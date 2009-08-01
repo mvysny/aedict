@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+
+
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Japanese search"></TextView><Spinner android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/jpSearchProps" android:entries="@+array/jpSearchPropsItems"></Spinner>
+
+<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+<EditText android:layout_height="wrap_content" android:id="@+id/jpSearchEdit" android:layout_width="wrap_content" android:layout_weight="1" android:hint="Enter word in romaji" android:inputType="text"></EditText>
+<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Search" android:id="@+id/jpSearch"></Button>
+</LinearLayout>
+
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="English search"></TextView>
+<Spinner android:layout_height="wrap_content" android:id="@+id/englishSearchProps" android:layout_width="fill_parent" android:entries="@+array/englishSearchPropsItems"></Spinner>
+<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
+<EditText android:layout_height="wrap_content" android:id="@+id/engSearchEdit" android:layout_width="wrap_content" android:layout_weight="1" android:hint="Enter word or expression" android:inputType="text"></EditText>
+<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Search" android:id="@+id/engSearch"></Button>
+</LinearLayout>
+</LinearLayout>

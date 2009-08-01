@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<resources> 
+<array name="jpSearchPropsItems"> 
+        <item>Exact Matches</item> 
+        <item>Starts With</item> 
+        <item>Ends With</item> 
+        <item>Any Matches</item> 
+    </array> 
+<array name="englishSearchPropsItems"> 
+        <item>Whole Expressions</item> 
+        <item>Whole Words</item> 
+        <item>Any Matches</item> 
+    </array> 
+</resources>
