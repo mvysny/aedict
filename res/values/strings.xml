@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World, MainActivity!</string>
     <string name="app_name">Aedict</string>
+    <string name="searchResults">Aedict: Search Results</string>
 </resources>

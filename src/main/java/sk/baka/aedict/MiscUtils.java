@@ -21,6 +21,8 @@ package sk.baka.aedict;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import android.util.Log;
 
@@ -54,19 +56,19 @@ public final class MiscUtils {
 	}
 
 	/**
-	 * Opens a class-loader resource using the
-	 * {@link Thread#getContextClassLoader() context class-loader}. Fails if the
-	 * resource does not exist.
+	 * Opens a class-loader resource. Fails if the resource does not exist.
 	 * 
 	 * @param resName
 	 *            the resource name
+	 * @param cl
+	 *            class-loader to use
 	 * @return an opened stream
 	 * @throws IOException
 	 *             if the resource does not exist.
 	 */
-	public static InputStream openResource(String resName) throws IOException {
-		final InputStream result = Thread.currentThread()
-				.getContextClassLoader().getResourceAsStream(resName);
+	public static InputStream openResource(String resName, final ClassLoader cl)
+			throws IOException {
+		final InputStream result = cl.getResourceAsStream(resName);
 		if (result == null) {
 			throw new IOException("Failed to load resource '" + resName + "'");
 		}
@@ -83,5 +85,20 @@ public final class MiscUtils {
 	 */
 	public static boolean isBlank(final String str) {
 		return str == null || str.trim().length() == 0;
+	}
+
+	/**
+	 * Returns stacktrace of given exception.
+	 * 
+	 * @param ex
+	 *            the exception
+	 * @return stacktrace as string.
+	 */
+	public static String getStacktrace(Exception ex) {
+		final StringWriter sw = new StringWriter();
+		final PrintWriter pw = new PrintWriter(sw);
+		ex.printStackTrace();
+		pw.close();
+		return sw.toString();
 	}
 }

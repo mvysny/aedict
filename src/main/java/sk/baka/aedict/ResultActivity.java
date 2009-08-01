@@ -20,14 +20,14 @@ package sk.baka.aedict;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import android.app.ListActivity;
+import android.os.Bundle;
 import android.widget.ArrayAdapter;
 
 /**
@@ -36,51 +36,50 @@ import android.widget.ArrayAdapter;
  * @author Martin Vysny
  */
 public class ResultActivity extends ListActivity {
-	/**
-	 * Creates new activity.
-	 */
-	public ResultActivity() {
-		super();
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		List<String> list;
 		final SearchQuery query = SearchQuery.fromIntent(getIntent());
 		if (MiscUtils.isBlank(query.query)) {
 			// nothing to search for
 			list = Collections.singletonList("Nothing to search for");
-			finish();
-		}
-		try {
-			list = performSearch(query);
-		} catch (Exception ex) {
-			list = Collections.singletonList(ex.toString() + "\n"
-					+ getStacktrace(ex));
+		} else {
+			try {
+				list = performSearch(query);
+			} catch (Exception ex) {
+				throw new RuntimeException(ex);
+			}
+			if (list.isEmpty()) {
+				list = Collections.singletonList("No results");
+			}
 		}
 		setListAdapter(new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, list));
-	}
-
-	private String getStacktrace(Exception ex) {
-		final StringWriter sw = new StringWriter();
-		final PrintWriter pw = new PrintWriter(sw);
-		ex.printStackTrace();
-		pw.close();
-		return sw.toString();
 	}
 
 	private List<String> performSearch(final SearchQuery query)
 			throws IOException {
 		final String expr = query.query.toLowerCase();
 		final List<String> result = new ArrayList<String>();
-		final BufferedReader in = new BufferedReader(new InputStreamReader(
-				MiscUtils.openResource("edict")));
+		final InputStream edict = MiscUtils.openResource("edict",
+				getClassLoader());
 		try {
-			for (String line = in.readLine(); line != null; line = in
-					.readLine()) {
-				if (line.toLowerCase().contains(expr)) {
-					result.add(line);
+			final BufferedReader in = new BufferedReader(new InputStreamReader(
+					edict, "EUC-JP"));
+			try {
+				for (String line = in.readLine(); line != null; line = in
+						.readLine()) {
+					if (line.toLowerCase().contains(expr)) {
+						result.add(line);
+					}
 				}
+			} finally {
+				MiscUtils.closeQuietly(in);
 			}
 		} finally {
-			MiscUtils.closeQuietly(in);
+			MiscUtils.closeQuietly(edict);
 		}
 		return result;
 	}

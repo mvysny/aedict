@@ -47,6 +47,18 @@ public class MainActivity extends Activity {
 			}
 
 		});
+		final Button engSearch = (Button) findViewById(R.id.engSearch);
+		final EditText engSearchEdit = (EditText) findViewById(R.id.engSearchEdit);
+		engSearch.setOnClickListener(new View.OnClickListener() {
+
+			public void onClick(View v) {
+				final SearchQuery q = new SearchQuery();
+				q.isJapanese = false;
+				q.query = engSearchEdit.getText().toString();
+				performSearch(q);
+			}
+
+		});
 	}
 
 	private void performSearch(final SearchQuery query) {
