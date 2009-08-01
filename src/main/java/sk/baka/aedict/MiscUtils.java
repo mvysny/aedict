@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Properties;
 
 import android.util.Log;
 
@@ -100,5 +101,24 @@ public final class MiscUtils {
 		ex.printStackTrace();
 		pw.close();
 		return sw.toString();
+	}
+
+	/**
+	 * Loads property file from given input stream. The stream is always closed.
+	 * 
+	 * @param in
+	 *            the stream to read from
+	 * @return properties instance
+	 * @throws IOException
+	 *             if i/o error occurs
+	 */
+	public static Properties load(final InputStream in) throws IOException {
+		try {
+			final Properties result = new Properties();
+			result.load(in);
+			return result;
+		} finally {
+			closeQuietly(in);
+		}
 	}
 }

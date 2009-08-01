@@ -34,6 +34,11 @@ public class MainActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		try {
+			JpUtils.initialize(getClassLoader());
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
 		setContentView(R.layout.main);
 		final Button jpSearch = (Button) findViewById(R.id.jpSearch);
 		final EditText jpSearchEdit = (EditText) findViewById(R.id.jpSearchEdit);
