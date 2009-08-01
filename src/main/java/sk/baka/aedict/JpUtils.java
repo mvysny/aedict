@@ -100,8 +100,14 @@ public final class JpUtils {
 			String romaji) {
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < romaji.length(); i++) {
+			// optimization - only convert ascii letters
+			final char c = romaji.charAt(i);
+			if (!isAsciiLetter(c)) {
+				sb.append(c);
+				continue;
+			}
 			String kana = null;
-			for (int matchLen = 1; matchLen <= 4; matchLen++) {
+			for (int matchLen = 1; matchLen <= Math.min(romaji.length() - i, 4); matchLen++) {
 				final String romajiMatch = String.valueOf(romaji.substring(i,
 						i + matchLen).toLowerCase());
 				if (romajiMatch.equals("n")) {
@@ -126,6 +132,10 @@ public final class JpUtils {
 		}
 		return sb.toString();
 
+	}
+
+	private static boolean isAsciiLetter(char c) {
+		return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 	}
 
 	/**

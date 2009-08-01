@@ -47,7 +47,9 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				final SearchQuery q = new SearchQuery();
 				q.isJapanese = true;
-				q.query = jpSearchEdit.getText().toString();
+				final String romaji = jpSearchEdit.getText().toString();
+				q.query = new String[] { JpUtils.toHiragana(romaji),
+						JpUtils.toKatakana(romaji) };
 				performSearch(q);
 			}
 
@@ -59,7 +61,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				final SearchQuery q = new SearchQuery();
 				q.isJapanese = false;
-				q.query = engSearchEdit.getText().toString();
+				q.query = new String[] { engSearchEdit.getText().toString() };
 				performSearch(q);
 			}
 

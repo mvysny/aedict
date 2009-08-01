@@ -89,6 +89,27 @@ public final class MiscUtils {
 	}
 
 	/**
+	 * Checks if given string array is null, empty or contains whitespace-only
+	 * strings only.
+	 * 
+	 * @param str
+	 *            the string to check
+	 * @return true if given string is null, empty or consists of whitespaces
+	 *         only.
+	 */
+	public static boolean isBlank(final String[] str) {
+		if (str == null || str.length == 0) {
+			return true;
+		}
+		for (final String s : str) {
+			if (!isBlank(s)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Returns stacktrace of given exception.
 	 * 
 	 * @param ex

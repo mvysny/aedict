@@ -41,7 +41,8 @@ public class ResultActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		List<String> list;
-		final SearchQuery query = SearchQuery.fromIntent(getIntent());
+		final SearchQuery query = SearchQuery.fromIntent(getIntent())
+				.toLowerCase();
 		if (MiscUtils.isBlank(query.query)) {
 			// nothing to search for
 			list = Collections.singletonList("Nothing to search for");
@@ -61,7 +62,6 @@ public class ResultActivity extends ListActivity {
 
 	private List<String> performSearch(final SearchQuery query)
 			throws IOException {
-		final String expr = query.query.toLowerCase();
 		final List<String> result = new ArrayList<String>();
 		final InputStream edict = MiscUtils.openResource("edict",
 				getClassLoader());
@@ -71,8 +71,11 @@ public class ResultActivity extends ListActivity {
 			try {
 				for (String line = in.readLine(); line != null; line = in
 						.readLine()) {
-					if (line.toLowerCase().contains(expr)) {
-						result.add(line);
+					for (final String expr : query.query) {
+						if (line.toLowerCase().contains(expr)) {
+							result.add(line);
+							break;
+						}
 					}
 				}
 			} finally {

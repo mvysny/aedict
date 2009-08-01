@@ -31,14 +31,46 @@ public final class SearchQuery implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	/**
-	 * A search query.
+	 * A search query. If multiple queries are specified then all strings which
+	 * matches at least one query will be shown.
 	 */
-	public String query;
+	public String[] query;
 	/**
 	 * If true we are searching for a japanese query. If false the query is for
 	 * an english word.
 	 */
 	public boolean isJapanese;
+
+	/**
+	 * Creates an empty search query.
+	 */
+	public SearchQuery() {
+		super();
+	}
+
+	/**
+	 * Clones given search query.
+	 * @param other query to clone
+	 */
+	public SearchQuery(SearchQuery other) {
+		this();
+		query = other.query.clone();
+		isJapanese = other.isJapanese;
+	}
+
+	/**
+	 * All query strings are converted to a lower case.
+	 * 
+	 * @return this
+	 */
+	public SearchQuery toLowerCase() {
+		if (query != null) {
+			for (int i = 0; i < query.length; i++) {
+				query[i] = query[i].toLowerCase();
+			}
+		}
+		return this;
+	}
 
 	/**
 	 * Retrieves values for the query from given intent.
@@ -49,7 +81,7 @@ public final class SearchQuery implements Serializable {
 	 */
 	public static SearchQuery fromIntent(final Intent intent) {
 		final SearchQuery result = new SearchQuery();
-		result.query = intent.getStringExtra(INTENTKEY_SEARCH_QUERY);
+		result.query = intent.getStringArrayExtra(INTENTKEY_SEARCH_QUERY);
 		result.isJapanese = intent.getBooleanExtra(INTENTKEY_JAPANESE, false);
 		return result;
 	}
