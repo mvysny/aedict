@@ -19,6 +19,7 @@
 package sk.baka.aedict;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -140,6 +141,37 @@ public final class MiscUtils {
 			return result;
 		} finally {
 			closeQuietly(in);
+		}
+	}
+
+	/**
+	 * Deletes given directory, including subdirectories.
+	 * 
+	 * @param dir
+	 *            the directory to delete. For safety reasons it must start with
+	 *            /sdcard/aedict
+	 * @throws IOException
+	 */
+	public static void deleteDir(final File dir) throws IOException {
+		if (!dir.getPath().startsWith("/sdcard/aedict")) {
+			throw new IllegalArgumentException(dir
+					+ " does not start with /sdcard/aedict");
+		}
+		if (!dir.isDirectory()) {
+			throw new IllegalArgumentException(dir + " is not a directory");
+		}
+		for (final File f : dir.listFiles()) {
+			if (f.isDirectory()) {
+				deleteDir(f);
+			} else {
+				if (!f.delete()) {
+					throw new IOException("Failed to delete "
+							+ f.getAbsolutePath());
+				}
+			}
+		}
+		if (!dir.delete()) {
+			throw new IOException("Failed to delete " + dir.getAbsolutePath());
 		}
 	}
 }

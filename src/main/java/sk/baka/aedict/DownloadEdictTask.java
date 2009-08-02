@@ -18,7 +18,11 @@
 
 package sk.baka.aedict;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +31,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.zip.GZIPInputStream;
+
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexWriter;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -144,7 +153,8 @@ public final class DownloadEdictTask extends
 	@Override
 	protected Void doInBackground(Void... params) {
 		try {
-			performDownloadAndUnpack();
+			edictDownloadAndUnpack();
+			edictIndex();
 		} catch (Exception ex) {
 			if (!isCancelled()) {
 				Log.e(DownloadEdictTask.class.getSimpleName(), "Error", ex);
@@ -158,8 +168,11 @@ public final class DownloadEdictTask extends
 		return null;
 	}
 
-	private void performDownloadAndUnpack() throws IOException,
+	private void edictDownloadAndUnpack() throws IOException,
 			InterruptedException {
+		if (exists(EDICT)) {
+			return;
+		}
 		publishProgress(new Progress("Connecting", 0));
 		final URLConnection conn = EDICT_GZ.openConnection();
 		final int length = 10304902;
@@ -229,6 +242,79 @@ public final class DownloadEdictTask extends
 		} else {
 			if (msg != null) {
 				dlg.setTitle(msg);
+			}
+		}
+	}
+
+	public static final int LINES_PER_INDEXABLE_ITEM = 20;
+	private static final int REPORT_EACH_XTH_LINE = 1000;
+	private static final int FLUSH_LUCENE_EACH_XTH_LINE = 100000;
+
+	private void edictIndex() throws IOException, InterruptedException {
+		if (exists(LUCENE_INDEX) && exists(LINE_INDEX)) {
+			return;
+		}
+		dlg.setMax(172280);
+		final InputStream edict = new FileInputStream(EDICT);
+		try {
+			final LineReadInputStream lines = new LineReadInputStream(edict);
+			final DataOutputStream idx = new DataOutputStream(
+					new BufferedOutputStream(new FileOutputStream(LINE_INDEX)));
+			try {
+				IndexWriter luceneWriter = new IndexWriter(LUCENE_INDEX,
+						new StandardAnalyzer(), true,
+						IndexWriter.MaxFieldLength.LIMITED);
+				try {
+					edictIndexImpl(lines, idx, luceneWriter);
+					luceneWriter.optimize();
+				} finally {
+					luceneWriter.close();
+				}
+			} finally {
+				MiscUtils.closeQuietly(idx);
+			}
+		} finally {
+			MiscUtils.closeQuietly(edict);
+		}
+	}
+
+	private void edictIndexImpl(final LineReadInputStream lines,
+			final DataOutputStream idx, final IndexWriter luceneWriter)
+			throws IOException, InterruptedException {
+		publishProgress(new Progress("Indexing", 0));
+		int linesRead = 0;
+		int fileName = 0;
+		idx.writeInt(0);
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		while (lines.readLine()) {
+			bout.write(lines.buffer, lines.lineStart, lines.lineLength);
+			bout.write('\n');
+			linesRead++;
+			if (linesRead >= LINES_PER_INDEXABLE_ITEM) {
+				linesRead = 0;
+				final String contents = bout.toString("EUC-JP");
+				final Document doc = new Document();
+				doc.add(new Field("path", Integer.toString(fileName++),
+						Field.Store.YES, Field.Index.NOT_ANALYZED));
+				doc.add(new Field("contents", contents, Field.Store.NO,
+						Field.Index.ANALYZED));
+				luceneWriter.addDocument(doc);
+				idx.writeInt(lines.lineFilePos);
+				bout.reset();
+			}
+			if (lines.lineNumber % REPORT_EACH_XTH_LINE == 0) {
+				publishProgress(new Progress(null, lines.lineNumber));
+			}
+			if (lines.lineNumber % FLUSH_LUCENE_EACH_XTH_LINE == 0) {
+				luceneWriter.commit();
+				luceneWriter.optimize();
+			}
+			if (Thread.currentThread().isInterrupted()) {
+				MiscUtils.closeQuietly(idx);
+				luceneWriter.close();
+				new File(LINE_INDEX).delete();
+				MiscUtils.deleteDir(new File(LUCENE_INDEX));
+				throw new InterruptedException();
 			}
 		}
 	}

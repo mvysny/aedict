@@ -63,6 +63,19 @@ public final class LineReadInputStream {
 	public int lineLength = 0;
 	private boolean isNoMoreBytes = false;
 
+	private int currentFilePos = 0;
+
+	/**
+	 * Returns absolute position in the file of the first byte of most recent
+	 * line returned by {@link #readLine()}.
+	 */
+	public int lineFilePos = 0;
+
+	/**
+	 * Current line number. First line has number of 0.
+	 */
+	public int lineNumber = -1;
+
 	private void preloadBuffer(final int from) throws IOException {
 		if (isNoMoreBytes) {
 			return;
@@ -117,7 +130,10 @@ public final class LineReadInputStream {
 		}
 		lineStart = currentBufferPosition;
 		lineLength = nextSeparator - currentBufferPosition;
+		lineFilePos = currentFilePos;
+		currentFilePos += lineLength + 1;
 		currentBufferPosition = nextSeparator + 1;
+		lineNumber++;
 		return true;
 	}
 }
