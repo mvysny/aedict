@@ -19,6 +19,7 @@
 package sk.baka.aedict;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -63,8 +64,7 @@ public class ResultActivity extends ListActivity {
 	private List<String> performSearch(final SearchQuery query)
 			throws IOException {
 		final List<String> result = new ArrayList<String>();
-		final InputStream edict = MiscUtils.openResource("edict",
-				getClassLoader());
+		final InputStream edict = new FileInputStream("/sdcard/aedict/edict");
 		try {
 			final BufferedReader in = new BufferedReader(new InputStreamReader(
 					edict, "EUC-JP"));

@@ -45,6 +45,7 @@ public final class DownloadEdictTask extends
 
 	private static final class Progress {
 		public Progress() {
+			super();
 		}
 
 		public Progress(final String message, final int progress) {
@@ -75,6 +76,12 @@ public final class DownloadEdictTask extends
 	}
 	private final Context context;
 
+	/**
+	 * Creates new EDict downloader.
+	 * 
+	 * @param context
+	 *            parent context.
+	 */
 	public DownloadEdictTask(Context context) {
 		this.context = context;
 	}
@@ -111,7 +118,8 @@ public final class DownloadEdictTask extends
 		return null;
 	}
 
-	private void performDownloadAndUnpack() throws IOException, InterruptedException {
+	private void performDownloadAndUnpack() throws IOException,
+			InterruptedException {
 		final URLConnection conn = EDICT_GZ.openConnection();
 		int length = conn.getContentLength();
 		if (length < 0) {
@@ -124,13 +132,7 @@ public final class DownloadEdictTask extends
 		}
 		final InputStream in = new GZIPInputStream(conn.getInputStream());
 		try {
-			final OutputStream out = new FileOutputStream(
-					"/sdcard/aedict/edict");
-			try {
-				copy(in, out, length);
-			} finally {
-				MiscUtils.closeQuietly(out);
-			}
+			copy(in, new File("/sdcard/aedict/edict"), length);
 		} finally {
 			MiscUtils.closeQuietly(in);
 		}
@@ -138,19 +140,29 @@ public final class DownloadEdictTask extends
 
 	private static final int BUFFER_SIZE = 32768 * 4;
 
-	private void copy(final InputStream in, final OutputStream out,
-			final int length) throws IOException, InterruptedException {
-		int downloaded = 0;
-		final byte[] buf = new byte[BUFFER_SIZE];
-		int bufLen;
-		while ((bufLen = in.read(buf)) >= 0) {
-			out.write(buf, 0, bufLen);
-			downloaded += bufLen;
-			if (Thread.currentThread().isInterrupted()) {
-				throw new InterruptedException();
+	private void copy(final InputStream in, final File file, final int length)
+			throws IOException, InterruptedException {
+		OutputStream out = new FileOutputStream(file);
+		try {
+			int downloaded = 0;
+			final byte[] buf = new byte[BUFFER_SIZE];
+			int bufLen;
+			while ((bufLen = in.read(buf)) >= 0) {
+				out.write(buf, 0, bufLen);
+				downloaded += bufLen;
+				if (Thread.currentThread().isInterrupted()) {
+					// delete incomplete download
+					MiscUtils.closeQuietly(out);
+					out = null;
+					file.delete();
+					throw new InterruptedException();
+				}
+				publishProgress(new Progress("Downloading: "
+						+ (downloaded / 1024) + "K",
+						(int) (downloaded * 10000L / length)));
 			}
-			publishProgress(new Progress("Downloading: " + (downloaded / 1024)
-					+ "K", (int) (downloaded * 10000L / length)));
+		} finally {
+			MiscUtils.closeQuietly(out);
 		}
 	}
 
