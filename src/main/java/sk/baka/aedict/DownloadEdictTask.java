@@ -90,15 +90,18 @@ public final class DownloadEdictTask extends
 
 	@Override
 	protected void onPreExecute() {
-		dlg = ProgressDialog.show(context, "Downloading EDict", "", false,
-				true, new OnCancelListener() {
-					public void onCancel(DialogInterface dialog) {
-						cancel(true);
-						dlg.setMessage("Cancelling");
-					}
-				});
-		dlg.setMax(10000);
+		dlg = new ProgressDialog(context);
+		dlg.setCancelable(true);
+		dlg.setOnCancelListener(new OnCancelListener() {
+			public void onCancel(DialogInterface dialog) {
+				cancel(true);
+				dlg.setTitle("Cancelling");
+			}
+		});
 		dlg.setIndeterminate(false);
+		dlg.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		dlg.setTitle("Connecting");
+		dlg.show();
 	}
 
 	private volatile boolean isError = false;
@@ -122,6 +125,7 @@ public final class DownloadEdictTask extends
 
 	private void performDownloadAndUnpack() throws IOException,
 			InterruptedException {
+		publishProgress(new Progress("Connecting", 0));
 		final URLConnection conn = EDICT_GZ.openConnection();
 		final int length = 10304902;
 		final File dir = new File("/sdcard/aedict");
@@ -137,15 +141,16 @@ public final class DownloadEdictTask extends
 	}
 
 	private static final int BUFFER_SIZE = 32768;
-	private static final int REPORT_EACH_XTH_BUFFER = 8;
+	private static final int REPORT_EACH_XTH_BYTE = BUFFER_SIZE * 8;
 
 	private void copy(final InputStream in, final File file, final int length)
 			throws IOException, InterruptedException {
-		publishProgress(new Progress("Downloading", 0));
+		dlg.setMax(length / 1024);
+		publishProgress(new Progress("Downloading EDict", 0));
 		OutputStream out = new FileOutputStream(file);
 		try {
 			int downloaded = 0;
-			int reportCountdown = REPORT_EACH_XTH_BUFFER;
+			int reportCountdown = REPORT_EACH_XTH_BYTE;
 			final byte[] buf = new byte[BUFFER_SIZE];
 			int bufLen;
 			while ((bufLen = in.read(buf)) >= 0) {
@@ -158,11 +163,10 @@ public final class DownloadEdictTask extends
 					file.delete();
 					throw new InterruptedException();
 				}
-				if (reportCountdown-- <= 0) {
-					publishProgress(new Progress("Downloading: "
-							+ (downloaded / 1024) + "K",
-							(int) (downloaded * 10000L / length)));
-					reportCountdown = REPORT_EACH_XTH_BUFFER;
+				reportCountdown -= bufLen;
+				if (reportCountdown <= 0) {
+					publishProgress(new Progress(null, downloaded / 1024));
+					reportCountdown = REPORT_EACH_XTH_BYTE;
 				}
 			}
 		} finally {
@@ -180,12 +184,17 @@ public final class DownloadEdictTask extends
 	@Override
 	protected void onProgressUpdate(Progress... values) {
 		int p = values[0].progress;
-		if (p < 0) {
-			p = 0;
-		} else if (p > 10000) {
-			p = 10000;
-		}
 		dlg.setProgress(p);
-		dlg.setMessage(values[0].message);
+		final String msg = values[0].message;
+		final Throwable t = values[0].error;
+		if (t != null) {
+			dlg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			dlg.setMessage(msg);
+			dlg.setTitle("Error");
+		} else {
+			if (msg != null) {
+				dlg.setTitle(msg);
+			}
+		}
 	}
 }
