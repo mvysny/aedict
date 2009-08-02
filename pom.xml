@@ -9,7 +9,7 @@
 	<description>A english-japanese dictionary which uses Jim Breen's edict data. Does not require japanese keyboard.</description>
 	<url>http://code.google.com/p/aedict</url>
 	<prerequisites>
-		<maven>2.0.9</maven>
+		<maven>2.2.0</maven>
 	</prerequisites>
 	
 	<properties>
@@ -269,14 +269,24 @@ org.eclipse.jdt.core.compiler.source=1.5
 			   </configuration>
 			</plugin>
 			<plugin>
+				<!-- this is an example of totally fucked-up (read: regular) Maven plugin. Imagine we want to disable obfuscation forced on us by the masa plugin -->
 				<groupId>com.pyx4me</groupId>
 				<artifactId>proguard-maven-plugin</artifactId>
-             <configuration>
-                 <options>
-                     <option>-allowaccessmodification</option>
-                     <option>-keep public class * extends android.app.Activity { *; }</option>
-                 </options>
-             </configuration>
+				<executions>
+					<execution> <!-- disable by binding to the 'none' phase. this does not work -->
+						<id>default-proguard</id>
+						<phase>none</phase>
+					</execution>
+				</executions>
+			   <configuration>
+			   	<skip>true</skip> <!-- this does not work as well -->
+					<options>
+						<option>-dontobfuscate</option>
+						<option>-dontoptimize</option>
+						<option>-dontshrink</option> <!-- this is ignored -->
+						<option>-keep public class * extends java.lang.Object { *; }</option> <!-- fortunately this is finally processed -->
+					</options>
+			   </configuration>
 			</plugin>
 		</plugins>
 	</build>
