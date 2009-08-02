@@ -18,7 +18,11 @@
 
 package sk.baka.aedict;
 
+import java.io.File;
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -66,6 +70,29 @@ public class MainActivity extends Activity {
 			}
 
 		});
+		// check for dictionary file
+		if (!new File("/sdcard/aedict/edict").exists()) {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder
+					.setMessage("The EDict dictionary is missing. Do you wish to download it now?");
+			builder.setPositiveButton("Yes",
+					new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+							new DownloadEdictTask(MainActivity.this).execute();
+						}
+
+					});
+			builder.setNegativeButton("No",
+					new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+						}
+					});
+			builder.create().show();
+		}
 	}
 
 	private void performSearch(final SearchQuery query) {
