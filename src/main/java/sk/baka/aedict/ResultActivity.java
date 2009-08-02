@@ -23,9 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import java.util.RandomAccess;
+import java.util.Set;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -87,13 +89,14 @@ public class ResultActivity extends ListActivity {
 					new StandardAnalyzer());
 			final Query parsedQuery = parser.parse(query.getLuceneQuery());
 			final TopDocs result = searcher.search(parsedQuery, null, 100);
-			Log.e("CICA", "lucene result:" + result.scoreDocs.length);
+			final Set<Integer> idxOffsets = new HashSet<Integer>();
 			for (final ScoreDoc sd : result.scoreDocs) {
 				final Document doc = searcher.doc(sd.doc);
-				final int lineNumber = Integer.parseInt(doc.get("path"));
-				final int lineOffset = getStartingOffset(lineNumber);
-				Log.e("CICA", "line:" + lineNumber + " offset:" + lineOffset);
-				r.addAll(performSearch(query, lineOffset));
+				final int idxOffset = Integer.parseInt(doc.get("path"));
+				idxOffsets.add(idxOffset);
+			}
+			for (final Integer offset : getStartingOffset(idxOffsets)) {
+				r.addAll(performSearch(query, offset));
 			}
 		} finally {
 			reader.close();
@@ -101,16 +104,20 @@ public class ResultActivity extends ListActivity {
 		return r;
 	}
 
-	private int getStartingOffset(final int lineNumber) throws IOException {
-		final int idxOffset = lineNumber;
+	private List<Integer> getStartingOffset(final Collection<Integer> idxOffsets)
+			throws IOException {
+		final List<Integer> offsets = new ArrayList<Integer>();
 		final RandomAccessFile ra = new RandomAccessFile(
 				DownloadEdictTask.LINE_INDEX, "r");
 		try {
-			ra.seek(idxOffset * 4);
-			return ra.readInt();
+			for (final Integer idxOffset : idxOffsets) {
+				ra.seek(idxOffset * 4);
+				offsets.add(ra.readInt());
+			}
 		} finally {
 			MiscUtils.closeQuietly(ra);
 		}
+		return offsets;
 	}
 
 	private List<String> performSearch(final SearchQuery query, final int seekTo)
