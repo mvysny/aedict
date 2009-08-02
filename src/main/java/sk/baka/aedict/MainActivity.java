@@ -18,8 +18,6 @@
 
 package sk.baka.aedict;
 
-import java.io.File;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -71,7 +69,7 @@ public class MainActivity extends Activity {
 
 		});
 		// check for dictionary file
-		if (!new File("/sdcard/aedict/edict").exists()) {
+		if (!DownloadEdictTask.isComplete()) {
 			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder
 					.setMessage("The EDict dictionary is missing. Do you wish to download it now?");

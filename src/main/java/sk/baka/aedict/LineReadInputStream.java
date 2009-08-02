@@ -18,61 +18,106 @@
 
 package sk.baka.aedict;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
  * Reads given input stream and is able to return "lines" - byte arrays
  * terminated with 0x0A (excluding the 0x0A character). Performs buffering.
+ * Thread-unsafe.
  * 
  * @author Martin Vysny
  */
-public final class LineReadInputStream extends BufferedInputStream {
+public final class LineReadInputStream {
+	private final InputStream in;
+
 	/**
 	 * Creates a new line reader instance.
 	 * 
 	 * @param in
 	 *            underlying input stream.
+	 * @throws IOException
 	 */
-	public LineReadInputStream(InputStream in) {
-		super(in);
+	public LineReadInputStream(final InputStream in) throws IOException {
+		this.in = in;
+		preloadBuffer(0);
 	}
 
 	/**
 	 * Maximum line length.
 	 */
-	public static final int MAX_LINE_LEN = 4096;
+	public static final int BUFFER_LEN = 32768;
 	/**
 	 * Currently loaded line. Available after {@link #readLine()} invocation.
 	 */
-	public final byte[] line = new byte[MAX_LINE_LEN];
+	public final byte[] buffer = new byte[BUFFER_LEN];
+	/**
+	 * Marks beginning of the line in the {@link #buffer}. Valid after
+	 * {@link #readLine()} is invoked.
+	 */
+	public int lineStart = 0;
+	/**
+	 * Marks length of the line in the {@link #buffer}. Valid after
+	 * {@link #readLine()} is invoked.
+	 */
+	public int lineLength = 0;
+	private boolean isNoMoreBytes = false;
+
+	private void preloadBuffer(final int from) throws IOException {
+		if (isNoMoreBytes) {
+			return;
+		}
+		int readPosition = from;
+		while (readPosition < BUFFER_LEN) {
+			int bytesRead = in.read(buffer, readPosition, BUFFER_LEN
+					- readPosition);
+			if (bytesRead < 0) {
+				isNoMoreBytes = true;
+				currentBufferLength = readPosition;
+				return;
+			}
+			readPosition += bytesRead;
+		}
+		currentBufferLength = BUFFER_LEN;
+	}
+
+	private int currentBufferPosition = 0;
+	private int currentBufferLength;
+
+	private int nextIndexOfSeparator() {
+		for (int i = currentBufferPosition; i < currentBufferLength; i++) {
+			if (buffer[i] == 0x0a) {
+				return i;
+			}
+		}
+		return -1;
+	}
 
 	/**
-	 * Fills the {@link #line} array with next line.
+	 * Fills the {@link #buffer} array with next line.
 	 * 
-	 * @return number of bytes read. -1 on end of file
+	 * @return true if everything went okay, false if there are no more lines.
 	 * @throws IOException
 	 *             on i/o error
 	 */
-	public int readLine() throws IOException {
-		int i = 0;
-		while (true) {
-			final int b = read();
-			if (b < 0) {
-				// end of file
-				if (i > 0) {
-					return i;
-				}
-				return -1;
+	public boolean readLine() throws IOException {
+		int nextSeparator = nextIndexOfSeparator();
+		if (nextSeparator < 0) {
+			if (isNoMoreBytes) {
+				return false;
 			}
-			if (b == 0x0a) {
-				return i;
-			}
-			line[i++] = (byte) b;
-			if (i >= MAX_LINE_LEN) {
-				throw new IOException("Exceeded maximum line length");
+			System.arraycopy(buffer, currentBufferPosition, buffer, 0,
+					currentBufferLength - currentBufferPosition);
+			preloadBuffer(currentBufferLength - currentBufferPosition);
+			currentBufferPosition = 0;
+			nextSeparator = nextIndexOfSeparator();
+			if (nextSeparator < 0) {
+				throw new IOException("Too long line");
 			}
 		}
+		lineStart = currentBufferPosition;
+		lineLength = nextSeparator - currentBufferPosition;
+		currentBufferPosition = nextSeparator + 1;
+		return true;
 	}
 }

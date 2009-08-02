@@ -20,6 +20,7 @@ package sk.baka.aedict;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -70,29 +71,30 @@ public class ResultActivity extends ListActivity {
 		for (final String q : query.query) {
 			queries[i++] = q.getBytes("EUC-JP");
 		}
-		final LineReadInputStream edict = new LineReadInputStream(
-				new FileInputStream("/sdcard/aedict/edict"));
+		final InputStream in = new FileInputStream("/sdcard/aedict/edict");
 		try {
-			int linelen;
-			while ((linelen = edict.readLine()) >= 0) {
+			final LineReadInputStream edict = new LineReadInputStream(in);
+			while (edict.readLine()) {
 				for (final byte[] q : queries) {
-					if (contains(q, edict.line, linelen)) {
-						result
-								.add(new String(edict.line, 0, linelen,
-										"EUC-JP"));
+					if (contains(q, edict)) {
+						final String line = new String(edict.buffer,
+								edict.lineStart, edict.lineLength, "EUC-JP");
+						result.add(line);
 					}
 				}
 			}
 		} finally {
-			MiscUtils.closeQuietly(edict);
+			MiscUtils.closeQuietly(in);
 		}
 		return result;
 	}
 
-	private boolean contains(byte[] subarray, byte[] array, int linelen) {
+	private boolean contains(byte[] subarray, LineReadInputStream in) {
 		byte firstChar = subarray[0];
 		int matched = 0;
-		for (int i = 0; i < linelen - subarray.length + 1; i++) {
+		final byte[] array = in.buffer;
+		final int end = in.lineStart + in.lineLength - subarray.length + 1;
+		for (int i = in.lineStart; i < end; i++) {
 			if (matched == 0) {
 				if (array[i] != firstChar) {
 					continue;

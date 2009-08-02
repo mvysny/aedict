@@ -122,6 +122,25 @@ public final class DownloadEdictTask extends
 
 	private volatile boolean isError = false;
 
+	public static final String BASE_DIR = "/sdcard/aedict";
+	private static final String EDICT = BASE_DIR + "/edict";
+	private static final String LUCENE_INDEX = BASE_DIR + "/index";
+	private static final String LINE_INDEX = BASE_DIR + "/idx";
+
+	/**
+	 * Checks if the edict is downloaded and indexed correctly.
+	 * 
+	 * @return true if everything is okay, false if not
+	 */
+	public static boolean isComplete() {
+		return exists(BASE_DIR) && exists(EDICT) && exists(LUCENE_INDEX)
+				&& exists(LINE_INDEX);
+	}
+
+	private static boolean exists(final String fname) {
+		return new File(fname).exists();
+	}
+
 	@Override
 	protected Void doInBackground(Void... params) {
 		try {
