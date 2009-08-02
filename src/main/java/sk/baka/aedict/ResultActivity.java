@@ -18,13 +18,8 @@
 
 package sk.baka.aedict;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -65,32 +60,6 @@ public class ResultActivity extends ListActivity {
 		}
 		setListAdapter(new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, list));
-	}
-
-	private List<String> performSearch(final SearchQuery query)
-			throws IOException {
-		final List<String> result = new ArrayList<String>();
-		final InputStream edict = new FileInputStream("/sdcard/aedict/edict");
-		try {
-			final BufferedReader in = new BufferedReader(new InputStreamReader(
-					edict, "EUC-JP"));
-			try {
-				for (String line = in.readLine(); line != null; line = in
-						.readLine()) {
-					for (final String expr : query.query) {
-						if (line.toLowerCase().contains(expr)) {
-							result.add(line);
-							break;
-						}
-					}
-				}
-			} finally {
-				MiscUtils.closeQuietly(in);
-			}
-		} finally {
-			MiscUtils.closeQuietly(edict);
-		}
-		return result;
 	}
 
 	private List<String> performSearch2(final SearchQuery query)

@@ -24,19 +24,37 @@ import java.io.InputStream;
 
 /**
  * Reads given input stream and is able to return "lines" - byte arrays
- * terminated with 0x0A (excluding the 0x0A character).
+ * terminated with 0x0A (excluding the 0x0A character). Performs buffering.
  * 
  * @author Martin Vysny
  */
 public final class LineReadInputStream extends BufferedInputStream {
-
+	/**
+	 * Creates a new line reader instance.
+	 * 
+	 * @param in
+	 *            underlying input stream.
+	 */
 	public LineReadInputStream(InputStream in) {
 		super(in);
 	}
 
-	public static final int MAX_LINE_LEN = 65536;
+	/**
+	 * Maximum line length.
+	 */
+	public static final int MAX_LINE_LEN = 4096;
+	/**
+	 * Currently loaded line. Available after {@link #readLine()} invocation.
+	 */
 	public final byte[] line = new byte[MAX_LINE_LEN];
 
+	/**
+	 * Fills the {@link #line} array with next line.
+	 * 
+	 * @return number of bytes read. -1 on end of file
+	 * @throws IOException
+	 *             on i/o error
+	 */
 	public int readLine() throws IOException {
 		int i = 0;
 		while (true) {
