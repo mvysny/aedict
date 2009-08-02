@@ -182,6 +182,6 @@ public final class DownloadEdictTask extends
 			p = 10000;
 		}
 		dlg.setProgress(p);
-		dlg.setTitle(values[0].message);
+		dlg.setMessage(values[0].message);
 	}
 }
