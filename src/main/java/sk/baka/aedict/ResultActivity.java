@@ -92,7 +92,7 @@ public class ResultActivity extends ListActivity {
 			final Set<Integer> idxOffsets = new HashSet<Integer>();
 			for (final ScoreDoc sd : result.scoreDocs) {
 				final Document doc = searcher.doc(sd.doc);
-				final int idxOffset = Integer.parseInt(doc.get("path"));
+				final int idxOffset = Integer.parseInt(doc.get("path")) * 4;
 				idxOffsets.add(idxOffset);
 			}
 			for (final Integer offset : getStartingOffset(idxOffsets)) {
@@ -104,6 +104,15 @@ public class ResultActivity extends ListActivity {
 		return r;
 	}
 
+	/**
+	 * Translates all IDX file offsets into pointers to the EDICT file.
+	 * 
+	 * @param idxOffsets
+	 *            a collection of offsets into the
+	 *            {@link DownloadEdictTask#LINE_INDEX} file.
+	 * @return translated offsets into the EDICT file.
+	 * @throws IOException
+	 */
 	private List<Integer> getStartingOffset(final Collection<Integer> idxOffsets)
 			throws IOException {
 		final List<Integer> offsets = new ArrayList<Integer>();
@@ -111,7 +120,7 @@ public class ResultActivity extends ListActivity {
 				DownloadEdictTask.LINE_INDEX, "r");
 		try {
 			for (final Integer idxOffset : idxOffsets) {
-				ra.seek(idxOffset * 4);
+				ra.seek(idxOffset);
 				offsets.add(ra.readInt());
 			}
 		} finally {
@@ -120,6 +129,19 @@ public class ResultActivity extends ListActivity {
 		return offsets;
 	}
 
+	/**
+	 * Performs a quick byte-comparison search on
+	 * {@value DownloadEdictTask#LINES_PER_INDEXABLE_ITEM} lines of the edict
+	 * file, starting at given file offset.
+	 * 
+	 * @param query
+	 *            the query object
+	 * @param seekTo
+	 *            start reading the lines from this position
+	 * @return list of matched lines from the edict file.
+	 * @throws IOException
+	 *             on i/o error
+	 */
 	private List<String> performSearch(final SearchQuery query, final int seekTo)
 			throws IOException {
 		final List<String> result = new ArrayList<String>();
@@ -155,6 +177,17 @@ public class ResultActivity extends ListActivity {
 		return result;
 	}
 
+	/**
+	 * Checks if given sub-array is contained in current line of given line
+	 * reader.
+	 * 
+	 * @param subarray
+	 *            the sub-array to check.
+	 * @param in
+	 *            the line reader. Only the current line is checked.
+	 * @return true if the sub-array is contained in current line, false
+	 *         otherwise.
+	 */
 	private boolean contains(byte[] subarray, LineReadInputStream in) {
 		byte firstChar = subarray[0];
 		int matched = 0;

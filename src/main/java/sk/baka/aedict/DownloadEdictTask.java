@@ -78,10 +78,26 @@ public final class DownloadEdictTask extends
 			this.progress = progress;
 		}
 
+		/**
+		 * The message to show.
+		 */
 		public String message;
+		/**
+		 * A progress being made.
+		 */
 		public int progress;
+		/**
+		 * Optional error (if the download failed).
+		 */
 		public Throwable error;
 
+		/**
+		 * Creates the progress object from an error.
+		 * 
+		 * @param t
+		 *            the error, must not be null.
+		 * @return new object instance with filled message.
+		 */
 		public static Progress fromError(final Throwable t) {
 			Progress p = new Progress();
 			p.progress = -1;
@@ -130,10 +146,23 @@ public final class DownloadEdictTask extends
 	}
 
 	private volatile boolean isError = false;
-
+	/**
+	 * The base temporary directory, located on the sdcard, where EDICT and
+	 * index files are stored.
+	 */
 	public static final String BASE_DIR = "/sdcard/aedict";
+	/**
+	 * The name of the EDICT file.
+	 */
 	private static final String EDICT = BASE_DIR + "/edict";
+	/**
+	 * Directory where the Apache Lucene index is stored.
+	 */
 	public static final String LUCENE_INDEX = BASE_DIR + "/index";
+	/**
+	 * Index file which translates Edict file line numbers into appropriate byte
+	 * positions.
+	 */
 	public static final String LINE_INDEX = BASE_DIR + "/idx";
 
 	/**
@@ -168,6 +197,15 @@ public final class DownloadEdictTask extends
 		return null;
 	}
 
+	/**
+	 * Downloads the edict file (in the .gz format) and unpacks it onto the
+	 * sdcard.
+	 * 
+	 * @throws IOException
+	 *             on i/o error.
+	 * @throws InterruptedException
+	 *             if canceled
+	 */
 	private void edictDownloadAndUnpack() throws IOException,
 			InterruptedException {
 		if (exists(EDICT)) {
@@ -175,6 +213,7 @@ public final class DownloadEdictTask extends
 		}
 		publishProgress(new Progress("Connecting", 0));
 		final URLConnection conn = EDICT_GZ.openConnection();
+		// this is the unpacked edict file size.
 		final int length = 10304902;
 		final File dir = new File("/sdcard/aedict");
 		if (!dir.exists() && !dir.mkdirs()) {
@@ -191,6 +230,21 @@ public final class DownloadEdictTask extends
 	private static final int BUFFER_SIZE = 32768;
 	private static final int REPORT_EACH_XTH_BYTE = BUFFER_SIZE * 8;
 
+	/**
+	 * Copies all bytes from given input stream to given file, overwriting the
+	 * file. Progress is updated periodically.
+	 * 
+	 * @param in
+	 *            read bytes from here
+	 * @param file
+	 *            write bytes here
+	 * @param length
+	 *            number of bytes in the input stream
+	 * @throws IOException
+	 *             on i/o error
+	 * @throws InterruptedException
+	 *             if canceled
+	 */
 	private void copy(final InputStream in, final File file, final int length)
 			throws IOException, InterruptedException {
 		dlg.setMax(length / 1024);
@@ -246,14 +300,28 @@ public final class DownloadEdictTask extends
 		}
 	}
 
+	/**
+	 * Split the EDICT file into chunks with {@value #LINES_PER_INDEXABLE_ITEM}
+	 * lines.
+	 */
 	public static final int LINES_PER_INDEXABLE_ITEM = 20;
 	private static final int REPORT_EACH_XTH_LINE = 1000;
 	private static final int FLUSH_LUCENE_EACH_XTH_LINE = 100000;
 
+	/**
+	 * Creates Lucene index for the edict file if the index does not exist yet.
+	 * Does nothing if the index already exists.
+	 * 
+	 * @throws IOException
+	 *             on i/o error
+	 * @throws InterruptedException
+	 *             if canceled
+	 */
 	private void edictIndex() throws IOException, InterruptedException {
 		if (exists(LUCENE_INDEX) && exists(LINE_INDEX)) {
 			return;
 		}
+		// number of lines of the edict file
 		dlg.setMax(172280);
 		final InputStream edict = new FileInputStream(EDICT);
 		try {
@@ -261,7 +329,7 @@ public final class DownloadEdictTask extends
 			final DataOutputStream idx = new DataOutputStream(
 					new BufferedOutputStream(new FileOutputStream(LINE_INDEX)));
 			try {
-				IndexWriter luceneWriter = new IndexWriter(LUCENE_INDEX,
+				final IndexWriter luceneWriter = new IndexWriter(LUCENE_INDEX,
 						new StandardAnalyzer(), true,
 						IndexWriter.MaxFieldLength.LIMITED);
 				try {
@@ -306,6 +374,7 @@ public final class DownloadEdictTask extends
 				publishProgress(new Progress(null, lines.lineNumber));
 			}
 			if (lines.lineNumber % FLUSH_LUCENE_EACH_XTH_LINE == 0) {
+				// this prevents OutOfMemoryErrors
 				luceneWriter.commit();
 				luceneWriter.optimize();
 			}
