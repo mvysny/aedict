@@ -133,8 +133,8 @@ public final class DownloadEdictTask extends
 
 	public static final String BASE_DIR = "/sdcard/aedict";
 	private static final String EDICT = BASE_DIR + "/edict";
-	private static final String LUCENE_INDEX = BASE_DIR + "/index";
-	private static final String LINE_INDEX = BASE_DIR + "/idx";
+	public static final String LUCENE_INDEX = BASE_DIR + "/index";
+	public static final String LINE_INDEX = BASE_DIR + "/idx";
 
 	/**
 	 * Checks if the edict is downloaded and indexed correctly.

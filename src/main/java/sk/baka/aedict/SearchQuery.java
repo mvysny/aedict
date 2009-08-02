@@ -48,9 +48,22 @@ public final class SearchQuery implements Serializable {
 		super();
 	}
 
+	public String getLuceneQuery() {
+		final StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < query.length; i++) {
+			sb.append(query[i]);
+			if (i < query.length - 1) {
+				sb.append(" OR ");
+			}
+		}
+		return sb.toString();
+	}
+
 	/**
 	 * Clones given search query.
-	 * @param other query to clone
+	 * 
+	 * @param other
+	 *            query to clone
 	 */
 	public SearchQuery(SearchQuery other) {
 		this();

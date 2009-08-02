@@ -21,9 +21,22 @@ package sk.baka.aedict;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.RandomAccess;
+
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Searcher;
+import org.apache.lucene.search.TopDocs;
 
 import android.app.ListActivity;
 import android.os.Bundle;
@@ -48,7 +61,7 @@ public class ResultActivity extends ListActivity {
 			list = Collections.singletonList("Nothing to search for");
 		} else {
 			try {
-				list = performSearch2(query);
+				list = performLuceneSearch(query);
 			} catch (Exception ex) {
 				Log.e(ResultActivity.class.getSimpleName(),
 						"Failed to perform search", ex);
@@ -63,7 +76,44 @@ public class ResultActivity extends ListActivity {
 				android.R.layout.simple_list_item_1, list));
 	}
 
-	private List<String> performSearch2(final SearchQuery query)
+	private List<String> performLuceneSearch(final SearchQuery query)
+			throws IOException, ParseException {
+		final List<String> r = new ArrayList<String>();
+		final IndexReader reader = IndexReader
+				.open(DownloadEdictTask.LUCENE_INDEX);
+		try {
+			final Searcher searcher = new IndexSearcher(reader);
+			final QueryParser parser = new QueryParser("contents",
+					new StandardAnalyzer());
+			final Query parsedQuery = parser.parse(query.getLuceneQuery());
+			final TopDocs result = searcher.search(parsedQuery, null, 100);
+			Log.e("CICA", "lucene result:" + result.scoreDocs.length);
+			for (final ScoreDoc sd : result.scoreDocs) {
+				final Document doc = searcher.doc(sd.doc);
+				final int lineNumber = Integer.parseInt(doc.get("path"));
+				final int lineOffset = getStartingOffset(lineNumber);
+				Log.e("CICA", "line:" + lineNumber + " offset:" + lineOffset);
+				r.addAll(performSearch(query, lineOffset));
+			}
+		} finally {
+			reader.close();
+		}
+		return r;
+	}
+
+	private int getStartingOffset(final int lineNumber) throws IOException {
+		final int idxOffset = lineNumber;
+		final RandomAccessFile ra = new RandomAccessFile(
+				DownloadEdictTask.LINE_INDEX, "r");
+		try {
+			ra.seek(idxOffset * 4);
+			return ra.readInt();
+		} finally {
+			MiscUtils.closeQuietly(ra);
+		}
+	}
+
+	private List<String> performSearch(final SearchQuery query, final int seekTo)
 			throws IOException {
 		final List<String> result = new ArrayList<String>();
 		final byte[][] queries = new byte[query.query.length][];
@@ -73,8 +123,17 @@ public class ResultActivity extends ListActivity {
 		}
 		final InputStream in = new FileInputStream("/sdcard/aedict/edict");
 		try {
+			int seekBytes = seekTo;
+			while (seekBytes > 0) {
+				final long skipped = in.skip(seekBytes);
+				if (skipped == 0) {
+					throw new IOException("Cannot skip " + seekBytes + " bytes");
+				}
+				seekBytes -= skipped;
+			}
 			final LineReadInputStream edict = new LineReadInputStream(in);
-			while (edict.readLine()) {
+			int linesToRead = DownloadEdictTask.LINES_PER_INDEXABLE_ITEM;
+			while ((linesToRead-- > 0) && edict.readLine()) {
 				for (final byte[] q : queries) {
 					if (contains(q, edict)) {
 						final String line = new String(edict.buffer,
