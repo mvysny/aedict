@@ -29,6 +29,7 @@ import java.util.List;
 
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
 /**
@@ -51,7 +52,10 @@ public class ResultActivity extends ListActivity {
 			try {
 				list = performSearch(query);
 			} catch (Exception ex) {
-				throw new RuntimeException(ex);
+				Log.e(ResultActivity.class.getSimpleName(),
+						"Failed to perform search", ex);
+				list = Collections.singletonList("Failed to perform search: "
+						+ ex);
 			}
 			if (list.isEmpty()) {
 				list = Collections.singletonList("No results");
