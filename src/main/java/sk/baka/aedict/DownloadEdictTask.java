@@ -97,6 +97,8 @@ public final class DownloadEdictTask extends
 						dlg.setMessage("Cancelling");
 					}
 				});
+		dlg.setMax(10000);
+		dlg.setIndeterminate(false);
 	}
 
 	private volatile boolean isError = false;
@@ -121,13 +123,9 @@ public final class DownloadEdictTask extends
 	private void performDownloadAndUnpack() throws IOException,
 			InterruptedException {
 		final URLConnection conn = EDICT_GZ.openConnection();
-		int length = conn.getContentLength();
-		if (length < 0) {
-			// expected length of the EDICT.gz file
-			length = 3500 * 1024;
-		}
-		length *= 2;
-		if (!new File("/sdcard/aedict").mkdirs()) {
+		final int length = 10304902;
+		final File dir = new File("/sdcard/aedict");
+		if (!dir.exists() && !dir.mkdirs()) {
 			throw new IOException("Failed to create /sdcard/aedict");
 		}
 		final InputStream in = new GZIPInputStream(conn.getInputStream());
@@ -138,13 +136,16 @@ public final class DownloadEdictTask extends
 		}
 	}
 
-	private static final int BUFFER_SIZE = 32768 * 4;
+	private static final int BUFFER_SIZE = 32768;
+	private static final int REPORT_EACH_XTH_BUFFER = 8;
 
 	private void copy(final InputStream in, final File file, final int length)
 			throws IOException, InterruptedException {
+		publishProgress(new Progress("Downloading", 0));
 		OutputStream out = new FileOutputStream(file);
 		try {
 			int downloaded = 0;
+			int reportCountdown = REPORT_EACH_XTH_BUFFER;
 			final byte[] buf = new byte[BUFFER_SIZE];
 			int bufLen;
 			while ((bufLen = in.read(buf)) >= 0) {
@@ -157,9 +158,12 @@ public final class DownloadEdictTask extends
 					file.delete();
 					throw new InterruptedException();
 				}
-				publishProgress(new Progress("Downloading: "
-						+ (downloaded / 1024) + "K",
-						(int) (downloaded * 10000L / length)));
+				if (reportCountdown-- <= 0) {
+					publishProgress(new Progress("Downloading: "
+							+ (downloaded / 1024) + "K",
+							(int) (downloaded * 10000L / length)));
+					reportCountdown = REPORT_EACH_XTH_BUFFER;
+				}
 			}
 		} finally {
 			MiscUtils.closeQuietly(out);
