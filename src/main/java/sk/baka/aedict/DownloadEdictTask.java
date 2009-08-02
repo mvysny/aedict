@@ -43,11 +43,27 @@ import android.util.Log;
 public final class DownloadEdictTask extends
 		AsyncTask<Void, DownloadEdictTask.Progress, Void> {
 
-	private static final class Progress {
+	/**
+	 * Contains data about a progress.
+	 * 
+	 * @author Martin Vysny
+	 */
+	protected static final class Progress {
+		/**
+		 * Creates new empty progress instance.
+		 */
 		public Progress() {
 			super();
 		}
 
+		/**
+		 * Creates instance with given message and a progress.
+		 * 
+		 * @param message
+		 *            the message to display
+		 * @param progress
+		 *            a progress
+		 */
 		public Progress(final String message, final int progress) {
 			this.message = message;
 			this.progress = progress;
