@@ -18,8 +18,10 @@
 
 package sk.baka.aedict;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -50,7 +52,7 @@ public class ResultActivity extends ListActivity {
 			list = Collections.singletonList("Nothing to search for");
 		} else {
 			try {
-				list = performSearch(query);
+				list = performSearch2(query);
 			} catch (Exception ex) {
 				Log.e(ResultActivity.class.getSimpleName(),
 						"Failed to perform search", ex);
@@ -89,5 +91,55 @@ public class ResultActivity extends ListActivity {
 			MiscUtils.closeQuietly(edict);
 		}
 		return result;
+	}
+
+	private List<String> performSearch2(final SearchQuery query)
+			throws IOException {
+		final List<String> result = new ArrayList<String>();
+		final byte[][] queries = new byte[query.query.length][];
+		int i = 0;
+		for (final String q : query.query) {
+			queries[i++] = q.getBytes("EUC-JP");
+		}
+		final LineReadInputStream edict = new LineReadInputStream(
+				new FileInputStream("/sdcard/aedict/edict"));
+		try {
+			int linelen;
+			while ((linelen = edict.readLine()) >= 0) {
+				for (final byte[] q : queries) {
+					if (contains(q, edict.line, linelen)) {
+						result
+								.add(new String(edict.line, 0, linelen,
+										"EUC-JP"));
+					}
+				}
+			}
+		} finally {
+			MiscUtils.closeQuietly(edict);
+		}
+		return result;
+	}
+
+	private boolean contains(byte[] subarray, byte[] array, int linelen) {
+		byte firstChar = subarray[0];
+		int matched = 0;
+		for (int i = 0; i < linelen - subarray.length + 1; i++) {
+			if (matched == 0) {
+				if (array[i] != firstChar) {
+					continue;
+				}
+				matched++;
+				continue;
+			}
+			if (array[i] != subarray[matched]) {
+				matched = 0;
+				continue;
+			}
+			matched++;
+			if (matched >= subarray.length) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
