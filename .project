@@ -1,5 +1,5 @@
 <projectDescription>
-  <name>ambient</name>
+  <name>aedict</name>
   <comment>A english-japanese dictionary which uses Jim Breen&apos;s edict data. Does not require japanese keyboard.</comment>
   <projects/>
   <buildSpec>
