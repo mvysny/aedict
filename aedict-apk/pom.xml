@@ -50,6 +50,7 @@
 				   </buildcommands>
 				   <additionalProjectnatures>
 				      <projectnature>com.android.ide.eclipse.adt.AndroidNature</projectnature>
+				      <projectnature>org.eclipse.jdt.core.javanature</projectnature>
 				   </additionalProjectnatures>
 				   <classpathContainers>
 				   	<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
