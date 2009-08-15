@@ -16,6 +16,11 @@
 			<version>2.4.1</version>
 			<classifier>android</classifier>
 		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.4</version>
+		</dependency>
 	</dependencies>
 </project>
 
