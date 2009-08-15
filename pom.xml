@@ -2,21 +2,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>sk.baka.aedict</groupId>
 	<artifactId>aedict</artifactId>
-	<packaging>android:apk</packaging>
+	<packaging>pom</packaging>
 	<version>0.1-SNAPSHOT</version>
 	<name>Aedict</name>
-	<inceptionYear>2007</inceptionYear>
+	<inceptionYear>2009</inceptionYear>
 	<description>A english-japanese dictionary which uses Jim Breen's edict data. Does not require japanese keyboard.</description>
 	<url>http://code.google.com/p/aedict</url>
 	<prerequisites>
 		<maven>2.2.0</maven>
 	</prerequisites>
-	
-	<properties>
-		<masa.version>1.1-svn81</masa.version>
-		<android.version>1.5-r2</android.version>
-		<android.api>1.5</android.api>
-	</properties>
 	
 	<scm>
 		<connection>scm:hg:https://aedict.googlecode.com/hg/</connection>
@@ -64,10 +58,6 @@
 	</developers>
 	
 	<distributionManagement>
-        <site>
-            <id>realtime</id>
-            <url>scp://rt.sk/home/moto/public_html/ambient/</url>
-        </site>
         <repository>
             <id>realtime</id>
             <url>scp://rt.sk/home/moto/public_html/maven2</url>
@@ -86,28 +76,15 @@
 			<version>4.6</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.google.android</groupId>
-			<artifactId>android</artifactId>
-			<version>${android.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-core</artifactId>
-			<version>2.4.1</version>
-			<classifier>android</classifier>
-		</dependency>
 	</dependencies>
+   
+   <modules>
+   	<module>aedict-apk</module>
+   </modules>
    
 	<!-- Build environment -->
 	<build>
-		<defaultGoal>package</defaultGoal>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
+		<defaultGoal>install</defaultGoal>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -251,79 +228,7 @@ org.eclipse.jdt.core.compiler.source=1.5
 					<issueLinkTemplate>http://code.google.com/a/aedict/issues/detail?id=%ISSUE%</issueLinkTemplate>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.jvending.masa.plugins</groupId>
-				<artifactId>maven-aapt-plugin</artifactId>
-				<version>${masa.version}</version>
-				<extensions>true</extensions>
-			</plugin>
-			<plugin>
-			   <groupId>org.jvending.masa.plugins</groupId>
-			   <artifactId>maven-toolchains-plugin</artifactId>
-			   <version>${masa.version}</version>
-			   <configuration>
-			      <toolchains>
-			         <android>
-			            <version>${android.api}</version>
-			         </android>
-			      </toolchains>
-			   </configuration>
-			</plugin>
-			<plugin>
-				<!-- this is an example of totally fucked-up (read: regular) Maven plugin. Imagine we want to disable obfuscation forced on us by the masa plugin -->
-				<groupId>com.pyx4me</groupId>
-				<artifactId>proguard-maven-plugin</artifactId>
-				<executions>
-					<execution> <!-- disable by binding to the 'none' phase. this does not work -->
-						<id>default-proguard</id>
-						<phase>none</phase>
-					</execution>
-				</executions>
-			   <configuration>
-			   	<skip>true</skip> <!-- this does not work as well -->
-					<options>
-						<option>-dontobfuscate</option>
-						<option>-dontoptimize</option>
-						<option>-dontshrink</option> <!-- this is ignored -->
-						<option>-keep public class * extends java.lang.Object { *; }</option> <!-- fortunately this is finally processed -->
-					</options>
-			   </configuration>
-			</plugin>
 		</plugins>
 	</build>
-	<profiles>
-		<profile>
-	      <id>release</id>
-	      <build>
-	         <plugins>
-	            <plugin>
-					<groupId>org.jvending.masa.plugins</groupId>
-					<artifactId>maven-jarsigner-plugin</artifactId>
-					<version>${masa.version}</version>
-					<configuration>
-						<keystore>ambient.keystore</keystore>
-						<alias>ambientcertss</alias>
-						<keypass>${cert.keypass}</keypass>
-						<storepass>${cert.storepass}</storepass>
-					</configuration>
-				</plugin>
-	         </plugins>
-	      </build>
-	   </profile>
-	</profiles>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>baka.pluginRepo</id>
-			<name>Baka.sk repository</name>
-			<url>http://baka.sk/maven2</url>
-		</pluginRepository>
-	</pluginRepositories>
-	<repositories>
-		<repository>
-			<id>baka.repo</id>
-			<name>Baka.sk repository</name>
-			<url>http://baka.sk/maven2</url>
-		</repository>
-	</repositories>
 </project>
 
