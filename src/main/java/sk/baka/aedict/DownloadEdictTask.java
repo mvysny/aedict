@@ -362,9 +362,9 @@ public final class DownloadEdictTask extends
 				linesRead = 0;
 				final String contents = bout.toString("EUC-JP");
 				final Document doc = new Document();
-				doc.add(new Field("path", Integer.toString(fileName++),
-						Field.Store.YES, Field.Index.NOT_ANALYZED));
-				doc.add(new Field("contents", contents, Field.Store.NO,
+//				doc.add(new Field("path", Integer.toString(fileName++),
+//						Field.Store.YES, Field.Index.NOT_ANALYZED));
+				doc.add(new Field("contents", contents, Field.Store.YES,
 						Field.Index.ANALYZED));
 				luceneWriter.addDocument(doc);
 				idx.writeInt(lines.lineFilePos);

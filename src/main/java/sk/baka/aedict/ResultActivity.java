@@ -89,13 +89,13 @@ public class ResultActivity extends ListActivity {
 					new StandardAnalyzer());
 			final Query parsedQuery = parser.parse(query.getLuceneQuery());
 			final TopDocs result = searcher.search(parsedQuery, null, 100);
-			final Set<Integer> idxOffsets = new HashSet<Integer>();
+			final Set<String> idxOffsets = new HashSet<String>();
 			for (final ScoreDoc sd : result.scoreDocs) {
 				final Document doc = searcher.doc(sd.doc);
-				final int idxOffset = Integer.parseInt(doc.get("path")) * 4;
-				idxOffsets.add(idxOffset);
+				final String contents = doc.get("contents");
+				idxOffsets.add(contents);
 			}
-			for (final Integer offset : getStartingOffset(idxOffsets)) {
+			for (final String offset : idxOffsets) {
 				r.addAll(performSearch(query, offset));
 			}
 		} finally {
@@ -129,6 +129,20 @@ public class ResultActivity extends ListActivity {
 		return offsets;
 	}
 
+	private List<String> performSearch(final SearchQuery query, final String text){
+		final List<String> result=new ArrayList<String>();
+		final String[] lines=text.split("\n");
+		for(final String line:lines){
+			for(final String q:query.query){
+				if(line.contains(q)){
+					result.add(line);
+					break;
+				}
+			}
+		}
+		return result;
+	}
+	
 	/**
 	 * Performs a quick byte-comparison search on
 	 * {@value DownloadEdictTask#LINES_PER_INDEXABLE_ITEM} lines of the edict
