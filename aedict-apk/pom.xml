@@ -40,6 +40,23 @@
 		</resources>
 		<plugins>
 			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<configuration>
+				   <buildcommands>
+				   	<buildcommand>com.android.ide.eclipse.adt.ResourceManagerBuilder</buildcommand>
+				      <buildcommand>com.android.ide.eclipse.adt.PreCompilerBuilder</buildcommand>
+				      <buildcommand>org.eclipse.jdt.core.javabuilder</buildcommand>
+				      <buildcommand>com.android.ide.eclipse.adt.ApkBuilder</buildcommand>
+				   </buildcommands>
+				   <additionalProjectnatures>
+				      <projectnature>com.android.ide.eclipse.adt.AndroidNature</projectnature>
+				   </additionalProjectnatures>
+				   <classpathContainers>
+				   	<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
+				   </classpathContainers>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.jvending.masa.plugins</groupId>
 				<artifactId>maven-aapt-plugin</artifactId>
 				<version>${masa.version}</version>
