@@ -80,6 +80,7 @@
    
    <modules>
    	<module>aedict-apk</module>
+   	<module>aedict-indexer</module>
    </modules>
    
 	<!-- Build environment -->
