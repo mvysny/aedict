@@ -18,9 +18,7 @@
 
 package sk.baka.aedict;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -326,20 +324,14 @@ public final class DownloadEdictTask extends
 		final InputStream edict = new FileInputStream(EDICT);
 		try {
 			final LineReadInputStream lines = new LineReadInputStream(edict);
-			final DataOutputStream idx = new DataOutputStream(
-					new BufferedOutputStream(new FileOutputStream(LINE_INDEX)));
+			final IndexWriter luceneWriter = new IndexWriter(LUCENE_INDEX,
+					new StandardAnalyzer(), true,
+					IndexWriter.MaxFieldLength.LIMITED);
 			try {
-				final IndexWriter luceneWriter = new IndexWriter(LUCENE_INDEX,
-						new StandardAnalyzer(), true,
-						IndexWriter.MaxFieldLength.LIMITED);
-				try {
-					edictIndexImpl(lines, idx, luceneWriter);
-					luceneWriter.optimize();
-				} finally {
-					luceneWriter.close();
-				}
+				edictIndexImpl(lines, luceneWriter);
+				luceneWriter.optimize();
 			} finally {
-				MiscUtils.closeQuietly(idx);
+				luceneWriter.close();
 			}
 		} finally {
 			MiscUtils.closeQuietly(edict);
@@ -347,12 +339,10 @@ public final class DownloadEdictTask extends
 	}
 
 	private void edictIndexImpl(final LineReadInputStream lines,
-			final DataOutputStream idx, final IndexWriter luceneWriter)
-			throws IOException, InterruptedException {
+			final IndexWriter luceneWriter) throws IOException,
+			InterruptedException {
 		publishProgress(new Progress("Indexing", 0));
 		int linesRead = 0;
-		int fileName = 0;
-		idx.writeInt(0);
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		while (lines.readLine()) {
 			bout.write(lines.buffer, lines.lineStart, lines.lineLength);
@@ -362,12 +352,9 @@ public final class DownloadEdictTask extends
 				linesRead = 0;
 				final String contents = bout.toString("EUC-JP");
 				final Document doc = new Document();
-//				doc.add(new Field("path", Integer.toString(fileName++),
-//						Field.Store.YES, Field.Index.NOT_ANALYZED));
 				doc.add(new Field("contents", contents, Field.Store.YES,
 						Field.Index.ANALYZED));
 				luceneWriter.addDocument(doc);
-				idx.writeInt(lines.lineFilePos);
 				bout.reset();
 			}
 			if (lines.lineNumber % REPORT_EACH_XTH_LINE == 0) {
@@ -379,7 +366,6 @@ public final class DownloadEdictTask extends
 				luceneWriter.optimize();
 			}
 			if (Thread.currentThread().isInterrupted()) {
-				MiscUtils.closeQuietly(idx);
 				luceneWriter.close();
 				new File(LINE_INDEX).delete();
 				MiscUtils.deleteDir(new File(LUCENE_INDEX));
