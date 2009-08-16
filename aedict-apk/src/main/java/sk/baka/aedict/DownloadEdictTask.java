@@ -18,22 +18,21 @@
 
 package sk.baka.aedict;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexWriter;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.input.CountingInputStream;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -105,10 +104,10 @@ public final class DownloadEdictTask extends
 		}
 	}
 
-	private static final URL EDICT_GZ;
+	private static final URL EDICT_LUCENE_ZIP;
 	static {
 		try {
-			EDICT_GZ = new URL("http://ftp.monash.edu.au/pub/nihongo/edict.gz");
+			EDICT_LUCENE_ZIP = new URL("http://baka.sk/aedict/edict-lucene.zip");
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
@@ -150,18 +149,9 @@ public final class DownloadEdictTask extends
 	 */
 	public static final String BASE_DIR = "/sdcard/aedict";
 	/**
-	 * The name of the EDICT file.
-	 */
-	private static final String EDICT = BASE_DIR + "/edict";
-	/**
 	 * Directory where the Apache Lucene index is stored.
 	 */
 	public static final String LUCENE_INDEX = BASE_DIR + "/index";
-	/**
-	 * Index file which translates Edict file line numbers into appropriate byte
-	 * positions.
-	 */
-	public static final String LINE_INDEX = BASE_DIR + "/idx";
 
 	/**
 	 * Checks if the edict is downloaded and indexed correctly.
@@ -169,19 +159,24 @@ public final class DownloadEdictTask extends
 	 * @return true if everything is okay, false if not
 	 */
 	public static boolean isComplete() {
-		return exists(BASE_DIR) && exists(EDICT) && exists(LUCENE_INDEX)
-				&& exists(LINE_INDEX);
-	}
-
-	private static boolean exists(final String fname) {
-		return new File(fname).exists();
+		final File f = new File(LUCENE_INDEX);
+		if (!f.exists()) {
+			return false;
+		}
+		if (!f.isDirectory()) {
+			f.delete();
+			return false;
+		}
+		if (f.listFiles().length == 0) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
 	protected Void doInBackground(Void... params) {
 		try {
 			edictDownloadAndUnpack();
-			edictIndex();
 		} catch (Exception ex) {
 			if (!isCancelled()) {
 				Log.e(DownloadEdictTask.class.getSimpleName(), "Error", ex);
@@ -201,25 +196,28 @@ public final class DownloadEdictTask extends
 	 * 
 	 * @throws IOException
 	 *             on i/o error.
-	 * @throws InterruptedException
-	 *             if canceled
 	 */
-	private void edictDownloadAndUnpack() throws IOException,
-			InterruptedException {
-		if (exists(EDICT)) {
+	private void edictDownloadAndUnpack() throws IOException {
+		if (isComplete()) {
 			return;
 		}
 		publishProgress(new Progress("Connecting", 0));
-		final URLConnection conn = EDICT_GZ.openConnection();
+		final URLConnection conn = EDICT_LUCENE_ZIP.openConnection();
 		// this is the unpacked edict file size.
-		final int length = 10304902;
-		final File dir = new File("/sdcard/aedict");
+		final int length = conn.getContentLength();
+		final File dir = new File(LUCENE_INDEX);
 		if (!dir.exists() && !dir.mkdirs()) {
-			throw new IOException("Failed to create /sdcard/aedict");
+			throw new IOException("Failed to create " + LUCENE_INDEX);
 		}
-		final InputStream in = new GZIPInputStream(conn.getInputStream());
+		final CountingInputStream in = new CountingInputStream(
+				new BufferedInputStream(conn.getInputStream()));
 		try {
-			copy(in, new File("/sdcard/aedict/edict"), length);
+			final ZipInputStream zip = new ZipInputStream(in);
+			copy(in, zip, length);
+		} catch (InterruptedIOException ex) {
+			MiscUtils.closeQuietly(in);
+			FileUtils.deleteDirectory(dir);
+			throw ex;
 		} finally {
 			MiscUtils.closeQuietly(in);
 		}
@@ -233,44 +231,49 @@ public final class DownloadEdictTask extends
 	 * file. Progress is updated periodically.
 	 * 
 	 * @param in
-	 *            read bytes from here
-	 * @param file
-	 *            write bytes here
+	 *            use this stream to count bytes
+	 * @param zip
+	 *            unzip files from here
 	 * @param length
 	 *            number of bytes in the input stream
 	 * @throws IOException
 	 *             on i/o error
-	 * @throws InterruptedException
-	 *             if canceled
 	 */
-	private void copy(final InputStream in, final File file, final int length)
-			throws IOException, InterruptedException {
+	private void copy(final CountingInputStream in, final ZipInputStream zip,
+			final int length) throws IOException {
 		dlg.setMax(length / 1024);
 		publishProgress(new Progress("Downloading EDict", 0));
-		OutputStream out = new FileOutputStream(file);
-		try {
-			int downloaded = 0;
-			int reportCountdown = REPORT_EACH_XTH_BYTE;
-			final byte[] buf = new byte[BUFFER_SIZE];
-			int bufLen;
-			while ((bufLen = in.read(buf)) >= 0) {
-				out.write(buf, 0, bufLen);
-				downloaded += bufLen;
-				if (Thread.currentThread().isInterrupted()) {
-					// delete incomplete download
-					MiscUtils.closeQuietly(out);
-					out = null;
-					file.delete();
-					throw new InterruptedException();
-				}
-				reportCountdown -= bufLen;
-				if (reportCountdown <= 0) {
-					publishProgress(new Progress(null, downloaded / 1024));
-					reportCountdown = REPORT_EACH_XTH_BYTE;
-				}
+		for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip
+				.getNextEntry()) {
+			final OutputStream out = new FileOutputStream(LUCENE_INDEX + "/"
+					+ entry.getName());
+			try {
+				copy(entry, zip, out);
+			} finally {
+				MiscUtils.closeQuietly(out);
 			}
-		} finally {
-			MiscUtils.closeQuietly(out);
+			zip.closeEntry();
+		}
+	}
+
+	private void copy(final ZipEntry entry, final InputStream in,
+			final OutputStream out) throws IOException {
+		dlg.setMax((int) (entry.getSize() / 1024));
+		int downloaded = 0;
+		int reportCountdown = REPORT_EACH_XTH_BYTE;
+		final byte[] buf = new byte[BUFFER_SIZE];
+		int bufLen;
+		while ((bufLen = in.read(buf)) >= 0) {
+			out.write(buf, 0, bufLen);
+			downloaded += bufLen;
+			if (Thread.currentThread().isInterrupted()) {
+				throw new InterruptedIOException();
+			}
+			reportCountdown -= bufLen;
+			if (reportCountdown <= 0) {
+				publishProgress(new Progress(null, downloaded / 1024));
+				reportCountdown = REPORT_EACH_XTH_BYTE;
+			}
 		}
 	}
 
@@ -303,74 +306,4 @@ public final class DownloadEdictTask extends
 	 * lines.
 	 */
 	public static final int LINES_PER_INDEXABLE_ITEM = 20;
-	private static final int REPORT_EACH_XTH_LINE = 1000;
-	private static final int FLUSH_LUCENE_EACH_XTH_LINE = 100000;
-
-	/**
-	 * Creates Lucene index for the edict file if the index does not exist yet.
-	 * Does nothing if the index already exists.
-	 * 
-	 * @throws IOException
-	 *             on i/o error
-	 * @throws InterruptedException
-	 *             if canceled
-	 */
-	private void edictIndex() throws IOException, InterruptedException {
-		if (exists(LUCENE_INDEX) && exists(LINE_INDEX)) {
-			return;
-		}
-		// number of lines of the edict file
-		dlg.setMax(172280);
-		final InputStream edict = new FileInputStream(EDICT);
-		try {
-			final LineReadInputStream lines = new LineReadInputStream(edict);
-			final IndexWriter luceneWriter = new IndexWriter(LUCENE_INDEX,
-					new StandardAnalyzer(), true,
-					IndexWriter.MaxFieldLength.LIMITED);
-			try {
-				edictIndexImpl(lines, luceneWriter);
-				luceneWriter.optimize();
-			} finally {
-				luceneWriter.close();
-			}
-		} finally {
-			MiscUtils.closeQuietly(edict);
-		}
-	}
-
-	private void edictIndexImpl(final LineReadInputStream lines,
-			final IndexWriter luceneWriter) throws IOException,
-			InterruptedException {
-		publishProgress(new Progress("Indexing", 0));
-		int linesRead = 0;
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		while (lines.readLine()) {
-			bout.write(lines.buffer, lines.lineStart, lines.lineLength);
-			bout.write('\n');
-			linesRead++;
-			if (linesRead >= LINES_PER_INDEXABLE_ITEM) {
-				linesRead = 0;
-				final String contents = bout.toString("EUC-JP");
-				final Document doc = new Document();
-				doc.add(new Field("contents", contents, Field.Store.YES,
-						Field.Index.ANALYZED));
-				luceneWriter.addDocument(doc);
-				bout.reset();
-			}
-			if (lines.lineNumber % REPORT_EACH_XTH_LINE == 0) {
-				publishProgress(new Progress(null, lines.lineNumber));
-			}
-			if (lines.lineNumber % FLUSH_LUCENE_EACH_XTH_LINE == 0) {
-				// this prevents OutOfMemoryErrors
-				luceneWriter.commit();
-				luceneWriter.optimize();
-			}
-			if (Thread.currentThread().isInterrupted()) {
-				luceneWriter.close();
-				new File(LINE_INDEX).delete();
-				MiscUtils.deleteDir(new File(LUCENE_INDEX));
-				throw new InterruptedException();
-			}
-		}
-	}
 }

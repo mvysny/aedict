@@ -18,12 +18,8 @@
 
 package sk.baka.aedict;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -89,141 +85,17 @@ public class ResultActivity extends ListActivity {
 					new StandardAnalyzer());
 			final Query parsedQuery = parser.parse(query.getLuceneQuery());
 			final TopDocs result = searcher.search(parsedQuery, null, 100);
-			final Set<String> idxOffsets = new HashSet<String>();
+			final Set<String> matchedLines = new HashSet<String>();
 			for (final ScoreDoc sd : result.scoreDocs) {
 				final Document doc = searcher.doc(sd.doc);
 				final String contents = doc.get("contents");
-				idxOffsets.add(contents);
-			}
-			for (final String offset : idxOffsets) {
-				r.addAll(performSearch(query, offset));
+				if(query.matches(contents)){
+				matchedLines.add(contents);
+				}
 			}
 		} finally {
 			reader.close();
 		}
 		return r;
-	}
-
-	/**
-	 * Translates all IDX file offsets into pointers to the EDICT file.
-	 * 
-	 * @param idxOffsets
-	 *            a collection of offsets into the
-	 *            {@link DownloadEdictTask#LINE_INDEX} file.
-	 * @return translated offsets into the EDICT file.
-	 * @throws IOException
-	 */
-	private List<Integer> getStartingOffset(final Collection<Integer> idxOffsets)
-			throws IOException {
-		final List<Integer> offsets = new ArrayList<Integer>();
-		final RandomAccessFile ra = new RandomAccessFile(
-				DownloadEdictTask.LINE_INDEX, "r");
-		try {
-			for (final Integer idxOffset : idxOffsets) {
-				ra.seek(idxOffset);
-				offsets.add(ra.readInt());
-			}
-		} finally {
-			MiscUtils.closeQuietly(ra);
-		}
-		return offsets;
-	}
-
-	private List<String> performSearch(final SearchQuery query, final String text){
-		final List<String> result=new ArrayList<String>();
-		final String[] lines=text.split("\n");
-		for(final String line:lines){
-			for(final String q:query.query){
-				if(line.contains(q)){
-					result.add(line);
-					break;
-				}
-			}
-		}
-		return result;
-	}
-	
-	/**
-	 * Performs a quick byte-comparison search on
-	 * {@value DownloadEdictTask#LINES_PER_INDEXABLE_ITEM} lines of the edict
-	 * file, starting at given file offset.
-	 * 
-	 * @param query
-	 *            the query object
-	 * @param seekTo
-	 *            start reading the lines from this position
-	 * @return list of matched lines from the edict file.
-	 * @throws IOException
-	 *             on i/o error
-	 */
-	private List<String> performSearch(final SearchQuery query, final int seekTo)
-			throws IOException {
-		final List<String> result = new ArrayList<String>();
-		final byte[][] queries = new byte[query.query.length][];
-		int i = 0;
-		for (final String q : query.query) {
-			queries[i++] = q.getBytes("EUC-JP");
-		}
-		final InputStream in = new FileInputStream("/sdcard/aedict/edict");
-		try {
-			int seekBytes = seekTo;
-			while (seekBytes > 0) {
-				final long skipped = in.skip(seekBytes);
-				if (skipped == 0) {
-					throw new IOException("Cannot skip " + seekBytes + " bytes");
-				}
-				seekBytes -= skipped;
-			}
-			final LineReadInputStream edict = new LineReadInputStream(in);
-			int linesToRead = DownloadEdictTask.LINES_PER_INDEXABLE_ITEM;
-			while ((linesToRead-- > 0) && edict.readLine()) {
-				for (final byte[] q : queries) {
-					if (contains(q, edict)) {
-						final String line = new String(edict.buffer,
-								edict.lineStart, edict.lineLength, "EUC-JP");
-						result.add(line);
-					}
-				}
-			}
-		} finally {
-			MiscUtils.closeQuietly(in);
-		}
-		return result;
-	}
-
-	/**
-	 * Checks if given sub-array is contained in current line of given line
-	 * reader.
-	 * 
-	 * @param subarray
-	 *            the sub-array to check.
-	 * @param in
-	 *            the line reader. Only the current line is checked.
-	 * @return true if the sub-array is contained in current line, false
-	 *         otherwise.
-	 */
-	private boolean contains(byte[] subarray, LineReadInputStream in) {
-		byte firstChar = subarray[0];
-		int matched = 0;
-		final byte[] array = in.buffer;
-		final int end = in.lineStart + in.lineLength - subarray.length + 1;
-		for (int i = in.lineStart; i < end; i++) {
-			if (matched == 0) {
-				if (array[i] != firstChar) {
-					continue;
-				}
-				matched++;
-				continue;
-			}
-			if (array[i] != subarray[matched]) {
-				matched = 0;
-				continue;
-			}
-			matched++;
-			if (matched >= subarray.length) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

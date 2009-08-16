@@ -48,6 +48,27 @@ public final class SearchQuery implements Serializable {
 		super();
 	}
 
+	/**
+	 * Checks if given line matches the query.
+	 * 
+	 * @param line
+	 *            the line from the EDict file
+	 * @return true if the line matched, false otherwise.
+	 */
+	public boolean matches(final String line) {
+		for (final String q : query) {
+			if (line.contains(q)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns a Lucene query which matches this query as close as possible.
+	 * 
+	 * @return the Apache Lucene query
+	 */
 	public String getLuceneQuery() {
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < query.length; i++) {
