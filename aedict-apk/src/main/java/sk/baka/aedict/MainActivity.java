@@ -28,11 +28,13 @@ import android.os.Bundle;
 import android.os.StatFs;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -52,30 +54,12 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.main);
 		final Button jpSearch = (Button) findViewById(R.id.jpSearch);
 		final EditText jpSearchEdit = (EditText) findViewById(R.id.jpSearchEdit);
-		jpSearch.setOnClickListener(new View.OnClickListener() {
-
-			public void onClick(View v) {
-				final SearchQuery q = new SearchQuery();
-				q.isJapanese = true;
-				final String romaji = jpSearchEdit.getText().toString();
-				q.query = new String[] { JpUtils.toHiragana(romaji),
-						JpUtils.toKatakana(romaji) };
-				performSearch(q);
-			}
-
-		});
+		jpSearchEdit.setOnEditorActionListener(new SearchJpText());
+		jpSearch.setOnClickListener(new SearchJpText());
 		final Button engSearch = (Button) findViewById(R.id.engSearch);
 		final EditText engSearchEdit = (EditText) findViewById(R.id.engSearchEdit);
-		engSearch.setOnClickListener(new View.OnClickListener() {
-
-			public void onClick(View v) {
-				final SearchQuery q = new SearchQuery();
-				q.isJapanese = false;
-				q.query = new String[] { engSearchEdit.getText().toString() };
-				performSearch(q);
-			}
-
-		});
+		engSearchEdit.setOnEditorActionListener(new SearchEngText());
+		engSearch.setOnClickListener(new SearchEngText());
 		// check for dictionary file
 		if (!DownloadEdictTask.isComplete()) {
 			final StatFs stats = new StatFs("/sdcard");
@@ -95,6 +79,40 @@ public class MainActivity extends Activity {
 						}
 
 					});
+		}
+	}
+
+	private class SearchJpText implements TextView.OnEditorActionListener,
+			View.OnClickListener {
+		public void onClick(View v) {
+			final EditText jpSearchEdit = (EditText) findViewById(R.id.jpSearchEdit);
+			final SearchQuery q = new SearchQuery();
+			q.isJapanese = true;
+			final String romaji = jpSearchEdit.getText().toString();
+			q.query = new String[] { JpUtils.toHiragana(romaji),
+					JpUtils.toKatakana(romaji) };
+			performSearch(q);
+		}
+
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+			onClick(v);
+			return true;
+		}
+	}
+
+	private class SearchEngText implements TextView.OnEditorActionListener,
+			View.OnClickListener {
+		public void onClick(View v) {
+			final EditText engSearchEdit = (EditText) findViewById(R.id.engSearchEdit);
+			final SearchQuery q = new SearchQuery();
+			q.isJapanese = false;
+			q.query = new String[] { engSearchEdit.getText().toString() };
+			performSearch(q);
+		}
+
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+			onClick(v);
+			return true;
 		}
 	}
 
