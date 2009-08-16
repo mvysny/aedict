@@ -21,9 +21,7 @@ package sk.baka.aedict;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -85,12 +83,11 @@ public class ResultActivity extends ListActivity {
 					new StandardAnalyzer());
 			final Query parsedQuery = parser.parse(query.getLuceneQuery());
 			final TopDocs result = searcher.search(parsedQuery, null, 100);
-			final Set<String> matchedLines = new HashSet<String>();
 			for (final ScoreDoc sd : result.scoreDocs) {
 				final Document doc = searcher.doc(sd.doc);
 				final String contents = doc.get("contents");
-				if(query.matches(contents)){
-				matchedLines.add(contents);
+				if (query.matches(contents)) {
+					r.add(contents);
 				}
 			}
 		} finally {
