@@ -157,6 +157,9 @@ public final class MiscUtils {
 			throw new IllegalArgumentException(dir
 					+ " does not start with /sdcard/aedict");
 		}
+		if (!dir.exists()) {
+			return;
+		}
 		if (!dir.isDirectory()) {
 			throw new IllegalArgumentException(dir + " is not a directory");
 		}

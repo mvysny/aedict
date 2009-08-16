@@ -25,12 +25,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StatFs;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 /**
  * Provides means to search the edict dictionary file.
@@ -75,8 +78,15 @@ public class MainActivity extends Activity {
 		});
 		// check for dictionary file
 		if (!DownloadEdictTask.isComplete()) {
-			showYesNoDialog(
-					"The EDict dictionary is missing. Do you wish to download it now?",
+			final StatFs stats = new StatFs("/sdcard");
+			final long free = stats.getBlockSize() * stats.getAvailableBlocks();
+			final StringBuilder msg = new StringBuilder(
+					"The EDict dictionary is missing. Do you wish to download it now?");
+			if (free < 20000000) {
+				msg
+						.append(" Warning: there is less than 20MB of free space on the sd card. The download will most probably fail");
+			}
+			showYesNoDialog(msg.toString(),
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
@@ -131,11 +141,9 @@ public class MainActivity extends Activity {
 	}
 
 	private void showInfoDialog(final String message) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(message);
-		builder.setTitle("Info");
-		builder.setIcon(android.R.drawable.ic_dialog_info);
-		builder.create().show();
+		final Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+		toast.setGravity(Gravity.BOTTOM, 0, 0);
+		toast.show();
 	}
 
 	private void cleanup() {
