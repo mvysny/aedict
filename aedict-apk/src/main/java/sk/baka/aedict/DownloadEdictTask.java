@@ -31,9 +31,6 @@ import java.net.URLConnection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.input.CountingInputStream;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -193,7 +190,7 @@ public final class DownloadEdictTask extends
 
 	private void deleteDirQuietly(final File dir) {
 		try {
-			FileUtils.deleteDirectory(dir);
+			MiscUtils.deleteDir(dir);
 		} catch (IOException e) {
 			Log.e(DownloadEdictTask.class.getSimpleName(),
 					"Failed to delete the directory", e);
@@ -218,8 +215,7 @@ public final class DownloadEdictTask extends
 		if (!dir.exists() && !dir.mkdirs()) {
 			throw new IOException("Failed to create " + LUCENE_INDEX);
 		}
-		final CountingInputStream in = new CountingInputStream(
-				new BufferedInputStream(conn.getInputStream()));
+		final InputStream in = new BufferedInputStream(conn.getInputStream());
 		try {
 			final ZipInputStream zip = new ZipInputStream(in);
 			copy(in, zip);
@@ -246,7 +242,7 @@ public final class DownloadEdictTask extends
 	 * @throws IOException
 	 *             on i/o error
 	 */
-	private void copy(final CountingInputStream in, final ZipInputStream zip)
+	private void copy(final InputStream in, final ZipInputStream zip)
 			throws IOException {
 		publishProgress(new Progress("Downloading EDict", 0));
 		for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip
