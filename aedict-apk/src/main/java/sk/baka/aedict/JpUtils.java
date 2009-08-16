@@ -50,11 +50,17 @@ public final class JpUtils {
 	 */
 	public static synchronized void initialize(final ClassLoader cl)
 			throws IOException {
+		if (INITIALIZED) {
+			return;
+		}
 		parse(MiscUtils.openResource("katakana.properties", cl),
 				katakanaToRomaji, romajiToKatakana);
 		parse(MiscUtils.openResource("hiragana.properties", cl),
 				hiraganaToRomaji, romajiToHiragana);
+		INITIALIZED = true;
 	}
+
+	private static boolean INITIALIZED = false;
 
 	private static void parse(InputStream kanaStream,
 			ConcurrentMap<String, String> kanaToRomaji,

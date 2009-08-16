@@ -174,4 +174,29 @@ public final class MiscUtils {
 			throw new IOException("Failed to delete " + dir.getAbsolutePath());
 		}
 	}
+
+	/**
+	 * Returns length in bytes of given file or directory.
+	 * 
+	 * @param dir
+	 *            the directory to list. A directory length is set to be 4kb +
+	 *            lengths of all its children.
+	 * @return the directory length, 0 if the directory/file does not exist.
+	 */
+	public static long getLength(final File dir) {
+		if (!dir.exists()) {
+			return 0;
+		}
+		if (dir.isFile()) {
+			return dir.length();
+		} else if (dir.isDirectory()) {
+			long result = 4096;
+			for (final File file : dir.listFiles()) {
+				result += getLength(file);
+			}
+			return result;
+		} else {
+			return 0;
+		}
+	}
 }

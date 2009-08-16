@@ -300,10 +300,4 @@ public final class DownloadEdictTask extends
 			}
 		}
 	}
-
-	/**
-	 * Split the EDICT file into chunks with {@value #LINES_PER_INDEXABLE_ITEM}
-	 * lines.
-	 */
-	public static final int LINES_PER_INDEXABLE_ITEM = 20;
 }

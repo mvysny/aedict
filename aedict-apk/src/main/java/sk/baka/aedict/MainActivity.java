@@ -18,11 +18,16 @@
 
 package sk.baka.aedict;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -70,10 +75,8 @@ public class MainActivity extends Activity {
 		});
 		// check for dictionary file
 		if (!DownloadEdictTask.isComplete()) {
-			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder
-					.setMessage("The EDict dictionary is missing. Do you wish to download it now?");
-			builder.setPositiveButton("Yes",
+			showYesNoDialog(
+					"The EDict dictionary is missing. Do you wish to download it now?",
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
@@ -82,14 +85,6 @@ public class MainActivity extends Activity {
 						}
 
 					});
-			builder.setNegativeButton("No",
-					new DialogInterface.OnClickListener() {
-
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.dismiss();
-						}
-					});
-			builder.create().show();
 		}
 	}
 
@@ -97,5 +92,73 @@ public class MainActivity extends Activity {
 		final Intent intent = new Intent(this, ResultActivity.class);
 		query.putTo(intent);
 		startActivity(intent);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		final MenuItem item = menu.add("Cleanup");
+		item.setIcon(android.R.drawable.ic_menu_delete);
+		item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+			public boolean onMenuItemClick(MenuItem item) {
+				cleanup();
+				return true;
+			}
+		});
+		return true;
+	}
+
+	private void showYesNoDialog(final String message,
+			final DialogInterface.OnClickListener yesListener) {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(message);
+		builder.setPositiveButton("Yes", yesListener);
+		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		builder.create().show();
+	}
+
+	private void showErrorDialog(final String message) {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(message);
+		builder.setTitle("Error");
+		builder.setIcon(android.R.drawable.ic_dialog_alert);
+		builder.create().show();
+	}
+
+	private void showInfoDialog(final String message) {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(message);
+		builder.setTitle("Info");
+		builder.setIcon(android.R.drawable.ic_dialog_info);
+		builder.create().show();
+	}
+
+	private void cleanup() {
+		showYesNoDialog(
+				"EDict data files are currently taking up to "
+						+ (MiscUtils.getLength(new File(
+								DownloadEdictTask.BASE_DIR)) / 1024)
+						+ "kb. Do you wish to clean the files?",
+				new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						try {
+							MiscUtils.deleteDir(new File(
+									DownloadEdictTask.BASE_DIR));
+							showInfoDialog("Data files were removed");
+						} catch (Exception ex) {
+							Log.e(MainActivity.class.getSimpleName(), ex
+									.toString(), ex);
+							showErrorDialog("Failed to clean the files: " + ex);
+						}
+					}
+
+				});
 	}
 }
