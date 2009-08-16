@@ -57,7 +57,7 @@ public final class SearchQuery implements Serializable {
 	 */
 	public boolean matches(final String line) {
 		for (final String q : query) {
-			if (line.contains(q)) {
+			if (line.toLowerCase().contains(q.toLowerCase())) {
 				return true;
 			}
 		}
