@@ -186,8 +186,18 @@ public final class DownloadEdictTask extends
 				Log.i(DownloadEdictTask.class.getSimpleName(), "Interrupted",
 						ex);
 			}
+			deleteDirQuietly(new File(LUCENE_INDEX));
 		}
 		return null;
+	}
+
+	private void deleteDirQuietly(final File dir) {
+		try {
+			FileUtils.deleteDirectory(dir);
+		} catch (IOException e) {
+			Log.e(DownloadEdictTask.class.getSimpleName(),
+					"Failed to delete the directory", e);
+		}
 	}
 
 	/**
@@ -204,7 +214,6 @@ public final class DownloadEdictTask extends
 		publishProgress(new Progress("Connecting", 0));
 		final URLConnection conn = EDICT_LUCENE_ZIP.openConnection();
 		// this is the unpacked edict file size.
-		final int length = conn.getContentLength();
 		final File dir = new File(LUCENE_INDEX);
 		if (!dir.exists() && !dir.mkdirs()) {
 			throw new IOException("Failed to create " + LUCENE_INDEX);
@@ -213,10 +222,10 @@ public final class DownloadEdictTask extends
 				new BufferedInputStream(conn.getInputStream()));
 		try {
 			final ZipInputStream zip = new ZipInputStream(in);
-			copy(in, zip, length);
+			copy(in, zip);
 		} catch (InterruptedIOException ex) {
 			MiscUtils.closeQuietly(in);
-			FileUtils.deleteDirectory(dir);
+			deleteDirQuietly(new File(LUCENE_INDEX));
 			throw ex;
 		} finally {
 			MiscUtils.closeQuietly(in);
@@ -234,14 +243,11 @@ public final class DownloadEdictTask extends
 	 *            use this stream to count bytes
 	 * @param zip
 	 *            unzip files from here
-	 * @param length
-	 *            number of bytes in the input stream
 	 * @throws IOException
 	 *             on i/o error
 	 */
-	private void copy(final CountingInputStream in, final ZipInputStream zip,
-			final int length) throws IOException {
-		dlg.setMax(length / 1024);
+	private void copy(final CountingInputStream in, final ZipInputStream zip)
+			throws IOException {
 		publishProgress(new Progress("Downloading EDict", 0));
 		for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip
 				.getNextEntry()) {
@@ -258,7 +264,12 @@ public final class DownloadEdictTask extends
 
 	private void copy(final ZipEntry entry, final InputStream in,
 			final OutputStream out) throws IOException {
-		dlg.setMax((int) (entry.getSize() / 1024));
+		long size = entry.getSize();
+		if (size < 0) {
+			size = 20000000;
+		}
+		dlg.setMax((int) (size / 1024));
+		publishProgress(new Progress(null, 0));
 		int downloaded = 0;
 		int reportCountdown = REPORT_EACH_XTH_BYTE;
 		final byte[] buf = new byte[BUFFER_SIZE];

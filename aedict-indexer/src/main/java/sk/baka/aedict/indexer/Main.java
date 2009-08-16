@@ -135,7 +135,9 @@ public class Main {
 			out.setLevel(9);
 			final File[] luceneIndexFiles = new File(LUCENE_INDEX).listFiles();
 			for (final File indexFile : luceneIndexFiles) {
-				out.putNextEntry(new ZipEntry(indexFile.getName()));
+				final ZipEntry entry = new ZipEntry(indexFile.getName());
+				entry.setSize(indexFile.length());
+				out.putNextEntry(entry);
 				final InputStream in = new FileInputStream(indexFile);
 				try {
 					IOUtils.copy(in, out);
