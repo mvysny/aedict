@@ -90,7 +90,7 @@ public final class JpUtils {
 	 * @return text converted to hiragana, with unknown characters untranslated.
 	 */
 	public static String toHiragana(final String romaji) {
-		return toKana(romajiToHiragana, romaji);
+		return toKana(romajiToHiragana, romaji, false);
 	}
 
 	/**
@@ -101,11 +101,11 @@ public final class JpUtils {
 	 * @return text converted to katakana, with unknown characters untranslated.
 	 */
 	public static String toKatakana(final String romaji) {
-		return toKana(romajiToKatakana, romaji);
+		return toKana(romajiToKatakana, romaji, true);
 	}
 
 	private static String toKana(ConcurrentMap<String, String> romajiToKana,
-			String romaji) {
+			String romaji, final boolean isKatakana) {
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < romaji.length(); i++) {
 			// optimization - only convert ascii letters
@@ -137,6 +137,13 @@ public final class JpUtils {
 				// give up
 				kana = String.valueOf(romaji.charAt(i));
 			}
+			if (isKatakana) {
+				// check for double vowel: in katakana, aa must be replaced by
+				// アー instead of アア
+				if (isVowel(c) && i > 0 && romaji.charAt(i - 1) == c) {
+					kana = "−";
+				}
+			}
 			sb.append(kana);
 		}
 		return sb.toString();
@@ -145,6 +152,11 @@ public final class JpUtils {
 
 	private static boolean isAsciiLetter(char c) {
 		return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+	}
+
+	private static boolean isVowel(final char c) {
+		return c == 'a' || c == 'u' || c == 'e' || c == 'i' || c == 'o'
+				|| c == 'A' || c == 'U' || c == 'E' || c == 'I' || c == 'O';
 	}
 
 	/**
