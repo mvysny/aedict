@@ -152,7 +152,7 @@ public final class JpUtils {
 				// check for double vowel: in katakana, aa must be replaced by
 				// アー instead of アア
 				if (isVowel(c) && i > 0 && romaji.charAt(i - 1) == c) {
-					kana = "−";
+					kana = "ー";
 				}
 			}
 			sb.append(kana);
@@ -226,7 +226,7 @@ public final class JpUtils {
 				}
 			}
 			// check for katakana "-"
-			if (romaji == null && "−".equals(kana)) {
+			if (romaji == null && "ー".equals(kana)) {
 				// just repeat last letter if there is one
 				if (sb.length() > 0) {
 					romaji = String.valueOf(sb.charAt(sb.length() - 1));

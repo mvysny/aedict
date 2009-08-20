@@ -52,6 +52,7 @@ public class ResultActivity extends ListActivity {
 		List<String> list;
 		final SearchQuery query = SearchQuery.fromIntent(getIntent())
 				.toLowerCase();
+		setTitle("Search results for " + prettyPrintQuery(query));
 		if (MiscUtils.isBlank(query.query)) {
 			// nothing to search for
 			list = Collections.singletonList("Nothing to search for");
@@ -70,6 +71,20 @@ public class ResultActivity extends ListActivity {
 		}
 		setListAdapter(new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, list));
+	}
+
+	private String prettyPrintQuery(SearchQuery query) {
+		final StringBuilder sb = new StringBuilder();
+		boolean isFirst = true;
+		for (final String q : query.query) {
+			if (isFirst) {
+				isFirst = false;
+			} else {
+				sb.append("/");
+			}
+			sb.append(q);
+		}
+		return sb.toString();
 	}
 
 	private List<String> performLuceneSearch(final SearchQuery query)

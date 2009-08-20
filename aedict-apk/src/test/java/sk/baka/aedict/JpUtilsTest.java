@@ -52,7 +52,7 @@ public class JpUtilsTest {
 	@Test
 	public void testToKatakana() {
 		assertEquals("ミニコン", JpUtils.toKatakana("minikon"));
-		assertEquals("コンピュ−タ", JpUtils.toKatakana("konpyuuta"));
+		assertEquals("コンピュータ", JpUtils.toKatakana("konpyuuta"));
 	}
 
 	/**
@@ -64,6 +64,6 @@ public class JpUtilsTest {
 		assertEquals("yokohama", JpUtils.toRomaji("よこはま"));
 		assertEquals("zutto", JpUtils.toRomaji("ずっと"));
 		assertEquals("minikon", JpUtils.toRomaji("ミニコン"));
-		assertEquals("konpyuuta", JpUtils.toRomaji("コンピュ−タ"));
+		assertEquals("konpyuuta", JpUtils.toRomaji("コンピュータ"));
 	}
 }
