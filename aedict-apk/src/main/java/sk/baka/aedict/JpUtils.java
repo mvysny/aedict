@@ -1,5 +1,5 @@
 /**
- *     Ambient - A music player for the Android platform
+ *     Aedict - an EDICT browser for Android
  Copyright (C) 2007 Martin Vysny
  
  This program is free software: you can redistribute it and/or modify
@@ -68,14 +68,16 @@ public final class JpUtils {
 		final Properties mapping = MiscUtils.load(kanaStream);
 		for (final Map.Entry<Object, Object> e : mapping.entrySet()) {
 			final String kana = (String) e.getKey();
-			final String romaji = (String) e.getValue();
-			if (kanaToRomaji.put(kana, romaji) != null) {
+			final String[] romajis = ((String) e.getValue()).split("\\,");
+			if (kanaToRomaji.put(kana, romajis[0]) != null) {
 				throw new IllegalArgumentException("Mapping for " + kana
 						+ " defined multiple times");
 			}
-			if (romajiToKana.put(romaji, kana) != null) {
-				throw new IllegalArgumentException("Mapping for " + romaji
-						+ " defined multiple times");
+			for (final String romaji : romajis) {
+				if (romajiToKana.put(romaji, kana) != null) {
+					throw new IllegalArgumentException("Mapping for " + romaji
+							+ " defined multiple times");
+				}
 			}
 		}
 	}
@@ -113,13 +115,9 @@ public final class JpUtils {
 				continue;
 			}
 			String kana = null;
-			for (int matchLen = 1; matchLen <= Math.min(romaji.length() - i, 4); matchLen++) {
+			for (int matchLen = Math.min(romaji.length() - i, 4); matchLen >= 1; matchLen--) {
 				final String romajiMatch = String.valueOf(romaji.substring(i,
 						i + matchLen).toLowerCase());
-				if (romajiMatch.equals("n")) {
-					// skip "n" for now: prevents conversion of e.g. na to n'a
-					continue;
-				}
 				kana = romajiToKana.get(romajiMatch);
 				if (kana != null) {
 					i += matchLen - 1;
@@ -131,8 +129,13 @@ public final class JpUtils {
 				kana = romajiToKana.get("nn");
 				i += 1;
 			}
+			if (kana == null && romaji.substring(i).startsWith("n")) {
+				// a stand-alone n.
+				kana = romajiToKana.get("n");
+			}
 			if (kana == null) {
-				kana = romaji.substring(i, i + 1);
+				// give up
+				kana = String.valueOf(romaji.charAt(i));
 			}
 			sb.append(kana);
 		}
@@ -153,9 +156,30 @@ public final class JpUtils {
 	 */
 	public static String toRomaji(final String hiraganaOrKatakana) {
 		final StringBuilder sb = new StringBuilder();
+		// last kana character was the small "tsu". this means that we have to
+		// double next character.
+		boolean wasXtsu = false;
 		for (int i = 0; i < hiraganaOrKatakana.length(); i++) {
-			final String kana = String.valueOf(hiraganaOrKatakana.charAt(i));
-			String romaji = katakanaToRomaji.get(kana);
+			// check two consecutive kana characters first - to support stuff
+			// like "pyu" etc
+			String romaji = null;
+			String kana = null;
+			if (i < hiraganaOrKatakana.length() - 1) {
+				kana = String.valueOf(hiraganaOrKatakana.substring(i, i + 2));
+				romaji = katakanaToRomaji.get(kana);
+				if (romaji == null) {
+					romaji = hiraganaToRomaji.get(kana);
+				}
+				if (romaji != null) {
+					// success! skip next kana
+					i++;
+				}
+			}
+			if (romaji == null) {
+				// nope. convert just a single kana character
+				kana = String.valueOf(hiraganaOrKatakana.charAt(i));
+				romaji = katakanaToRomaji.get(kana);
+			}
 			if (romaji == null) {
 				romaji = hiraganaToRomaji.get(kana);
 			}
@@ -166,8 +190,25 @@ public final class JpUtils {
 				} else if (romaji.startsWith("x")) {
 					romaji = romaji.substring(1);
 				}
-			} else {
+			}
+			// check for katakana "-"
+			if (romaji == null && "−".equals(kana)) {
+				// just repeat last letter if there is one
+				if (sb.length() > 0) {
+					romaji = String.valueOf(sb.charAt(sb.length() - 1));
+				}
+			}
+			// check for small "tsu"
+			if (romaji == null && "っ".equals(kana)) {
+				wasXtsu = true;
+				continue;
+			}
+			if (romaji == null) {
 				romaji = kana;
+			}
+			if (wasXtsu) {
+				sb.append(romaji.charAt(0));
+				wasXtsu = false;
 			}
 			sb.append(romaji);
 		}
