@@ -166,7 +166,7 @@ public class MainActivity extends Activity {
 
 	private void cleanup() {
 		showYesNoDialog(
-				"EDict data files are currently taking up to "
+				"EDict data files are currently taking up "
 						+ (MiscUtils.getLength(new File(
 								DownloadEdictTask.BASE_DIR)) / 1024)
 						+ "kb. Do you wish to clean the files?",
