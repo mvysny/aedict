@@ -20,8 +20,11 @@ package sk.baka.aedict;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -116,8 +119,8 @@ public final class JpUtils {
 			}
 			String kana = null;
 			for (int matchLen = Math.min(romaji.length() - i, 4); matchLen >= 1; matchLen--) {
-				final String romajiMatch = String.valueOf(romaji.substring(i,
-						i + matchLen).toLowerCase());
+				final String romajiMatch = romaji.substring(i, i + matchLen)
+						.toLowerCase();
 				kana = romajiToKana.get(romajiMatch);
 				if (kana != null) {
 					i += matchLen - 1;
@@ -132,6 +135,14 @@ public final class JpUtils {
 			if (kana == null && romaji.substring(i).startsWith("n")) {
 				// a stand-alone n.
 				kana = romajiToKana.get("n");
+			}
+			if (kana == null && i < romaji.length() - 1) {
+				// check for double consonant: for example "tta" must be
+				// transformed to った
+				String romajiMatch = romaji.substring(i, i + 2);
+				if (isDoubledConsonant(romajiMatch)) {
+					kana = isKatakana ? "ッ" : "っ";
+				}
 			}
 			if (kana == null) {
 				// give up
@@ -157,6 +168,17 @@ public final class JpUtils {
 	private static boolean isVowel(final char c) {
 		return c == 'a' || c == 'u' || c == 'e' || c == 'i' || c == 'o'
 				|| c == 'A' || c == 'U' || c == 'E' || c == 'I' || c == 'O';
+	}
+
+	private final static Set<String> DOUBLED_CONSONANTS = new HashSet<String>(
+			Arrays.asList("rr", "tt", "pp", "ss", "dd", "gg", "hh", "jj", "kk",
+					"zz", "cc", "bb", "mm"));
+
+	private static boolean isDoubledConsonant(final String str) {
+		if (str.length() != 2) {
+			throw new AssertionError();
+		}
+		return DOUBLED_CONSONANTS.contains(str.toLowerCase());
 	}
 
 	/**
