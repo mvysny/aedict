@@ -4,7 +4,7 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
-		<release version="0.1.0" date="15. August 2009">
+		<release version="0.1" date="22. August 2009">
 			<action dev="vyzivus" type="add">
 				Initial release.
 			</action>
