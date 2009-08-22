@@ -87,12 +87,14 @@ public class MainActivity extends Activity {
 			View.OnClickListener {
 		public void onClick(View v) {
 			final EditText jpSearchEdit = (EditText) findViewById(R.id.jpSearchEdit);
+			final CheckBox jpExactMatch = (CheckBox) findViewById(R.id.jpExactMatch);
 			final SearchQuery q = new SearchQuery();
 			q.isJapanese = true;
 			final String romaji = jpSearchEdit.getText().toString();
 			q.query = new String[] { JpUtils.toHiragana(romaji),
 					JpUtils.toKatakana(romaji) };
-			q.matcher = MatcherEnum.SubstringMatch;
+			q.matcher = jpExactMatch.isChecked() ? MatcherEnum.ExactMatchEng
+					: MatcherEnum.SubstringMatch;
 			performSearch(q);
 		}
 
