@@ -204,6 +204,8 @@ org.eclipse.jdt.core.compiler.source=1.5
 					<preparationGoals>clean changes:announcement-generate install -P release</preparationGoals>
 					<goals>clean deploy changes:announcement-mail -P release</goals>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<username>${google-code.hg.username}</username>
+					<password>${google-code.hg.password}</password>
 				</configuration>
 			</plugin>
  			<plugin>
