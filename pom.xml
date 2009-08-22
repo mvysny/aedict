@@ -6,7 +6,7 @@
 	<version>0.2-SNAPSHOT</version>
 	<name>Aedict</name>
 	<inceptionYear>2009</inceptionYear>
-	<description>A english-japanese dictionary which uses Jim Breen's edict data. Does not require japanese keyboard.</description>
+	<description>An english-japanese dictionary which uses Jim Breen's edict data. Does not require japanese keyboard.</description>
 	<url>http://code.google.com/p/aedict</url>
 	<prerequisites>
 		<maven>2.2.0</maven>
