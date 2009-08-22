@@ -57,7 +57,8 @@ public enum MatcherEnum {
 		}
 
 		private boolean isWordPart(final char c) {
-			return c == '-' || c == '\'' || MiscUtils.isAsciiLetter(c);
+			return c == '-' || c == '\'' || c == '.' || c == ','
+					|| Character.isLetter(c);
 		}
 
 		private char skipWhitespaces(final String line, final int charIndex,
