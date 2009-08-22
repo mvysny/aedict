@@ -202,4 +202,13 @@ public final class MiscUtils {
 			return 0;
 		}
 	}
+
+	/**
+	 * Checks if given character is an ascii letter (a-z, A-Z).
+	 * @param c the character to check
+	 * @return true if the character is a letter, false otherwise.
+	 */
+	public static boolean isAsciiLetter(char c) {
+		return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+	}
 }

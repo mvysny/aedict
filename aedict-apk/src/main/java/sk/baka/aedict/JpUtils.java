@@ -113,7 +113,7 @@ public final class JpUtils {
 		for (int i = 0; i < romaji.length(); i++) {
 			// optimization - only convert ascii letters
 			final char c = romaji.charAt(i);
-			if (!isAsciiLetter(c)) {
+			if (!MiscUtils.isAsciiLetter(c)) {
 				sb.append(c);
 				continue;
 			}
@@ -159,10 +159,6 @@ public final class JpUtils {
 		}
 		return sb.toString();
 
-	}
-
-	private static boolean isAsciiLetter(char c) {
-		return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 	}
 
 	private static boolean isVowel(final char c) {
