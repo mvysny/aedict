@@ -199,7 +199,6 @@ org.eclipse.jdt.core.compiler.source=1.5
 			<plugin>
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
-					<resume>false</resume>
 					<!-- The changes:announcement-generate goal will verify whether the changes.xml file is valid -->
 					<preparationGoals>clean changes:announcement-generate install -P release</preparationGoals>
 					<goals>clean deploy changes:announcement-mail -P release</goals>
