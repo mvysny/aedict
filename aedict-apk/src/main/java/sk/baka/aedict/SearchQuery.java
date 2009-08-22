@@ -114,14 +114,10 @@ public final class SearchQuery implements Serializable {
 	 * @return query instance.
 	 */
 	public static SearchQuery fromIntent(final Intent intent) {
-		final SearchQuery result = new SearchQuery();
-		result.query = intent.getStringArrayExtra(INTENTKEY_SEARCH_QUERY);
-		result.isJapanese = intent.getBooleanExtra(INTENTKEY_JAPANESE, false);
-		return result;
+		return (SearchQuery)intent.getSerializableExtra(INTENTKEY_SEARCH_QUERY);
 	}
 
 	private static final String INTENTKEY_SEARCH_QUERY = "QUERY";
-	private static final String INTENTKEY_JAPANESE = "JAPANESE";
 
 	/**
 	 * Puts values from this bean to given intent. The object can be
@@ -131,7 +127,6 @@ public final class SearchQuery implements Serializable {
 	 *            store the values here.
 	 */
 	public void putTo(Intent intent) {
-		intent.putExtra(INTENTKEY_SEARCH_QUERY, query);
-		intent.putExtra(INTENTKEY_JAPANESE, isJapanese);
+		intent.putExtra(INTENTKEY_SEARCH_QUERY, this);
 	}
 }
