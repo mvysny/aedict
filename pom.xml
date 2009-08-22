@@ -200,8 +200,8 @@ org.eclipse.jdt.core.compiler.source=1.5
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
 					<!-- The changes:announcement-generate goal will verify whether the changes.xml file is valid -->
-					<preparationGoals>clean changes:announcement-generate install -P release</preparationGoals>
-					<goals>clean deploy changes:announcement-mail -P release</goals>
+					<preparationGoals>clean install -P release</preparationGoals>
+					<goals>clean deploy -P release</goals>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<username>${google-code.hg.username}</username>
 					<password>${google-code.hg.password}</password>
@@ -218,6 +218,18 @@ org.eclipse.jdt.core.compiler.source=1.5
 					<url>${project.url}</url>
 					<issueLinkTemplate>http://code.google.com/a/aedict/issues/detail?id=%ISSUE%</issueLinkTemplate>
 				</configuration>
+				<executions>
+					<execution>
+						<id>verify.changes.xml</id>
+						<goals><goal>announcement-generate</goal></goals>
+						<phase>install</phase>
+					</execution>
+					<execution>
+						<id>send.mail</id>
+						<goals><goal>announcement-mail</goal></goals>
+						<phase>deploy</phase>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
