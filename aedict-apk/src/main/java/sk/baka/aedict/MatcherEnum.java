@@ -19,11 +19,11 @@
 package sk.baka.aedict;
 
 /**
- * Enumerates search modes for an english search.
+ * Enumerates search modes.
  * 
  * @author Martin Vysny
  */
-public enum EngSearchEnum {
+public enum MatcherEnum {
 	/**
 	 * Matches when the query is a substring of given line.
 	 */
@@ -34,9 +34,10 @@ public enum EngSearchEnum {
 		}
 	},
 	/**
-	 * Matches when the query is
+	 * Matches when the query matches an entire expression text for given line.
+	 * E.g. foo matches "foo", "foo;bar" but not "foo bar"
 	 */
-	ExactMatch {
+	ExactMatchEng {
 		@Override
 		public boolean matches(String query, String line) {
 			int lastIndex = 0;

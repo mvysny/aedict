@@ -42,6 +42,11 @@ public final class SearchQuery implements Serializable {
 	public boolean isJapanese;
 
 	/**
+	 * A matcher to use when matching query strings to a line.
+	 */
+	public MatcherEnum matcher;
+
+	/**
 	 * Creates an empty search query.
 	 */
 	public SearchQuery() {
@@ -57,7 +62,7 @@ public final class SearchQuery implements Serializable {
 	 */
 	public boolean matches(final String line) {
 		for (final String q : query) {
-			if (line.toLowerCase().contains(q.toLowerCase())) {
+			if (matcher.matches(q, line)) {
 				return true;
 			}
 		}
@@ -114,7 +119,8 @@ public final class SearchQuery implements Serializable {
 	 * @return query instance.
 	 */
 	public static SearchQuery fromIntent(final Intent intent) {
-		return (SearchQuery)intent.getSerializableExtra(INTENTKEY_SEARCH_QUERY);
+		return (SearchQuery) intent
+				.getSerializableExtra(INTENTKEY_SEARCH_QUERY);
 	}
 
 	private static final String INTENTKEY_SEARCH_QUERY = "QUERY";

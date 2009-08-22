@@ -33,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -91,6 +92,7 @@ public class MainActivity extends Activity {
 			final String romaji = jpSearchEdit.getText().toString();
 			q.query = new String[] { JpUtils.toHiragana(romaji),
 					JpUtils.toKatakana(romaji) };
+			q.matcher = MatcherEnum.SubstringMatch;
 			performSearch(q);
 		}
 
@@ -104,9 +106,12 @@ public class MainActivity extends Activity {
 			View.OnClickListener {
 		public void onClick(View v) {
 			final EditText engSearchEdit = (EditText) findViewById(R.id.engSearchEdit);
+			final CheckBox engExactMatch = (CheckBox) findViewById(R.id.engExactMatch);
 			final SearchQuery q = new SearchQuery();
 			q.isJapanese = false;
 			q.query = new String[] { engSearchEdit.getText().toString() };
+			q.matcher = engExactMatch.isChecked() ? MatcherEnum.ExactMatchEng
+					: MatcherEnum.SubstringMatch;
 			performSearch(q);
 		}
 
