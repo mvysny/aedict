@@ -6,9 +6,4 @@
         <item>Ends With</item> 
         <item>Any Matches</item> 
     </array> 
-<array name="englishSearchPropsItems"> 
-        <item>Whole Expressions</item> 
-        <item>Whole Words</item> 
-        <item>Any Matches</item> 
-    </array> 
 </resources>

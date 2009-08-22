@@ -15,9 +15,10 @@
 </LinearLayout>
 
 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="English search"></TextView>
-<Spinner android:layout_height="wrap_content" android:id="@+id/englishSearchProps" android:layout_width="fill_parent" android:entries="@+array/englishSearchPropsItems"></Spinner>
-<LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
+
+<CheckBox android:id="@+id/engExactMatch" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="Exact match"></CheckBox><LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
 <EditText android:layout_height="wrap_content" android:id="@+id/engSearchEdit" android:layout_width="wrap_content" android:layout_weight="1" android:hint="Enter word or expression" android:inputType="text" android:imeOptions="actionDone"></EditText>
 <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Search" android:id="@+id/engSearch"></Button>
 </LinearLayout>
+
 </LinearLayout>
