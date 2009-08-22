@@ -203,6 +203,7 @@ org.eclipse.jdt.core.compiler.source=1.5
 					<!-- The changes:announcement-generate goal will verify whether the changes.xml file is valid -->
 					<preparationGoals>clean changes:announcement-generate install -P release</preparationGoals>
 					<goals>clean deploy changes:announcement-mail -P release</goals>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
 				</configuration>
 			</plugin>
  			<plugin>
