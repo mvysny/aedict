@@ -27,18 +27,11 @@
 	
 	<mailingLists>
 		<mailingList>
-			<name>Announcements</name>
-			<subscribe>http://lists.sourceforge.net/mailman/listinfo/ambientmp-announcements</subscribe>
-			<unsubscribe>http://lists.sourceforge.net/mailman/listinfo/ambientmp-announcements</unsubscribe>
-			<post>ambientmp-announcements@lists.sourceforge.net</post>
-			<archive>http://sourceforge.net/mailarchive/forum.php?forum=ambientmp-announcements</archive>
-		</mailingList>
-		<mailingList>
-			<name>Subversion commits</name>
-			<subscribe>http://lists.sourceforge.net/mailman/listinfo/ambientmp-commits</subscribe>
-			<unsubscribe>http://lists.sourceforge.net/mailman/listinfo/ambientmp-commits</unsubscribe>
-			<post>ambientmp-commits@lists.sourceforge.net</post>
-			<archive>http://sourceforge.net/mailarchive/forum.php?forum=ambientmp-commits</archive>
+			<name>Users</name>
+			<subscribe>http://groups.google.com/group/aedict-users/subscribe</subscribe>
+			<unsubscribe>http://groups.google.com/group/aedict-users/subscribe</unsubscribe>
+			<post>aedict-users@googlegroups.com</post>
+			<archive>http://groups.google.com/group/aedict-users/topics</archive>
 		</mailingList>
 	</mailingLists>
 	
