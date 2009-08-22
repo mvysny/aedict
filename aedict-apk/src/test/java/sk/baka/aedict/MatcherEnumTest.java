@@ -46,6 +46,8 @@ public class MatcherEnumTest {
 		assertFalse(MatcherEnum.ExactMatchEng.matches("query", "QUERY QUERY"));
 		assertFalse(MatcherEnum.ExactMatchEng.matches("query", "queryquery"));
 		assertFalse(MatcherEnum.ExactMatchEng.matches("query", "query query"));
+		assertFalse(MatcherEnum.ExactMatchEng.matches("query", "query-query"));
+		assertFalse(MatcherEnum.ExactMatchEng.matches("query", "query'query"));
 		assertTrue(MatcherEnum.ExactMatchEng.matches("query", "query; query"));
 		assertTrue(MatcherEnum.ExactMatchEng.matches("query", "foo-bar-baz [f] (p) query; query"));
 	}

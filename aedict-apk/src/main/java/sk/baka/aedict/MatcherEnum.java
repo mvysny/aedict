@@ -45,16 +45,19 @@ public enum MatcherEnum {
 			final String _query = query.toLowerCase();
 			int indexOfQuery = _line.indexOf(_query, lastIndex);
 			while (indexOfQuery >= 0) {
-				if (!MiscUtils.isAsciiLetter(skipWhitespaces(_line,
-						indexOfQuery - 1, -1))
-						&& !MiscUtils.isAsciiLetter(skipWhitespaces(_line,
-								indexOfQuery + _query.length(), 1))) {
+				if (!isWordPart(skipWhitespaces(_line, indexOfQuery - 1, -1))
+						&& !isWordPart(skipWhitespaces(_line, indexOfQuery
+								+ _query.length(), 1))) {
 					return true;
 				}
 				lastIndex = indexOfQuery + 1;
 				indexOfQuery = _line.indexOf(_query, lastIndex);
 			}
 			return false;
+		}
+
+		private boolean isWordPart(final char c) {
+			return c == '-' || c == '\'' || MiscUtils.isAsciiLetter(c);
 		}
 
 		private char skipWhitespaces(final String line, final int charIndex,
