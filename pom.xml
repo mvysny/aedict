@@ -200,31 +200,40 @@ org.eclipse.jdt.core.compiler.source=1.5
 					<password>${google-code.hg.password}</password>
 				</configuration>
 			</plugin>
- 			<plugin>
-				<artifactId>maven-changes-plugin</artifactId>
-				<inherited>false</inherited>
-				<configuration>
-					<smtpHost>${smtp.host}</smtpHost>
-					<smtpPort>${smtp.port}</smtpPort>
- 					<toAddresses><toAddress>aedict-users@googlegroups.com</toAddress></toAddresses>
-					<urlDownload>http://code.google.com/p/aedict/downloads/list</urlDownload>
-					<url>${project.url}</url>
-					<issueLinkTemplate>http://code.google.com/a/aedict/issues/detail?id=%ISSUE%</issueLinkTemplate>
-				</configuration>
-				<executions>
-					<execution>
-						<id>verify.changes.xml</id>
-						<goals><goal>announcement-generate</goal></goals>
-						<phase>install</phase>
-					</execution>
-					<execution>
-						<id>send.mail</id>
-						<goals><goal>announcement-mail</goal></goals>
-						<phase>deploy</phase>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+		 			<plugin>
+						<artifactId>maven-changes-plugin</artifactId>
+						<inherited>false</inherited>
+						<configuration>
+							<smtpHost>${smtp.host}</smtpHost>
+							<smtpPort>${smtp.port}</smtpPort>
+		 					<toAddresses><toAddress>aedict-users@googlegroups.com</toAddress></toAddresses>
+							<urlDownload>http://code.google.com/p/aedict/downloads/list</urlDownload>
+							<url>${project.url}</url>
+							<issueLinkTemplate>http://code.google.com/a/aedict/issues/detail?id=%ISSUE%</issueLinkTemplate>
+						</configuration>
+						<executions>
+							<execution>
+								<id>verify.changes.xml</id>
+								<goals><goal>announcement-generate</goal></goals>
+								<phase>install</phase>
+							</execution>
+							<execution>
+								<id>send.mail</id>
+								<goals><goal>announcement-mail</goal></goals>
+								<phase>deploy</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
 
