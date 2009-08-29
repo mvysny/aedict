@@ -66,10 +66,9 @@ public class MainActivity extends Activity {
 			final StatFs stats = new StatFs("/sdcard");
 			final long free = stats.getBlockSize() * stats.getAvailableBlocks();
 			final StringBuilder msg = new StringBuilder(
-					"The EDict dictionary is missing. Do you wish to download it now?");
+					getString(R.string.edict_missing_download));
 			if (free < 20000000) {
-				msg
-						.append(" Warning: there is less than 20MB of free space on the sd card. The download will most probably fail");
+				msg.append(getString(R.string.warning_less_than_20mb_free));
 			}
 			showYesNoDialog(msg.toString(),
 					new DialogInterface.OnClickListener() {
@@ -131,7 +130,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		final MenuItem item = menu.add("Cleanup");
+		final MenuItem item = menu.add(R.string.cleanup);
 		item.setIcon(android.R.drawable.ic_menu_delete);
 		item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
@@ -147,8 +146,8 @@ public class MainActivity extends Activity {
 			final DialogInterface.OnClickListener yesListener) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(message);
-		builder.setPositiveButton("Yes", yesListener);
-		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+		builder.setPositiveButton(R.string.yes, yesListener);
+		builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
@@ -160,7 +159,7 @@ public class MainActivity extends Activity {
 	private void showErrorDialog(final String message) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(message);
-		builder.setTitle("Error");
+		builder.setTitle(R.string.error);
 		builder.setIcon(android.R.drawable.ic_dialog_alert);
 		builder.create().show();
 	}

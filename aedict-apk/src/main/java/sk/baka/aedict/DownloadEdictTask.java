@@ -51,7 +51,7 @@ public final class DownloadEdictTask extends
 	 * 
 	 * @author Martin Vysny
 	 */
-	protected static final class Progress {
+	protected final class Progress {
 		/**
 		 * Creates new empty progress instance.
 		 */
@@ -73,6 +73,19 @@ public final class DownloadEdictTask extends
 		}
 
 		/**
+		 * Creates instance with given message and a progress.
+		 * 
+		 * @param messageRes
+		 *            the message to display
+		 * @param progress
+		 *            a progress
+		 */
+		public Progress(final int messageRes, final int progress) {
+			this.message = context.getString(messageRes);
+			this.progress = progress;
+		}
+
+		/**
 		 * The message to show.
 		 */
 		public String message;
@@ -90,14 +103,12 @@ public final class DownloadEdictTask extends
 		 * 
 		 * @param t
 		 *            the error, must not be null.
-		 * @return new object instance with filled message.
 		 */
-		public static Progress fromError(final Throwable t) {
-			Progress p = new Progress();
-			p.progress = -1;
-			p.message = "Failed to download EDICT: " + t;
-			p.error = t;
-			return p;
+		public Progress(final Throwable t) {
+			this();
+			progress = -1;
+			message = context.getString(R.string.failed_to_download_edict) + t;
+			error = t;
 		}
 	}
 
@@ -135,7 +146,7 @@ public final class DownloadEdictTask extends
 		});
 		dlg.setIndeterminate(false);
 		dlg.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		dlg.setTitle("Connecting");
+		dlg.setTitle(R.string.connecting);
 		dlg.show();
 	}
 
@@ -176,12 +187,13 @@ public final class DownloadEdictTask extends
 			edictDownloadAndUnpack();
 		} catch (Exception ex) {
 			if (!isCancelled()) {
-				Log.e(DownloadEdictTask.class.getSimpleName(), "Error", ex);
+				Log.e(DownloadEdictTask.class.getSimpleName(), context
+						.getString(R.string.error), ex);
 				isError = true;
-				publishProgress(Progress.fromError(ex));
+				publishProgress(new Progress(ex));
 			} else {
-				Log.i(DownloadEdictTask.class.getSimpleName(), "Interrupted",
-						ex);
+				Log.i(DownloadEdictTask.class.getSimpleName(), context
+						.getString(R.string.interrupted), ex);
 			}
 			deleteDirQuietly(new File(LUCENE_INDEX));
 		}
@@ -208,7 +220,7 @@ public final class DownloadEdictTask extends
 		if (isComplete()) {
 			return;
 		}
-		publishProgress(new Progress("Connecting", 0));
+		publishProgress(new Progress(R.string.connecting, 0));
 		final URLConnection conn = EDICT_LUCENE_ZIP.openConnection();
 		// this is the unpacked edict file size.
 		final File dir = new File(LUCENE_INDEX);
@@ -244,7 +256,7 @@ public final class DownloadEdictTask extends
 	 */
 	private void copy(final InputStream in, final ZipInputStream zip)
 			throws IOException {
-		publishProgress(new Progress("Downloading EDict", 0));
+		publishProgress(new Progress(R.string.downloading_edict, 0));
 		for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip
 				.getNextEntry()) {
 			final OutputStream out = new FileOutputStream(LUCENE_INDEX + "/"
@@ -300,7 +312,7 @@ public final class DownloadEdictTask extends
 		if (t != null) {
 			dlg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			dlg.setMessage(msg);
-			dlg.setTitle("Error");
+			dlg.setTitle(R.string.error);
 		} else {
 			if (msg != null) {
 				dlg.setTitle(msg);
