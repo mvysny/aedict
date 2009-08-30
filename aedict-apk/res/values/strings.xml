@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="nothing_to_search_for">Nothing to search for</string>
+    <string name="no_results">No results</string>
+    <string name="searchFailed">Failed to perform search: </string>
     <string name="failed_to_clean_files">Failed to clean the files: </string>
     <string name="data_files_removed">Data files were removed</string>
     <string name="no">No</string>
@@ -15,4 +18,5 @@
     <string name="app_name">Aedict</string>
     <string name="searchResults">Aedict: Search Results</string>
     <string name="deleteEdictFiles">EDict data files are currently taking up to %d kb. Do you wish to clean the files?</string>
+    <string name="searchResultsFor">Search results for %s</string>
 </resources>

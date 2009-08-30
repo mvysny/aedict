@@ -52,21 +52,21 @@ public class ResultActivity extends ListActivity {
 		List<String> list;
 		final SearchQuery query = SearchQuery.fromIntent(getIntent())
 				.toLowerCase();
-		setTitle("Search results for " + prettyPrintQuery(query));
+		setTitle(AedictApp.format(R.string.searchResultsFor, prettyPrintQuery(query)));
 		if (MiscUtils.isBlank(query.query)) {
 			// nothing to search for
-			list = Collections.singletonList("Nothing to search for");
+			list = Collections.singletonList(getString(R.string.nothing_to_search_for));
 		} else {
 			try {
 				list = performLuceneSearch(query);
 			} catch (Exception ex) {
 				Log.e(ResultActivity.class.getSimpleName(),
 						"Failed to perform search", ex);
-				list = Collections.singletonList("Failed to perform search: "
-						+ ex);
+				list = Collections.singletonList(AedictApp.format(
+						R.string.searchFailed, ex.toString()));
 			}
 			if (list.isEmpty()) {
-				list = Collections.singletonList("No results");
+				list = Collections.singletonList(getString(R.string.no_results));
 			}
 		}
 		setListAdapter(new ArrayAdapter<String>(this,
