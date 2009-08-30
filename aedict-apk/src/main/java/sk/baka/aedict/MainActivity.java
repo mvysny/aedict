@@ -164,6 +164,9 @@ public class MainActivity extends Activity {
 		builder.create().show();
 	}
 
+	private void showInfoDialog(final int messageRes) {
+		showInfoDialog(getString(messageRes));
+	}
 	private void showInfoDialog(final String message) {
 		final Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
 		toast.setGravity(Gravity.BOTTOM, 0, 0);
@@ -171,11 +174,8 @@ public class MainActivity extends Activity {
 	}
 
 	private void cleanup() {
-		showYesNoDialog(
-				"EDict data files are currently taking up "
-						+ (MiscUtils.getLength(new File(
-								DownloadEdictTask.BASE_DIR)) / 1024)
-						+ "kb. Do you wish to clean the files?",
+		showYesNoDialog(AedictApp.format(R.string.deleteEdictFiles, MiscUtils
+				.getLength(new File(DownloadEdictTask.BASE_DIR)) / 1024),
 				new DialogInterface.OnClickListener() {
 
 					public void onClick(DialogInterface dialog, int which) {
@@ -183,11 +183,11 @@ public class MainActivity extends Activity {
 						try {
 							MiscUtils.deleteDir(new File(
 									DownloadEdictTask.BASE_DIR));
-							showInfoDialog("Data files were removed");
+							showInfoDialog(R.string.data_files_removed);
 						} catch (Exception ex) {
 							Log.e(MainActivity.class.getSimpleName(), ex
 									.toString(), ex);
-							showErrorDialog("Failed to clean the files: " + ex);
+							showErrorDialog(getString(R.string.failed_to_clean_files) + ex);
 						}
 					}
 
