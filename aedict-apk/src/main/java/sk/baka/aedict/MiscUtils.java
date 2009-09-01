@@ -233,8 +233,11 @@ public final class MiscUtils {
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			while (true) {
 				final int bytesRead = in.read(buf);
-				if (bytesRead < -1) {
+				if (bytesRead < 0) {
 					break;
+				}
+				if (bytesRead == 0) {
+					continue;
 				}
 				bout.write(buf, 0, bytesRead);
 			}

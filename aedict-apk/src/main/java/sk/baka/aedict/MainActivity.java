@@ -139,6 +139,17 @@ public class MainActivity extends Activity {
 				return true;
 			}
 		});
+		final MenuItem item2 = menu.add(R.string.aboutCaption);
+		item2.setIcon(android.R.drawable.ic_menu_info_details);
+		item2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+			public boolean onMenuItemClick(MenuItem item) {
+				final Intent intent = new Intent(MainActivity.this,
+						AboutActivity.class);
+				startActivity(intent);
+				return true;
+			}
+		});
 		return true;
 	}
 
@@ -147,12 +158,13 @@ public class MainActivity extends Activity {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(message);
 		builder.setPositiveButton(R.string.yes, yesListener);
-		builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+		builder.setNegativeButton(R.string.no,
+				new DialogInterface.OnClickListener() {
 
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		});
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
 		builder.create().show();
 	}
 
@@ -167,6 +179,7 @@ public class MainActivity extends Activity {
 	private void showInfoDialog(final int messageRes) {
 		showInfoDialog(getString(messageRes));
 	}
+
 	private void showInfoDialog(final String message) {
 		final Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
 		toast.setGravity(Gravity.BOTTOM, 0, 0);
@@ -187,7 +200,8 @@ public class MainActivity extends Activity {
 						} catch (Exception ex) {
 							Log.e(MainActivity.class.getSimpleName(), ex
 									.toString(), ex);
-							showErrorDialog(getString(R.string.failed_to_clean_files) + ex);
+							showErrorDialog(getString(R.string.failed_to_clean_files)
+									+ ex);
 						}
 					}
 

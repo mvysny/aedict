@@ -37,4 +37,5 @@
     <string name="deleteEdictFiles">EDict data files are currently taking up to %d kb. Do you wish to clean the files?</string>
     <string name="searchResultsFor">Search results for %s</string>
     <string name="about">http://code.google.com/p/aedict\n\nCopyright (C) 2009 Martin Vyšný\n\nLicensed under GPL3: http://www.gnu.org/licenses/gpl-3.0.html\n\nReferences: EDict: http://www.csse.monash.edu.au/~jwb/edict.html\nLucene: http://lucene.apache.org/java/docs/</string>
+    <string name="aboutCaption">About</string>
 </resources>
