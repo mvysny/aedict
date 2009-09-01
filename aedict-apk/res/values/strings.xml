@@ -38,4 +38,10 @@
     <string name="searchResultsFor">Search results for %s</string>
     <string name="about">http://code.google.com/p/aedict\n\nCopyright (C) 2009 Martin Vyšný\n\nLicensed under GPL3: http://www.gnu.org/licenses/gpl-3.0.html\n\nReferences: EDict: http://www.csse.monash.edu.au/~jwb/edict.html\nLucene: http://lucene.apache.org/java/docs/</string>
     <string name="aboutCaption">About</string>
+    <string name="jpSearch">Japanese search</string>
+    <string name="exactMatch">Exact match</string>
+    <string name="enterRomajiWord">Enter a word in romaji</string>
+    <string name="search">Search</string>
+    <string name="englishSearch">English search</string>
+    <string name="enterWordOrExpression">Enter word or expression</string>
 </resources>

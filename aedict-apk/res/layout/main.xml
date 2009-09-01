@@ -20,32 +20,32 @@
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 	<TextView android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="Japanese search"></TextView>
+		android:layout_height="wrap_content" android:text="@string/jpSearch"></TextView>
 	<CheckBox android:layout_height="wrap_content" android:id="@+id/jpExactMatch"
-		android:text="Exact match" android:layout_width="fill_parent"></CheckBox>
+		android:text="@string/exactMatch" android:layout_width="fill_parent"></CheckBox>
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:orientation="horizontal">
 		<EditText android:layout_height="wrap_content" android:id="@+id/jpSearchEdit"
 			android:layout_width="wrap_content" android:layout_weight="1"
-			android:hint="Enter word in romaji" android:inputType="text"
+			android:hint="@string/enterRomajiWord" android:inputType="text"
 			android:imeOptions="actionDone"></EditText>
 		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="Search"
+			android:layout_height="wrap_content" android:text="@string/search"
 			android:id="@+id/jpSearch"></Button>
 	</LinearLayout>
 	<TextView android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="English search"></TextView>
+		android:layout_height="wrap_content" android:text="@string/englishSearch"></TextView>
 	<CheckBox android:id="@+id/engExactMatch"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:text="Exact match"></CheckBox>
+		android:text="@string/exactMatch"></CheckBox>
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content">
 		<EditText android:layout_height="wrap_content" android:id="@+id/engSearchEdit"
 			android:layout_width="wrap_content" android:layout_weight="1"
-			android:hint="Enter word or expression" android:inputType="text"
+			android:hint="@string/enterWordOrExpression" android:inputType="text"
 			android:imeOptions="actionDone"></EditText>
 		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="Search"
+			android:layout_height="wrap_content" android:text="@string/search"
 			android:id="@+id/engSearch"></Button>
 	</LinearLayout>
 </LinearLayout>
