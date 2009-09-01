@@ -1,5 +1,5 @@
 /**
- *     Ambient - A music player for the Android platform
+  Aedict - an EDICT browser for Android
  Copyright (C) 2007 Martin Vysny
  
  This program is free software: you can redistribute it and/or modify
@@ -59,6 +59,11 @@ public class Main {
 	private static final String LUCENE_INDEX_ZIP = BASE_DIR
 			+ "/edict-lucene.zip";
 
+	/**
+	 * Performs EDICT download and indexing tasks.
+	 * @param args ignored, does not take any parameters.
+	 * @throws Exception if error occurs
+	 */
 	public static void main(String[] args) throws Exception {
 		downloadEdict();
 		indexWithLucene();
