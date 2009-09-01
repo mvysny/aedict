@@ -1,6 +1,6 @@
 /**
  *     Aedict - an EDICT browser for Android
- Copyright (C) 2007 Martin Vysny
+ Copyright (C) 2009 Martin Vysny
  
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
