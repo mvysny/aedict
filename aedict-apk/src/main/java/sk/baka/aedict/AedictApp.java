@@ -18,9 +18,10 @@
 
 package sk.baka.aedict;
 
+import java.io.InputStream;
 import java.util.Formatter;
-
 import android.app.Application;
+import android.util.Log;
 
 /**
  * The main application class.
@@ -66,4 +67,33 @@ public class AedictApp extends Application {
 		return new Formatter().format(formatStr, args).toString();
 	}
 
+	/**
+	 * The Ambient version.
+	 */
+	private static String version;
+
+	/**
+	 * Returns the Ambient version.
+	 * 
+	 * @return the version string or "unknown" if the version is not available.
+	 */
+	public static String getVersion() {
+		if (version != null) {
+			return version;
+		}
+		final InputStream in = getApp().getClassLoader().getResourceAsStream(
+				"version");
+		if (in != null) {
+			try {
+				version = new String(MiscUtils.readFully(in), "UTF-8");
+			} catch (Exception ex) {
+				Log.e(AedictApp.class.getSimpleName(), "Failed to get version",
+						ex);
+				version = "unknown";
+			} finally {
+				MiscUtils.closeQuietly(in);
+			}
+		}
+		return version;
+	}
 }

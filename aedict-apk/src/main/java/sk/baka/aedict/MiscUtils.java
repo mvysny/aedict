@@ -18,6 +18,7 @@
 
 package sk.baka.aedict;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -205,10 +206,41 @@ public final class MiscUtils {
 
 	/**
 	 * Checks if given character is an ascii letter (a-z, A-Z).
-	 * @param c the character to check
+	 * 
+	 * @param c
+	 *            the character to check
 	 * @return true if the character is a letter, false otherwise.
 	 */
 	public static boolean isAsciiLetter(char c) {
 		return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+	}
+
+	private static final int BUFSIZE = 8192;
+
+	/**
+	 * Reads given file fully and returns its contents. The stream is always
+	 * closed.
+	 * 
+	 * @param in
+	 *            read this stream. Always closed.
+	 * @return the byte contents of given stream.
+	 * @throws IOException
+	 *             on i/o error
+	 */
+	public static byte[] readFully(final InputStream in) throws IOException {
+		try {
+			final byte[] buf = new byte[BUFSIZE];
+			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			while (true) {
+				final int bytesRead = in.read(buf);
+				if (bytesRead < -1) {
+					break;
+				}
+				bout.write(buf, 0, bytesRead);
+			}
+			return bout.toByteArray();
+		} finally {
+			closeQuietly(in);
+		}
 	}
 }
