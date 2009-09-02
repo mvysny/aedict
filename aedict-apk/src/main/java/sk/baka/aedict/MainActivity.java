@@ -64,11 +64,13 @@ public class MainActivity extends Activity {
 		// check for dictionary file
 		if (!DownloadEdictTask.isComplete()) {
 			final StatFs stats = new StatFs("/sdcard");
-			final long free = stats.getBlockSize() * stats.getAvailableBlocks();
+			final long free = ((long)stats.getBlockSize()) * stats.getAvailableBlocks();
 			final StringBuilder msg = new StringBuilder(
 					getString(R.string.edict_missing_download));
-			if (free < 20000000) {
-				msg.append(getString(R.string.warning_less_than_20mb_free));
+			if (free < 20 * 1000 * 1000) {
+				msg.append('\n');
+				msg.append(AedictApp.format(
+						R.string.warning_less_than_20mb_free, free / 1024));
 			}
 			showYesNoDialog(msg.toString(),
 					new DialogInterface.OnClickListener() {

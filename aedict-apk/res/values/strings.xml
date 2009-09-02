@@ -25,7 +25,7 @@
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="cleanup">Cleanup</string>
-    <string name="warning_less_than_20mb_free"> Warning: there is less than 20MB of free space on the sd card. The download will most probably fail</string>
+    <string name="warning_less_than_20mb_free"> Warning: there is less than 20MB of free space on the sd card (%d kb). The download will most probably fail.</string>
     <string name="edict_missing_download">The EDict dictionary is missing. Do you wish to download it now?</string>
     <string name="downloading_edict">Downloading EDict</string>
     <string name="interrupted">Interrupted</string>
