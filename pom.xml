@@ -253,5 +253,9 @@ org.eclipse.jdt.core.compiler.source=1.5
 			</build>
 		</profile>
 	</profiles>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 </project>
 
