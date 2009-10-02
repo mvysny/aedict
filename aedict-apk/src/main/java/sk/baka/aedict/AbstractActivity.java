@@ -20,28 +20,20 @@ package sk.baka.aedict;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.TextView;
 
 /**
- * Shows the About dialog.
+ * Properly initializes the application.
  * 
  * @author Martin Vysny
  */
-public final class AboutActivity extends AbstractActivity {
+public abstract class AbstractActivity extends Activity {
 	@Override
-	protected void onCreate(Bundle icicle) {
-		super.onCreate(icicle);
-		setContentView(R.layout.about);
-		final TextView appNameText = (TextView) findViewById(R.id.aboutAppName);
-		final String appName = getAppName();
-		appNameText.setText(appName);
-	}
-
-	private String getAppName() {
-		final StringBuilder b = new StringBuilder();
-		b.append(getString(R.string.app_name));
-		b.append(" v");
-		b.append(AedictApp.getVersion());
-		return b.toString();
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		try {
+			JpUtils.initialize(getClassLoader());
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 }

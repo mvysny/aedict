@@ -20,7 +20,6 @@ package sk.baka.aedict;
 
 import java.io.File;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -43,15 +42,10 @@ import android.widget.Toast;
  * 
  * @author Martin Vysny
  */
-public class MainActivity extends Activity {
+public class MainActivity extends AbstractActivity {
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		try {
-			JpUtils.initialize(getClassLoader());
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}
 		setContentView(R.layout.main);
 		final Button jpSearch = (Button) findViewById(R.id.jpSearch);
 		final EditText jpSearchEdit = (EditText) findViewById(R.id.jpSearchEdit);
