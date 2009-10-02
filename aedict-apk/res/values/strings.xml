@@ -19,7 +19,7 @@
 <resources>
     <string name="nothing_to_search_for">Nothing to search for</string>
     <string name="no_results">No results</string>
-    <string name="searchFailed">Failed to perform search: </string>
+    <string name="searchFailed">Failed to perform search: %s</string>
     <string name="failed_to_clean_files">Failed to clean the files: </string>
     <string name="data_files_removed">Data files were removed</string>
     <string name="no">No</string>
@@ -44,4 +44,5 @@
     <string name="search">Search</string>
     <string name="englishSearch">English search</string>
     <string name="enterWordOrExpression">Enter word or expression</string>
+    <string name="entryDetail">Entry detail</string>
 </resources>

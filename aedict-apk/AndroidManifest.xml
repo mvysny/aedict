@@ -28,6 +28,7 @@
 		</activity>
 		<activity android:name=".ResultActivity" android:label="@string/searchResults"/>
 		<activity android:name=".AboutActivity" android:label="@string/aboutCaption"/>
+		<activity android:name=".EntryDetailActivity" android:label="@string/entryDetail"/>
 	</application>
 	<uses-sdk android:minSdkVersion="3" />
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>

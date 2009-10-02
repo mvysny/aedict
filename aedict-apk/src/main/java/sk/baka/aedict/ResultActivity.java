@@ -35,9 +35,12 @@ import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.TopDocs;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 /**
  * Performs a search and shows search result.
@@ -46,31 +49,43 @@ import android.widget.ArrayAdapter;
  */
 public class ResultActivity extends ListActivity {
 
+	private List<String> model;
+	private boolean isModelValid = false;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		List<String> list;
-		final SearchQuery query = SearchQuery.fromIntent(getIntent())
-				.toLowerCase();
+		final SearchQuery query = SearchQuery.fromIntent(getIntent()).toLowerCase();
 		setTitle(AedictApp.format(R.string.searchResultsFor, prettyPrintQuery(query)));
 		if (MiscUtils.isBlank(query.query)) {
 			// nothing to search for
-			list = Collections.singletonList(getString(R.string.nothing_to_search_for));
+			model = Collections.singletonList(getString(R.string.nothing_to_search_for));
 		} else {
 			try {
-				list = performLuceneSearch(query);
+				model = performLuceneSearch(query);
+				if (!model.isEmpty()) {
+					isModelValid = true;
+				}
 			} catch (Exception ex) {
-				Log.e(ResultActivity.class.getSimpleName(),
-						"Failed to perform search", ex);
-				list = Collections.singletonList(AedictApp.format(
-						R.string.searchFailed, ex.toString()));
+				Log.e(ResultActivity.class.getSimpleName(), "Failed to perform search", ex);
+				model = Collections.singletonList(AedictApp.format(R.string.searchFailed, ex.toString()));
 			}
-			if (list.isEmpty()) {
-				list = Collections.singletonList(getString(R.string.no_results));
+			if (model.isEmpty()) {
+				model = Collections.singletonList(getString(R.string.no_results));
 			}
 		}
-		setListAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, list));
+		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, model));
+	}
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		if (!isModelValid) {
+			return;
+		}
+		final String entry = model.get(position);
+		final Intent intent = new Intent(this, EntryDetailActivity.class);
+		intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, entry);
+		startActivity(intent);
 	}
 
 	private String prettyPrintQuery(SearchQuery query) {
@@ -87,15 +102,12 @@ public class ResultActivity extends ListActivity {
 		return sb.toString();
 	}
 
-	private List<String> performLuceneSearch(final SearchQuery query)
-			throws IOException, ParseException {
+	private List<String> performLuceneSearch(final SearchQuery query) throws IOException, ParseException {
 		final List<String> r = new ArrayList<String>();
-		final IndexReader reader = IndexReader
-				.open(DownloadEdictTask.LUCENE_INDEX);
+		final IndexReader reader = IndexReader.open(DownloadEdictTask.LUCENE_INDEX);
 		try {
 			final Searcher searcher = new IndexSearcher(reader);
-			final QueryParser parser = new QueryParser("contents",
-					new StandardAnalyzer());
+			final QueryParser parser = new QueryParser("contents", new StandardAnalyzer());
 			final Query parsedQuery = parser.parse(query.getLuceneQuery());
 			final TopDocs result = searcher.search(parsedQuery, null, 100);
 			for (final ScoreDoc sd : result.scoreDocs) {
