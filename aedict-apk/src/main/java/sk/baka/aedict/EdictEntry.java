@@ -73,7 +73,11 @@ public final class EdictEntry {
 		if (firstSlash < 0) {
 			throw new ParseException("Failed to parse " + edictEntry + ": missing slash", 0);
 		}
-		final String englishPart = edictEntry.substring(firstSlash + 1).trim();
+		String englishPart = edictEntry.substring(firstSlash + 1).trim();
+		while (englishPart.endsWith("/")) {
+			// drop trailing slashes
+			englishPart = englishPart.substring(0, englishPart.length() - 1);
+		}
 		final String jpPart = edictEntry.substring(0, firstSlash).trim();
 		final int openSquareBracket = jpPart.indexOf('[');
 		final String kanji;

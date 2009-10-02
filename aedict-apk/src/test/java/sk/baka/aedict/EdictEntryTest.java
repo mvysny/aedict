@@ -43,6 +43,14 @@ public class EdictEntryTest {
 		assertEquals("bbb", e.english);
 	}
 
+	@Test
+	public void parserDropsTrailingSlashes() throws ParseException {
+		final EdictEntry e = EdictEntry.parse("aaa [ccc] / bbb//");
+		assertEquals("aaa", e.kanji);
+		assertEquals("ccc", e.reading);
+		assertEquals("bbb", e.english);
+	}
+
 	@Test(expected = ParseException.class)
 	public void simpleUnsuccessfullParse() throws ParseException {
 		EdictEntry.parse("aaa");
