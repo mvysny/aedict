@@ -89,14 +89,7 @@ public class MainActivity extends Activity {
 		public void onClick(View v) {
 			final EditText jpSearchEdit = (EditText) findViewById(R.id.jpSearchEdit);
 			final CheckBox jpExactMatch = (CheckBox) findViewById(R.id.jpExactMatch);
-			final SearchQuery q = new SearchQuery();
-			q.isJapanese = true;
-			final String romaji = jpSearchEdit.getText().toString();
-			q.query = new String[] { JpUtils.toHiragana(romaji),
-					JpUtils.toKatakana(romaji) };
-			q.matcher = jpExactMatch.isChecked() ? MatcherEnum.ExactMatchEng
-					: MatcherEnum.SubstringMatch;
-			performSearch(q);
+			new SearchUtils(MainActivity.this).searchForJapan(jpSearchEdit.getText().toString(), jpExactMatch.isChecked());
 		}
 
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -110,24 +103,13 @@ public class MainActivity extends Activity {
 		public void onClick(View v) {
 			final EditText engSearchEdit = (EditText) findViewById(R.id.engSearchEdit);
 			final CheckBox engExactMatch = (CheckBox) findViewById(R.id.engExactMatch);
-			final SearchQuery q = new SearchQuery();
-			q.isJapanese = false;
-			q.query = new String[] { engSearchEdit.getText().toString() };
-			q.matcher = engExactMatch.isChecked() ? MatcherEnum.ExactMatchEng
-					: MatcherEnum.SubstringMatch;
-			performSearch(q);
+			new SearchUtils(MainActivity.this).searchForEnglish(engSearchEdit.getText().toString(), engExactMatch.isChecked());
 		}
 
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			onClick(v);
 			return true;
 		}
-	}
-
-	private void performSearch(final SearchQuery query) {
-		final Intent intent = new Intent(this, ResultActivity.class);
-		query.putTo(intent);
-		startActivity(intent);
 	}
 
 	@Override
