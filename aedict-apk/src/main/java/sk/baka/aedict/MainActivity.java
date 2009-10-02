@@ -47,62 +47,24 @@ public class MainActivity extends AbstractActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		final Button jpSearch = (Button) findViewById(R.id.jpSearch);
-		final EditText jpSearchEdit = (EditText) findViewById(R.id.jpSearchEdit);
-		jpSearchEdit.setOnEditorActionListener(new SearchJpText());
-		jpSearch.setOnClickListener(new SearchJpText());
-		final Button engSearch = (Button) findViewById(R.id.engSearch);
-		final EditText engSearchEdit = (EditText) findViewById(R.id.engSearchEdit);
-		engSearchEdit.setOnEditorActionListener(new SearchEngText());
-		engSearch.setOnClickListener(new SearchEngText());
+		final SearchUtils utils = new SearchUtils(this);
+		utils.registerSearch(R.id.jpExactMatch, R.id.jpSearchEdit, false, R.id.jpSearch, true);
+		utils.registerSearch(R.id.engExactMatch, R.id.engSearchEdit, false, R.id.engSearch, false);
 		// check for dictionary file
 		if (!DownloadEdictTask.isComplete()) {
 			final StatFs stats = new StatFs("/sdcard");
-			final long free = ((long)stats.getBlockSize()) * stats.getAvailableBlocks();
-			final StringBuilder msg = new StringBuilder(
-					getString(R.string.edict_missing_download));
+			final long free = ((long) stats.getBlockSize()) * stats.getAvailableBlocks();
+			final StringBuilder msg = new StringBuilder(getString(R.string.edict_missing_download));
 			if (free < 20 * 1000 * 1000) {
 				msg.append('\n');
-				msg.append(AedictApp.format(
-						R.string.warning_less_than_20mb_free, free / 1024));
+				msg.append(AedictApp.format(R.string.warning_less_than_20mb_free, free / 1024));
 			}
-			showYesNoDialog(msg.toString(),
-					new DialogInterface.OnClickListener() {
-
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.dismiss();
-							new DownloadEdictTask(MainActivity.this).execute();
-						}
-
-					});
-		}
-	}
-
-	private class SearchJpText implements TextView.OnEditorActionListener,
-			View.OnClickListener {
-		public void onClick(View v) {
-			final EditText jpSearchEdit = (EditText) findViewById(R.id.jpSearchEdit);
-			final CheckBox jpExactMatch = (CheckBox) findViewById(R.id.jpExactMatch);
-			new SearchUtils(MainActivity.this).searchForJapan(jpSearchEdit.getText().toString(), jpExactMatch.isChecked());
-		}
-
-		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-			onClick(v);
-			return true;
-		}
-	}
-
-	private class SearchEngText implements TextView.OnEditorActionListener,
-			View.OnClickListener {
-		public void onClick(View v) {
-			final EditText engSearchEdit = (EditText) findViewById(R.id.engSearchEdit);
-			final CheckBox engExactMatch = (CheckBox) findViewById(R.id.engExactMatch);
-			new SearchUtils(MainActivity.this).searchForEnglish(engSearchEdit.getText().toString(), engExactMatch.isChecked());
-		}
-
-		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-			onClick(v);
-			return true;
+			showYesNoDialog(msg.toString(), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					new DownloadEdictTask(MainActivity.this).execute();
+				}
+			});
 		}
 	}
 
@@ -122,8 +84,7 @@ public class MainActivity extends AbstractActivity {
 		item2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
 			public boolean onMenuItemClick(MenuItem item) {
-				final Intent intent = new Intent(MainActivity.this,
-						AboutActivity.class);
+				final Intent intent = new Intent(MainActivity.this, AboutActivity.class);
 				startActivity(intent);
 				return true;
 			}
@@ -131,18 +92,16 @@ public class MainActivity extends AbstractActivity {
 		return true;
 	}
 
-	private void showYesNoDialog(final String message,
-			final DialogInterface.OnClickListener yesListener) {
+	private void showYesNoDialog(final String message, final DialogInterface.OnClickListener yesListener) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(message);
 		builder.setPositiveButton(R.string.yes, yesListener);
-		builder.setNegativeButton(R.string.no,
-				new DialogInterface.OnClickListener() {
+		builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-					}
-				});
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
 		builder.create().show();
 	}
 
@@ -165,24 +124,19 @@ public class MainActivity extends AbstractActivity {
 	}
 
 	private void cleanup() {
-		showYesNoDialog(AedictApp.format(R.string.deleteEdictFiles, MiscUtils
-				.getLength(new File(DownloadEdictTask.BASE_DIR)) / 1024),
-				new DialogInterface.OnClickListener() {
+		showYesNoDialog(AedictApp.format(R.string.deleteEdictFiles, MiscUtils.getLength(new File(DownloadEdictTask.BASE_DIR)) / 1024), new DialogInterface.OnClickListener() {
 
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-						try {
-							MiscUtils.deleteDir(new File(
-									DownloadEdictTask.BASE_DIR));
-							showInfoDialog(R.string.data_files_removed);
-						} catch (Exception ex) {
-							Log.e(MainActivity.class.getSimpleName(), ex
-									.toString(), ex);
-							showErrorDialog(getString(R.string.failed_to_clean_files)
-									+ ex);
-						}
-					}
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				try {
+					MiscUtils.deleteDir(new File(DownloadEdictTask.BASE_DIR));
+					showInfoDialog(R.string.data_files_removed);
+				} catch (Exception ex) {
+					Log.e(MainActivity.class.getSimpleName(), ex.toString(), ex);
+					showErrorDialog(getString(R.string.failed_to_clean_files) + ex);
+				}
+			}
 
-				});
+		});
 	}
 }
