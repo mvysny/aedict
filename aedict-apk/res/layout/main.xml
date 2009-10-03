@@ -48,6 +48,6 @@
 			android:layout_height="wrap_content" android:text="@string/search"
 			android:id="@+id/engSearch"></Button>
 	</LinearLayout>
-<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Configuration"></TextView>
-<CheckBox android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="Show icon in notification bar" android:id="@+id/cfgNotifBar"></CheckBox>
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/configuration"></TextView>
+<CheckBox android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="@string/show_icon_in_notification_bar" android:id="@+id/cfgNotifBar"></CheckBox>
 </LinearLayout>

@@ -125,7 +125,7 @@ public class ResultActivity extends ListActivity {
 			if (isFirst) {
 				isFirst = false;
 			} else {
-				sb.append("/");
+				sb.append('/');
 			}
 			sb.append(q);
 		}
