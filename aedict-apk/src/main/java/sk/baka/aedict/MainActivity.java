@@ -21,6 +21,10 @@ package sk.baka.aedict;
 import java.io.File;
 
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,6 +33,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 /**
@@ -60,6 +66,13 @@ public class MainActivity extends AbstractActivity {
 				}
 			});
 		}
+		final CheckBox cfgNotifBar = (CheckBox) findViewById(R.id.cfgNotifBar);
+		cfgNotifBar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				showHideNotification();
+			}
+		});
 	}
 
 	@Override
@@ -132,5 +145,22 @@ public class MainActivity extends AbstractActivity {
 			}
 
 		});
+	}
+
+	private static final int NOTIFICATION_ID = 1;
+
+	private void showHideNotification() {
+		final CheckBox cb = (CheckBox) findViewById(R.id.cfgNotifBar);
+		final boolean isNotification = cb.isChecked();
+		final NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		if (!isNotification) {
+			nm.cancel(NOTIFICATION_ID);
+			return;
+		}
+		final Notification notification = new Notification(R.drawable.notification, null, 0);
+		final PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+		notification.setLatestEventInfo(this, "Aedict", "A japanese dictionary", contentIntent);
+		notification.flags = Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+		nm.notify(NOTIFICATION_ID, notification);
 	}
 }
