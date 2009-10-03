@@ -42,7 +42,7 @@ public class EntryDetailActivity extends AbstractActivity {
 			throw new RuntimeException(e);
 		}
 		final EditText kanjiSearchEdit = (EditText) findViewById(R.id.kanjiSearchEdit);
-		kanjiSearchEdit.setText(entry.kanji);
+		kanjiSearchEdit.setText(entry.kanji != null ? entry.kanji : entry.reading);
 		final EditText readingSearchEdit = (EditText) findViewById(R.id.readingSearchEdit);
 		readingSearchEdit.setText(JpUtils.toRomaji(entry.reading));
 		final EditText englishSearchEdit = (EditText) findViewById(R.id.englishSearchEdit);
