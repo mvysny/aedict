@@ -43,6 +43,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.TwoLineListItem;
 
 /**
  * Performs a search and shows search result.
@@ -83,6 +84,7 @@ public class ResultActivity extends ListActivity {
 				if (convertView == null) {
 					convertView = getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
 				}
+				final TwoLineListItem view = (TwoLineListItem) convertView;
 				String text1 = "";
 				String text2 = model.get(position);
 				if (isModelValid) {
@@ -98,8 +100,8 @@ public class ResultActivity extends ListActivity {
 						// do nothing
 					}
 				}
-				((TextView) convertView.findViewById(android.R.id.text1)).setText(text1);
-				((TextView) convertView.findViewById(android.R.id.text2)).setText(text2);
+				view.getText1().setText(text1);
+				view.getText2().setText(text2);
 				return convertView;
 			}
 
