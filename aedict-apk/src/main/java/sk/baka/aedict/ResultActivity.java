@@ -39,8 +39,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 /**
  * Performs a search and shows search result.
@@ -74,7 +76,34 @@ public class ResultActivity extends ListActivity {
 				model = Collections.singletonList(getString(R.string.no_results));
 			}
 		}
-		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, model));
+		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_2, model) {
+
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				if (convertView == null) {
+					convertView = getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
+				}
+				String text1 = "";
+				String text2 = model.get(position);
+				if (isModelValid) {
+					try {
+						final EdictEntry ee = EdictEntry.parse(text2);
+						if (ee.kanji == null) {
+							text1 = ee.reading;
+						} else {
+							text1 = ee.kanji + "  -  " + ee.reading;
+						}
+						text2 = ee.english;
+					} catch (java.text.ParseException e) {
+						// do nothing
+					}
+				}
+				((TextView) convertView.findViewById(android.R.id.text1)).setText(text1);
+				((TextView) convertView.findViewById(android.R.id.text2)).setText(text2);
+				return convertView;
+			}
+
+		});
 	}
 
 	@Override
