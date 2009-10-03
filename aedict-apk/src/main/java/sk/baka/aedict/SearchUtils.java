@@ -19,7 +19,9 @@
 package sk.baka.aedict;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.text.ClipboardManager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -152,5 +154,26 @@ public final class SearchUtils {
 			onClick(v);
 			return true;
 		}
+	}
+
+	/**
+	 * Configures given button to copy a text from given edit to the global
+	 * clipboard.
+	 * 
+	 * @param copyButton
+	 *            copies the text to the clipboard on this button press
+	 * @param textView
+	 *            copies the text from this {@link TextView}
+	 */
+	public void setupCopyButton(final int copyButton, final int textView) {
+		final Button btn = (Button) activity.findViewById(copyButton);
+		final TextView text = (TextView) activity.findViewById(textView);
+		btn.setOnClickListener(new View.OnClickListener() {
+
+			public void onClick(View v) {
+				final ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+				cm.setText(text.getText());
+			}
+		});
 	}
 }

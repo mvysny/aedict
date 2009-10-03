@@ -49,4 +49,5 @@
     <string name="englishSearch">English search</string>
     <string name="enterWordOrExpression">Enter word or expression</string>
     <string name="entryDetail">Entry detail</string>
+    <string name="copy">Copy</string>
 </resources>

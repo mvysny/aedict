@@ -51,6 +51,9 @@ public class EntryDetailActivity extends AbstractActivity {
 		utils.registerSearch(R.id.kanjiExactMatch, R.id.kanjiSearchEdit, true, R.id.kanjiSearch, false);
 		utils.registerSearch(R.id.readingExactMatch, R.id.readingSearchEdit, true, R.id.readingSearch, true);
 		utils.registerSearch(R.id.englishExactMatch, R.id.englishSearchEdit, true, R.id.englishSearch, false);
+		utils.setupCopyButton(R.id.kanjiCopy, R.id.kanjiSearchEdit);
+		utils.setupCopyButton(R.id.readingCopy, R.id.readingSearchEdit);
+		utils.setupCopyButton(R.id.englishCopy, R.id.englishSearchEdit);
 	}
 
 	/**
