@@ -4,6 +4,20 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
+		<release version="0.2" date="22. August 2009">
+			<action dev="vyzivus" type="update">
+				The search result list is now sorted.
+			</action>
+			<action dev="vyzivus" type="fix" issue="3">
+				Added copy-paste support
+			</action>
+			<action dev="vyzivus" type="fix" issue="1">
+				Fixed bug with incorrect free space computation
+			</action>
+			<action dev="vyzivus" type="add">
+				Added the "About" activity.
+			</action>
+		</release>
 		<release version="0.1" date="22. August 2009">
 			<action dev="vyzivus" type="add">
 				Initial release.
