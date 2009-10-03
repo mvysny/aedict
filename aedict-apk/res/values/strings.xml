@@ -18,7 +18,7 @@
  -->
 <resources>
     <string name="configuration">Configuration</string>
-    <string name="show_icon_in_notification_bar">Show icon in notification bar</string>
+    <string name="always_available">Aedict available at all times</string>
     <string name="kanjiEntryText">Kanji (tip: to select and/or copy-paste just long-click the edit box. To search for a part of a word just select it and press search)</string>
     <string name="entryReadingText">Reading (when searching, romaji is automatically translated to both hiragana and katakana)</string>
     <string name="nothing_to_search_for">Nothing to search for</string>
