@@ -17,6 +17,8 @@
 	android:layout_height="fill_parent">
 	<TextView android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:text="Kanji (tip: to select and/or copy-paste just long-click the edit box. To search for a part of a word just select it and press search)"></TextView>
+	<CheckBox android:layout_height="wrap_content" android:id="@+id/kanjiExactMatch"
+		android:text="@string/exactMatch" android:layout_width="fill_parent"></CheckBox>
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:orientation="horizontal">
 		<EditText android:layout_height="wrap_content" android:id="@+id/kanjiSearchEdit"
@@ -29,6 +31,8 @@
 	</LinearLayout>
 	<TextView android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:text="Reading (when searching, romaji is automatically translated to both hiragana and katakana)"></TextView>
+	<CheckBox android:layout_height="wrap_content" android:id="@+id/readingExactMatch"
+		android:text="@string/exactMatch" android:layout_width="fill_parent"></CheckBox>
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:orientation="horizontal">
 		<EditText android:layout_height="wrap_content" android:id="@+id/readingSearchEdit"
@@ -41,6 +45,8 @@
 	</LinearLayout>
 	<TextView android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:text="English"></TextView>
+	<CheckBox android:layout_height="wrap_content" android:id="@+id/englishExactMatch"
+		android:text="@string/exactMatch" android:layout_width="fill_parent"></CheckBox>
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:orientation="horizontal">
 		<EditText android:layout_height="wrap_content" android:id="@+id/englishSearchEdit"
