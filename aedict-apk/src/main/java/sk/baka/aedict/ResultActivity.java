@@ -67,6 +67,7 @@ public class ResultActivity extends ListActivity {
 				model = performLuceneSearch(query);
 				if (!model.isEmpty()) {
 					isModelValid = true;
+					Collections.sort(model);
 				}
 			} catch (Exception ex) {
 				Log.e(ResultActivity.class.getSimpleName(), "Failed to perform search", ex);
