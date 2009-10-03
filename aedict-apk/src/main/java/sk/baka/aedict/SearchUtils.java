@@ -126,10 +126,18 @@ public final class SearchUtils {
 			final EditText searchEdit = (EditText) activity.findViewById(searchEditText);
 			final CheckBox exactMatch = (CheckBox) activity.findViewById(isExactCheckBox);
 			String query = searchEdit.getText().toString();
-			if (handleSelections && (searchEdit.getSelectionStart() >= 0) && (searchEdit.getSelectionEnd() >= 0)) {
-				String selected = query.substring(searchEdit.getSelectionStart(), searchEdit.getSelectionEnd()).trim();
-				if (selected.length() > 0) {
-					query = selected;
+			if (handleSelections) {
+				int start = searchEdit.getSelectionStart();
+				int end = searchEdit.getSelectionEnd();
+				if ((start >= 0) && (end >= 0)) {
+					if (start > end) {
+						start = searchEdit.getSelectionEnd();
+						end = searchEdit.getSelectionStart();
+					}
+					String selected = query.substring(start, end).trim();
+					if (selected.length() > 0) {
+						query = selected;
+					}
 				}
 			}
 			final boolean isExact = exactMatch.isChecked();
