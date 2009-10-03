@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Contains utility methods for searching with Lucene.
@@ -173,6 +174,8 @@ public final class SearchUtils {
 			public void onClick(View v) {
 				final ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
 				cm.setText(text.getText());
+				final Toast toast = Toast.makeText(activity, AedictApp.format(R.string.copied, text.getText()), Toast.LENGTH_SHORT);
+				toast.show();
 			}
 		});
 	}
