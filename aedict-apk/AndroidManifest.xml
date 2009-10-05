@@ -21,7 +21,7 @@
 	<application android:icon="@drawable/aedict_icon"
 		android:label="@string/app_name" android:name=".AedictApp">
 		<activity android:name=".MainActivity" android:label="@string/app_name">
-			<intent-filter>
+	 		<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
@@ -29,6 +29,7 @@
 		<activity android:name=".ResultActivity" android:label="@string/searchResults"/>
 		<activity android:name=".AboutActivity" android:label="@string/aboutCaption"/>
 		<activity android:name=".EntryDetailActivity" android:label="@string/entryDetail"/>
+		<activity android:name=".KanaTableActivity" android:label="@string/kanaTable"/>
 	</application>
 	<uses-sdk android:minSdkVersion="3" />
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
