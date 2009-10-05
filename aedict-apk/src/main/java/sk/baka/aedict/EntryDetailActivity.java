@@ -21,6 +21,7 @@ package sk.baka.aedict;
 import java.text.ParseException;
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.widget.EditText;
 
 /**
@@ -61,4 +62,9 @@ public class EntryDetailActivity extends AbstractActivity {
 	 */
 	public static final String INTENTKEY_ENTRY = "entry";
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		addActivityLauncher(menu, R.string.showkanaTable, R.drawable.kanamenuitem, KanaTableActivity.class);
+		return true;
+	}
 }

@@ -86,16 +86,8 @@ public class MainActivity extends AbstractActivity {
 				return true;
 			}
 		});
-		final MenuItem item2 = menu.add(R.string.aboutCaption);
-		item2.setIcon(android.R.drawable.ic_menu_info_details);
-		item2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-
-			public boolean onMenuItemClick(MenuItem item) {
-				final Intent intent = new Intent(MainActivity.this, AboutActivity.class);
-				startActivity(intent);
-				return true;
-			}
-		});
+		addActivityLauncher(menu, R.string.aboutCaption, android.R.drawable.ic_menu_info_details, AboutActivity.class);
+		addActivityLauncher(menu, R.string.showkanaTable, R.drawable.kanamenuitem, KanaTableActivity.class);
 		return true;
 	}
 

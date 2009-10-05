@@ -38,6 +38,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -152,5 +153,11 @@ public class ResultActivity extends ListActivity {
 			reader.close();
 		}
 		return r;
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		AbstractActivity.addActivityLauncher(this, menu, R.string.showkanaTable, R.drawable.kanamenuitem, KanaTableActivity.class);
+		return true;
 	}
 }

@@ -52,4 +52,5 @@
     <string name="copy">Copy</string>
     <string name="copied">Copied "%s" to the clipboard</string>
     <string name="kanaTable">Kana Table</string>
+    <string name="showkanaTable">Show kana table</string>
 </resources>

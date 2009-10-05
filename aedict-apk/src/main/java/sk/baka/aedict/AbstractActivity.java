@@ -19,7 +19,11 @@
 package sk.baka.aedict;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 /**
  * Properly initializes the application.
@@ -35,5 +39,22 @@ public abstract class AbstractActivity extends Activity {
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
+	}
+
+	protected final void addActivityLauncher(final Menu menu, final int caption, final int icon, final Class<? extends Activity> activity) {
+		addActivityLauncher(this, menu, caption, icon, activity);
+	}
+
+	public static void addActivityLauncher(final Context context, final Menu menu, final int caption, final int icon, final Class<? extends Activity> activity) {
+		final MenuItem item2 = menu.add(caption);
+		item2.setIcon(icon);
+		item2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+			public boolean onMenuItemClick(MenuItem item) {
+				final Intent intent = new Intent(context, activity);
+				context.startActivity(intent);
+				return true;
+			}
+		});
 	}
 }
