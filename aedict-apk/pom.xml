@@ -83,6 +83,16 @@
 				<extensions>true</extensions>
 			</plugin>
 			<plugin>
+				<groupId>org.jvending.masa.plugins</groupId>
+				<artifactId>maven-dx-plugin</artifactId>
+				<version>${masa.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<!-- fixes OutOfMemory errors on MacOSX while building dex. Issue http://code.google.com/p/aedict/issues/detail?id=2 -->
+					<jvmArguments><jvmArgument>-Xmx512m</jvmArgument></jvmArguments>
+				</configuration>
+			</plugin>
+			<plugin>
 			   <groupId>org.jvending.masa.plugins</groupId>
 			   <artifactId>maven-toolchains-plugin</artifactId>
 			   <version>${masa.version}</version>
