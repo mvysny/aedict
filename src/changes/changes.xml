@@ -5,6 +5,12 @@
 	</properties>
 	<body>
 		<release version="0.2" date="22. August 2009">
+			<action dev="vyzivus" type="add">
+				Added a hiragana/katakana table.
+			</action>
+			<action dev="vyzivus" type="fix" issue="2">
+				fixes OutOfMemory errors on MacOSX while building dex.
+			</action>
 			<action dev="vyzivus" type="update">
 				The search result list is now sorted.
 			</action>
