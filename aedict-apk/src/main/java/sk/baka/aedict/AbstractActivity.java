@@ -21,7 +21,6 @@ package sk.baka.aedict;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -31,20 +30,36 @@ import android.view.MenuItem;
  * @author Martin Vysny
  */
 public abstract class AbstractActivity extends Activity {
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		try {
-			JpUtils.initialize(getClassLoader());
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}
-	}
-
+	/**
+	 * Adds a menu item to given menu which launches given activity.
+	 * 
+	 * @param menu
+	 *            the menu
+	 * @param caption
+	 *            the menu item caption
+	 * @param icon
+	 *            the menu item icon
+	 * @param activity
+	 *            the activity to launch.
+	 */
 	protected final void addActivityLauncher(final Menu menu, final int caption, final int icon, final Class<? extends Activity> activity) {
 		addActivityLauncher(this, menu, caption, icon, activity);
 	}
 
+	/**
+	 * Adds a menu item to given menu which launches given activity.
+	 * 
+	 * @param context
+	 *            the owning context
+	 * @param menu
+	 *            the menu
+	 * @param caption
+	 *            the menu item caption
+	 * @param icon
+	 *            the menu item icon
+	 * @param activity
+	 *            the activity to launch.
+	 */
 	public static void addActivityLauncher(final Context context, final Menu menu, final int caption, final int icon, final Class<? extends Activity> activity) {
 		final MenuItem item2 = menu.add(caption);
 		item2.setIcon(icon);

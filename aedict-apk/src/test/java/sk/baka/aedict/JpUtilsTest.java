@@ -18,11 +18,8 @@
 
 package sk.baka.aedict;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -30,11 +27,6 @@ import org.junit.Test;
  * @author Martin Vysny
  */
 public class JpUtilsTest {
-
-	@BeforeClass
-	public static void initialize() throws IOException{
-		JpUtils.initialize(Thread.currentThread().getContextClassLoader());
-	}
 	
 	/**
 	 * Test method for {@link sk.baka.aedict.JpUtils#toHiragana(java.lang.String)}.

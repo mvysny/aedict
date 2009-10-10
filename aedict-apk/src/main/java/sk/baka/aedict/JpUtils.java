@@ -18,13 +18,11 @@
 
 package sk.baka.aedict;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -38,40 +36,28 @@ public final class JpUtils {
 		throw new AssertionError();
 	}
 
+	private static final String TABLE_HIRAGANA="あ=a;い=i;う=u;え=e;お=o;か=ka;き=ki;く=ku;け=ke;こ=ko;きゃ=kya;きゅ=kyu;きょ=kyo;さ=sa;し=shi;す=su;せ=se;そ=so;しゃ=sha;しゅ=shu;しょ=sho;た=ta;ち=chi;つ=tsu;て=te;と=to;ちゃ=cha;ちゅ=chu;ちょ=cho;な=na;に=ni;ぬ=nu;ね=ne;の=no;にゃ=nya;にゅ=nyu;にょ=nyo;は=ha;ひ=hi;ふ=fu;へ=he;ほ=ho;ひゃ=hya;ひゅ=hyu;ひょ=hyo;ま=ma;み=mi;む=mu;め=me;も=mo;みゃ=mya;みゅ=myu;みょ=myo;や=ya;ゆ=yu;よ=yo;ら=ra;り=ri;る=ru;れ=re;ろ=ro;りゃ=rya;りゅ=ryu;りょ=ryo;わ=wa;ゐ=wi;ゑ=we;を=wo;くゎ=kwa;ん=n,nn;が=ga;ぎ=gi;ぐ=gu;げ=ge;ご=go;ぎゃ=gya;ぎゅ=gyu;ぎょ=gyo;ざ=za;じ=ji;ず=zu;ぜ=ze;ぞ=zo;じゃ=ja;じゅ=ju;じょ=jo;だ=da;ぢ=xji;づ=xzu;で=de;ど=do;ぢゃ=xja;ぢゅ=xju;ぢょ=xjo;ば=ba;び=bi;ぶ=bu;べ=be;ぼ=bo;びゃ=bya;びゅ=byu;びょ=byo;ぱ=pa;ぴ=pi;ぷ=pu;ぺ=pe;ぽ=po;ぴゃ=pya;ぴゅ=pyu;ぴょ=pyo;ゔ=vu;ぐゎ=gwa";
+	private static final String TABLE_KATAKANA="ア=a;イ=i;ウ=u;エ=e;オ=o;カ=ka;キ=ki;ク=ku;ケ=ke;コ=ko;キャ=kya;キュ=kyu;キョ=kyo;サ=sa;シ=shi;ス=su;セ=se;ソ=so;シャ=sha;シュ=shu;ショ=sho;タ=ta;チ=chi;ツ=tsu;テ=te;ト=to;チャ=cha;チュ=chu;チョ=cho;ナ=na;ニ=ni;ヌ=nu;ネ=ne;ノ=no;ニャ=nya;ニュ=nyu;ニョ=nyo;ハ=ha;ヒ=hi;フ=fu;ヘ=he;ホ=ho;ヒャ=hya;ヒュ=hyu;ヒョ=hyo;マ=ma;ミ=mi;ム=mu;メ=me;モ=mo;ミャ=mya;ミュ=myu;ミョ=myo;ヤ=ya;ユ=yu;ヨ=yo;ラ=ra;リ=ri;ル=ru;レ=re;ロ=ro;リャ=rya;リュ=ryu;リョ=ryo;ワ=wa;ヰ=wi;ヱ=we;ヲ=wo;ン=n,nn;ガ=ga;ギ=gi;グ=gu;ゲ=ge;ゴ=go;ギャ=gya;ギュ=gyu;ギョ=gyo;ザ=za;ジ=ji,dži;ズ=zu;ゼ=ze;ゾ=zo;ジャ=ja;ジュ=ju;ジョ=jo;ダ=da;ヂ=xji;ヅ=xzu;デ=de;ド=do;ヂャ=xja;ヂュ=xju;ヂョ=xjo;バ=ba;ビ=bi;ブ=bu;ベ=be;ボ=bo;ビャ=bya;ビュ=byu;ビョ=byo;パ=pa;ピ=pi;プ=pu;ペ=pe;ポ=po;ピャ=pya;ピュ=pyu;ピョ=pyo";
+	
 	private static final ConcurrentMap<String, String> katakanaToRomaji = new ConcurrentHashMap<String, String>();
 	private static final ConcurrentMap<String, String> hiraganaToRomaji = new ConcurrentHashMap<String, String>();
 	private static final ConcurrentMap<String, String> romajiToKatakana = new ConcurrentHashMap<String, String>();
 	private static final ConcurrentMap<String, String> romajiToHiragana = new ConcurrentHashMap<String, String>();
 
-	/**
-	 * Initializes this class.
-	 * 
-	 * @param cl
-	 *            class-loader to load property files from.
-	 * @throws IOException
-	 *             if shit happens
-	 */
-	public static synchronized void initialize(final ClassLoader cl)
-			throws IOException {
-		if (INITIALIZED) {
-			return;
-		}
-		parse(MiscUtils.openResource("katakana.properties", cl),
+	static {
+		parse(new StringTokenizer(TABLE_KATAKANA, ";"),
 				katakanaToRomaji, romajiToKatakana);
-		parse(MiscUtils.openResource("hiragana.properties", cl),
+		parse(new StringTokenizer(TABLE_HIRAGANA, ";"),
 				hiraganaToRomaji, romajiToHiragana);
-		INITIALIZED = true;
 	}
-
-	private static boolean INITIALIZED = false;
-
-	private static void parse(InputStream kanaStream,
+	
+	private static void parse(final StringTokenizer kanaStream,
 			ConcurrentMap<String, String> kanaToRomaji,
-			ConcurrentMap<String, String> romajiToKana) throws IOException {
-		final Properties mapping = MiscUtils.load(kanaStream);
-		for (final Map.Entry<Object, Object> e : mapping.entrySet()) {
-			final String kana = (String) e.getKey();
-			final String[] romajis = ((String) e.getValue()).split("\\,");
+			ConcurrentMap<String, String> romajiToKana) {
+		for (final Object entry : Collections.list(kanaStream)) {
+			final String[] mapping=((String)entry).split("\\=");
+			final String kana = mapping[0];
+			final String[] romajis = mapping[1].split("\\,");
 			if (kanaToRomaji.put(kana, romajis[0]) != null) {
 				throw new IllegalArgumentException("Mapping for " + kana
 						+ " defined multiple times");
