@@ -216,8 +216,8 @@ org.eclipse.jdt.core.compiler.source=1.5
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
 					<!-- The changes:announcement-generate goal will verify whether the changes.xml file is valid -->
-					<preparationGoals>clean install -P release</preparationGoals>
-					<goals>clean deploy -P release</goals>
+					<preparationGoals>clean install site -P release</preparationGoals>
+					<goals>clean deploy site-deploy -P release</goals>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<username>${google-code.hg.username}</username>
 					<password>${google-code.hg.password}</password>
