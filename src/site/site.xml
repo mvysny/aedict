@@ -34,6 +34,7 @@
 			<item name="About" href="index.html"/>
 			<item name="Download" href="http://code.google.com/p/aedict/downloads/list"/>
 			<item name="What's new" href="changes-report.html"/>
+			<item name="Documentation" href="http://code.google.com/p/aedict/w/list"/>
 		</menu>
 		<menu ref="modules" />
 		<menu ref="reports" />
