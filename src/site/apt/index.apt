@@ -1,0 +1,25 @@
+            ------
+            About
+            ------
+            Martin Vysny
+            ------
+            2009-10-12
+
+About the project
+
+  An english-japanese dictionary for Android which uses Jim Breen's edict data. Does not require japanese keyboard. Works offline. The dictionary data is downloaded automatically. Features:
+  
+  * simple user interface, tested on HTC Magic
+  
+  *  quick search for japanese and english words/phrases
+  
+  []
+
+  Aedict requires Android 1.5 or higher.
+  
+* Credits
+
+  * Martin Vyšný - programming
+
+  []
+

@@ -25,7 +25,7 @@
 	<name>Aedict</name>
 	<inceptionYear>2009</inceptionYear>
 	<description>An english-japanese dictionary which uses Jim Breen's edict data. Does not require japanese keyboard.</description>
-	<url>http://code.google.com/p/aedict</url>
+	<url>http://baka.sk/aedict/</url>
 	<prerequisites>
 		<maven>2.2.0</maven>
 	</prerequisites>
@@ -69,6 +69,10 @@
 	</developers>
 	
 	<distributionManagement>
+        <site>
+            <id>realtime</id>
+            <url>scp://rt.sk/home/moto/public_html/aedict/</url>
+        </site>
         <repository>
             <id>realtime</id>
             <url>scp://rt.sk/home/moto/public_html/maven2</url>
@@ -235,7 +239,7 @@ org.eclipse.jdt.core.compiler.source=1.5
 		 					<toAddresses><toAddress>aedict-users@googlegroups.com</toAddress></toAddresses>
 							<urlDownload>http://code.google.com/p/aedict/downloads/list</urlDownload>
 							<url>${project.url}</url>
-							<issueLinkTemplate>http://code.google.com/a/aedict/issues/detail?id=%ISSUE%</issueLinkTemplate>
+							<issueLinkTemplate>http://code.google.com/p/aedict/issues/detail?id=%ISSUE%</issueLinkTemplate>
 						</configuration>
 						<executions>
 							<execution>
@@ -258,5 +262,86 @@ org.eclipse.jdt.core.compiler.source=1.5
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <links>
+                        <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+                        <link>http://developer.android.com/reference</link>
+                    </links>
+                    <show>package</show>
+                    <quiet>true</quiet>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jxr-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>surefire-report-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>taglist-maven-plugin</artifactId>
+                <configuration>
+                    <tags>
+                        <tag>TODO</tag>
+                        <tag>FIXME</tag>
+                        <tag>@todo</tag>
+                        <tag>XXX</tag>
+                    </tags>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-changes-plugin</artifactId>
+                <configuration>
+                    <issueLinkTemplate>http://code.google.com/p/aedict/issues/detail?id=%ISSUE%</issueLinkTemplate>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <linkXref>true</linkXref>
+                    <sourceEncoding>UTF-8</sourceEncoding>
+                    <targetJdk>1.5</targetJdk>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>1.2</version>
+                <configuration>
+                    <threshold>High</threshold>
+                    <effort>Max</effort>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>project-team</report>
+                            <report>dependencies</report>
+                            <report>dependency-convergence</report>
+                            <report>license</report>
+                            <report>mailing-list</report>
+                            <report>scm</report>
+                            <report>issue-tracking</report>
+                            <report>changes-report</report>
+                            <report>index</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
 
