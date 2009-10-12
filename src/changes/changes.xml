@@ -4,7 +4,16 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
-		<release version="0.2" date="22. August 2009">
+		<release version="0.2" date="12. October 2009">
+			<action dev="vyzivus" type="add" issue="4">
+				Added support for Simeji.
+			</action>
+			<action dev="vyzivus" type="fix" issue="5">
+				The hiragana/katakana table is now stored in a Java source instead of in a property file.
+			</action>
+			<action dev="vyzivus" type="add">
+				Marked as compatible with all screen sizes and Android APIs both 1.5 and 1.6
+			</action>
 			<action dev="vyzivus" type="add">
 				Added a hiragana/katakana table.
 			</action>
