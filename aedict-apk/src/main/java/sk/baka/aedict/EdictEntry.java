@@ -93,4 +93,14 @@ public final class EdictEntry {
 		}
 		return new EdictEntry(kanji, reading, englishPart);
 	}
+
+	/**
+	 * Returns japanese translation. Returns {@link #kanji} if available,
+	 * {@link #reading} otherwise.
+	 * 
+	 * @return a japanese translation, kanji or hiragana/katakana.
+	 */
+	public String getJapanese() {
+		return kanji != null ? kanji : reading;
+	}
 }

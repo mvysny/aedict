@@ -54,12 +54,43 @@ public class ResultActivity extends ListActivity {
 
 	private List<String> model;
 	private boolean isModelValid = false;
+	/**
+	 * true if the activity was invoked from the Simeji keyboard
+	 */
+	private boolean isSimeji = false;
+	private SearchQuery query;
+	private static final String SIMEJI_ACTION_INTERCEPT = "com.adamrocker.android.simeji.ACTION_INTERCEPT";
+	private static final String SIMEJI_INTENTKEY_REPLACE = "replace_key";
+
+	private SearchQuery fromIntent() {
+		final Intent it = getIntent();
+		final SearchQuery result;
+		String action = it.getAction();
+		if (SIMEJI_ACTION_INTERCEPT.equals(action)) {
+			isSimeji = true;
+			result = new SearchQuery();
+			result.matcher = MatcherEnum.ExactMatchEng;
+			String searchFor = it.getStringExtra(SIMEJI_INTENTKEY_REPLACE);
+			if (!MiscUtils.isBlank(searchFor)) {
+				searchFor = searchFor.trim();
+				final String firstChar = searchFor.substring(0, 1);
+				// try to convert the first character to romaji. If the
+				// conversion succeeds then we are searching for a
+				// katakana/hiragana string
+				result.isJapanese = !firstChar.equals(JpUtils.toRomaji(firstChar));
+				result.query = new String[] { searchFor };
+			}
+		} else {
+			result = SearchQuery.fromIntent(getIntent());
+		}
+		return result.toLowerCase();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		final SearchQuery query = SearchQuery.fromIntent(getIntent()).toLowerCase();
-		setTitle(AedictApp.format(R.string.searchResultsFor, prettyPrintQuery(query)));
+		query = fromIntent().toLowerCase();
+		setTitle(AedictApp.format(R.string.searchResultsFor, query.prettyPrintQuery()));
 		if (MiscUtils.isBlank(query.query)) {
 			// nothing to search for
 			model = Collections.singletonList(getString(R.string.nothing_to_search_for));
@@ -82,10 +113,10 @@ public class ResultActivity extends ListActivity {
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
-				if (convertView == null) {
-					convertView = getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
+				TwoLineListItem view = (TwoLineListItem) convertView;
+				if (view == null) {
+					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
 				}
-				final TwoLineListItem view = (TwoLineListItem) convertView;
 				String text1 = "";
 				String text2 = model.get(position);
 				if (isModelValid) {
@@ -98,12 +129,12 @@ public class ResultActivity extends ListActivity {
 						}
 						text2 = ee.english;
 					} catch (java.text.ParseException e) {
-						// do nothing
+						Log.e(ResultActivity.class.getSimpleName(), "Failed to parse edict entry", e);
 					}
 				}
 				view.getText1().setText(text1);
 				view.getText2().setText(text2);
-				return convertView;
+				return view;
 			}
 
 		});
@@ -115,23 +146,22 @@ public class ResultActivity extends ListActivity {
 			return;
 		}
 		final String entry = model.get(position);
-		final Intent intent = new Intent(this, EntryDetailActivity.class);
-		intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, entry);
-		startActivity(intent);
-	}
-
-	private String prettyPrintQuery(SearchQuery query) {
-		final StringBuilder sb = new StringBuilder();
-		boolean isFirst = true;
-		for (final String q : query.query) {
-			if (isFirst) {
-				isFirst = false;
-			} else {
-				sb.append('/');
+		if (isSimeji) {
+			try {
+				final EdictEntry e = EdictEntry.parse(entry);
+				final Intent data = new Intent();
+				final String result = query.isJapanese ? e.english : e.getJapanese();
+				data.putExtra(SIMEJI_INTENTKEY_REPLACE, result);
+				setResult(RESULT_OK, data);
+				finish();
+			} catch (java.text.ParseException e) {
+				Log.e(ResultActivity.class.getSimpleName(), "Failed to parse edict entry", e);
 			}
-			sb.append(q);
+		} else {
+			final Intent intent = new Intent(this, EntryDetailActivity.class);
+			intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, entry);
+			startActivity(intent);
 		}
-		return sb.toString();
 	}
 
 	private List<String> performLuceneSearch(final SearchQuery query) throws IOException, ParseException {

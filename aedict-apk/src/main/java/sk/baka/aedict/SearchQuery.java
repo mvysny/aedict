@@ -119,8 +119,7 @@ public final class SearchQuery implements Serializable {
 	 * @return query instance.
 	 */
 	public static SearchQuery fromIntent(final Intent intent) {
-		return (SearchQuery) intent
-				.getSerializableExtra(INTENTKEY_SEARCH_QUERY);
+		return (SearchQuery) intent.getSerializableExtra(INTENTKEY_SEARCH_QUERY);
 	}
 
 	private static final String INTENTKEY_SEARCH_QUERY = "QUERY";
@@ -134,5 +133,27 @@ public final class SearchQuery implements Serializable {
 	 */
 	public void putTo(Intent intent) {
 		intent.putExtra(INTENTKEY_SEARCH_QUERY, this);
+	}
+
+	/**
+	 * Pretty-prints {@link #query} as query1/query2/...
+	 * 
+	 * @return pretty-printed query.
+	 */
+	public String prettyPrintQuery() {
+		if (query == null) {
+			return "";
+		}
+		final StringBuilder sb = new StringBuilder();
+		boolean isFirst = true;
+		for (final String q : query) {
+			if (isFirst) {
+				isFirst = false;
+			} else {
+				sb.append('/');
+			}
+			sb.append(q);
+		}
+		return sb.toString();
 	}
 }
