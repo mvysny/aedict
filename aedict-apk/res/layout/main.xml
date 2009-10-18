@@ -43,9 +43,4 @@
 	<EditText android:layout_height="wrap_content" android:id="@+id/engSearchEdit"
 		android:layout_width="fill_parent" android:hint="@string/enterWordOrExpression"
 		android:inputType="text" android:imeOptions="actionDone"></EditText>
-	<TextView android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="@string/configuration"></TextView>
-	<CheckBox android:layout_height="wrap_content"
-		android:layout_width="fill_parent" android:text="@string/always_available"
-		android:id="@+id/cfgNotifBar"></CheckBox>
 </LinearLayout>

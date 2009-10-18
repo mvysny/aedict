@@ -21,4 +21,8 @@
         <item>hiragana</item>
         <item>katakana</item>
     </string-array>
+    <string-array name="romanizations">
+        <item>Hepburn</item>
+        <item>Nihon-Shiki</item>
+    </string-array>
 </resources>
