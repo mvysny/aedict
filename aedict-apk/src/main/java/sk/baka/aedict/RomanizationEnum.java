@@ -39,12 +39,28 @@ public enum RomanizationEnum {
 
 		@Override
 		public String getHiraganaTable() {
-			return "あ=a;い=i;う=u;え=e;お=o;か=ka;き=ki;く=ku;け=ke;こ=ko;きゃ=kya;きゅ=kyu;きょ=kyo;さ=sa;し=shi;す=su;せ=se;そ=so;しゃ=sha;しゅ=shu;しょ=sho;た=ta;ち=chi;つ=tsu;て=te;と=to;ちゃ=cha;ちゅ=chu;ちょ=cho;な=na;に=ni;ぬ=nu;ね=ne;の=no;にゃ=nya;にゅ=nyu;にょ=nyo;は=ha;ひ=hi;ふ=fu;へ=he;ほ=ho;ひゃ=hya;ひゅ=hyu;ひょ=hyo;ま=ma;み=mi;む=mu;め=me;も=mo;みゃ=mya;みゅ=myu;みょ=myo;や=ya;ゆ=yu;よ=yo;ら=ra;り=ri;る=ru;れ=re;ろ=ro;りゃ=rya;りゅ=ryu;りょ=ryo;わ=wa;ゐ=wi;ゑ=we;を=wo;くゎ=kwa;ん=n,nn;が=ga;ぎ=gi;ぐ=gu;げ=ge;ご=go;ぎゃ=gya;ぎゅ=gyu;ぎょ=gyo;ざ=za;じ=ji;ず=zu;ぜ=ze;ぞ=zo;じゃ=ja;じゅ=ju;じょ=jo;だ=da;ぢ=xji;づ=xzu;で=de;ど=do;ぢゃ=xja;ぢゅ=xju;ぢょ=xjo;ば=ba;び=bi;ぶ=bu;べ=be;ぼ=bo;びゃ=bya;びゅ=byu;びょ=byo;ぱ=pa;ぴ=pi;ぷ=pu;ぺ=pe;ぽ=po;ぴゃ=pya;ぴゅ=pyu;ぴょ=pyo;ゔ=vu;ぐゎ=gwa";
+			return "あ=a;い=i;う=u;え=e;お=o;か=ka;き=ki;く=ku;け=ke;こ=ko;きゃ=kya;きゅ=kyu;きょ=kyo;さ=sa;し=shi;す=su;せ=se;そ=so;しゃ=sha;しゅ=shu;しょ=sho;た=ta;ち=chi;つ=tsu;て=te;と=to;ちゃ=cha;ちゅ=chu;ちょ=cho;な=na;に=ni;ぬ=nu;ね=ne;の=no;にゃ=nya;にゅ=nyu;にょ=nyo;は=ha;ひ=hi;ふ=fu;へ=he;ほ=ho;ひゃ=hya;ひゅ=hyu;ひょ=hyo;ま=ma;み=mi;む=mu;め=me;も=mo;みゃ=mya;みゅ=myu;みょ=myo;や=ya;ゆ=yu;よ=yo;ら=ra;り=ri;る=ru;れ=re;ろ=ro;りゃ=rya;りゅ=ryu;りょ=ryo;わ=wa;ゐ=wi;ゑ=we;を=wo;ん=n,nn;が=ga;ぎ=gi;ぐ=gu;げ=ge;ご=go;ぎゃ=gya;ぎゅ=gyu;ぎょ=gyo;ざ=za;じ=ji;ず=zu;ぜ=ze;ぞ=zo;じゃ=ja;じゅ=ju;じょ=jo;だ=da;ぢ=xji;づ=xzu;で=de;ど=do;ぢゃ=xja;ぢゅ=xju;ぢょ=xjo;ば=ba;び=bi;ぶ=bu;べ=be;ぼ=bo;びゃ=bya;びゅ=byu;びょ=byo;ぱ=pa;ぴ=pi;ぷ=pu;ぺ=pe;ぽ=po;ぴゃ=pya;ぴゅ=pyu;ぴょ=pyo;ゔ=vu;くゎ=kwa;ぐゎ=gwa";
 		}
 
 		@Override
 		public String getKatakanaTable() {
 			return "ア=a;イ=i;ウ=u;エ=e;オ=o;カ=ka;キ=ki;ク=ku;ケ=ke;コ=ko;キャ=kya;キュ=kyu;キョ=kyo;サ=sa;シ=shi;ス=su;セ=se;ソ=so;シャ=sha;シュ=shu;ショ=sho;タ=ta;チ=chi;ツ=tsu;テ=te;ト=to;チャ=cha;チュ=chu;チョ=cho;ナ=na;ニ=ni;ヌ=nu;ネ=ne;ノ=no;ニャ=nya;ニュ=nyu;ニョ=nyo;ハ=ha;ヒ=hi;フ=fu;ヘ=he;ホ=ho;ヒャ=hya;ヒュ=hyu;ヒョ=hyo;マ=ma;ミ=mi;ム=mu;メ=me;モ=mo;ミャ=mya;ミュ=myu;ミョ=myo;ヤ=ya;ユ=yu;ヨ=yo;ラ=ra;リ=ri;ル=ru;レ=re;ロ=ro;リャ=rya;リュ=ryu;リョ=ryo;ワ=wa;ヰ=wi;ヱ=we;ヲ=wo;ン=n,nn;ガ=ga;ギ=gi;グ=gu;ゲ=ge;ゴ=go;ギャ=gya;ギュ=gyu;ギョ=gyo;ザ=za;ジ=ji,dži;ズ=zu;ゼ=ze;ゾ=zo;ジャ=ja;ジュ=ju;ジョ=jo;ダ=da;ヂ=xji;ヅ=xzu;デ=de;ド=do;ヂャ=xja;ヂュ=xju;ヂョ=xjo;バ=ba;ビ=bi;ブ=bu;ベ=be;ボ=bo;ビャ=bya;ビュ=byu;ビョ=byo;パ=pa;ピ=pi;プ=pu;ペ=pe;ポ=po;ピャ=pya;ピュ=pyu;ピョ=pyo";
+		}
+		
+	},
+	/**
+	 * The Nihon-Shiki romanization.
+	 */
+	NihonShiki{
+
+		@Override
+		public String getHiraganaTable() {
+			return "あ=a;い=i;う=u;え=e;お=o;か=ka;き=ki;く=ku;け=ke;こ=ko;きゃ=kya;きゅ=kyu;きょ=kyo;さ=sa;し=si;す=su;せ=se;そ=so;しゃ=sya;しゅ=syu;しょ=syo;た=ta;ち=ti;つ=tu;て=te;と=to;ちゃ=tya;ちゅ=tyu;ちょ=tyo;な=na;に=ni;ぬ=nu;ね=ne;の=no;にゃ=nya;にゅ=nyu;にょ=nyo;は=ha;ひ=hi;ふ=hu;へ=he;ほ=ho;ひゃ=hya;ひゅ=hyu;ひょ=hyo;ま=ma;み=mi;む=mu;め=me;も=mo;みゃ=mya;みゅ=myu;みょ=myo;や=ya;ゆ=yu;よ=yo;ら=ra;り=ri;る=ru;れ=re;ろ=ro;りゃ=rya;りゅ=ryu;りょ=ryo;わ=wa;ゐ=wi;ゑ=we;を=wo;ん=n,nn;が=ga;ぎ=gi;ぐ=gu;げ=ge;ご=go;ぎゃ=gya;ぎゅ=gyu;ぎょ=gyo;ざ=za;じ=zi;ず=zu;ぜ=ze;ぞ=zo;じゃ=zya;じゅ=zyu;じょ=zyo;だ=da;ぢ=di;づ=du;で=de;ど=do;ぢゃ=dya;ぢゅ=dyu;ぢょ=dyo;ば=ba;び=bi;ぶ=bu;べ=be;ぼ=bo;びゃ=bya;びゅ=byu;びょ=byo;ぱ=pa;ぴ=pi;ぷ=pu;ぺ=pe;ぽ=po;ぴゃ=pya;ぴゅ=pyu;ぴょ=pyo;ゔ=vu;くゎ=kwa;ぐゎ=gwa";
+		}
+
+		@Override
+		public String getKatakanaTable() {
+			return "ア=a;イ=i;ウ=u;エ=e;オ=o;カ=ka;キ=ki;ク=ku;ケ=ke;コ=ko;キャ=kya;キュ=kyu;キョ=kyo;サ=sa;シ=si;ス=su;セ=se;ソ=so;シャ=sya;シュ=syu;ショ=syo;タ=ta;チ=ti;ツ=tu;テ=te;ト=to;チャ=tya;チュ=tyu;チョ=tyo;ナ=na;ニ=ni;ヌ=nu;ネ=ne;ノ=no;ニャ=nya;ニュ=nyu;ニョ=nyo;ハ=ha;ヒ=hi;フ=hu;ヘ=he;ホ=ho;ヒャ=hya;ヒュ=hyu;ヒョ=hyo;マ=ma;ミ=mi;ム=mu;メ=me;モ=mo;ミャ=mya;ミュ=myu;ミョ=myo;ヤ=ya;ユ=yu;ヨ=yo;ラ=ra;リ=ri;ル=ru;レ=re;ロ=ro;リャ=rya;リュ=ryu;リョ=ryo;ワ=wa;ヰ=wi;ヱ=we;ヲ=wo;ン=n,nn;ガ=ga;ギ=gi;グ=gu;ゲ=ge;ゴ=go;ギャ=gya;ギュ=gyu;ギョ=gyo;ザ=za;ジ=zi;ズ=zu;ゼ=ze;ゾ=zo;ジャ=zya;ジュ=zyu;ジョ=zyo;ダ=da;ヂ=di;ヅ=du;デ=de;ド=do;ヂャ=dya;ヂュ=dyu;ヂョ=dyo;バ=ba;ビ=bi;ブ=bu;ベ=be;ボ=bo;ビャ=bya;ビュ=byu;ビョ=byo;パ=pa;ピ=pi;プ=pu;ペ=pe;ポ=po;ピャ=pya;ピュ=pyu;ピョ=pyo";
 		}
 		
 	};
