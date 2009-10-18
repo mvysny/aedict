@@ -31,23 +31,43 @@ import java.util.concurrent.ConcurrentMap;
  * 
  * @author Martin Vysny
  */
-public final class JpUtils {
-	private JpUtils() {
-		throw new AssertionError();
-	}
+public enum RomanizationEnum {
+	/**
+	 * The Hepburn romanization.
+	 */
+	Hepburn{
 
-	private static final String TABLE_HIRAGANA="あ=a;い=i;う=u;え=e;お=o;か=ka;き=ki;く=ku;け=ke;こ=ko;きゃ=kya;きゅ=kyu;きょ=kyo;さ=sa;し=shi;す=su;せ=se;そ=so;しゃ=sha;しゅ=shu;しょ=sho;た=ta;ち=chi;つ=tsu;て=te;と=to;ちゃ=cha;ちゅ=chu;ちょ=cho;な=na;に=ni;ぬ=nu;ね=ne;の=no;にゃ=nya;にゅ=nyu;にょ=nyo;は=ha;ひ=hi;ふ=fu;へ=he;ほ=ho;ひゃ=hya;ひゅ=hyu;ひょ=hyo;ま=ma;み=mi;む=mu;め=me;も=mo;みゃ=mya;みゅ=myu;みょ=myo;や=ya;ゆ=yu;よ=yo;ら=ra;り=ri;る=ru;れ=re;ろ=ro;りゃ=rya;りゅ=ryu;りょ=ryo;わ=wa;ゐ=wi;ゑ=we;を=wo;くゎ=kwa;ん=n,nn;が=ga;ぎ=gi;ぐ=gu;げ=ge;ご=go;ぎゃ=gya;ぎゅ=gyu;ぎょ=gyo;ざ=za;じ=ji;ず=zu;ぜ=ze;ぞ=zo;じゃ=ja;じゅ=ju;じょ=jo;だ=da;ぢ=xji;づ=xzu;で=de;ど=do;ぢゃ=xja;ぢゅ=xju;ぢょ=xjo;ば=ba;び=bi;ぶ=bu;べ=be;ぼ=bo;びゃ=bya;びゅ=byu;びょ=byo;ぱ=pa;ぴ=pi;ぷ=pu;ぺ=pe;ぽ=po;ぴゃ=pya;ぴゅ=pyu;ぴょ=pyo;ゔ=vu;ぐゎ=gwa";
-	private static final String TABLE_KATAKANA="ア=a;イ=i;ウ=u;エ=e;オ=o;カ=ka;キ=ki;ク=ku;ケ=ke;コ=ko;キャ=kya;キュ=kyu;キョ=kyo;サ=sa;シ=shi;ス=su;セ=se;ソ=so;シャ=sha;シュ=shu;ショ=sho;タ=ta;チ=chi;ツ=tsu;テ=te;ト=to;チャ=cha;チュ=chu;チョ=cho;ナ=na;ニ=ni;ヌ=nu;ネ=ne;ノ=no;ニャ=nya;ニュ=nyu;ニョ=nyo;ハ=ha;ヒ=hi;フ=fu;ヘ=he;ホ=ho;ヒャ=hya;ヒュ=hyu;ヒョ=hyo;マ=ma;ミ=mi;ム=mu;メ=me;モ=mo;ミャ=mya;ミュ=myu;ミョ=myo;ヤ=ya;ユ=yu;ヨ=yo;ラ=ra;リ=ri;ル=ru;レ=re;ロ=ro;リャ=rya;リュ=ryu;リョ=ryo;ワ=wa;ヰ=wi;ヱ=we;ヲ=wo;ン=n,nn;ガ=ga;ギ=gi;グ=gu;ゲ=ge;ゴ=go;ギャ=gya;ギュ=gyu;ギョ=gyo;ザ=za;ジ=ji,dži;ズ=zu;ゼ=ze;ゾ=zo;ジャ=ja;ジュ=ju;ジョ=jo;ダ=da;ヂ=xji;ヅ=xzu;デ=de;ド=do;ヂャ=xja;ヂュ=xju;ヂョ=xjo;バ=ba;ビ=bi;ブ=bu;ベ=be;ボ=bo;ビャ=bya;ビュ=byu;ビョ=byo;パ=pa;ピ=pi;プ=pu;ペ=pe;ポ=po;ピャ=pya;ピュ=pyu;ピョ=pyo";
+		@Override
+		public String getHiraganaTable() {
+			return "あ=a;い=i;う=u;え=e;お=o;か=ka;き=ki;く=ku;け=ke;こ=ko;きゃ=kya;きゅ=kyu;きょ=kyo;さ=sa;し=shi;す=su;せ=se;そ=so;しゃ=sha;しゅ=shu;しょ=sho;た=ta;ち=chi;つ=tsu;て=te;と=to;ちゃ=cha;ちゅ=chu;ちょ=cho;な=na;に=ni;ぬ=nu;ね=ne;の=no;にゃ=nya;にゅ=nyu;にょ=nyo;は=ha;ひ=hi;ふ=fu;へ=he;ほ=ho;ひゃ=hya;ひゅ=hyu;ひょ=hyo;ま=ma;み=mi;む=mu;め=me;も=mo;みゃ=mya;みゅ=myu;みょ=myo;や=ya;ゆ=yu;よ=yo;ら=ra;り=ri;る=ru;れ=re;ろ=ro;りゃ=rya;りゅ=ryu;りょ=ryo;わ=wa;ゐ=wi;ゑ=we;を=wo;くゎ=kwa;ん=n,nn;が=ga;ぎ=gi;ぐ=gu;げ=ge;ご=go;ぎゃ=gya;ぎゅ=gyu;ぎょ=gyo;ざ=za;じ=ji;ず=zu;ぜ=ze;ぞ=zo;じゃ=ja;じゅ=ju;じょ=jo;だ=da;ぢ=xji;づ=xzu;で=de;ど=do;ぢゃ=xja;ぢゅ=xju;ぢょ=xjo;ば=ba;び=bi;ぶ=bu;べ=be;ぼ=bo;びゃ=bya;びゅ=byu;びょ=byo;ぱ=pa;ぴ=pi;ぷ=pu;ぺ=pe;ぽ=po;ぴゃ=pya;ぴゅ=pyu;ぴょ=pyo;ゔ=vu;ぐゎ=gwa";
+		}
+
+		@Override
+		public String getKatakanaTable() {
+			return "ア=a;イ=i;ウ=u;エ=e;オ=o;カ=ka;キ=ki;ク=ku;ケ=ke;コ=ko;キャ=kya;キュ=kyu;キョ=kyo;サ=sa;シ=shi;ス=su;セ=se;ソ=so;シャ=sha;シュ=shu;ショ=sho;タ=ta;チ=chi;ツ=tsu;テ=te;ト=to;チャ=cha;チュ=chu;チョ=cho;ナ=na;ニ=ni;ヌ=nu;ネ=ne;ノ=no;ニャ=nya;ニュ=nyu;ニョ=nyo;ハ=ha;ヒ=hi;フ=fu;ヘ=he;ホ=ho;ヒャ=hya;ヒュ=hyu;ヒョ=hyo;マ=ma;ミ=mi;ム=mu;メ=me;モ=mo;ミャ=mya;ミュ=myu;ミョ=myo;ヤ=ya;ユ=yu;ヨ=yo;ラ=ra;リ=ri;ル=ru;レ=re;ロ=ro;リャ=rya;リュ=ryu;リョ=ryo;ワ=wa;ヰ=wi;ヱ=we;ヲ=wo;ン=n,nn;ガ=ga;ギ=gi;グ=gu;ゲ=ge;ゴ=go;ギャ=gya;ギュ=gyu;ギョ=gyo;ザ=za;ジ=ji,dži;ズ=zu;ゼ=ze;ゾ=zo;ジャ=ja;ジュ=ju;ジョ=jo;ダ=da;ヂ=xji;ヅ=xzu;デ=de;ド=do;ヂャ=xja;ヂュ=xju;ヂョ=xjo;バ=ba;ビ=bi;ブ=bu;ベ=be;ボ=bo;ビャ=bya;ビュ=byu;ビョ=byo;パ=pa;ピ=pi;プ=pu;ペ=pe;ポ=po;ピャ=pya;ピュ=pyu;ピョ=pyo";
+		}
+		
+	};
+	/**
+	 * Returns a mapping of hiragana characters to the appropriate reading in latin. The format is as follows: KANA=reading;KANA2=reading;... 
+	 * @return a hiragana table
+	 */
+	protected abstract String getHiraganaTable();
+	/**
+	 * Returns a mapping of katakana characters to the appropriate reading in latin. The format is as follows: KANA=reading;KANA2=reading;... 
+	 * @return a hiragana table
+	 */
+	protected abstract String getKatakanaTable();
 	
-	private static final ConcurrentMap<String, String> katakanaToRomaji = new ConcurrentHashMap<String, String>();
-	private static final ConcurrentMap<String, String> hiraganaToRomaji = new ConcurrentHashMap<String, String>();
-	private static final ConcurrentMap<String, String> romajiToKatakana = new ConcurrentHashMap<String, String>();
-	private static final ConcurrentMap<String, String> romajiToHiragana = new ConcurrentHashMap<String, String>();
+	private final ConcurrentMap<String, String> katakanaToRomaji = new ConcurrentHashMap<String, String>();
+	private final ConcurrentMap<String, String> hiraganaToRomaji = new ConcurrentHashMap<String, String>();
+	private final ConcurrentMap<String, String> romajiToKatakana = new ConcurrentHashMap<String, String>();
+	private final ConcurrentMap<String, String> romajiToHiragana = new ConcurrentHashMap<String, String>();
 
-	static {
-		parse(new StringTokenizer(TABLE_KATAKANA, ";"),
+	private RomanizationEnum() {
+		parse(new StringTokenizer(getKatakanaTable(), ";"),
 				katakanaToRomaji, romajiToKatakana);
-		parse(new StringTokenizer(TABLE_HIRAGANA, ";"),
+		parse(new StringTokenizer(getHiraganaTable(), ";"),
 				hiraganaToRomaji, romajiToHiragana);
 	}
 	
@@ -78,7 +98,7 @@ public final class JpUtils {
 	 *            romaji text
 	 * @return text converted to hiragana, with unknown characters untranslated.
 	 */
-	public static String toHiragana(final String romaji) {
+	public String toHiragana(final String romaji) {
 		return toKana(romajiToHiragana, romaji, false);
 	}
 
@@ -89,7 +109,7 @@ public final class JpUtils {
 	 *            romaji text
 	 * @return text converted to katakana, with unknown characters untranslated.
 	 */
-	public static String toKatakana(final String romaji) {
+	public String toKatakana(final String romaji) {
 		return toKana(romajiToKatakana, romaji, true);
 	}
 
@@ -170,7 +190,7 @@ public final class JpUtils {
 	 *            text in hiragana or katakana.
 	 * @return romaji text
 	 */
-	public static String toRomaji(final String hiraganaOrKatakana) {
+	public String toRomaji(final String hiraganaOrKatakana) {
 		final StringBuilder sb = new StringBuilder();
 		// last kana character was the small "tsu". this means that we have to
 		// double next character.

@@ -60,7 +60,7 @@ public final class SearchUtils {
 	public void searchForJapan(final String romaji, final boolean isExact) {
 		final SearchQuery q = new SearchQuery();
 		q.isJapanese = true;
-		q.query = new String[] { JpUtils.toHiragana(romaji), JpUtils.toKatakana(romaji) };
+		q.query = new String[] { RomanizationEnum.Hepburn.toHiragana(romaji), RomanizationEnum.Hepburn.toKatakana(romaji) };
 		q.matcher = isExact ? MatcherEnum.ExactMatchEng : MatcherEnum.SubstringMatch;
 		performSearch(q);
 	}

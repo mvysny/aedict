@@ -77,7 +77,7 @@ public class ResultActivity extends ListActivity {
 				// try to convert the first character to romaji. If the
 				// conversion succeeds then we are searching for a
 				// katakana/hiragana string
-				result.isJapanese = !firstChar.equals(JpUtils.toRomaji(firstChar));
+				result.isJapanese = !firstChar.equals(RomanizationEnum.Hepburn.toRomaji(firstChar));
 				result.query = new String[] { searchFor };
 			}
 		} else {

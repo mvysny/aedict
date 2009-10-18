@@ -23,39 +23,39 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 /**
- * Tests the {@link JpUtils} class.
+ * Tests the {@link RomanizationEnum} class.
  * @author Martin Vysny
  */
 public class JpUtilsTest {
 	
 	/**
-	 * Test method for {@link sk.baka.aedict.JpUtils#toHiragana(java.lang.String)}.
+	 * Test method for {@link sk.baka.aedict.RomanizationEnum#toHiragana(java.lang.String)}.
 	 */
 	@Test
-	public void testToHiragana() {
-		assertEquals("はは", JpUtils.toHiragana("haha"));
-		assertEquals("よこはま", JpUtils.toHiragana("yokohama"));
-		assertEquals("ずっと", JpUtils.toHiragana("zutto"));
+	public void testHepburnToHiragana() {
+		assertEquals("はは", RomanizationEnum.Hepburn.toHiragana("haha"));
+		assertEquals("よこはま", RomanizationEnum.Hepburn.toHiragana("yokohama"));
+		assertEquals("ずっと", RomanizationEnum.Hepburn.toHiragana("zutto"));
 	}
 
 	/**
-	 * Test method for {@link sk.baka.aedict.JpUtils#toKatakana(java.lang.String)}.
+	 * Test method for {@link sk.baka.aedict.RomanizationEnum#toKatakana(java.lang.String)}.
 	 */
 	@Test
-	public void testToKatakana() {
-		assertEquals("ミニコン", JpUtils.toKatakana("minikon"));
-		assertEquals("コンピュータ", JpUtils.toKatakana("konpyuuta"));
+	public void testHepburnToKatakana() {
+		assertEquals("ミニコン", RomanizationEnum.Hepburn.toKatakana("minikon"));
+		assertEquals("コンピュータ", RomanizationEnum.Hepburn.toKatakana("konpyuuta"));
 	}
 
 	/**
-	 * Test method for {@link sk.baka.aedict.JpUtils#toRomaji(java.lang.String)}.
+	 * Test method for {@link sk.baka.aedict.RomanizationEnum#toRomaji(java.lang.String)}.
 	 */
 	@Test
-	public void testToRomaji() {
-		assertEquals("haha", JpUtils.toRomaji("はは"));
-		assertEquals("yokohama", JpUtils.toRomaji("よこはま"));
-		assertEquals("zutto", JpUtils.toRomaji("ずっと"));
-		assertEquals("minikon", JpUtils.toRomaji("ミニコン"));
-		assertEquals("konpyuuta", JpUtils.toRomaji("コンピュータ"));
+	public void testHepburnToRomaji() {
+		assertEquals("haha", RomanizationEnum.Hepburn.toRomaji("はは"));
+		assertEquals("yokohama", RomanizationEnum.Hepburn.toRomaji("よこはま"));
+		assertEquals("zutto", RomanizationEnum.Hepburn.toRomaji("ずっと"));
+		assertEquals("minikon", RomanizationEnum.Hepburn.toRomaji("ミニコン"));
+		assertEquals("konpyuuta", RomanizationEnum.Hepburn.toRomaji("コンピュータ"));
 	}
 }

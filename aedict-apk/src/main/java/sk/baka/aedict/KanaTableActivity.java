@@ -58,7 +58,7 @@ public class KanaTableActivity extends AbstractActivity {
 			add(row, firstKana);
 			for (int i = 0; i < ORDER.length; i++) {
 				String kana = KANA_ORDER.get(r * 5 + i);
-				kana = hiragana ? JpUtils.toHiragana(kana) : JpUtils.toKatakana(kana);
+				kana = hiragana ? RomanizationEnum.Hepburn.toHiragana(kana) : RomanizationEnum.Hepburn.toKatakana(kana);
 				add(row, kana);
 			}
 		}
