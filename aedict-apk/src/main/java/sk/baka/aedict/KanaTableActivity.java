@@ -36,23 +36,30 @@ import android.widget.TextView;
  * @author Martin Vysny
  */
 public class KanaTableActivity extends AbstractActivity {
-	private void fillTable(boolean hiragana) {
-		final TableLayout l = (TableLayout) findViewById(R.id.kanaTable);
+	private void fillTables(boolean hiragana) {
+		fillTable(R.id.gojuuonTable, GOJUUON, 5, hiragana);
+		fillTable(R.id.youonTable, YOUON, 3, hiragana);
+	}
+
+	private void fillTable(int tableId, List<String> table, final int columns, final boolean hiragana) {
+		final TableLayout l = (TableLayout) findViewById(tableId);
 		l.removeAllViews();
-		// create a header
-		TableRow row = new TableRow(this);
-		l.addView(row);
-		add(row, null, "");
-		for (char c : ORDER) {
-			add(row, null, String.valueOf(c));
+		if (columns == 5) {
+			// create a header
+			final TableRow row = new TableRow(this);
+			l.addView(row);
+			add(row, null, "");
+			for (char c : ORDER) {
+				add(row, null, String.valueOf(c));
+			}
 		}
 		// create other rows
-		for (int r = 0; r < KANA_ORDER.size() / 5; r++) {
-			row = new TableRow(this);
+		for (int r = 0; r < table.size() / columns; r++) {
+			final TableRow row = new TableRow(this);
 			l.addView(row);
-			final TableRow row2=new TableRow(this);
+			final TableRow row2 = new TableRow(this);
 			l.addView(row2);
-			String firstKana = KANA_ORDER.get(r * 5);
+			String firstKana = table.get(r * columns);
 			if (firstKana.length() > 1) {
 				firstKana = firstKana.substring(0, 1);
 			} else {
@@ -60,8 +67,8 @@ public class KanaTableActivity extends AbstractActivity {
 			}
 			add(row, null, firstKana);
 			row2.addView(new TextView(this));
-			for (int i = 0; i < ORDER.length; i++) {
-				String kana = KANA_ORDER.get(r * 5 + i);
+			for (int i = 0; i < columns; i++) {
+				String kana = table.get(r * columns + i);
 				kana = hiragana ? RomanizationEnum.NihonShiki.toHiragana(kana) : RomanizationEnum.NihonShiki.toKatakana(kana);
 				add(row, row2, kana);
 			}
@@ -72,11 +79,12 @@ public class KanaTableActivity extends AbstractActivity {
 		final TextView tv = new TextView(this);
 		tv.setText(text);
 		tv.setPadding(9, 3, 9, 3);
+		tv.setGravity(Gravity.CENTER);
 		tv.setTextSize(30);
 		row.addView(tv);
 		if (row2 != null) {
 			final TextView tvReading = new TextView(this);
-			tvReading.setText(RomanizationEnum.Hepburn.toRomaji(text));
+			tvReading.setText(RomanizationEnum.Hepburn.getWriting(text));
 			tvReading.setGravity(Gravity.CENTER);
 			row2.addView(tvReading);
 		}
@@ -87,12 +95,12 @@ public class KanaTableActivity extends AbstractActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.kanatable);
-		fillTable(true);
+		fillTables(true);
 		final Spinner s = (Spinner) findViewById(R.id.kanaSelectSpinner);
 		s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				fillTable(arg2 == 0);
+				fillTables(arg2 == 0);
 			}
 
 			public void onNothingSelected(AdapterView<?> arg0) {
@@ -102,7 +110,8 @@ public class KanaTableActivity extends AbstractActivity {
 
 	private static final char[] ORDER = new char[] { 'a', 'i', 'u', 'e', 'o' };
 
-	private static final List<String> KANA_ORDER = new ArrayList<String>();
+	private static final List<String> GOJUUON = new ArrayList<String>();
+	private static final List<String> YOUON = new ArrayList<String>();
 	static {
 		add("");
 		add("k");
@@ -120,20 +129,38 @@ public class KanaTableActivity extends AbstractActivity {
 		add("d");
 		add("b");
 		add("p");
+		add("kya", "kyu", "kyo");
+		add("sya", "syu", "syo");
+		add("tya", "tyu", "tyo");
+		add("nya", "nyu", "nyo");
+		add("hya", "hyu", "hyo");
+		add("mya", "myu", "myo");
+		add("rya", "ryu", "ryo");
+		add("gya", "gyu", "gyo");
+		add("zya", "zyu", "zyo");
+		add("dya", "dyu", "dyo");
+		add("bya", "byu", "byo");
+		add("pya", "pyu", "pyo");
 	}
 
 	private static void add(final String prefix) {
 		for (final char suffix : ORDER) {
-			KANA_ORDER.add(prefix + suffix);
+			GOJUUON.add(prefix + suffix);
 		}
 	}
 
+	private static void add(String ya, String yu, String yo) {
+		YOUON.add(ya);
+		YOUON.add(yu);
+		YOUON.add(yo);
+	}
+
 	private static void add(String a, String i, String u, String e, String o) {
-		KANA_ORDER.add(a);
-		KANA_ORDER.add(i);
-		KANA_ORDER.add(u);
-		KANA_ORDER.add(e);
-		KANA_ORDER.add(o);
+		GOJUUON.add(a);
+		GOJUUON.add(i);
+		GOJUUON.add(u);
+		GOJUUON.add(e);
+		GOJUUON.add(o);
 	}
 
 }

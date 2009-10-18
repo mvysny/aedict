@@ -20,7 +20,12 @@
 		android:entries="@array/kana"></Spinner>
 	<ScrollView android:layout_height="fill_parent"
 		android:layout_width="fill_parent">
-		<TableLayout android:id="@+id/kanaTable"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"></TableLayout>
+		<LinearLayout android:orientation="vertical"
+			android:layout_width="fill_parent" android:layout_height="wrap_content">
+			<TableLayout android:id="@+id/gojuuonTable"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"></TableLayout>
+			<TableLayout android:id="@+id/youonTable"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"></TableLayout>
+		</LinearLayout>
 	</ScrollView>
 </LinearLayout>

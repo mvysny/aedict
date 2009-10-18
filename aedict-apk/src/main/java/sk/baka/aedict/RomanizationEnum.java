@@ -35,7 +35,7 @@ public enum RomanizationEnum {
 	/**
 	 * The Hepburn romanization.
 	 */
-	Hepburn{
+	Hepburn {
 
 		@Override
 		public String getHiraganaTable() {
@@ -46,12 +46,12 @@ public enum RomanizationEnum {
 		public String getKatakanaTable() {
 			return "ア=a;イ=i;ウ=u;エ=e;オ=o;カ=ka;キ=ki;ク=ku;ケ=ke;コ=ko;キャ=kya;キュ=kyu;キョ=kyo;サ=sa;シ=shi;ス=su;セ=se;ソ=so;シャ=sha;シュ=shu;ショ=sho;タ=ta;チ=chi;ツ=tsu;テ=te;ト=to;チャ=cha;チュ=chu;チョ=cho;ナ=na;ニ=ni;ヌ=nu;ネ=ne;ノ=no;ニャ=nya;ニュ=nyu;ニョ=nyo;ハ=ha;ヒ=hi;フ=fu;ヘ=he;ホ=ho;ヒャ=hya;ヒュ=hyu;ヒョ=hyo;マ=ma;ミ=mi;ム=mu;メ=me;モ=mo;ミャ=mya;ミュ=myu;ミョ=myo;ヤ=ya;ユ=yu;ヨ=yo;ラ=ra;リ=ri;ル=ru;レ=re;ロ=ro;リャ=rya;リュ=ryu;リョ=ryo;ワ=wa;ヰ=wi;ヱ=we;ヲ=wo;ン=n,nn;ガ=ga;ギ=gi;グ=gu;ゲ=ge;ゴ=go;ギャ=gya;ギュ=gyu;ギョ=gyo;ザ=za;ジ=ji,dži;ズ=zu;ゼ=ze;ゾ=zo;ジャ=ja;ジュ=ju;ジョ=jo;ダ=da;ヂ=xji;ヅ=xzu;デ=de;ド=do;ヂャ=xja;ヂュ=xju;ヂョ=xjo;バ=ba;ビ=bi;ブ=bu;ベ=be;ボ=bo;ビャ=bya;ビュ=byu;ビョ=byo;パ=pa;ピ=pi;プ=pu;ペ=pe;ポ=po;ピャ=pya;ピュ=pyu;ピョ=pyo";
 		}
-		
+
 	},
 	/**
 	 * The Nihon-Shiki romanization.
 	 */
-	NihonShiki{
+	NihonShiki {
 
 		@Override
 		public String getHiraganaTable() {
@@ -62,46 +62,45 @@ public enum RomanizationEnum {
 		public String getKatakanaTable() {
 			return "ア=a;イ=i;ウ=u;エ=e;オ=o;カ=ka;キ=ki;ク=ku;ケ=ke;コ=ko;キャ=kya;キュ=kyu;キョ=kyo;サ=sa;シ=si;ス=su;セ=se;ソ=so;シャ=sya;シュ=syu;ショ=syo;タ=ta;チ=ti;ツ=tu;テ=te;ト=to;チャ=tya;チュ=tyu;チョ=tyo;ナ=na;ニ=ni;ヌ=nu;ネ=ne;ノ=no;ニャ=nya;ニュ=nyu;ニョ=nyo;ハ=ha;ヒ=hi;フ=hu;ヘ=he;ホ=ho;ヒャ=hya;ヒュ=hyu;ヒョ=hyo;マ=ma;ミ=mi;ム=mu;メ=me;モ=mo;ミャ=mya;ミュ=myu;ミョ=myo;ヤ=ya;ユ=yu;ヨ=yo;ラ=ra;リ=ri;ル=ru;レ=re;ロ=ro;リャ=rya;リュ=ryu;リョ=ryo;ワ=wa;ヰ=wi;ヱ=we;ヲ=wo;ン=n,nn;ガ=ga;ギ=gi;グ=gu;ゲ=ge;ゴ=go;ギャ=gya;ギュ=gyu;ギョ=gyo;ザ=za;ジ=zi;ズ=zu;ゼ=ze;ゾ=zo;ジャ=zya;ジュ=zyu;ジョ=zyo;ダ=da;ヂ=di;ヅ=du;デ=de;ド=do;ヂャ=dya;ヂュ=dyu;ヂョ=dyo;バ=ba;ビ=bi;ブ=bu;ベ=be;ボ=bo;ビャ=bya;ビュ=byu;ビョ=byo;パ=pa;ピ=pi;プ=pu;ペ=pe;ポ=po;ピャ=pya;ピュ=pyu;ピョ=pyo";
 		}
-		
+
 	};
 	/**
-	 * Returns a mapping of hiragana characters to the appropriate reading in latin. The format is as follows: KANA=reading;KANA2=reading;... 
+	 * Returns a mapping of hiragana characters to the appropriate reading in
+	 * latin. The format is as follows: KANA=reading;KANA2=reading;...
+	 * 
 	 * @return a hiragana table
 	 */
 	protected abstract String getHiraganaTable();
+
 	/**
-	 * Returns a mapping of katakana characters to the appropriate reading in latin. The format is as follows: KANA=reading;KANA2=reading;... 
+	 * Returns a mapping of katakana characters to the appropriate reading in
+	 * latin. The format is as follows: KANA=reading;KANA2=reading;...
+	 * 
 	 * @return a hiragana table
 	 */
 	protected abstract String getKatakanaTable();
-	
+
 	private final ConcurrentMap<String, String> katakanaToRomaji = new ConcurrentHashMap<String, String>();
 	private final ConcurrentMap<String, String> hiraganaToRomaji = new ConcurrentHashMap<String, String>();
 	private final ConcurrentMap<String, String> romajiToKatakana = new ConcurrentHashMap<String, String>();
 	private final ConcurrentMap<String, String> romajiToHiragana = new ConcurrentHashMap<String, String>();
 
 	private RomanizationEnum() {
-		parse(new StringTokenizer(getKatakanaTable(), ";"),
-				katakanaToRomaji, romajiToKatakana);
-		parse(new StringTokenizer(getHiraganaTable(), ";"),
-				hiraganaToRomaji, romajiToHiragana);
+		parse(new StringTokenizer(getKatakanaTable(), ";"), katakanaToRomaji, romajiToKatakana);
+		parse(new StringTokenizer(getHiraganaTable(), ";"), hiraganaToRomaji, romajiToHiragana);
 	}
-	
-	private static void parse(final StringTokenizer kanaStream,
-			ConcurrentMap<String, String> kanaToRomaji,
-			ConcurrentMap<String, String> romajiToKana) {
+
+	private static void parse(final StringTokenizer kanaStream, ConcurrentMap<String, String> kanaToRomaji, ConcurrentMap<String, String> romajiToKana) {
 		for (final Object entry : Collections.list(kanaStream)) {
-			final String[] mapping=((String)entry).split("\\=");
+			final String[] mapping = ((String) entry).split("\\=");
 			final String kana = mapping[0];
 			final String[] romajis = mapping[1].split("\\,");
 			if (kanaToRomaji.put(kana, romajis[0]) != null) {
-				throw new IllegalArgumentException("Mapping for " + kana
-						+ " defined multiple times");
+				throw new IllegalArgumentException("Mapping for " + kana + " defined multiple times");
 			}
 			for (final String romaji : romajis) {
 				if (romajiToKana.put(romaji, kana) != null) {
-					throw new IllegalArgumentException("Mapping for " + romaji
-							+ " defined multiple times");
+					throw new IllegalArgumentException("Mapping for " + romaji + " defined multiple times");
 				}
 			}
 		}
@@ -129,8 +128,7 @@ public enum RomanizationEnum {
 		return toKana(romajiToKatakana, romaji, true);
 	}
 
-	private static String toKana(ConcurrentMap<String, String> romajiToKana,
-			String romaji, final boolean isKatakana) {
+	private static String toKana(ConcurrentMap<String, String> romajiToKana, String romaji, final boolean isKatakana) {
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < romaji.length(); i++) {
 			// optimization - only convert ascii letters
@@ -141,8 +139,7 @@ public enum RomanizationEnum {
 			}
 			String kana = null;
 			for (int matchLen = Math.min(romaji.length() - i, 4); matchLen >= 1; matchLen--) {
-				final String romajiMatch = romaji.substring(i, i + matchLen)
-						.toLowerCase();
+				final String romajiMatch = romaji.substring(i, i + matchLen).toLowerCase();
 				kana = romajiToKana.get(romajiMatch);
 				if (kana != null) {
 					i += matchLen - 1;
@@ -184,13 +181,10 @@ public enum RomanizationEnum {
 	}
 
 	private static boolean isVowel(final char c) {
-		return c == 'a' || c == 'u' || c == 'e' || c == 'i' || c == 'o'
-				|| c == 'A' || c == 'U' || c == 'E' || c == 'I' || c == 'O';
+		return c == 'a' || c == 'u' || c == 'e' || c == 'i' || c == 'o' || c == 'A' || c == 'U' || c == 'E' || c == 'I' || c == 'O';
 	}
 
-	private final static Set<String> DOUBLED_CONSONANTS = new HashSet<String>(
-			Arrays.asList("rr", "tt", "pp", "ss", "dd", "gg", "hh", "jj", "kk",
-					"zz", "cc", "bb", "mm"));
+	private final static Set<String> DOUBLED_CONSONANTS = new HashSet<String>(Arrays.asList("rr", "tt", "pp", "ss", "dd", "gg", "hh", "jj", "kk", "zz", "cc", "bb", "mm"));
 
 	private static boolean isDoubledConsonant(final String str) {
 		if (str.length() != 2) {
@@ -265,5 +259,22 @@ public enum RomanizationEnum {
 			sb.append(romaji);
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * Returns a hint on how to write given katakana/hiragana character in
+	 * romaji so that it may be properly translated back. For example querying
+	 * for づ returns xzu.
+	 * 
+	 * @param kana
+	 *            the kana character
+	 * @return a writing or null if no such kana is known.
+	 */
+	public String getWriting(final String kana) {
+		String result = katakanaToRomaji.get(kana);
+		if (result == null) {
+			result = hiraganaToRomaji.get(kana);
+		}
+		return result;
 	}
 }
