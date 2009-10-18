@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
@@ -41,35 +42,44 @@ public class KanaTableActivity extends AbstractActivity {
 		// create a header
 		TableRow row = new TableRow(this);
 		l.addView(row);
-		add(row, "");
+		add(row, null, "");
 		for (char c : ORDER) {
-			add(row, String.valueOf(c));
+			add(row, null, String.valueOf(c));
 		}
 		// create other rows
 		for (int r = 0; r < KANA_ORDER.size() / 5; r++) {
 			row = new TableRow(this);
 			l.addView(row);
+			final TableRow row2=new TableRow(this);
+			l.addView(row2);
 			String firstKana = KANA_ORDER.get(r * 5);
 			if (firstKana.length() > 1) {
 				firstKana = firstKana.substring(0, 1);
 			} else {
 				firstKana = "";
 			}
-			add(row, firstKana);
+			add(row, null, firstKana);
+			row2.addView(new TextView(this));
 			for (int i = 0; i < ORDER.length; i++) {
 				String kana = KANA_ORDER.get(r * 5 + i);
-				kana = hiragana ? RomanizationEnum.Hepburn.toHiragana(kana) : RomanizationEnum.Hepburn.toKatakana(kana);
-				add(row, kana);
+				kana = hiragana ? RomanizationEnum.NihonShiki.toHiragana(kana) : RomanizationEnum.NihonShiki.toKatakana(kana);
+				add(row, row2, kana);
 			}
 		}
 	}
 
-	private KanaTableActivity add(final TableRow row, String text) {
-		TextView tv = new TextView(this);
+	private KanaTableActivity add(final TableRow row, final TableRow row2, String text) {
+		final TextView tv = new TextView(this);
 		tv.setText(text);
 		tv.setPadding(9, 3, 9, 3);
 		tv.setTextSize(30);
 		row.addView(tv);
+		if (row2 != null) {
+			final TextView tvReading = new TextView(this);
+			tvReading.setText(RomanizationEnum.Hepburn.toRomaji(text));
+			tvReading.setGravity(Gravity.CENTER);
+			row2.addView(tvReading);
+		}
 		return this;
 	}
 
@@ -96,15 +106,20 @@ public class KanaTableActivity extends AbstractActivity {
 	static {
 		add("");
 		add("k");
-		add("sa", "shi", "su", "se", "so");
-		add("ta", "chi", "tsu", "te", "to");
+		add("s");
+		add("t");
 		add("n");
-		add("ha", "hi", "fu", "he", "ho");
+		add("h");
 		add("m");
 		add("ya", "", "yu", "", "yo");
 		add("r");
 		add("wa", "wi", "", "we", "wo");
 		add("", "", "n", "", "");
+		add("g");
+		add("z");
+		add("d");
+		add("b");
+		add("p");
 	}
 
 	private static void add(final String prefix) {
