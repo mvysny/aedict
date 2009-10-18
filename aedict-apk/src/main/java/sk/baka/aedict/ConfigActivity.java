@@ -42,7 +42,9 @@ public class ConfigActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.config);
+		final Config cfg = AedictApp.loadConfig();
 		final CheckBox cfgNotifBar = (CheckBox) findViewById(R.id.cfgNotifBar);
+		cfgNotifBar.setChecked(cfg.isAlwaysAvailable);
 		cfgNotifBar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -60,6 +62,7 @@ public class ConfigActivity extends Activity {
 
 		});
 		final Spinner s = (Spinner) findViewById(R.id.romanizationSystem);
+		s.setSelection(cfg.romanization.ordinal());
 		s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
