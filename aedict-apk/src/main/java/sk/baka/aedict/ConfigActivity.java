@@ -26,9 +26,11 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Spinner;
 
 /**
  * Configures AEdict.
@@ -56,6 +58,18 @@ public class ConfigActivity extends Activity {
 				cleanup();
 			}
 
+		});
+		final Spinner s = (Spinner) findViewById(R.id.romanizationSystem);
+		s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				final Config cfg = new Config(false);
+				cfg.romanization = RomanizationEnum.values()[arg2];
+				AedictApp.saveConfig(cfg);
+			}
+
+			public void onNothingSelected(AdapterView<?> arg0) {
+			}
 		});
 	}
 

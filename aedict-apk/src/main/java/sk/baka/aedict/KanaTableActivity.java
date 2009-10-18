@@ -21,6 +21,7 @@ package sk.baka.aedict;
 import java.util.ArrayList;
 import java.util.List;
 
+import sk.baka.aedict.AedictApp.Config;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -42,15 +43,16 @@ public class KanaTableActivity extends AbstractActivity {
 	}
 
 	private void fillTable(int tableId, List<String> table, final int columns, final boolean hiragana) {
+		final Config cfg = AedictApp.loadConfig();
 		final TableLayout l = (TableLayout) findViewById(tableId);
 		l.removeAllViews();
 		if (columns == 5) {
 			// create a header
 			final TableRow row = new TableRow(this);
 			l.addView(row);
-			add(row, null, "");
+			add(row, null, "", cfg);
 			for (char c : ORDER) {
-				add(row, null, String.valueOf(c));
+				add(row, null, String.valueOf(c), cfg);
 			}
 		}
 		// create other rows
@@ -65,17 +67,17 @@ public class KanaTableActivity extends AbstractActivity {
 			} else {
 				firstKana = "";
 			}
-			add(row, null, firstKana);
+			add(row, null, firstKana, cfg);
 			row2.addView(new TextView(this));
 			for (int i = 0; i < columns; i++) {
 				String kana = table.get(r * columns + i);
 				kana = hiragana ? RomanizationEnum.NihonShiki.toHiragana(kana) : RomanizationEnum.NihonShiki.toKatakana(kana);
-				add(row, row2, kana);
+				add(row, row2, kana, cfg);
 			}
 		}
 	}
 
-	private KanaTableActivity add(final TableRow row, final TableRow row2, String text) {
+	private KanaTableActivity add(final TableRow row, final TableRow row2, String text, final Config cfg) {
 		final TextView tv = new TextView(this);
 		tv.setText(text);
 		tv.setPadding(9, 3, 9, 3);
@@ -84,7 +86,7 @@ public class KanaTableActivity extends AbstractActivity {
 		row.addView(tv);
 		if (row2 != null) {
 			final TextView tvReading = new TextView(this);
-			tvReading.setText(RomanizationEnum.Hepburn.getWriting(text));
+			tvReading.setText(cfg.romanization.getWriting(text));
 			tvReading.setGravity(Gravity.CENTER);
 			row2.addView(tvReading);
 		}
