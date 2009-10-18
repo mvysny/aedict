@@ -20,6 +20,7 @@ package sk.baka.aedict;
 
 import java.text.ParseException;
 
+import sk.baka.aedict.AedictApp.Config;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.EditText;
@@ -45,7 +46,8 @@ public class EntryDetailActivity extends AbstractActivity {
 		final EditText kanjiSearchEdit = (EditText) findViewById(R.id.kanjiSearchEdit);
 		kanjiSearchEdit.setText(entry.kanji != null ? entry.kanji : entry.reading);
 		final EditText readingSearchEdit = (EditText) findViewById(R.id.readingSearchEdit);
-		readingSearchEdit.setText(RomanizationEnum.Hepburn.toRomaji(entry.reading));
+		final Config cfg = AedictApp.loadConfig();
+		readingSearchEdit.setText(cfg.romanization.toRomaji(entry.reading));
 		final EditText englishSearchEdit = (EditText) findViewById(R.id.englishSearchEdit);
 		englishSearchEdit.setText(entry.english);
 		final SearchUtils utils = new SearchUtils(this);
@@ -65,6 +67,7 @@ public class EntryDetailActivity extends AbstractActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		addActivityLauncher(menu, R.string.showkanaTable, R.drawable.kanamenuitem, KanaTableActivity.class);
+		addActivityLauncher(menu, R.string.configuration, android.R.drawable.ic_menu_manage, ConfigActivity.class);
 		return true;
 	}
 }

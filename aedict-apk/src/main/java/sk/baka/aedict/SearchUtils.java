@@ -18,6 +18,7 @@
 
 package sk.baka.aedict;
 
+import sk.baka.aedict.AedictApp.Config;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -61,9 +62,10 @@ public final class SearchUtils {
 	 *            if true then only exact matches are returned.
 	 */
 	public void searchForJapan(final String romaji, final boolean isExact) {
+		final Config cfg = AedictApp.loadConfig();
 		final SearchQuery q = new SearchQuery();
 		q.isJapanese = true;
-		q.query = new String[] { RomanizationEnum.Hepburn.toHiragana(romaji), RomanizationEnum.Hepburn.toKatakana(romaji) };
+		q.query = new String[] { cfg.romanization.toHiragana(romaji), cfg.romanization.toKatakana(romaji) };
 		q.matcher = isExact ? MatcherEnum.ExactMatchEng : MatcherEnum.SubstringMatch;
 		performSearch(q);
 	}
