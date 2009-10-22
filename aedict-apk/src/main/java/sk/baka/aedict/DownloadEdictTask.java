@@ -88,15 +88,15 @@ public final class DownloadEdictTask extends
 		/**
 		 * The message to show.
 		 */
-		public String message;
+		public volatile String message;
 		/**
 		 * A progress being made.
 		 */
-		public int progress;
+		public volatile int progress;
 		/**
 		 * Optional error (if the download failed).
 		 */
-		public Throwable error;
+		public volatile Throwable error;
 
 		/**
 		 * Creates the progress object from an error.
@@ -307,11 +307,11 @@ public final class DownloadEdictTask extends
 	protected void onProgressUpdate(Progress... values) {
 		int p = values[0].progress;
 		dlg.setProgress(p);
-		final String msg = values[0].message;
+		String msg = values[0].message;
 		final Throwable t = values[0].error;
 		if (t != null) {
 			dlg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			dlg.setMessage(msg);
+			dlg.setMessage(msg == null ? t.toString() : msg);
 			dlg.setTitle(R.string.error);
 		} else {
 			if (msg != null) {
