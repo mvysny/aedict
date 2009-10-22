@@ -53,13 +53,6 @@ public final class DownloadEdictTask extends
 	 */
 	protected final class Progress {
 		/**
-		 * Creates new empty progress instance.
-		 */
-		public Progress() {
-			super();
-		}
-
-		/**
 		 * Creates instance with given message and a progress.
 		 * 
 		 * @param message
@@ -70,6 +63,7 @@ public final class DownloadEdictTask extends
 		public Progress(final String message, final int progress) {
 			this.message = message;
 			this.progress = progress;
+			error = null;
 		}
 
 		/**
@@ -83,20 +77,21 @@ public final class DownloadEdictTask extends
 		public Progress(final int messageRes, final int progress) {
 			this.message = context.getString(messageRes);
 			this.progress = progress;
+			error = null;
 		}
 
 		/**
 		 * The message to show.
 		 */
-		public volatile String message;
+		public final String message;
 		/**
 		 * A progress being made.
 		 */
-		public volatile int progress;
+		public final int progress;
 		/**
 		 * Optional error (if the download failed).
 		 */
-		public volatile Throwable error;
+		public final Throwable error;
 
 		/**
 		 * Creates the progress object from an error.
@@ -105,7 +100,6 @@ public final class DownloadEdictTask extends
 		 *            the error, must not be null.
 		 */
 		public Progress(final Throwable t) {
-			this();
 			progress = -1;
 			message = context.getString(R.string.failed_to_download_edict) + t;
 			error = t;
@@ -225,7 +219,10 @@ public final class DownloadEdictTask extends
 		// this is the unpacked edict file size.
 		final File dir = new File(LUCENE_INDEX);
 		if (!dir.exists() && !dir.mkdirs()) {
-			throw new IOException("Failed to create " + LUCENE_INDEX);
+			throw new IOException(
+					"Failed to create directory '"
+							+ LUCENE_INDEX
+							+ "'. Please make sure that the sdcard is inserted in the phone, mounted and is not write-protected.");
 		}
 		final InputStream in = new BufferedInputStream(conn.getInputStream());
 		try {
