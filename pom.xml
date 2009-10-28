@@ -237,6 +237,10 @@ org.eclipse.jdt.core.compiler.source=1.5
 							<smtpHost>${smtp.host}</smtpHost>
 							<smtpPort>${smtp.port}</smtpPort>
 		 					<toAddresses><toAddress>aedict-users@googlegroups.com</toAddress></toAddresses>
+							<mailSender>
+								<name>Martin Vysny</name>
+								<email>vysny@baka.sk</email>
+							</mailSender>
 							<urlDownload>http://code.google.com/p/aedict/downloads/list</urlDownload>
 							<url>${project.url}</url>
 							<issueLinkTemplate>http://code.google.com/p/aedict/issues/detail?id=%ISSUE%</issueLinkTemplate>
