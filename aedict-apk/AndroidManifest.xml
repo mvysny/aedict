@@ -33,10 +33,17 @@
 		<activity android:name=".EntryDetailActivity" android:label="@string/entryDetail" />
 		<activity android:name=".KanaTableActivity" android:label="@string/kanaTable" />
 		<activity android:name=".ConfigActivity" android:label="@string/configuration" />
+		<receiver android:name=".WordSearchWidget">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+			</intent-filter>
+			<meta-data android:name="android.appwidget.provider"
+				android:resource="@xml/wordsearch_appwidget_info" />
+		</receiver>
 	</application>
 	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4" />
-	<uses-permission android:name="android.permission.INTERNET"/>
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<supports-screens android:smallScreens="true"
 		android:normalScreens="true" android:largeScreens="true"
 		android:anyDensity="true" />
