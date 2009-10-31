@@ -112,6 +112,20 @@ public final class SearchQuery implements Serializable {
 	}
 
 	/**
+	 * All query strings are trimmed.
+	 * 
+	 * @return this
+	 */
+	public SearchQuery trim() {
+		if (query != null) {
+			for (int i = 0; i < query.length; i++) {
+				query[i] = query[i].trim();
+			}
+		}
+		return this;
+	}
+
+	/**
 	 * Retrieves values for the query from given intent.
 	 * 
 	 * @param intent

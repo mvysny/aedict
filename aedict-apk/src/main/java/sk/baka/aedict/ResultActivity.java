@@ -89,7 +89,7 @@ public class ResultActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		query = fromIntent().toLowerCase();
+		query = fromIntent().toLowerCase().trim();
 		setTitle(AedictApp.format(R.string.searchResultsFor, query.prettyPrintQuery()));
 		if (MiscUtils.isBlank(query.query)) {
 			// nothing to search for
