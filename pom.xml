@@ -236,6 +236,9 @@ org.eclipse.jdt.core.compiler.source=1.5
 						<configuration>
 							<smtpHost>${smtp.host}</smtpHost>
 							<smtpPort>${smtp.port}</smtpPort>
+							<sslMode>${smtp.ssl}</sslMode>
+							<username>${smtp.username}</username>
+							<password>${smtp.password}</password>
 		 					<toAddresses><toAddress>aedict-users@googlegroups.com</toAddress></toAddresses>
 							<mailSender>
 								<name>Martin Vysny</name>
