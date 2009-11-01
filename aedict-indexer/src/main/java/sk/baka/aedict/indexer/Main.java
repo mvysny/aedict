@@ -95,12 +95,17 @@ public class Main {
         opt = new Option("e", "encoding", true, "edict file encoding, defaults to EUC_JP");
         opt.setArgName("encoding");
         opts.addOption(opt);
+        opts.addOption("?", null, false, "prints help");
         return opts;
     }
 
     private Main(final String[] args) throws MalformedURLException, ParseException {
         final CommandLineParser parser = new GnuParser();
         final CommandLine cl = parser.parse(getOptions(), args);
+        if (cl.hasOption('?')) {
+            printHelp();
+            System.exit(255);
+        }
         if (cl.hasOption('u')) {
             source = cl.getOptionValue('u');
             urlSource = new URL(source);
