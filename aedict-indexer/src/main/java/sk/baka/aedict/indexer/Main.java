@@ -91,7 +91,7 @@ public class Main {
         opt.setArgName("url");
         opts.addOption(opt);
         opts.addOption("d", "default", false, "load default eng-jp edict file. Equal to -g -u " + EDICT_GZ);
-        opts.addOption("g", "gzipped", false, "the edict file is gzippped");
+        opts.addOption("g", "gzipped", false, "the edict file is gzipped");
         opt = new Option("e", "encoding", true, "edict file encoding, defaults to EUC_JP");
         opt.setArgName("encoding");
         opts.addOption(opt);
