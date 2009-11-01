@@ -26,16 +26,25 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.commons.cli.Options;
 
 /**
  * Downloads the EDict file, indexes it with Lucene then zips it.
@@ -44,19 +53,10 @@ import org.apache.lucene.index.IndexWriter;
  */
 public class Main {
 
-    private static final URL EDICT_GZ;
-
-    static {
-        try {
-            EDICT_GZ = new URL("http://ftp.monash.edu.au/pub/nihongo/edict.gz");
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private static final String EDICT_GZ = "http://ftp.monash.edu.au/pub/nihongo/edict.gz";
     private static final String BASE_DIR = "target";
     private static final String LUCENE_INDEX = BASE_DIR + "/index";
-    private static final String LUCENE_INDEX_ZIP = BASE_DIR
-            + "/edict-lucene.zip";
+    private static final String LUCENE_INDEX_ZIP = "edict-lucene.zip";
 
     /**
      * Performs EDICT download and indexing tasks.
@@ -80,31 +80,53 @@ public class Main {
     private final URL urlSource;
     private final String source;
     private final boolean isGzipped;
+    private final Charset encoding;
 
-    private Main(final String[] args) throws MalformedURLException {
-        if ("-u".equals(args[0])) {
-            source = args[1];
-            urlSource = new URL(args[1]);
+    private static Options getOptions() {
+        final Options opts = new Options();
+        Option opt = new Option("f", "file", true, "load edict file from a filesystem");
+        opt.setArgName("file");
+        opts.addOption(opt);
+        opt = new Option("u", "url", true, "load edict file from a URL");
+        opt.setArgName("url");
+        opts.addOption(opt);
+        opts.addOption("d", "default", false, "load default eng-jp edict file. Equal to -g -u " + EDICT_GZ);
+        opts.addOption("g", "gzipped", false, "the edict file is gzippped");
+        opt = new Option("e", "encoding", true, "edict file encoding, defaults to EUC_JP");
+        opt.setArgName("encoding");
+        opts.addOption(opt);
+        return opts;
+    }
+
+    private Main(final String[] args) throws MalformedURLException, ParseException {
+        final CommandLineParser parser = new GnuParser();
+        final CommandLine cl = parser.parse(getOptions(), args);
+        if (cl.hasOption('u')) {
+            source = cl.getOptionValue('u');
+            urlSource = new URL(source);
             localSource = null;
-        } else if ("-e".equals(args[0])) {
-            source = EDICT_GZ.toString();
-            urlSource = EDICT_GZ;
+        } else if (cl.hasOption('d')) {
+            source = EDICT_GZ;
+            urlSource = new URL(EDICT_GZ);
             localSource = null;
-        } else {
+        } else if (cl.hasOption('f')) {
+            source = cl.getOptionValue('f');
             urlSource = null;
-            localSource = new File(args[0]);
-            source = args[0];
+            localSource = new File(source);
+        } else {
+            throw new ParseException("At least one of -u, -d or -f switch must be specified");
         }
-        isGzipped = source.endsWith(".gz");
+        isGzipped = cl.hasOption('g') || cl.hasOption('d');
+        final String charset = cl.getOptionValue('e', "EUC_JP");
+        if (!Charset.isSupported(charset)) {
+            throw new ParseException("Charset " + charset + " is not supported by JVM. Supported charsets: " + new ArrayList<String>(Charset.availableCharsets().keySet()));
+        }
+        encoding = Charset.forName(charset);
     }
 
     private static void printHelp() {
-        System.out.println("Aedict index file generator");
-        System.out.println("Usage: ai [-u] edict-file");
-        System.out.println("  or:  ai -e");
-        System.out.println();
-        System.out.println("Produces a Lucene-indexed file from given EDict-formatted dictionary file (a local filesystem reference or an URL if the -u switch is specified). The file may be gzipped - in such case the filename must end with .gz.");
-        System.out.println("To download and index the default english-japan edict file just use the -e switch - the file is downloaded automatically.");
+        final HelpFormatter f = new HelpFormatter();
+        f.printHelp("ai", "Aedict index file generator\nProduces a Lucene-indexed file from given EDict-formatted dictionary file. To download and index the default english-japan edict file just use the -d switch - the file is downloaded automatically.", getOptions(), null, true);
     }
 
     private void run() throws Exception {
@@ -145,7 +167,7 @@ public class Main {
         FileUtils.deleteDirectory(new File(LUCENE_INDEX));
         System.out.println("Indexing with Lucene");
         final BufferedReader edict = new BufferedReader(new InputStreamReader(
-                readEdict(), "EUC-JP"));
+                readEdict(), encoding));
         try {
             final IndexWriter luceneWriter = new IndexWriter(LUCENE_INDEX,
                     new StandardAnalyzer(), true,
