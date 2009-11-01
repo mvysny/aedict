@@ -24,7 +24,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.zip.GZIPInputStream;
@@ -55,7 +54,6 @@ public class Main {
         }
     }
     private static final String BASE_DIR = "target";
-    private static final String EDICT_CACHE = BASE_DIR + "/edict";
     private static final String LUCENE_INDEX = BASE_DIR + "/index";
     private static final String LUCENE_INDEX_ZIP = BASE_DIR
             + "/edict-lucene.zip";
@@ -65,41 +63,89 @@ public class Main {
      * @param args ignored, does not take any parameters.
      * @throws Exception if error occurs
      */
-    public static void main(String[] args) throws Exception {
-        downloadEdict();
+    public static void main(String[] args) {
+        try {
+            if (args == null || args.length == 0) {
+                printHelp();
+                System.exit(255);
+            }
+            new Main(args).run();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("Indexing failed: " + ex.toString());
+            System.exit(1);
+        }
+    }
+    private final File localSource;
+    private final URL urlSource;
+    private final String source;
+    private final boolean isGzipped;
+
+    private Main(final String[] args) throws MalformedURLException {
+        if ("-u".equals(args[0])) {
+            source = args[1];
+            urlSource = new URL(args[1]);
+            localSource = null;
+        } else if ("-e".equals(args[0])) {
+            source = EDICT_GZ.toString();
+            urlSource = EDICT_GZ;
+            localSource = null;
+        } else {
+            urlSource = null;
+            localSource = new File(args[0]);
+            source = args[0];
+        }
+        isGzipped = source.endsWith(".gz");
+    }
+
+    private static void printHelp() {
+        System.out.println("Aedict index file generator");
+        System.out.println("Usage: ai [-u] edict-file");
+        System.out.println("  or:  ai -e");
+        System.out.println();
+        System.out.println("Produces a Lucene-indexed file from given EDict-formatted dictionary file (a local filesystem reference or an URL if the -u switch is specified). The file may be gzipped - in such case the filename must end with .gz.");
+        System.out.println("To download and index the default english-japan edict file just use the -e switch - the file is downloaded automatically.");
+    }
+
+    private void run() throws Exception {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Indexing ");
+        if (isGzipped) {
+            sb.append("gzipped ");
+        }
+        sb.append("Edict file from ");
+        sb.append(urlSource != null ? "URL" : "file");
+        sb.append(' ').append(source);
+        System.out.println(sb.toString());
         indexWithLucene();
         zipLuceneIndex();
-        System.out.println("Finished.");
+        System.out.println("Finished - a " + LUCENE_INDEX_ZIP + " file was created");
+        System.out.println("To use the indexed file with Aedict, you'll have to:");
+        System.out.println("1. Connect your phone as a mass storage device to your computer");
+        System.out.println("2. Browse the SDCard contents and delete the aedict/ directory if it is present");
+        System.out.println("3. Create the aedict/index/ directory");
+        System.out.println("4. Unzip the " + LUCENE_INDEX_ZIP + " file to the aedict/index/ directory");
     }
 
-    private static void downloadEdict() throws IOException {
-        final File target = new File(EDICT_CACHE);
-        if (target.exists()) {
-            System.out.println(target.getAbsolutePath()
-                    + " exists, skipping download");
-            return;
+    private InputStream readEdict() throws IOException {
+        InputStream in;
+        if (localSource != null) {
+            in = new FileInputStream(localSource);
+        } else {
+            in = urlSource.openStream();
         }
-        System.out.println("Downloading EDict to " + target.getAbsolutePath());
-        final InputStream in = new GZIPInputStream(EDICT_GZ.openStream());
-        try {
-            final OutputStream out = new FileOutputStream(target);
-            try {
-                IOUtils.copy(in, out);
-            } finally {
-                IOUtils.closeQuietly(out);
-            }
-        } finally {
-            IOUtils.closeQuietly(in);
+        if (isGzipped) {
+            in = new GZIPInputStream(in);
         }
-        System.out.println("Finished downloading EDict");
+        return in;
     }
 
-    private static void indexWithLucene() throws IOException {
+    private void indexWithLucene() throws IOException {
         System.out.println("Deleting old Lucene index");
         FileUtils.deleteDirectory(new File(LUCENE_INDEX));
         System.out.println("Indexing with Lucene");
         final BufferedReader edict = new BufferedReader(new InputStreamReader(
-                new FileInputStream(EDICT_CACHE), "EUC-JP"));
+                readEdict(), "EUC-JP"));
         try {
             final IndexWriter luceneWriter = new IndexWriter(LUCENE_INDEX,
                     new StandardAnalyzer(), true,
@@ -128,7 +174,7 @@ public class Main {
         luceneWriter.commit();
     }
 
-    private static void zipLuceneIndex() throws IOException {
+    private void zipLuceneIndex() throws IOException {
         System.out.println("Zipping the index file");
         final File zip = new File(LUCENE_INDEX_ZIP);
         if (zip.exists() && !zip.delete()) {
