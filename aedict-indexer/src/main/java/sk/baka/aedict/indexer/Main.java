@@ -119,7 +119,7 @@ public class Main {
         System.out.println(sb.toString());
         indexWithLucene();
         zipLuceneIndex();
-        System.out.println("Finished - a " + LUCENE_INDEX_ZIP + " file was created");
+        System.out.println("Finished - the index file '" + LUCENE_INDEX_ZIP + "' was created.");
         System.out.println("To use the indexed file with Aedict, you'll have to:");
         System.out.println("1. Connect your phone as a mass storage device to your computer");
         System.out.println("2. Browse the SDCard contents and delete the aedict/ directory if it is present");

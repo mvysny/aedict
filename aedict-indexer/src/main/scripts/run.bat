@@ -9,7 +9,7 @@ rem Add platform runtime libraries
 for %%i in (lib\*) do call :cpappend %%i
 
 rem Launch the runtime
-java %JAVA_OPTS% -classpath "%CLSPATH%" sk.baka.aedict.indexer.Main
+java %JAVA_OPTS% -classpath "%CLSPATH%" sk.baka.aedict.indexer.Main $1 $2 $3 $4 $5 $6 $7 $8 $9
 
 if "%OS%"=="Windows_NT" @endlocal
 
