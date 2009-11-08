@@ -106,24 +106,36 @@ public final class DownloadEdictTask extends
 		}
 	}
 
-	private static final URL EDICT_LUCENE_ZIP;
+	/**
+	 * A zipped Lucene-indexed EDICT location.
+	 */
+	public static final URL EDICT_LUCENE_ZIP;
+	/**
+	 * A zipped Lucene-indexed KANJIDIC location.
+	 */
+	public static final URL KANJIDIC_LUCENE_ZIP;
 	static {
 		try {
 			EDICT_LUCENE_ZIP = new URL("http://baka.sk/aedict/edict-lucene.zip");
+			KANJIDIC_LUCENE_ZIP = new URL("http://baka.sk/aedict/kanjidic-lucene.zip");
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
 	}
 	private final Context context;
+	private final URL source;
+	private final String targetDir;
 
 	/**
-	 * Creates new EDict downloader.
+	 * Creates new dictionary downloader.
 	 * 
 	 * @param context
 	 *            parent context.
 	 */
-	public DownloadEdictTask(Context context) {
+	public DownloadEdictTask(final Context context, final URL source, final String targetDir) {
 		this.context = context;
+		this.source = source;
+		this.targetDir = targetDir;
 	}
 
 	private ProgressDialog dlg;
@@ -151,17 +163,21 @@ public final class DownloadEdictTask extends
 	 */
 	public static final String BASE_DIR = "/sdcard/aedict";
 	/**
-	 * Directory where the Apache Lucene index is stored.
+	 * Directory where the Apache Lucene for the EDICT file index is stored.
 	 */
 	public static final String LUCENE_INDEX = BASE_DIR + "/index";
+	/**
+	 * Directory where the Apache Lucene index for the KANJIDIC file is stored.
+	 */
+	public static final String LUCENE_INDEX_KANJIDIC = BASE_DIR + "/index-kanjidic";
 
 	/**
 	 * Checks if the edict is downloaded and indexed correctly.
-	 * 
+	 * @param indexDir the directory where the index files are expected to be located.
 	 * @return true if everything is okay, false if not
 	 */
-	public static boolean isComplete() {
-		final File f = new File(LUCENE_INDEX);
+	public static boolean isComplete(final String indexDir) {
+		final File f = new File(indexDir);
 		if (!f.exists()) {
 			return false;
 		}
@@ -181,15 +197,13 @@ public final class DownloadEdictTask extends
 			edictDownloadAndUnpack();
 		} catch (Exception ex) {
 			if (!isCancelled()) {
-				Log.e(DownloadEdictTask.class.getSimpleName(), context
-						.getString(R.string.error), ex);
+				Log.e(DownloadEdictTask.class.getSimpleName(), context.getString(R.string.error), ex);
 				isError = true;
 				publishProgress(new Progress(ex));
 			} else {
-				Log.i(DownloadEdictTask.class.getSimpleName(), context
-						.getString(R.string.interrupted), ex);
+				Log.i(DownloadEdictTask.class.getSimpleName(), context.getString(R.string.interrupted), ex);
 			}
-			deleteDirQuietly(new File(LUCENE_INDEX));
+			deleteDirQuietly(new File(targetDir));
 		}
 		return null;
 	}
@@ -198,8 +212,7 @@ public final class DownloadEdictTask extends
 		try {
 			MiscUtils.deleteDir(dir);
 		} catch (IOException e) {
-			Log.e(DownloadEdictTask.class.getSimpleName(),
-					"Failed to delete the directory", e);
+			Log.e(DownloadEdictTask.class.getSimpleName(), "Failed to delete the directory", e);
 		}
 	}
 
@@ -211,18 +224,15 @@ public final class DownloadEdictTask extends
 	 *             on i/o error.
 	 */
 	private void edictDownloadAndUnpack() throws IOException {
-		if (isComplete()) {
+		if (isComplete(targetDir)) {
 			return;
 		}
 		publishProgress(new Progress(R.string.connecting, 0));
-		final URLConnection conn = EDICT_LUCENE_ZIP.openConnection();
+		final URLConnection conn = source.openConnection();
 		// this is the unpacked edict file size.
-		final File dir = new File(LUCENE_INDEX);
+		final File dir = new File(targetDir);
 		if (!dir.exists() && !dir.mkdirs()) {
-			throw new IOException(
-					"Failed to create directory '"
-							+ LUCENE_INDEX
-							+ "'. Please make sure that the sdcard is inserted in the phone, mounted and is not write-protected.");
+			throw new IOException("Failed to create directory '" + targetDir + "'. Please make sure that the sdcard is inserted in the phone, mounted and is not write-protected.");
 		}
 		final InputStream in = new BufferedInputStream(conn.getInputStream());
 		try {
@@ -230,7 +240,7 @@ public final class DownloadEdictTask extends
 			copy(in, zip);
 		} catch (InterruptedIOException ex) {
 			MiscUtils.closeQuietly(in);
-			deleteDirQuietly(new File(LUCENE_INDEX));
+			deleteDirQuietly(new File(targetDir));
 			throw ex;
 		} finally {
 			MiscUtils.closeQuietly(in);
@@ -251,13 +261,10 @@ public final class DownloadEdictTask extends
 	 * @throws IOException
 	 *             on i/o error
 	 */
-	private void copy(final InputStream in, final ZipInputStream zip)
-			throws IOException {
+	private void copy(final InputStream in, final ZipInputStream zip) throws IOException {
 		publishProgress(new Progress(R.string.downloading_edict, 0));
-		for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip
-				.getNextEntry()) {
-			final OutputStream out = new FileOutputStream(LUCENE_INDEX + "/"
-					+ entry.getName());
+		for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+			final OutputStream out = new FileOutputStream(targetDir + "/" + entry.getName());
 			try {
 				copy(entry, zip, out);
 			} finally {
@@ -267,8 +274,7 @@ public final class DownloadEdictTask extends
 		}
 	}
 
-	private void copy(final ZipEntry entry, final InputStream in,
-			final OutputStream out) throws IOException {
+	private void copy(final ZipEntry entry, final InputStream in, final OutputStream out) throws IOException {
 		long size = entry.getSize();
 		if (size < 0) {
 			size = 20000000;

@@ -37,7 +37,7 @@ public class MainActivity extends AbstractActivity {
 		utils.registerSearch(R.id.jpExactMatch, R.id.jpSearchEdit, false, R.id.jpSearch, true);
 		utils.registerSearch(R.id.engExactMatch, R.id.engSearchEdit, false, R.id.engSearch, false);
 		// check for dictionary file and download it if it is missing.
-		if (!DownloadEdictTask.isComplete()) {
+		if (!DownloadEdictTask.isComplete(DownloadEdictTask.LUCENE_INDEX)) {
 			final StatFs stats = new StatFs("/sdcard");
 			final long free = ((long) stats.getBlockSize()) * stats.getAvailableBlocks();
 			final StringBuilder msg = new StringBuilder(getString(R.string.edict_missing_download));
@@ -48,7 +48,7 @@ public class MainActivity extends AbstractActivity {
 			new AndroidUtils(this).showYesNoDialog(msg.toString(), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();
-					new DownloadEdictTask(MainActivity.this).execute();
+					new DownloadEdictTask(MainActivity.this, DownloadEdictTask.EDICT_LUCENE_ZIP, DownloadEdictTask.LUCENE_INDEX).execute();
 				}
 			});
 		}
