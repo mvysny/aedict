@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.TwoLineListItem;
 
 /**
@@ -120,7 +121,7 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	}
 
 	/**
-	 * Parses given EDICT  entry.
+	 * Parses given EDICT entry.
 	 * 
 	 * @param edictEntry
 	 *            the entry to parse.
@@ -164,18 +165,30 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 *            the item.
 	 */
 	public void print(final TwoLineListItem item) {
-		final String text1;
+		print(item.getText1(), item.getText2());
+	}
+
+	/**
+	 * Prints itself to a ListView item.
+	 * 
+	 * @param text1
+	 *            first, larger textview.
+	 * @param text2
+	 *            second, smaller textview.
+	 */
+	public void print(final TextView text1, final TextView text2) {
+		final String t1;
 		if (kanji == null) {
 			if (reading == null) {
-				text1 = "";
+				t1 = "";
 			} else {
-				text1 = reading;
+				t1 = reading;
 			}
 		} else {
-			text1 = kanji + "  -  " + reading;
+			t1 = kanji + "  -  " + reading;
 		}
-		item.getText1().setText(text1);
-		item.getText2().setText(english);
+		text1.setText(t1);
+		text2.setText(english);
 	}
 
 	/**

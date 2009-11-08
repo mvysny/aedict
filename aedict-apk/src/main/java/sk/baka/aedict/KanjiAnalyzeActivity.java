@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.TwoLineListItem;
 
 /**
@@ -54,16 +55,19 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			model = new ArrayList<EdictEntry>();
 			model.add(EdictEntry.newErrorMsg("Analysis failed: " + e));
 		}
-		setListAdapter(new ArrayAdapter<EdictEntry>(this, android.R.layout.simple_list_item_2, model) {
+		setListAdapter(new ArrayAdapter<EdictEntry>(this, R.layout.kanjidetail, model) {
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
-				TwoLineListItem view = (TwoLineListItem) convertView;
-				if (view == null) {
-					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
+				View v = convertView;
+				if (v == null) {
+					v = getLayoutInflater().inflate(R.layout.kanjidetail, getListView(), false);
 				}
-				model.get(position).print(view);
-				return view;
+				final EdictEntry e = model.get(position);
+				e.print((TextView) v.findViewById(android.R.id.text1), (TextView) v.findViewById(android.R.id.text2));
+				final TextView tv = (TextView) v.findViewById(R.id.kanjiBig);
+				tv.setText(e.getJapanese());
+				return v;
 			}
 
 		});
