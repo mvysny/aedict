@@ -54,9 +54,11 @@ import org.apache.commons.cli.Options;
 public class Main {
 
     private static final String EDICT_GZ = "http://ftp.monash.edu.au/pub/nihongo/edict.gz";
+    private static final String KANJIDIC_GZ = "http://ftp.monash.edu.au/pub/nihongo/kanjidic.gz";
     private static final String BASE_DIR = "target";
     private static final String LUCENE_INDEX = BASE_DIR + "/index";
     private static final String LUCENE_INDEX_ZIP = "edict-lucene.zip";
+    private static final String LUCENE_INDEX_ZIP_KANJIDIC = "kanjidic-lucene.zip";
 
     /**
      * Performs EDICT download and indexing tasks.
@@ -80,7 +82,9 @@ public class Main {
     private final URL urlSource;
     private final String source;
     private final boolean isGzipped;
+    private final boolean isKanjidic;
     private final Charset encoding;
+    private final String targetFileName;
 
     private static Options getOptions() {
         final Options opts = new Options();
@@ -90,12 +94,13 @@ public class Main {
         opt = new Option("u", "url", true, "load edict file from a URL");
         opt.setArgName("url");
         opts.addOption(opt);
-        opts.addOption("d", "default", false, "load default eng-jp edict file. Equal to -g -u " + EDICT_GZ);
+        opts.addOption("d", "default", false, "load default eng-jp edict file. Equal to -g -u " + EDICT_GZ + ". May be used with the -k switch, to download default kanjidic");
         opts.addOption("g", "gzipped", false, "the edict file is gzipped");
         opt = new Option("e", "encoding", true, "edict file encoding, defaults to EUC_JP");
         opt.setArgName("encoding");
         opts.addOption(opt);
         opts.addOption("?", null, false, "prints help");
+        opts.addOption("k", "kanjidic", false, "the file to process is actually a kanjidic");
         return opts;
     }
 
@@ -106,13 +111,15 @@ public class Main {
             printHelp();
             System.exit(255);
         }
+        isKanjidic = cl.hasOption('k');
+        targetFileName = isKanjidic ? LUCENE_INDEX_ZIP_KANJIDIC : LUCENE_INDEX_ZIP;
         if (cl.hasOption('u')) {
             source = cl.getOptionValue('u');
             urlSource = new URL(source);
             localSource = null;
         } else if (cl.hasOption('d')) {
-            source = EDICT_GZ;
-            urlSource = new URL(EDICT_GZ);
+            source = isKanjidic ? KANJIDIC_GZ : EDICT_GZ;
+            urlSource = new URL(source);
             localSource = null;
         } else if (cl.hasOption('f')) {
             source = cl.getOptionValue('f');
@@ -131,7 +138,7 @@ public class Main {
 
     private static void printHelp() {
         final HelpFormatter f = new HelpFormatter();
-        f.printHelp("ai", "Aedict index file generator\nProduces a Lucene-indexed file from given EDict-formatted dictionary file. To download and index the default english-japan edict file just use the -d switch - the file is downloaded automatically.", getOptions(), null, true);
+        f.printHelp("ai", "Aedict index file generator\nProduces a Lucene-indexed file from given EDict- or kanjidic-formatted dictionary file. To download and index the default english-japan edict file just use the -d switch - the file is downloaded automatically.", getOptions(), null, true);
     }
 
     private void run() throws Exception {
@@ -140,18 +147,20 @@ public class Main {
         if (isGzipped) {
             sb.append("gzipped ");
         }
-        sb.append("Edict file from ");
+        sb.append(isKanjidic ? "kanjidic" : "edict");
+        sb.append(" file from ");
         sb.append(urlSource != null ? "URL" : "file");
         sb.append(' ').append(source);
         System.out.println(sb.toString());
         indexWithLucene();
         zipLuceneIndex();
-        System.out.println("Finished - the index file '" + LUCENE_INDEX_ZIP + "' was created.");
+        final String aedictDir = "aedict/index" + (isKanjidic ? "-kanjidic" : "") + "/";
+        System.out.println("Finished - the index file '" + targetFileName + "' was created.");
         System.out.println("To use the indexed file with Aedict, you'll have to:");
         System.out.println("1. Connect your phone as a mass storage device to your computer");
         System.out.println("2. Browse the SDCard contents and delete the aedict/ directory if it is present");
-        System.out.println("3. Create the aedict/index/ directory");
-        System.out.println("4. Unzip the " + LUCENE_INDEX_ZIP + " file to the aedict/index/ directory");
+        System.out.println("3. Create the " + aedictDir + " directory");
+        System.out.println("4. Unzip the " + targetFileName + " file to the " + aedictDir + " directory");
     }
 
     private InputStream readEdict() throws IOException {
@@ -178,7 +187,7 @@ public class Main {
                     new StandardAnalyzer(), true,
                     IndexWriter.MaxFieldLength.UNLIMITED);
             try {
-                indexWithLucene(edict, luceneWriter);
+                indexWithLucene(edict, luceneWriter, isKanjidic);
                 System.out.println("Optimizing Lucene index");
                 luceneWriter.optimize();
             } finally {
@@ -191,19 +200,65 @@ public class Main {
     }
 
     private static void indexWithLucene(BufferedReader edict,
-            IndexWriter luceneWriter) throws IOException {
+            IndexWriter luceneWriter, final boolean isKanjidic) throws IOException {
         for (String line = edict.readLine(); line != null; line = edict.readLine()) {
+            if (line.startsWith("#")) {
+                // skip comments
+                continue;
+            }
             final Document doc = new Document();
-            doc.add(new Field("contents", line, Field.Store.YES,
-                    Field.Index.ANALYZED));
+            if (isKanjidic) {
+                doc.add(new Field("contents", line, Field.Store.COMPRESS, Field.Index.NO));
+                // the kanji itself
+                doc.add(new Field("kanji", getKanji(line), Field.Store.YES, Field.Index.NOT_ANALYZED));
+                // may contain several stroke numbers, separated by spaces. First one is the correct stroke number,
+                // following numbers are common mistakes.
+                doc.add(new Field("strokes", getFields(line, 'S', false), Field.Store.YES, Field.Index.ANALYZED));
+                // the radical number
+                doc.add(new Field("radical", getFields(line, 'B', true), Field.Store.YES, Field.Index.NOT_ANALYZED));
+                // the skip number in the form of x-x-x
+                doc.add(new Field("skip", getFields(line, 'P', true), Field.Store.YES, Field.Index.NOT_ANALYZED));
+            } else {
+                doc.add(new Field("contents", line, Field.Store.YES, Field.Index.ANALYZED));
+            }
             luceneWriter.addDocument(doc);
         }
         luceneWriter.commit();
     }
 
+    private static String getFields(final String kanjidicLine, final char firstChar, final boolean firstOnly) {
+        final StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (final String field : kanjidicLine.split("\\ ")) {
+            if (field.length() <= 1) {
+                continue;
+            }
+            if (field.charAt(0) != firstChar) {
+                continue;
+            }
+            if (first) {
+                first = false;
+            } else {
+                sb.append(' ');
+            }
+            sb.append(field.substring(1));
+            if (firstOnly) {
+                break;
+            }
+        }
+        return sb.toString();
+    }
+
+    private static String getKanji(final String kanjidicLine) {
+        if (kanjidicLine.charAt(1) != ' ') {
+            throw new IllegalArgumentException("Line in incorrect format. A single kanji followed by a space is expected: " + kanjidicLine);
+        }
+        return kanjidicLine.substring(0, 1);
+    }
+
     private void zipLuceneIndex() throws IOException {
         System.out.println("Zipping the index file");
-        final File zip = new File(LUCENE_INDEX_ZIP);
+        final File zip = new File(targetFileName);
         if (zip.exists() && !zip.delete()) {
             throw new IOException("Cannot delete " + zip.getAbsolutePath());
         }
