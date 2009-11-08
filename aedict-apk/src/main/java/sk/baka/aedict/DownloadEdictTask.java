@@ -43,8 +43,7 @@ import android.util.Log;
  * 
  * @author Martin Vysny
  */
-public final class DownloadEdictTask extends
-		AsyncTask<Void, DownloadEdictTask.Progress, Void> {
+public final class DownloadEdictTask extends AsyncTask<Void, DownloadEdictTask.Progress, Void> {
 
 	/**
 	 * Contains data about a progress.
@@ -101,7 +100,7 @@ public final class DownloadEdictTask extends
 		 */
 		public Progress(final Throwable t) {
 			progress = -1;
-			message = context.getString(R.string.failed_to_download_edict) + t;
+			message = AedictApp.format(R.string.failed_to_download_dictionary, dictName) + t;
 			error = t;
 		}
 	}
@@ -125,17 +124,27 @@ public final class DownloadEdictTask extends
 	private final Context context;
 	private final URL source;
 	private final String targetDir;
+	private final String dictName;
 
 	/**
 	 * Creates new dictionary downloader.
 	 * 
 	 * @param context
 	 *            parent context.
+	 * @param source
+	 *            download the dictionary files from here. A zipped Lucene index
+	 *            file is expected.
+	 * @param targetDir
+	 *            unzip the files here
+	 * @param dictName
+	 *            the dictionary name.
+	 * 
 	 */
-	public DownloadEdictTask(final Context context, final URL source, final String targetDir) {
+	public DownloadEdictTask(final Context context, final URL source, final String targetDir, final String dictName) {
 		this.context = context;
 		this.source = source;
 		this.targetDir = targetDir;
+		this.dictName = dictName;
 	}
 
 	private ProgressDialog dlg;
@@ -173,7 +182,10 @@ public final class DownloadEdictTask extends
 
 	/**
 	 * Checks if the edict is downloaded and indexed correctly.
-	 * @param indexDir the directory where the index files are expected to be located.
+	 * 
+	 * @param indexDir
+	 *            the directory where the index files are expected to be
+	 *            located.
 	 * @return true if everything is okay, false if not
 	 */
 	public static boolean isComplete(final String indexDir) {
@@ -262,7 +274,7 @@ public final class DownloadEdictTask extends
 	 *             on i/o error
 	 */
 	private void copy(final InputStream in, final ZipInputStream zip) throws IOException {
-		publishProgress(new Progress(R.string.downloading_edict, 0));
+		publishProgress(new Progress(AedictApp.format(R.string.downloading_dictionary, dictName), 0));
 		for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
 			final OutputStream out = new FileOutputStream(targetDir + "/" + entry.getName());
 			try {

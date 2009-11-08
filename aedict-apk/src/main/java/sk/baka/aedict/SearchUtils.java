@@ -18,10 +18,14 @@
 
 package sk.baka.aedict;
 
+import java.net.URL;
+
 import sk.baka.aedict.AedictApp.Config;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.StatFs;
 import android.text.ClipboardManager;
 import android.view.KeyEvent;
 import android.view.View;
@@ -182,5 +186,37 @@ public final class SearchUtils {
 				toast.show();
 			}
 		}));
+	}
+
+	/**
+	 * Checks if given dictionary file exists. If not, user is prompted for a
+	 * download and the files are downloaded if requested.
+	 * 
+	 * @param source
+	 *            download the dictionary here. A Lucene zipped index file is
+	 *            expected.
+	 * @param targetDir
+	 *            unpack the files here.
+	 * @param expectedSize
+	 *            the expected size of the dictionary file.
+	 * @param dictName
+	 *            the name of the dictionary, EDict or KanjiDic
+	 */
+	public void checkDictionaryFile(final URL source, final String targetDir, final long expectedSize, final String dictName) {
+		if (!DownloadEdictTask.isComplete(DownloadEdictTask.LUCENE_INDEX)) {
+			final StatFs stats = new StatFs("/sdcard");
+			final long free = ((long) stats.getBlockSize()) * stats.getAvailableBlocks();
+			final StringBuilder msg = new StringBuilder(activity.getString(R.string.dictionary_missing_download, dictName));
+			if (free < expectedSize) {
+				msg.append('\n');
+				msg.append(AedictApp.format(R.string.warning_less_than_x_mb_free, expectedSize / 1024, free / 1024));
+			}
+			new AndroidUtils(activity).showYesNoDialog(msg.toString(), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					new DownloadEdictTask(activity, source, targetDir, dictName).execute();
+				}
+			});
+		}
 	}
 }

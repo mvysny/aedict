@@ -18,9 +18,7 @@
 
 package sk.baka.aedict;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.StatFs;
 import android.view.Menu;
 
 /**
@@ -37,21 +35,7 @@ public class MainActivity extends AbstractActivity {
 		utils.registerSearch(R.id.jpExactMatch, R.id.jpSearchEdit, false, R.id.jpSearch, true);
 		utils.registerSearch(R.id.engExactMatch, R.id.engSearchEdit, false, R.id.engSearch, false);
 		// check for dictionary file and download it if it is missing.
-		if (!DownloadEdictTask.isComplete(DownloadEdictTask.LUCENE_INDEX)) {
-			final StatFs stats = new StatFs("/sdcard");
-			final long free = ((long) stats.getBlockSize()) * stats.getAvailableBlocks();
-			final StringBuilder msg = new StringBuilder(getString(R.string.edict_missing_download));
-			if (free < 20 * 1000 * 1000) {
-				msg.append('\n');
-				msg.append(AedictApp.format(R.string.warning_less_than_20mb_free, free / 1024));
-			}
-			new AndroidUtils(this).showYesNoDialog(msg.toString(), new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-					new DownloadEdictTask(MainActivity.this, DownloadEdictTask.EDICT_LUCENE_ZIP, DownloadEdictTask.LUCENE_INDEX).execute();
-				}
-			});
-		}
+		utils.checkDictionaryFile(DownloadEdictTask.EDICT_LUCENE_ZIP, DownloadEdictTask.LUCENE_INDEX, 20L * 1024 * 1024, "EDict");
 	}
 
 	@Override
