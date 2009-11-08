@@ -38,13 +38,16 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TwoLineListItem;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 /**
  * Performs a search and shows search result.
@@ -53,12 +56,15 @@ import android.widget.TwoLineListItem;
  */
 public class ResultActivity extends ListActivity {
 	/**
-	 * Shows a list of matched entries. May contain an error message if the search failed. In such case {@link #isModelValid} is false.
+	 * Shows a list of matched entries. May contain an error message if the
+	 * search failed. In such case {@link #isModelValid} is false.
 	 */
 	private List<String> model;
 	/**
-	 * If false then there was some kind of error while performing a search, or the search returned no results etc. In such case, {@link #model}
-	 * will contain a single item containing e.g. throwable message and the list must not be clickable.
+	 * If false then there was some kind of error while performing a search, or
+	 * the search returned no results etc. In such case, {@link #model} will
+	 * contain a single item containing e.g. throwable message and the list must
+	 * not be clickable.
 	 */
 	private boolean isModelValid = false;
 	/**
@@ -71,7 +77,8 @@ public class ResultActivity extends ListActivity {
 	private SearchQuery query;
 	private static final String SIMEJI_ACTION_INTERCEPT = "com.adamrocker.android.simeji.ACTION_INTERCEPT";
 	/**
-	 * Simeji expects a string stored under this key. This is the replacement string.
+	 * Simeji expects a string stored under this key. This is the replacement
+	 * string.
 	 */
 	private static final String SIMEJI_INTENTKEY_REPLACE = "replace_key";
 	/**
@@ -156,19 +163,53 @@ public class ResultActivity extends ListActivity {
 			}
 
 		});
-		getListView().setOnItemLongClickListener(AedictApp.safe(new AdapterView.OnItemLongClickListener() {
+		if (isSimeji) {
+			getListView().setOnCreateContextMenuListener(AedictApp.safe(new View.OnCreateContextMenuListener() {
 
-			public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				// show menu with options on what to return
-				try {
-					final EdictEntry ee = EdictEntry.parse(model.get(arg2));
-					// TODO
-				} catch (java.text.ParseException e) {
-					throw new RuntimeException(e);
+				public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+					final EdictEntry ee;
+					try {
+						ee = EdictEntry.parse(model.get(((AdapterContextMenuInfo) menuInfo).position));
+					} catch (java.text.ParseException e) {
+						throw new RuntimeException(e);
+					}
+					if (ee.kanji != null) {
+						menu.add("Return " + ee.kanji).setOnMenuItemClickListener(new SimejiReturn(ee.kanji));
+					}
+					menu.add("Return " + ee.reading).setOnMenuItemClickListener(new SimejiReturn(ee.reading));
+					menu.add("Return " + ee.english).setOnMenuItemClickListener(new SimejiReturn(ee.english));
 				}
-				return true;
-			}
-		}));
+			}));
+		}
+	}
+
+	/**
+	 * Forces the activity to close and return given string as a result to
+	 * Simeji.
+	 * 
+	 * @author vyzivus
+	 */
+	private class SimejiReturn implements MenuItem.OnMenuItemClickListener {
+		private final String stringToReturn;
+
+		/**
+		 * Creates the instance.
+		 * 
+		 * @param stringToReturn
+		 *            return this string to Simeji.
+		 */
+		public SimejiReturn(final String stringToReturn) {
+			this.stringToReturn = stringToReturn;
+		}
+
+		public boolean onMenuItemClick(MenuItem item) {
+			final Intent data = new Intent();
+			data.putExtra(SIMEJI_INTENTKEY_REPLACE, stringToReturn);
+			setResult(RESULT_OK, data);
+			finish();
+			return true;
+		}
+
 	}
 
 	@Override
@@ -191,16 +232,20 @@ public class ResultActivity extends ListActivity {
 		} else {
 			final Intent intent = new Intent(this, EntryDetailActivity.class);
 			intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, entry);
-			intent.putExtra(EntryDetailActivity.INTENTKEY_SIMEJI, isSimeji);
 			startActivity(intent);
 		}
 	}
+
 	/**
 	 * Uses lucene to search through the edict file and return matched lines.
-	 * @param query the query
+	 * 
+	 * @param query
+	 *            the query
 	 * @return a list of matched lines, never null.
-	 * @throws IOException on I/O error.
-	 * @throws ParseException on invalid Lucene query - indicates a bug in Aedict code.
+	 * @throws IOException
+	 *             on I/O error.
+	 * @throws ParseException
+	 *             on invalid Lucene query - indicates a bug in Aedict code.
 	 */
 	private List<String> performLuceneSearch(final SearchQuery query) throws IOException, ParseException {
 		final List<String> r = new ArrayList<String>();

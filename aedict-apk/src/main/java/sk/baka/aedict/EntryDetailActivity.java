@@ -63,10 +63,6 @@ public class EntryDetailActivity extends AbstractActivity {
 	 * The activity expects {@link EdictEntry} in the intent keys.
 	 */
 	public static final String INTENTKEY_ENTRY = "entry";
-	/**
-	 * boolean - if true then we were launched from Simeji.
-	 */
-	public static final String INTENTKEY_SIMEJI = "simeji";
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
