@@ -19,12 +19,12 @@
 package sk.baka.aedict;
 
 import java.io.File;
+import java.io.IOException;
 
 import sk.baka.aedict.AedictApp.Config;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -77,18 +77,17 @@ public class ConfigActivity extends Activity {
 	}
 
 	private void cleanup() {
-		final SearchUtils utils = new SearchUtils(this);
+		final AndroidUtils utils = new AndroidUtils(this);
 		utils.showYesNoDialog(AedictApp.format(R.string.deleteEdictFiles, MiscUtils.getLength(new File(DownloadEdictTask.BASE_DIR)) / 1024), new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
 				try {
 					MiscUtils.deleteDir(new File(DownloadEdictTask.BASE_DIR));
-					utils.showInfoDialog(R.string.data_files_removed);
-				} catch (Exception ex) {
-					Log.e(MainActivity.class.getSimpleName(), ex.toString(), ex);
-					utils.showErrorDialog(getString(R.string.failed_to_clean_files) + ex);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
 				}
+				utils.showInfoDialog(R.string.data_files_removed);
 			}
 
 		});

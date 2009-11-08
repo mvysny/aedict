@@ -45,7 +45,7 @@ public class MainActivity extends AbstractActivity {
 				msg.append('\n');
 				msg.append(AedictApp.format(R.string.warning_less_than_20mb_free, free / 1024));
 			}
-			new SearchUtils(this).showYesNoDialog(msg.toString(), new DialogInterface.OnClickListener() {
+			new AndroidUtils(this).showYesNoDialog(msg.toString(), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();
 					new DownloadEdictTask(MainActivity.this).execute();

@@ -41,6 +41,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TwoLineListItem;
@@ -69,6 +70,9 @@ public class ResultActivity extends ListActivity {
 	 */
 	private SearchQuery query;
 	private static final String SIMEJI_ACTION_INTERCEPT = "com.adamrocker.android.simeji.ACTION_INTERCEPT";
+	/**
+	 * Simeji expects a string stored under this key. This is the replacement string.
+	 */
 	private static final String SIMEJI_INTENTKEY_REPLACE = "replace_key";
 	/**
 	 * boolean - if true then we were launched from Simeji.
@@ -152,6 +156,19 @@ public class ResultActivity extends ListActivity {
 			}
 
 		});
+		getListView().setOnItemLongClickListener(AedictApp.safe(new AdapterView.OnItemLongClickListener() {
+
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				// show menu with options on what to return
+				try {
+					final EdictEntry ee = EdictEntry.parse(model.get(arg2));
+					// TODO
+				} catch (java.text.ParseException e) {
+					throw new RuntimeException(e);
+				}
+				return true;
+			}
+		}));
 	}
 
 	@Override

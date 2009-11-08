@@ -20,12 +20,9 @@ package sk.baka.aedict;
 
 import sk.baka.aedict.AedictApp.Config;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.text.ClipboardManager;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -183,63 +180,5 @@ public final class SearchUtils {
 				toast.show();
 			}
 		});
-	}
-
-	/**
-	 * Shows a simple yes/no dialog. The dialog does nothing and simply
-	 * disappears when No is clicked.
-	 * 
-	 * @param message
-	 *            the message to show
-	 * @param yesListener
-	 *            invoked when the Yes button is pressed.
-	 */
-	public void showYesNoDialog(final String message, final DialogInterface.OnClickListener yesListener) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-		builder.setMessage(message);
-		builder.setPositiveButton(R.string.yes, yesListener);
-		builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		});
-		builder.create().show();
-	}
-
-	/**
-	 * Shows an error dialog.
-	 * 
-	 * @param message
-	 *            the message to show.
-	 */
-	public void showErrorDialog(final String message) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-		builder.setMessage(message);
-		builder.setTitle(R.string.error);
-		builder.setIcon(android.R.drawable.ic_dialog_alert);
-		builder.create().show();
-	}
-
-	/**
-	 * Shows a quick info toast.
-	 * 
-	 * @param messageRes
-	 *            the message to show.
-	 */
-	public void showInfoDialog(final int messageRes) {
-		showInfoDialog(activity.getString(messageRes));
-	}
-
-	/**
-	 * Shows a quick info toast.
-	 * 
-	 * @param message
-	 *            the message to show.
-	 */
-	public void showInfoDialog(final String message) {
-		final Toast toast = Toast.makeText(activity, message, Toast.LENGTH_SHORT);
-		toast.setGravity(Gravity.BOTTOM, 0, 0);
-		toast.show();
 	}
 }
