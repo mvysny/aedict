@@ -101,7 +101,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 						result.add(ee);
 					} else {
 						// no luck. Just add the kanji
-						result.add(new EdictEntry(String.valueOf(c), String.valueOf(c), ""));
+						result.add(new EdictEntry(String.valueOf(c), "", ""));
 					}
 				}
 			}

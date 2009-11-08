@@ -57,7 +57,7 @@ public class EntryDetailActivity extends AbstractActivity {
 
 			public void onClick(View v) {
 				final Intent intent = new Intent(EntryDetailActivity.this, KanjiAnalyzeActivity.class);
-				intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, entry.kanji);
+				intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, entry.getJapanese());
 				startActivity(intent);
 			}
 		}));
