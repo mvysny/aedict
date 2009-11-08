@@ -21,8 +21,11 @@ package sk.baka.aedict;
 import java.text.ParseException;
 
 import sk.baka.aedict.AedictApp.Config;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 /**
@@ -57,6 +60,15 @@ public class EntryDetailActivity extends AbstractActivity {
 		utils.setupCopyButton(R.id.kanjiCopy, R.id.kanjiSearchEdit);
 		utils.setupCopyButton(R.id.readingCopy, R.id.readingSearchEdit);
 		utils.setupCopyButton(R.id.englishCopy, R.id.englishSearchEdit);
+		final Button analyze = (Button) findViewById(R.id.kanjiAnalyze);
+		analyze.setOnClickListener(AedictApp.safe(new View.OnClickListener() {
+
+			public void onClick(View v) {
+				final Intent intent = new Intent(EntryDetailActivity.this, KanjiAnalyzeActivity.class);
+				intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, entry.kanji);
+				startActivity(intent);
+			}
+		}));
 	}
 
 	/**

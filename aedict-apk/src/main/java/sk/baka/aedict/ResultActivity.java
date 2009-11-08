@@ -18,21 +18,8 @@
 
 package sk.baka.aedict;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.Searcher;
-import org.apache.lucene.search.TopDocs;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -121,7 +108,7 @@ public class ResultActivity extends ListActivity {
 			model = Collections.singletonList(getString(R.string.nothing_to_search_for));
 		} else {
 			try {
-				model = performLuceneSearch(query);
+				model = LuceneSearch.singleSearch(query);
 				if (!model.isEmpty()) {
 					isModelValid = true;
 					Collections.sort(model);
@@ -187,7 +174,7 @@ public class ResultActivity extends ListActivity {
 	 * Forces the activity to close and return given string as a result to
 	 * Simeji.
 	 * 
-	 * @author vyzivus
+	 * @author Martin Vysny
 	 */
 	private class SimejiReturn implements MenuItem.OnMenuItemClickListener {
 		private final String stringToReturn;
@@ -234,38 +221,6 @@ public class ResultActivity extends ListActivity {
 			intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, entry);
 			startActivity(intent);
 		}
-	}
-
-	/**
-	 * Uses lucene to search through the edict file and return matched lines.
-	 * 
-	 * @param query
-	 *            the query
-	 * @return a list of matched lines, never null.
-	 * @throws IOException
-	 *             on I/O error.
-	 * @throws ParseException
-	 *             on invalid Lucene query - indicates a bug in Aedict code.
-	 */
-	private List<String> performLuceneSearch(final SearchQuery query) throws IOException, ParseException {
-		final List<String> r = new ArrayList<String>();
-		final IndexReader reader = IndexReader.open(DownloadEdictTask.LUCENE_INDEX);
-		try {
-			final Searcher searcher = new IndexSearcher(reader);
-			final QueryParser parser = new QueryParser("contents", new StandardAnalyzer());
-			final Query parsedQuery = parser.parse(query.getLuceneQuery());
-			final TopDocs result = searcher.search(parsedQuery, null, 100);
-			for (final ScoreDoc sd : result.scoreDocs) {
-				final Document doc = searcher.doc(sd.doc);
-				final String contents = doc.get("contents");
-				if (query.matches(contents)) {
-					r.add(contents);
-				}
-			}
-		} finally {
-			reader.close();
-		}
-		return r;
 	}
 
 	@Override
