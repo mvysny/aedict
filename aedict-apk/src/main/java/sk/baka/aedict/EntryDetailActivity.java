@@ -18,8 +18,6 @@
 
 package sk.baka.aedict;
 
-import java.text.ParseException;
-
 import sk.baka.aedict.AedictApp.Config;
 import android.content.Intent;
 import android.os.Bundle;
@@ -39,13 +37,7 @@ public class EntryDetailActivity extends AbstractActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.entrydetail);
-		final String unparsedEntry = getIntent().getStringExtra(INTENTKEY_ENTRY);
-		final EdictEntry entry;
-		try {
-			entry = EdictEntry.parse(unparsedEntry);
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
-		}
+		final EdictEntry entry = (EdictEntry) getIntent().getSerializableExtra(INTENTKEY_ENTRY);
 		final EditText kanjiSearchEdit = (EditText) findViewById(R.id.kanjiSearchEdit);
 		kanjiSearchEdit.setText(entry.kanji != null ? entry.kanji : entry.reading);
 		final EditText readingSearchEdit = (EditText) findViewById(R.id.readingSearchEdit);

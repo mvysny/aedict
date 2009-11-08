@@ -44,16 +44,9 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 public class ResultActivity extends ListActivity {
 	/**
 	 * Shows a list of matched entries. May contain an error message if the
-	 * search failed. In such case {@link #isModelValid} is false.
+	 * search failed.
 	 */
-	private List<String> model;
-	/**
-	 * If false then there was some kind of error while performing a search, or
-	 * the search returned no results etc. In such case, {@link #model} will
-	 * contain a single item containing e.g. throwable message and the list must
-	 * not be clickable.
-	 */
-	private boolean isModelValid = false;
+	private List<EdictEntry> model;
 	/**
 	 * true if the activity was invoked from the Simeji keyboard application.
 	 */
@@ -105,23 +98,22 @@ public class ResultActivity extends ListActivity {
 		setTitle(AedictApp.format(R.string.searchResultsFor, query.prettyPrintQuery()));
 		if (MiscUtils.isBlank(query.query)) {
 			// nothing to search for
-			model = Collections.singletonList(getString(R.string.nothing_to_search_for));
+			model = Collections.singletonList(EdictEntry.newErrorMsg(getString(R.string.nothing_to_search_for)));
 		} else {
 			try {
-				model = LuceneSearch.singleSearch(query);
+				model = EdictEntry.tryParseEdict(LuceneSearch.singleSearch(query));
 				if (!model.isEmpty()) {
-					isModelValid = true;
 					Collections.sort(model);
 				}
 			} catch (Exception ex) {
 				Log.e(ResultActivity.class.getSimpleName(), "Failed to perform search", ex);
-				model = Collections.singletonList(AedictApp.format(R.string.searchFailed, ex.toString()));
+				model = Collections.singletonList(EdictEntry.newErrorMsg(AedictApp.format(R.string.searchFailed, ex.toString())));
 			}
 			if (model.isEmpty()) {
-				model = Collections.singletonList(getString(R.string.no_results));
+				model = Collections.singletonList(EdictEntry.newErrorMsg(getString(R.string.no_results)));
 			}
 		}
-		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_2, model) {
+		setListAdapter(new ArrayAdapter<EdictEntry>(this, android.R.layout.simple_list_item_2, model) {
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
@@ -129,23 +121,7 @@ public class ResultActivity extends ListActivity {
 				if (view == null) {
 					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
 				}
-				String text1 = "";
-				String text2 = model.get(position);
-				if (isModelValid) {
-					try {
-						final EdictEntry ee = EdictEntry.parse(text2);
-						if (ee.kanji == null) {
-							text1 = ee.reading;
-						} else {
-							text1 = ee.kanji + "  -  " + ee.reading;
-						}
-						text2 = ee.english;
-					} catch (java.text.ParseException e) {
-						Log.e(ResultActivity.class.getSimpleName(), "Failed to parse edict entry", e);
-					}
-				}
-				view.getText1().setText(text1);
-				view.getText2().setText(text2);
+				model.get(position).print(view);
 				return view;
 			}
 
@@ -154,11 +130,9 @@ public class ResultActivity extends ListActivity {
 			getListView().setOnCreateContextMenuListener(AedictApp.safe(new View.OnCreateContextMenuListener() {
 
 				public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-					final EdictEntry ee;
-					try {
-						ee = EdictEntry.parse(model.get(((AdapterContextMenuInfo) menuInfo).position));
-					} catch (java.text.ParseException e) {
-						throw new RuntimeException(e);
+					final EdictEntry ee = model.get(((AdapterContextMenuInfo) menuInfo).position);
+					if (!ee.isValid()) {
+						return;
 					}
 					if (ee.kanji != null) {
 						menu.add("Return " + ee.kanji).setOnMenuItemClickListener(new SimejiReturn(ee.kanji));
@@ -201,24 +175,19 @@ public class ResultActivity extends ListActivity {
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		if (!isModelValid) {
+		final EdictEntry e = model.get(position);
+		if (!e.isValid()) {
 			return;
 		}
-		final String entry = model.get(position);
 		if (isSimeji) {
-			try {
-				final EdictEntry e = EdictEntry.parse(entry);
-				final Intent data = new Intent();
-				final String result = query.isJapanese ? e.english : e.getJapanese();
-				data.putExtra(SIMEJI_INTENTKEY_REPLACE, result);
-				setResult(RESULT_OK, data);
-				finish();
-			} catch (java.text.ParseException e) {
-				Log.e(ResultActivity.class.getSimpleName(), "Failed to parse edict entry", e);
-			}
+			final Intent data = new Intent();
+			final String result = query.isJapanese ? e.english : e.getJapanese();
+			data.putExtra(SIMEJI_INTENTKEY_REPLACE, result);
+			setResult(RESULT_OK, data);
+			finish();
 		} else {
 			final Intent intent = new Intent(this, EntryDetailActivity.class);
-			intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, entry);
+			intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, e);
 			startActivity(intent);
 		}
 	}

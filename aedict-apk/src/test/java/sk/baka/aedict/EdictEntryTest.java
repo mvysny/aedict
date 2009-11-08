@@ -30,14 +30,14 @@ import org.junit.Test;
 public class EdictEntryTest {
 	@Test
 	public void simpleKatakanaParse() throws ParseException {
-		final EdictEntry e = EdictEntry.parse("aaa / bbb");
+		final EdictEntry e = EdictEntry.parseEdict("aaa / bbb");
 		assertEquals("aaa", e.reading);
 		assertEquals("bbb", e.english);
 	}
 
 	@Test
 	public void simpleHiraganaParse() throws ParseException {
-		final EdictEntry e = EdictEntry.parse("aaa [ccc] / bbb");
+		final EdictEntry e = EdictEntry.parseEdict("aaa [ccc] / bbb");
 		assertEquals("aaa", e.kanji);
 		assertEquals("ccc", e.reading);
 		assertEquals("bbb", e.english);
@@ -45,7 +45,7 @@ public class EdictEntryTest {
 
 	@Test
 	public void parserDropsTrailingSlashes() throws ParseException {
-		final EdictEntry e = EdictEntry.parse("aaa [ccc] / bbb//");
+		final EdictEntry e = EdictEntry.parseEdict("aaa [ccc] / bbb//");
 		assertEquals("aaa", e.kanji);
 		assertEquals("ccc", e.reading);
 		assertEquals("bbb", e.english);
@@ -53,6 +53,6 @@ public class EdictEntryTest {
 
 	@Test(expected = ParseException.class)
 	public void simpleUnsuccessfullParse() throws ParseException {
-		EdictEntry.parse("aaa");
+		EdictEntry.parseEdict("aaa");
 	}
 }

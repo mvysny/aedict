@@ -18,14 +18,22 @@
 
 package sk.baka.aedict;
 
+import java.io.Serializable;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import android.util.Log;
+import android.widget.TwoLineListItem;
 
 /**
  * Represents a parsed EDict entry. Immutable.
  * 
  * @author Martin Vysny
  */
-public final class EdictEntry {
+public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
+	private static final long serialVersionUID = 1L;
 	/**
 	 * The kanji expression, may be null if the entry does not contain any kanji
 	 */
@@ -35,7 +43,7 @@ public final class EdictEntry {
 	 */
 	public final String reading;
 	/**
-	 * The english translation
+	 * The English translation
 	 */
 	public final String english;
 
@@ -48,7 +56,7 @@ public final class EdictEntry {
 	 * @param reading
 	 *            the reading, in hiragana or katakana.
 	 * @param english
-	 *            the english translation
+	 *            the English translation
 	 */
 	public EdictEntry(final String kanji, final String reading, final String english) {
 		this.kanji = kanji;
@@ -57,7 +65,62 @@ public final class EdictEntry {
 	}
 
 	/**
-	 * Parses given entry.
+	 * Checks if this entry is valid.
+	 * 
+	 * @return true if it is valid (the kanji or the reading is not blank),
+	 *         false otherwise.
+	 */
+	public boolean isValid() {
+		return !MiscUtils.isBlank(kanji) || !MiscUtils.isBlank(reading);
+	}
+
+	/**
+	 * Constructs an invalid entry with given error message.
+	 * 
+	 * @param errorMsg
+	 *            the error message
+	 * @return invalid edict entry.
+	 */
+	public static EdictEntry newErrorMsg(final String errorMsg) {
+		return new EdictEntry(null, null, errorMsg);
+	}
+
+	/**
+	 * Parses given EDICT entry.
+	 * 
+	 * @param edictEntry
+	 *            the entry to parse.
+	 * @return a parsed entry. Never null. The entry may not be valid. In such
+	 *         case the English translation contains the error description, all
+	 *         other fields are null.
+	 */
+	public static EdictEntry tryParseEdict(final String edictEntry) {
+		try {
+			return parseEdict(edictEntry);
+		} catch (Exception ex) {
+			Log.e(EdictEntry.class.getSimpleName(), "Failed to parse an entry '" + edictEntry + "'", ex);
+			return new EdictEntry(null, null, ex.toString());
+		}
+	}
+
+	/**
+	 * Parses a list of EDICT entries.
+	 * 
+	 * @param edictEntries
+	 *            a list of entries.
+	 * @return a list of parsed entries, some of them may be invalid if parse
+	 *         error occurred.
+	 */
+	public static List<EdictEntry> tryParseEdict(final Collection<? extends String> edictEntries) {
+		final List<EdictEntry> result = new ArrayList<EdictEntry>(edictEntries.size());
+		for (final String unparsedEntry : edictEntries) {
+			result.add(tryParseEdict(unparsedEntry));
+		}
+		return result;
+	}
+
+	/**
+	 * Parses given EDICT  entry.
 	 * 
 	 * @param edictEntry
 	 *            the entry to parse.
@@ -65,7 +128,7 @@ public final class EdictEntry {
 	 * @throws ParseException
 	 *             if the parsing fails
 	 */
-	public static EdictEntry parse(final String edictEntry) throws ParseException {
+	public static EdictEntry parseEdict(final String edictEntry) throws ParseException {
 		// the entry is in one of the two following formats:
 		// KANJI [hiragana] / english meaning
 		// katakana / english meaning
@@ -95,6 +158,27 @@ public final class EdictEntry {
 	}
 
 	/**
+	 * Prints itself to a ListView item.
+	 * 
+	 * @param item
+	 *            the item.
+	 */
+	public void print(final TwoLineListItem item) {
+		final String text1;
+		if (kanji == null) {
+			if (reading == null) {
+				text1 = "";
+			} else {
+				text1 = reading;
+			}
+		} else {
+			text1 = kanji + "  -  " + reading;
+		}
+		item.getText1().setText(text1);
+		item.getText2().setText(english);
+	}
+
+	/**
 	 * Returns japanese translation. Returns {@link #kanji} if available,
 	 * {@link #reading} otherwise.
 	 * 
@@ -102,5 +186,18 @@ public final class EdictEntry {
 	 */
 	public String getJapanese() {
 		return kanji != null ? kanji : reading;
+	}
+
+	public int compareTo(EdictEntry another) {
+		if (!isValid()) {
+			if (another.isValid()) {
+				return 1;
+			}
+			return english.compareTo(another.english);
+		}
+		if (!another.isValid()) {
+			return -1;
+		}
+		return getJapanese().compareTo(another.getJapanese());
 	}
 }

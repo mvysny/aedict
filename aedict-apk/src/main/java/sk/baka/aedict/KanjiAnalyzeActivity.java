@@ -23,8 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TwoLineListItem;
 
 /**
  * Analyzes each kanji in given word.
@@ -36,20 +41,32 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	 * The string word to analyze.
 	 */
 	public static final String INTENTKEY_WORD = "word";
+	private List<EdictEntry> model = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		final String word = getIntent().getStringExtra(INTENTKEY_WORD);
 		setTitle(AedictApp.format(R.string.kanjiAnalysisOf, word));
-		List<String> model;
 		try {
 			model = analyze(word);
 		} catch (IOException e) {
-			model = new ArrayList<String>();
-			model.add("Analysis failed: " + e);
+			model = new ArrayList<EdictEntry>();
+			model.add(EdictEntry.newErrorMsg("Analysis failed: " + e));
 		}
-		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, model));
+		setListAdapter(new ArrayAdapter<EdictEntry>(this, android.R.layout.simple_list_item_2, model) {
+
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				TwoLineListItem view = (TwoLineListItem) convertView;
+				if (view == null) {
+					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
+				}
+				model.get(position).print(view);
+				return view;
+			}
+
+		});
 	}
 
 	/**
@@ -64,14 +81,14 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		return RomanizationEnum.Hepburn.toRomaji(String.valueOf(c)).charAt(0) == c;
 	}
 
-	private List<String> analyze(final String word) throws IOException {
-		final List<String> result = new ArrayList<String>(word.length());
+	private List<EdictEntry> analyze(final String word) throws IOException {
+		final List<EdictEntry> result = new ArrayList<EdictEntry>(word.length());
 		final LuceneSearch ls = new LuceneSearch();
 		try {
 			for (char c : word.toCharArray()) {
 				final boolean isKanji = isKanji(c);
 				if (!isKanji) {
-					result.add(String.valueOf(c));
+					result.add(new EdictEntry(String.valueOf(c), String.valueOf(c), ""));
 				} else {
 					// it is a kanji. search for it in the dictionary.
 					final SearchQuery q = new SearchQuery();
@@ -80,10 +97,11 @@ public class KanjiAnalyzeActivity extends ListActivity {
 					q.query = new String[] { String.valueOf(c) };
 					final List<String> matches = ls.search(q);
 					if (matches.size() > 0) {
-						result.add(matches.get(0));
+						final EdictEntry ee = EdictEntry.tryParseEdict(matches.get(0));
+						result.add(ee);
 					} else {
 						// no luck. Just add the kanji
-						result.add(String.valueOf(c));
+						result.add(new EdictEntry(String.valueOf(c), String.valueOf(c), ""));
 					}
 				}
 			}
@@ -91,5 +109,16 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		} finally {
 			MiscUtils.closeQuietly(ls);
 		}
+	}
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		final EdictEntry e = model.get(position);
+		if (!e.isValid()) {
+			return;
+		}
+		final Intent intent = new Intent(this, EntryDetailActivity.class);
+		intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, e);
+		startActivity(intent);
 	}
 }
