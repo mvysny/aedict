@@ -63,13 +63,13 @@ public abstract class AbstractActivity extends Activity {
 	public static void addActivityLauncher(final Context context, final Menu menu, final int caption, final int icon, final Class<? extends Activity> activity) {
 		final MenuItem item2 = menu.add(caption);
 		item2.setIcon(icon);
-		item2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+		item2.setOnMenuItemClickListener(AedictApp.safe(new MenuItem.OnMenuItemClickListener() {
 
 			public boolean onMenuItemClick(MenuItem item) {
 				final Intent intent = new Intent(context, activity);
 				context.startActivity(intent);
 				return true;
 			}
-		});
+		}));
 	}
 }

@@ -25,11 +25,13 @@ import android.content.Intent;
 import android.text.ClipboardManager;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.TextView.OnEditorActionListener;
 
 /**
  * Contains utility methods for searching with Lucene.
@@ -110,8 +112,8 @@ public final class SearchUtils {
 		final EditText searchEdit = (EditText) activity.findViewById(searchEditText);
 		final Button searchBtn = (Button) activity.findViewById(searchButton);
 		final SearchText handler = new SearchText(isExactCheckBox, searchEditText, handleSelections, isJapanSearch);
-		searchEdit.setOnEditorActionListener(handler);
-		searchBtn.setOnClickListener(handler);
+		searchEdit.setOnEditorActionListener(AedictApp.safe(OnEditorActionListener.class, handler));
+		searchBtn.setOnClickListener(AedictApp.safe(OnClickListener.class, handler));
 	}
 
 	private class SearchText implements TextView.OnEditorActionListener, View.OnClickListener {
@@ -171,7 +173,7 @@ public final class SearchUtils {
 	public void setupCopyButton(final int copyButton, final int textView) {
 		final Button btn = (Button) activity.findViewById(copyButton);
 		final TextView text = (TextView) activity.findViewById(textView);
-		btn.setOnClickListener(new View.OnClickListener() {
+		btn.setOnClickListener(AedictApp.safe(new View.OnClickListener() {
 
 			public void onClick(View v) {
 				final ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -179,6 +181,6 @@ public final class SearchUtils {
 				final Toast toast = Toast.makeText(activity, AedictApp.format(R.string.copied, text.getText()), Toast.LENGTH_SHORT);
 				toast.show();
 			}
-		});
+		}));
 	}
 }

@@ -132,12 +132,12 @@ public final class DownloadEdictTask extends
 	protected void onPreExecute() {
 		dlg = new ProgressDialog(context);
 		dlg.setCancelable(true);
-		dlg.setOnCancelListener(new OnCancelListener() {
+		dlg.setOnCancelListener(AedictApp.safe(new OnCancelListener() {
 			public void onCancel(DialogInterface dialog) {
 				cancel(true);
 				dlg.setTitle("Cancelling");
 			}
-		});
+		}));
 		dlg.setIndeterminate(false);
 		dlg.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		dlg.setTitle(R.string.connecting);
