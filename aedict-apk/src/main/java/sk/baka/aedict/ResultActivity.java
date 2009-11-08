@@ -51,16 +51,29 @@ import android.widget.TwoLineListItem;
  * @author Martin Vysny
  */
 public class ResultActivity extends ListActivity {
-
+	/**
+	 * Shows a list of matched entries. May contain an error message if the search failed. In such case {@link #isModelValid} is false.
+	 */
 	private List<String> model;
+	/**
+	 * If false then there was some kind of error while performing a search, or the search returned no results etc. In such case, {@link #model}
+	 * will contain a single item containing e.g. throwable message and the list must not be clickable.
+	 */
 	private boolean isModelValid = false;
 	/**
-	 * true if the activity was invoked from the Simeji keyboard
+	 * true if the activity was invoked from the Simeji keyboard application.
 	 */
 	private boolean isSimeji = false;
+	/**
+	 * The query.
+	 */
 	private SearchQuery query;
 	private static final String SIMEJI_ACTION_INTERCEPT = "com.adamrocker.android.simeji.ACTION_INTERCEPT";
 	private static final String SIMEJI_INTENTKEY_REPLACE = "replace_key";
+	/**
+	 * boolean - if true then we were launched from Simeji.
+	 */
+	public static final String INTENTKEY_SIMEJI = "simeji";
 
 	private SearchQuery fromIntent() {
 		final Intent it = getIntent();
@@ -82,6 +95,7 @@ public class ResultActivity extends ListActivity {
 			}
 		} else {
 			result = SearchQuery.fromIntent(getIntent());
+			isSimeji = it.getBooleanExtra(INTENTKEY_SIMEJI, false);
 		}
 		return result.toLowerCase();
 	}
@@ -160,10 +174,17 @@ public class ResultActivity extends ListActivity {
 		} else {
 			final Intent intent = new Intent(this, EntryDetailActivity.class);
 			intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, entry);
+			intent.putExtra(EntryDetailActivity.INTENTKEY_SIMEJI, isSimeji);
 			startActivity(intent);
 		}
 	}
-
+	/**
+	 * Uses lucene to search through the edict file and return matched lines.
+	 * @param query the query
+	 * @return a list of matched lines, never null.
+	 * @throws IOException on I/O error.
+	 * @throws ParseException on invalid Lucene query - indicates a bug in Aedict code.
+	 */
 	private List<String> performLuceneSearch(final SearchQuery query) throws IOException, ParseException {
 		final List<String> r = new ArrayList<String>();
 		final IndexReader reader = IndexReader.open(DownloadEdictTask.LUCENE_INDEX);

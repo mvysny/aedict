@@ -208,6 +208,10 @@ public class AedictApp extends Application {
 
 	private static final int NOTIFICATION_ID = 1;
 
+	/**
+	 * Applies values from given configuration file, e.g. removes or adds the notification icon etc.
+	 * @param cfg non-null configuration
+	 */
 	private static void apply(final Config cfg) {
 		final NotificationManager nm = (NotificationManager) instance.getSystemService(Context.NOTIFICATION_SERVICE);
 		if (!cfg.isAlwaysAvailable) {
