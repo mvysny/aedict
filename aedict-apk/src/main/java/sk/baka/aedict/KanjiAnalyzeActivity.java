@@ -63,7 +63,22 @@ public class KanjiAnalyzeActivity extends ListActivity {
 					v = getLayoutInflater().inflate(R.layout.kanjidetail, getListView(), false);
 				}
 				final EdictEntry e = model.get(position);
-				e.print((TextView) v.findViewById(android.R.id.text1), (TextView) v.findViewById(android.R.id.text2));
+				((TextView) v.findViewById(android.R.id.text1)).setText(e.reading);
+				final StringBuilder sb = new StringBuilder();
+				if (e.strokes != null) {
+					sb.append(" Strokes: ").append(e.strokes);
+				}
+				if (e.radical != null) {
+					sb.append(" Radical: ").append(e.radical);
+				}
+				if (e.skip != null) {
+					sb.append(" SKIP: ").append(e.skip);
+				}
+				if (sb.length() > 0) {
+					sb.setCharAt(0, '\n');
+				}
+				sb.insert(0, e.english);
+				((TextView) v.findViewById(android.R.id.text2)).setText(sb.toString());
 				final TextView tv = (TextView) v.findViewById(R.id.kanjiBig);
 				tv.setText(e.getJapanese());
 				return v;

@@ -139,7 +139,7 @@ public final class DownloadEdictTask extends AsyncTask<Void, DownloadEdictTask.P
 	 *            unzip the files here
 	 * @param dictName
 	 *            the dictionary name.
-	 * 
+	 * @param expectedSize the expected file size of unpacked dictionary.
 	 */
 	public DownloadEdictTask(final Context context, final URL source, final String targetDir, final String dictName, final long expectedSize) {
 		this.context = context;

@@ -49,6 +49,22 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 * The English translation
 	 */
 	public final String english;
+	/**
+	 * The classification radical number of the kanji (as in Nelson). Non-null
+	 * only when {@link #kanji} is a single kanji and this entry was parsed from
+	 * KANJIDIC.
+	 */
+	public final Integer radical;
+	/**
+	 * The total stroke-count of the kanji. Non-null only when {@link #kanji} is
+	 * a single kanji and this entry was parsed from KANJIDIC.
+	 */
+	public final Integer strokes;
+	/**
+	 * The "SKIP" coding of the kanji, as used in Halpern. Non-null only when
+	 * {@link #kanji} is a single kanji and this entry was parsed from KANJIDIC.
+	 */
+	public final String skip;
 
 	/**
 	 * Creates new entry instance.
@@ -62,9 +78,39 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 *            the English translation
 	 */
 	public EdictEntry(final String kanji, final String reading, final String english) {
+		this(kanji, reading, english, null, null, null);
+	}
+
+	/**
+	 * Creates new entry instance.
+	 * 
+	 * @param kanji
+	 *            the kanji expression, may be null if the entry does not
+	 *            contain any kanji
+	 * @param reading
+	 *            the reading, in hiragana or katakana.
+	 * @param english
+	 *            the English translation
+	 * @param radical
+	 *            The classification radical number of the kanji (as in Nelson).
+	 *            Non-null only when {@link #kanji} is a single kanji and this
+	 *            entry was parsed from KANJIDIC.
+	 * @param strokes
+	 *            The total stroke-count of the kanji. Non-null only when
+	 *            {@link #kanji} is a single kanji and this entry was parsed
+	 *            from KANJIDIC.
+	 * @param skip
+	 *            The "SKIP" coding of the kanji, as used in Halpern. Non-null
+	 *            only when {@link #kanji} is a single kanji and this entry was
+	 *            parsed from KANJIDIC.
+	 */
+	public EdictEntry(final String kanji, final String reading, final String english, final Integer radical, final Integer strokes, final String skip) {
 		this.kanji = kanji;
 		this.reading = reading;
 		this.english = english;
+		this.radical = radical;
+		this.strokes = strokes;
+		this.skip = skip;
 	}
 
 	/**
@@ -193,13 +239,26 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 		final ListBuilder reading = new ListBuilder(", ");
 		final ListBuilder namesReading = new ListBuilder(", ");
 		boolean readingInNames = false;
-		// first pass: ignore english readings as they may contain spaces and
-		// next simple algorithm would match them as readings (as the token does
+		Integer radicalNumber = null;
+		Integer strokeCount = null;
+		String skip = null;
+		// first pass: ignore English readings as they may contain spaces and
+		// this simple algorithm would match them as readings (as the token does
 		// not start with '{' )
 		for (final String field : kanjidicEntry.substring(2).split("\\ ")) {
 			final char firstChar = field.charAt(0);
 			if (firstChar == '{') {
 				break;
+			} else if (firstChar == 'B') {
+				radicalNumber = parse(field.substring(1));
+			} else if (firstChar == 'S') {
+				// get only the first value and ignore other, commonly mistaken
+				// stroke numbers.
+				if (strokeCount == null) {
+					strokeCount = parse(field.substring(1));
+				}
+			} else if (firstChar == 'P') {
+				skip = field.substring(1);
 			} else if ((firstChar < 'A' || firstChar > 'Z') && (firstChar < '0' || firstChar > '9')) {
 				// a reading
 				(readingInNames ? namesReading : reading).add(field);
@@ -223,7 +282,16 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 		if (!namesReading.isEmpty()) {
 			reading.add("[" + namesReading + "]");
 		}
-		return new EdictEntry(String.valueOf(kanji), reading.toString(), english.toString());
+		return new EdictEntry(String.valueOf(kanji), reading.toString(), english.toString(), radicalNumber, strokeCount, skip);
+	}
+
+	private static Integer parse(final String str) {
+		try {
+			return Integer.valueOf(str);
+		} catch (NumberFormatException ex) {
+			Log.e(EdictEntry.class.getSimpleName(), "Failed to parse integer " + str, ex);
+			return null;
+		}
 	}
 
 	private static class ListBuilder {
@@ -249,6 +317,7 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 			return isFirst;
 		}
 
+		@Override
 		public String toString() {
 			return sb.toString();
 		}
