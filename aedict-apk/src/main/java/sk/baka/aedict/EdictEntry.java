@@ -22,7 +22,9 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import android.util.Log;
 import android.widget.TextView;
@@ -188,20 +190,35 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 		if (kanjidicEntry.charAt(1) != ' ') {
 			throw new IllegalArgumentException("Invalid kanjidic entry: " + kanjidicEntry);
 		}
-		final ListBuilder english = new ListBuilder(", ");
-		final ListBuilder reading = new ListBuilder(" ");
-		final ListBuilder namesReading = new ListBuilder(" ");
+		final ListBuilder reading = new ListBuilder(", ");
+		final ListBuilder namesReading = new ListBuilder(", ");
 		boolean readingInNames = false;
+		// first pass: ignore english readings as they may contain spaces and
+		// next simple algorithm would match them as readings (as the token does
+		// not start with '{' )
 		for (final String field : kanjidicEntry.substring(2).split("\\ ")) {
 			final char firstChar = field.charAt(0);
 			if (firstChar == '{') {
-				english.add(field.substring(1, field.length() - 1));
-			} else if (firstChar < 'A' || firstChar > 'Z') {
+				break;
+			} else if ((firstChar < 'A' || firstChar > 'Z') && (firstChar < '0' || firstChar > '9')) {
 				// a reading
 				(readingInNames ? namesReading : reading).add(field);
 			} else if (field.equals("T1")) {
 				readingInNames = true;
 			}
+		}
+		// second pass: English translations
+		final ListBuilder english = new ListBuilder(", ");
+		List<Object> tokens = Collections.list(new StringTokenizer(kanjidicEntry, "{}"));
+		// skip the kanji definition tokens
+		tokens = tokens.subList(1, tokens.size());
+		for (final Object eng : tokens) {
+			final String engStr = eng.toString().trim();
+			if (engStr.length() == 0) {
+				// skip spaces between } {
+				continue;
+			}
+			english.add(engStr);
 		}
 		if (!namesReading.isEmpty()) {
 			reading.add("[" + namesReading + "]");
