@@ -125,6 +125,7 @@ public final class DownloadEdictTask extends AsyncTask<Void, DownloadEdictTask.P
 	private final URL source;
 	private final String targetDir;
 	private final String dictName;
+	private final long expectedSize;
 
 	/**
 	 * Creates new dictionary downloader.
@@ -140,11 +141,12 @@ public final class DownloadEdictTask extends AsyncTask<Void, DownloadEdictTask.P
 	 *            the dictionary name.
 	 * 
 	 */
-	public DownloadEdictTask(final Context context, final URL source, final String targetDir, final String dictName) {
+	public DownloadEdictTask(final Context context, final URL source, final String targetDir, final String dictName, final long expectedSize) {
 		this.context = context;
 		this.source = source;
 		this.targetDir = targetDir;
 		this.dictName = dictName;
+		this.expectedSize = expectedSize;
 	}
 
 	private ProgressDialog dlg;
@@ -289,7 +291,7 @@ public final class DownloadEdictTask extends AsyncTask<Void, DownloadEdictTask.P
 	private void copy(final ZipEntry entry, final InputStream in, final OutputStream out) throws IOException {
 		long size = entry.getSize();
 		if (size < 0) {
-			size = 20000000;
+			size = expectedSize;
 		}
 		dlg.setMax((int) (size / 1024));
 		publishProgress(new Progress(null, 0));

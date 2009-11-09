@@ -159,6 +159,85 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	}
 
 	/**
+	 * Parses a list of KANJIDIC entries.
+	 * 
+	 * @param edictEntries
+	 *            a list of entries.
+	 * @return a list of parsed entries, some of them may be invalid if parse
+	 *         error occurred.
+	 */
+	public static List<EdictEntry> parseKanjidic(final Collection<? extends String> edictEntries) {
+		final List<EdictEntry> result = new ArrayList<EdictEntry>(edictEntries.size());
+		for (final String unparsedEntry : edictEntries) {
+			result.add(tryParseKanjidic(unparsedEntry));
+		}
+		return result;
+	}
+
+	/**
+	 * Parses given KANJIDIC entry.
+	 * 
+	 * @param kanjidicEntry
+	 *            the entry to parse.
+	 * @return a parsed entry. Never null. The entry may not be valid. In such
+	 *         case the English translation contains the error description, all
+	 *         other fields are null.
+	 */
+	public static EdictEntry tryParseKanjidic(final String kanjidicEntry) {
+		final char kanji = kanjidicEntry.charAt(0);
+		if (kanjidicEntry.charAt(1) != ' ') {
+			throw new IllegalArgumentException("Invalid kanjidic entry: " + kanjidicEntry);
+		}
+		final ListBuilder english = new ListBuilder(", ");
+		final ListBuilder reading = new ListBuilder(" ");
+		final ListBuilder namesReading = new ListBuilder(" ");
+		boolean readingInNames = false;
+		for (final String field : kanjidicEntry.substring(2).split("\\ ")) {
+			final char firstChar = field.charAt(0);
+			if (firstChar == '{') {
+				english.add(field.substring(1, field.length() - 1));
+			} else if (firstChar < 'A' || firstChar > 'Z') {
+				// a reading
+				(readingInNames ? namesReading : reading).add(field);
+			} else if (field.equals("T1")) {
+				readingInNames = true;
+			}
+		}
+		if (!namesReading.isEmpty()) {
+			reading.add("[" + namesReading + "]");
+		}
+		return new EdictEntry(String.valueOf(kanji), reading.toString(), english.toString());
+	}
+
+	private static class ListBuilder {
+		private final String separator;
+		private boolean isFirst = true;
+		private final StringBuilder sb = new StringBuilder();
+
+		public ListBuilder(final String separator) {
+			this.separator = separator;
+		}
+
+		public ListBuilder add(final String string) {
+			if (isFirst) {
+				isFirst = false;
+			} else {
+				sb.append(separator);
+			}
+			sb.append(string);
+			return this;
+		}
+
+		public boolean isEmpty() {
+			return isFirst;
+		}
+
+		public String toString() {
+			return sb.toString();
+		}
+	}
+
+	/**
 	 * Prints itself to a ListView item.
 	 * 
 	 * @param item

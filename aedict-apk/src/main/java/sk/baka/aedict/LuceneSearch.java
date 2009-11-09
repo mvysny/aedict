@@ -43,15 +43,24 @@ public final class LuceneSearch implements Closeable {
 	private final IndexReader reader;
 	private final Searcher searcher;
 	private final QueryParser parser;
+	/**
+	 * If true then we are using Kanjidic for search. If false, we are using
+	 * edict.
+	 */
+	private final boolean kanjidic;
 
 	/**
 	 * Creates the object and opens the index file.
 	 * 
+	 * @param kanjidic
+	 *            If true then we are using Kanjidic for search. If false, we
+	 *            are using edict.
 	 * @throws IOException
 	 *             on I/O error.
 	 */
-	public LuceneSearch() throws IOException {
-		reader = IndexReader.open(DownloadEdictTask.LUCENE_INDEX);
+	public LuceneSearch(final boolean kanjidic) throws IOException {
+		this.kanjidic = kanjidic;
+		reader = IndexReader.open(kanjidic ? DownloadEdictTask.LUCENE_INDEX_KANJIDIC : DownloadEdictTask.LUCENE_INDEX);
 		searcher = new IndexSearcher(reader);
 		parser = new QueryParser("contents", new StandardAnalyzer());
 	}
@@ -69,7 +78,7 @@ public final class LuceneSearch implements Closeable {
 		final List<String> r = new ArrayList<String>();
 		final Query parsedQuery;
 		try {
-			parsedQuery = parser.parse(query.getLuceneQuery());
+			parsedQuery = parser.parse(query.getLuceneQuery(kanjidic));
 		} catch (ParseException e) {
 			// not expected - the SearchQuery object should produce valid query
 			// strings... indicates a bug in Aedict code.
@@ -97,12 +106,15 @@ public final class LuceneSearch implements Closeable {
 	 * 
 	 * @param query
 	 *            the query
+	 * @param kanjidic
+	 *            If true then we are using Kanjidic for search. If false, we
+	 *            are using edict.
 	 * @return a list of matched lines, never null.
 	 * @throws IOException
 	 *             on I/O error.
 	 */
-	public static List<String> singleSearch(final SearchQuery query) throws IOException {
-		final LuceneSearch s = new LuceneSearch();
+	public static List<String> singleSearch(final SearchQuery query, final boolean kanjidic) throws IOException {
+		final LuceneSearch s = new LuceneSearch(kanjidic);
 		try {
 			return s.search(query);
 		} finally {

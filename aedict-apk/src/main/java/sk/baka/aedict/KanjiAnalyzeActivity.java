@@ -86,31 +86,50 @@ public class KanjiAnalyzeActivity extends ListActivity {
 
 	private List<EdictEntry> analyze(final String word) throws IOException {
 		final List<EdictEntry> result = new ArrayList<EdictEntry>(word.length());
-		final LuceneSearch ls = new LuceneSearch();
+		final LuceneSearch lsEdict = new LuceneSearch(false);
 		try {
-			for (char c : word.toCharArray()) {
-				final boolean isKanji = isKanji(c);
-				if (!isKanji) {
-					result.add(new EdictEntry(String.valueOf(c), String.valueOf(c), ""));
-				} else {
-					// it is a kanji. search for it in the dictionary.
-					final SearchQuery q = new SearchQuery();
-					q.isJapanese = true;
-					q.matcher = MatcherEnum.ExactMatchEng;
-					q.query = new String[] { String.valueOf(c) };
-					final List<String> matches = ls.search(q);
-					if (matches.size() > 0) {
-						final EdictEntry ee = EdictEntry.tryParseEdict(matches.get(0));
-						result.add(ee);
+			LuceneSearch lsKanjidic = null;
+			if (DownloadEdictTask.isComplete(DownloadEdictTask.LUCENE_INDEX_KANJIDIC)) {
+				lsKanjidic = new LuceneSearch(true);
+			}
+			try {
+				for (char c : word.toCharArray()) {
+					final boolean isKanji = isKanji(c);
+					if (!isKanji) {
+						result.add(new EdictEntry(String.valueOf(c), String.valueOf(c), ""));
 					} else {
-						// no luck. Just add the kanji
-						result.add(new EdictEntry(String.valueOf(c), "", ""));
+						// it is a kanji. search for it in the dictionary.
+						final SearchQuery q = new SearchQuery();
+						q.isJapanese = true;
+						q.matcher = MatcherEnum.ExactMatchEng;
+						q.query = new String[] { String.valueOf(c) };
+						List<String> matches = null;
+						EdictEntry ee = null;
+						if (lsKanjidic != null) {
+							matches = lsKanjidic.search(q);
+						}
+						if (matches != null && !matches.isEmpty()) {
+							ee = EdictEntry.tryParseKanjidic(matches.get(0));
+						}
+						if (ee == null) {
+							matches = lsEdict.search(q);
+							if (matches.size() > 0) {
+								ee = EdictEntry.tryParseEdict(matches.get(0));
+							}
+						}
+						if (ee == null) {
+							// no luck. Just add the kanji
+							ee = new EdictEntry(String.valueOf(c), "", "");
+						}
+						result.add(ee);
 					}
 				}
+				return result;
+			} finally {
+				MiscUtils.closeQuietly(lsKanjidic);
 			}
-			return result;
 		} finally {
-			MiscUtils.closeQuietly(ls);
+			MiscUtils.closeQuietly(lsEdict);
 		}
 	}
 

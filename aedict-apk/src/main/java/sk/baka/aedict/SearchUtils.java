@@ -201,9 +201,10 @@ public final class SearchUtils {
 	 *            the expected size of the dictionary file.
 	 * @param dictName
 	 *            the name of the dictionary, EDict or KanjiDic
+	 * @return true if the files are available, false otherwise.
 	 */
-	public void checkDictionaryFile(final URL source, final String targetDir, final long expectedSize, final String dictName) {
-		if (!DownloadEdictTask.isComplete(DownloadEdictTask.LUCENE_INDEX)) {
+	public boolean checkDictionaryFile(final URL source, final String targetDir, final long expectedSize, final String dictName) {
+		if (!DownloadEdictTask.isComplete(targetDir)) {
 			final StatFs stats = new StatFs("/sdcard");
 			final long free = ((long) stats.getBlockSize()) * stats.getAvailableBlocks();
 			final StringBuilder msg = new StringBuilder(activity.getString(R.string.dictionary_missing_download, dictName));
@@ -214,9 +215,11 @@ public final class SearchUtils {
 			new AndroidUtils(activity).showYesNoDialog(msg.toString(), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();
-					new DownloadEdictTask(activity, source, targetDir, dictName).execute();
+					new DownloadEdictTask(activity, source, targetDir, dictName, expectedSize).execute();
 				}
 			});
+			return false;
 		}
+		return true;
 	}
 }

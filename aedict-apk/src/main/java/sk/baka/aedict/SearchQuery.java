@@ -45,6 +45,18 @@ public final class SearchQuery implements Serializable {
 	 * A matcher to use when matching query strings to a line.
 	 */
 	public MatcherEnum matcher;
+	/**
+	 * If non-null, defines the stroke count.
+	 */
+	public Integer strokeCount;
+	/**
+	 * If non-null, defines the desired SKIP code.
+	 */
+	public String skip;
+	/**
+	 * If non-null, contains a radical number.
+	 */
+	public Integer radical;
 
 	/**
 	 * Creates an empty search query.
@@ -72,14 +84,33 @@ public final class SearchQuery implements Serializable {
 	/**
 	 * Returns a Lucene query which matches this query as close as possible.
 	 * 
+	 * @param kanjidic
+	 *            if true we will search in a kanjidic, if false, we will search
+	 *            in edict.
 	 * @return the Apache Lucene query
 	 */
-	public String getLuceneQuery() {
+	public String getLuceneQuery(final boolean kanjidic) {
 		final StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < query.length; i++) {
-			sb.append(query[i]);
-			if (i < query.length - 1) {
-				sb.append(" OR ");
+		if (!kanjidic) {
+			for (int i = 0; i < query.length; i++) {
+				sb.append(query[i].trim());
+				if (i < query.length - 1) {
+					sb.append(" OR ");
+				}
+			}
+		} else {
+			if (query.length != 1) {
+				throw new IllegalStateException("Kanjidic search requires a single kanji character search");
+			}
+			sb.append("kanji:").append(query[0].trim());
+			if (strokeCount != null) {
+				sb.append(" AND strokes:").append(strokeCount);
+			}
+			if (skip != null) {
+				sb.append(" AND skip:").append(skip);
+			}
+			if (radical != null) {
+				sb.append(" AND radical:").append(radical);
 			}
 		}
 		return sb.toString();
@@ -95,6 +126,20 @@ public final class SearchQuery implements Serializable {
 		this();
 		query = other.query.clone();
 		isJapanese = other.isJapanese;
+		matcher = other.matcher;
+		strokeCount = other.strokeCount;
+		skip = other.skip;
+		radical = other.radical;
+	}
+
+	/**
+	 * When searching for a particular stroke count, SKIP code or radical, the
+	 * KANJIDIC dictionary is required to be available.
+	 * 
+	 * @return true if this search query requires a KANJIDIC, false otherwise.
+	 */
+	public boolean requiresKanjidic() {
+		return strokeCount != null || skip != null || radical != null;
 	}
 
 	/**
