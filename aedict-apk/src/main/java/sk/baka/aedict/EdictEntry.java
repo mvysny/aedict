@@ -65,6 +65,13 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 * {@link #kanji} is a single kanji and this entry was parsed from KANJIDIC.
 	 */
 	public final String skip;
+	/**
+	 * The "grade" of the kanji, In this case, G2 means it is a Jouyou (general
+	 * use) kanji taught in the second year of elementary schooling in Japan.
+	 * Non-null only when {@link #kanji} is a single kanji and this entry was
+	 * parsed from KANJIDIC.
+	 */
+	public final Integer grade;
 
 	/**
 	 * Creates new entry instance.
@@ -78,7 +85,7 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 *            the English translation
 	 */
 	public EdictEntry(final String kanji, final String reading, final String english) {
-		this(kanji, reading, english, null, null, null);
+		this(kanji, reading, english, null, null, null, null);
 	}
 
 	/**
@@ -103,14 +110,21 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 *            The "SKIP" coding of the kanji, as used in Halpern. Non-null
 	 *            only when {@link #kanji} is a single kanji and this entry was
 	 *            parsed from KANJIDIC.
+	 * @param grade
+	 *            The "grade" of the kanji, In this case, G2 means it is a
+	 *            Jouyou (general use) kanji taught in the second year of
+	 *            elementary schooling in Japan. Non-null only when
+	 *            {@link #kanji} is a single kanji and this entry was parsed
+	 *            from KANJIDIC.
 	 */
-	public EdictEntry(final String kanji, final String reading, final String english, final Integer radical, final Integer strokes, final String skip) {
+	public EdictEntry(final String kanji, final String reading, final String english, final Integer radical, final Integer strokes, final String skip, final Integer grade) {
 		this.kanji = kanji;
 		this.reading = reading;
 		this.english = english;
 		this.radical = radical;
 		this.strokes = strokes;
 		this.skip = skip;
+		this.grade = grade;
 	}
 
 	/**
@@ -241,6 +255,7 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 		boolean readingInNames = false;
 		Integer radicalNumber = null;
 		Integer strokeCount = null;
+		Integer grade = null;
 		String skip = null;
 		// first pass: ignore English readings as they may contain spaces and
 		// this simple algorithm would match them as readings (as the token does
@@ -259,6 +274,8 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 				}
 			} else if (firstChar == 'P') {
 				skip = field.substring(1);
+			} else if (firstChar == 'G') {
+				grade = parse(field.substring(1));
 			} else if ((firstChar < 'A' || firstChar > 'Z') && (firstChar < '0' || firstChar > '9')) {
 				// a reading
 				(readingInNames ? namesReading : reading).add(field);
@@ -282,7 +299,7 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 		if (!namesReading.isEmpty()) {
 			reading.add("[" + namesReading + "]");
 		}
-		return new EdictEntry(String.valueOf(kanji), reading.toString(), english.toString(), radicalNumber, strokeCount, skip);
+		return new EdictEntry(String.valueOf(kanji), reading.toString(), english.toString(), radicalNumber, strokeCount, skip, grade);
 	}
 
 	private static Integer parse(final String str) {

@@ -66,13 +66,16 @@ public class KanjiAnalyzeActivity extends ListActivity {
 				((TextView) v.findViewById(android.R.id.text1)).setText(e.reading);
 				final StringBuilder sb = new StringBuilder();
 				if (e.strokes != null) {
-					sb.append(" Strokes: ").append(e.strokes);
+					sb.append(" Strokes:").append(e.strokes);
 				}
 				if (e.radical != null) {
-					sb.append(" Radical: ").append(e.radical);
+					sb.append(" Radical:").append(e.radical);
 				}
 				if (e.skip != null) {
-					sb.append(" SKIP: ").append(e.skip);
+					sb.append(" SKIP:").append(e.skip);
+				}
+				if (e.grade != null) {
+					sb.append(" Grade:").append(e.grade);
 				}
 				if (sb.length() > 0) {
 					sb.setCharAt(0, '\n');
