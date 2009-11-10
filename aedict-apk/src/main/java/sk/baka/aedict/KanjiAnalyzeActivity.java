@@ -78,7 +78,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 					sb.append(" Grade:").append(e.grade);
 				}
 				if (sb.length() > 0) {
-					sb.setCharAt(0, '\n');
+					sb.replace(0, 1, "\n");
 				}
 				sb.insert(0, e.english);
 				((TextView) v.findViewById(android.R.id.text2)).setText(sb.toString());
