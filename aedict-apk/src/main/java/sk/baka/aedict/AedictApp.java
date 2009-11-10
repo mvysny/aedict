@@ -264,16 +264,17 @@ public class AedictApp extends Application {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T safe(final T instance) {
-		final Class<Object>[] intfs = instance.getClass().getInterfaces();
+		final Class<?>[] intfs = instance.getClass().getInterfaces();
 		if (intfs.length == 0) {
 			throw new IllegalArgumentException("Given class " + instance.getClass() + " does not implement any interfaces");
 		}
 		if (intfs.length > 1) {
 			throw new IllegalArgumentException("Given class " + instance.getClass() + " implements multiple interfaces");
 		}
-		final Class<Object> intf = intfs[0];
+		final Class<Object> intf = (Class) intfs[0];
 		final Object safe = safe(intf, instance);
-		// this is a bit ugly. The safe object will not of type T anymore, but this cast will succeed (because it is silently ignored by Java).
+		// this is a bit ugly. The safe object will not of type T anymore, but
+		// this cast will succeed (because it is silently ignored by Java).
 		return (T) safe;
 	}
 
