@@ -57,6 +57,11 @@ public final class SearchQuery implements Serializable {
 	 * If non-null, contains a radical number.
 	 */
 	public Integer radical;
+	/**
+	 * Optional: a positive integer, how much we can deviate from given stroke
+	 * count.
+	 */
+	public Integer strokesPlusMinus;
 
 	/**
 	 * Creates an empty search query.
@@ -104,7 +109,21 @@ public final class SearchQuery implements Serializable {
 			}
 			sb.append("kanji:").append(query[0].trim());
 			if (strokeCount != null) {
-				sb.append(" AND strokes:").append(strokeCount);
+				sb.append(" AND (");
+				boolean first = true;
+				final int plusMinus = strokesPlusMinus == null ? 0 : strokesPlusMinus;
+				if ((plusMinus > 3) || (plusMinus < 0)) {
+					throw new IllegalStateException("Invalid value: " + strokesPlusMinus);
+				}
+				for (int strokes = strokeCount - plusMinus; strokes <= strokeCount + plusMinus; strokes++) {
+					if (first) {
+						first = false;
+					} else {
+						sb.append(" OR ");
+					}
+					sb.append("strokes:").append(strokes);
+				}
+				sb.append(')');
 			}
 			if (skip != null) {
 				sb.append(" AND skip:").append(skip);
@@ -214,5 +233,27 @@ public final class SearchQuery implements Serializable {
 			sb.append(q);
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * Search for given kanji. Useful with KANJIDIC.
+	 * 
+	 * @param kanji
+	 *            the kanji to search for.
+	 * @param strokes
+	 *            optional number of strokes
+	 * @param strokesPlusMinus
+	 *            optional: a positive integer, how much we can deviate from
+	 *            given stroke count.
+	 * @return a search query instance, never null.
+	 */
+	public static SearchQuery kanjiSearch(final char kanji, final Integer strokes, final Integer strokesPlusMinus) {
+		final SearchQuery result = new SearchQuery();
+		result.isJapanese = true;
+		result.matcher = MatcherEnum.ExactMatchEng;
+		result.query = new String[] { String.valueOf(kanji) };
+		result.strokeCount = strokes;
+		result.strokesPlusMinus = strokesPlusMinus;
+		return result;
 	}
 }

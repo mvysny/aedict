@@ -18,9 +18,16 @@
 
 package sk.baka.aedict;
 
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -55,6 +62,16 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 			}
 			addRadicalToggle(v, radical, strokes);
 		}
+		findViewById(R.id.btnRadicalsSearch).setOnClickListener(AedictApp.safe(new View.OnClickListener() {
+
+			public void onClick(View v) {
+				try {
+					performSearch();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}));
 	}
 
 	private int radicalsPerRow;
@@ -152,5 +169,63 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 			}
 		}
 		return sb.toString();
+	}
+
+	private Integer getInt(final int editResId) {
+		final String text = ((EditText) findViewById(editResId)).getText().toString();
+		try {
+			return Integer.parseInt(text);
+		} catch (NumberFormatException ex) {
+			return null;
+		}
+	}
+
+	/**
+	 * Performs kanji search.
+	 * 
+	 * @throws IOException
+	 */
+	private void performSearch() throws IOException {
+		final String radicals = getRadicals();
+		if (radicals.length() == 0) {
+			new AndroidUtils(this).showErrorDialog("No radicals selected");
+			return;
+		}
+		final Integer strokes = getInt(R.id.editKanjiStrokes);
+		Integer plusMinus = getInt(R.id.editKanjiStrokesPlusMinus);
+		if (plusMinus != null) {
+			if (plusMinus < 0) {
+				plusMinus = -plusMinus;
+			}
+			if (plusMinus > 3) {
+				plusMinus = 3;
+			}
+		}
+		final Set<Character> matches = Radicals.getKanjisWithRadicals(radicals.toCharArray());
+		// filter the matches based on stroke count
+		if (strokes != null) {
+			final LuceneSearch ls = new LuceneSearch(true);
+			try {
+				for (final Iterator<Character> kanjis = matches.iterator(); kanjis.hasNext();) {
+					final char kanji = kanjis.next();
+					final SearchQuery sq = SearchQuery.kanjiSearch(kanji, strokes, plusMinus);
+					final List<String> result = ls.search(sq);
+					if (result.isEmpty()) {
+						// the kanji didn't matched
+						kanjis.remove();
+					}
+				}
+			} finally {
+				MiscUtils.closeQuietly(ls);
+			}
+		}
+		// we have the kanjis. launch the analyze activity
+		final StringBuilder kanjis = new StringBuilder();
+		for (final Character kanji : matches) {
+			kanjis.append(kanji);
+		}
+		final Intent i = new Intent(this, KanjiAnalyzeActivity.class);
+		i.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, kanjis.toString());
+		startActivity(i);
 	}
 }
