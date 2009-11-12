@@ -55,4 +55,6 @@
     <string name="romanizationCaption">Use the following romanization:</string>
     <string name="analyze">Analyze</string>
     <string name="kanjiAnalysisOf">Kanji analysis of %s</string>
+    <string name="kanjiRadicalLookup">Radical Lookup</string>
+    <string name="kanjiLookup">Kanji Lookup</string>
 </resources>

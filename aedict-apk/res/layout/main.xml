@@ -15,8 +15,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-	<TextView android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="@string/jpSearch"></TextView>
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text="@string/jpSearch" android:textColor="#FFF" android:background="#666"/>
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:orientation="horizontal">
 		<CheckBox android:layout_height="wrap_content" android:id="@+id/jpExactMatch"
@@ -29,7 +29,7 @@
 	<EditText android:layout_height="wrap_content" android:id="@+id/jpSearchEdit"
 		android:layout_width="fill_parent" android:hint="@string/enterRomajiWord"
 		android:inputType="text" android:imeOptions="actionDone"></EditText>
-	<TextView android:layout_width="wrap_content"
+	<TextView android:layout_width="fill_parent" android:textColor="#FFF" android:background="#666"
 		android:layout_height="wrap_content" android:text="@string/englishSearch"></TextView>
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content">
@@ -43,4 +43,12 @@
 	<EditText android:layout_height="wrap_content" android:id="@+id/engSearchEdit"
 		android:layout_width="fill_parent" android:hint="@string/enterWordOrExpression"
 		android:inputType="text" android:imeOptions="actionDone"></EditText>
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text="@string/kanjiLookup" android:textColor="#FFF" android:background="#666"/>
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/kanjiRadicalLookup"
+			android:id="@+id/kanjiRadicalLookup"></Button>
+		</LinearLayout>
 </LinearLayout>
