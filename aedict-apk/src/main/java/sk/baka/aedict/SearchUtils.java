@@ -222,4 +222,13 @@ public final class SearchUtils {
 		}
 		return true;
 	}
+
+	/**
+	 * Checks if KANJIDIC exists. If not, user is prompted for a download and
+	 * the files are downloaded if requested.
+	 * @return true if the files are available, false otherwise.
+	 */
+	public boolean checkKanjiDic() {
+		return checkDictionaryFile(DownloadEdictTask.KANJIDIC_LUCENE_ZIP, DownloadEdictTask.LUCENE_INDEX_KANJIDIC, 1500 * 1024, "KanjiDic");
+	}
 }

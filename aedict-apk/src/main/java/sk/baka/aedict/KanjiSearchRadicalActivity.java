@@ -41,6 +41,9 @@ import android.widget.ImageView.ScaleType;
  * 
  */
 public class KanjiSearchRadicalActivity extends AbstractActivity {
+	private static final int PADDING = 3;
+	private static final int SIZE = 30;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,7 +51,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 		final TableLayout v = (TableLayout) findViewById(R.id.kanjisearchRadicals);
 		// there is no stupid flow layout in the great Android. Oh well. Let's
 		// emulate that with a table.
-		radicalsPerRow = getWindowManager().getDefaultDisplay().getWidth() / (30 + 2 * 3);
+		radicalsPerRow = getWindowManager().getDefaultDisplay().getWidth() / (SIZE + 2 * PADDING);
 		currentColumn = 0;
 		row = null;
 		int strokeCount = -1;
@@ -72,6 +75,8 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 				}
 			}
 		}));
+		// check that KANJIDIC exists
+		new SearchUtils(this).checkKanjiDic();
 	}
 
 	private int radicalsPerRow;
@@ -99,20 +104,20 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 			final ImageView iv = new ImageView(this);
 			vv = iv;
 			iv.setImageResource(drawable);
-			iv.setMinimumHeight(36);
-			iv.setMinimumWidth(36);
+			iv.setMinimumHeight(SIZE + 2 * PADDING);
+			iv.setMinimumWidth(SIZE + 2 * PADDING);
 			iv.setScaleType(ScaleType.FIT_CENTER);
 		} else {
 			final TextView tv = new TextView(this);
 			vv = tv;
 			tv.setText(radical == null ? String.valueOf(strokes) : radical.toString());
 			tv.setGravity(Gravity.CENTER);
-			tv.setTextSize(30);
+			tv.setTextSize(SIZE);
 			if (radical == null) {
 				tv.setBackgroundColor(0xFF993333);
 			}
 		}
-		vv.setPadding(3, 3, 3, 3);
+		vv.setPadding(PADDING, PADDING, PADDING, PADDING);
 		if (radical != null) {
 			final PushButtonListener pbl = new PushButtonListener(radical);
 			vv.setOnClickListener(pbl);

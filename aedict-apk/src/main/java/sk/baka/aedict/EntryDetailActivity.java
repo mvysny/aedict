@@ -56,12 +56,9 @@ public class EntryDetailActivity extends AbstractActivity {
 		analyze.setOnClickListener(AedictApp.safe(new View.OnClickListener() {
 
 			public void onClick(View v) {
-				final SearchUtils su = new SearchUtils(EntryDetailActivity.this);
-				if (su.checkDictionaryFile(DownloadEdictTask.KANJIDIC_LUCENE_ZIP, DownloadEdictTask.LUCENE_INDEX_KANJIDIC, 1500 * 1024, "KanjiDic")) {
-					final Intent intent = new Intent(EntryDetailActivity.this, KanjiAnalyzeActivity.class);
-					intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, entry.getJapanese());
-					startActivity(intent);
-				}
+				final Intent intent = new Intent(EntryDetailActivity.this, KanjiAnalyzeActivity.class);
+				intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, entry.getJapanese());
+				startActivity(intent);
 			}
 		}));
 	}
