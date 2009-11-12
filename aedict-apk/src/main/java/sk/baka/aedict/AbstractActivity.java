@@ -23,6 +23,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 /**
  * Properly initializes the application.
@@ -71,5 +73,35 @@ public abstract class AbstractActivity extends Activity {
 				return true;
 			}
 		}));
+	}
+
+	/**
+	 * Sets given button to be an activity launcher.
+	 * 
+	 * @param buttonId
+	 *            the button ID
+	 * @param activity
+	 *            the activity class
+	 */
+	public void setButtonActivityLauncher(final int buttonId, final Class<? extends Activity> activity) {
+		setButtonActivityLauncher((Button) findViewById(buttonId), activity);
+	}
+
+	/**
+	 * Sets given button to be an activity launcher.
+	 * 
+	 * @param button
+	 *            the button
+	 * @param activity
+	 *            the activity class
+	 */
+	public void setButtonActivityLauncher(final Button button, final Class<? extends Activity> activity) {
+		button.setOnClickListener(new View.OnClickListener() {
+
+			public void onClick(View v) {
+				final Intent intent = new Intent(AbstractActivity.this, activity);
+				startActivity(intent);
+			}
+		});
 	}
 }

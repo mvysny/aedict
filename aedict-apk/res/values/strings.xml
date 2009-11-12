@@ -57,4 +57,5 @@
     <string name="kanjiAnalysisOf">Kanji analysis of %s</string>
     <string name="kanjiRadicalLookup">Radical Lookup</string>
     <string name="kanjiLookup">Kanji Lookup</string>
+    <string name="radicals">Radicals</string>
 </resources>

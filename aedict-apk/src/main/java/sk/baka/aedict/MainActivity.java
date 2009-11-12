@@ -34,6 +34,7 @@ public class MainActivity extends AbstractActivity {
 		final SearchUtils utils = new SearchUtils(this);
 		utils.registerSearch(R.id.jpExactMatch, R.id.jpSearchEdit, false, R.id.jpSearch, true);
 		utils.registerSearch(R.id.engExactMatch, R.id.engSearchEdit, false, R.id.engSearch, false);
+		setButtonActivityLauncher(R.id.kanjiRadicalLookup, KanjiSearchRadicalActivity.class);
 		// check for dictionary file and download it if it is missing.
 		utils.checkDictionaryFile(DownloadEdictTask.EDICT_LUCENE_ZIP, DownloadEdictTask.LUCENE_INDEX, 20L * 1024 * 1024, "EDict");
 	}
