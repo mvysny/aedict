@@ -89,6 +89,8 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			}
 
 		});
+		// check that KANJIDIC exists
+		new SearchUtils(this).checkKanjiDic();
 	}
 
 	/**
