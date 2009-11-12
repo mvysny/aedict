@@ -65,11 +65,12 @@ public class KanjiAnalyzeActivity extends ListActivity {
 				final EdictEntry e = model.get(position);
 				((TextView) v.findViewById(android.R.id.text1)).setText(e.reading);
 				final StringBuilder sb = new StringBuilder();
+				if (e.radical != null) {
+					// TODO mvy: show radicals as images when available?
+					sb.append(' ').append(Radicals.getRadicals(e.kanji.charAt(0)));
+				}
 				if (e.strokes != null) {
 					sb.append(" Strokes:").append(e.strokes);
-				}
-				if (e.radical != null) {
-					sb.append(" Radical:").append(e.radical);
 				}
 				if (e.skip != null) {
 					sb.append(" SKIP:").append(e.skip);

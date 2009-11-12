@@ -68,6 +68,21 @@ public final class Radicals {
 	}
 
 	/**
+	 * Returns radicals for given kanji.
+	 * @param kanji the kanji to analyze
+	 * @return a radical list, never null, may be empty if unknown kanji is supplied.
+	 */
+	public static String getRadicals(final char kanji) {
+		final StringBuilder sb=new StringBuilder();
+		for(final Map.Entry<Character,Radical> r:RADICAL_TO_KANJILIST.entrySet()){
+			if(r.getValue().kanjis.indexOf(kanji)>=0){
+				sb.append(r.getKey());
+			}
+		}
+		return sb.toString();
+	}
+	
+	/**
 	 * Returns all kanjis which contains all given radicals.
 	 * 
 	 * @param radicals
