@@ -27,6 +27,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PathEffect;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -89,8 +90,10 @@ public class KanjiDrawActivity extends AbstractActivity {
 			bg.setARGB(255, 0, 0, 0);
 			fg1.setARGB(255, 235, 255, 235);
 			fg1.setAntiAlias(true);
+			fg1.setStrokeWidth(8f);
 			fg2.setARGB(255, 160, 160, 255);
 			fg2.setAntiAlias(true);
+			fg2.setStrokeWidth(8f);
 			this.recognizer = recognizer;
 		}
 
