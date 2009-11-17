@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package sk.baka.aedict;
+package sk.baka.aedict.kanji;
 
 import static org.junit.Assert.assertEquals;
 
