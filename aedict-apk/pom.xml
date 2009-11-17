@@ -30,7 +30,7 @@
 	
 	<properties>
 	   <!-- TODO vyzivus: migrate to http://code.google.com/p/maven-android-plugin when http://code.google.com/p/maven-android-plugin/issues/detail?id=2 is fixed -->
-		<masa.version>1.1-svn81-vyzivus1</masa.version>
+		<masa.version>1.1-svn81-vyzivus2</masa.version>
 		<android.version>1.6-r1</android.version>
 		<android.api>1.6</android.api>
 	</properties>

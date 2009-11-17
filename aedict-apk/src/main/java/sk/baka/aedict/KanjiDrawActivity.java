@@ -53,9 +53,7 @@ public class KanjiDrawActivity extends AbstractActivity {
 			super(context);
 			setFocusable(true);
 			setFocusableInTouchMode(true);
-
 			this.setOnTouchListener(this);
-
 			paint.setColor(Color.WHITE);
 			paint.setAntiAlias(true);
 		}
