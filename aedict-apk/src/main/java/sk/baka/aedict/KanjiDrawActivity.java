@@ -18,11 +18,13 @@
 
 package sk.baka.aedict;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -43,30 +45,57 @@ public class KanjiDrawActivity extends AbstractActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.kanjidraw);
-		((ViewGroup) findViewById(R.id.kanjidrawRoot)).addView(new PainterView(this));
+		final DrawPanel recognizer = new DrawPanel(getClassLoader());
+		final PainterView view = new PainterView(this, recognizer);
+		((ViewGroup) findViewById(R.id.kanjidrawRoot)).addView(view);
+		findViewById(R.id.btnKanjiClear).setOnClickListener(AedictApp.safe(new View.OnClickListener() {
+
+			public void onClick(View v) {
+				recognizer.clear();
+				view.invalidate();
+			}
+		}));
+		findViewById(R.id.btnKanjiSearch).setOnClickListener(AedictApp.safe(new View.OnClickListener() {
+
+			public void onClick(View v) {
+				try {
+					final String kanjis = recognizer.analyzeKanji();
+					final Intent i = new Intent(KanjiDrawActivity.this, KanjiAnalyzeActivity.class);
+					i.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, kanjis);
+					startActivity(i);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}));
 	}
 
+	/**
+	 * Uses the DrawPanel class to paint and recognize Kanjis.
+	 * 
+	 * @author Martin Vysny
+	 */
 	private static class PainterView extends View implements OnTouchListener {
-		private final DrawPanel recognizer = new DrawPanel();
+		private final DrawPanel recognizer;
 		private final Paint bg = new Paint();
 		private final Paint fg1 = new Paint();
 		private final Paint fg2 = new Paint();
-		private int lastx, lasty;
 
-		public PainterView(Context context) {
+		public PainterView(Context context, final DrawPanel recognizer) {
 			super(context);
 			setFocusable(true);
 			setFocusableInTouchMode(true);
 			this.setOnTouchListener(this);
-			bg.setARGB(255, 30, 30, 50);
+			bg.setARGB(255, 0, 0, 0);
 			fg1.setARGB(255, 235, 255, 235);
 			fg1.setAntiAlias(true);
 			fg2.setARGB(255, 160, 160, 255);
 			fg2.setAntiAlias(true);
+			this.recognizer = recognizer;
 		}
 
 		@Override
-		public void onDraw(Canvas c) {
+		protected void onDraw(Canvas c) {
 			Rect r = new Rect();
 			getDrawingRect(r);
 			c.drawRect(r, bg);
@@ -88,29 +117,25 @@ public class KanjiDrawActivity extends AbstractActivity {
 		}
 
 		public boolean onTouch(View view, MotionEvent event) {
+			final int x, y;
+			x = (int) event.getX();
+			y = (int) event.getY();
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
 				recognizer.curxvec = new ArrayList<Integer>();
 				recognizer.curyvec = new ArrayList<Integer>();
 				recognizer.xstrokes.add(recognizer.curxvec);
 				recognizer.ystrokes.add(recognizer.curyvec);
-				lastx = (int) event.getX();
-				lasty = (int) event.getY();
-				recognizer.curxvec.add(lastx);
-				recognizer.curyvec.add(lasty);
-			} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-				int x, y;
-				x = (int) event.getX();
-				y = (int) event.getY();
 				recognizer.curxvec.add(x);
 				recognizer.curyvec.add(y);
-				lastx = x;
-				lasty = y;
+			} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+				recognizer.curxvec.add(x);
+				recognizer.curyvec.add(y);
 			}
 			invalidate();
 			return true;
 		}
 
-		public void drawVec(Canvas g, Iterator<Integer> xe2, Iterator<Integer> ye2, final Paint p) {
+		private void drawVec(Canvas g, Iterator<Integer> xe2, Iterator<Integer> ye2, final Paint p) {
 			int lastx, lasty;
 			lastx = -1;
 			lasty = -1;

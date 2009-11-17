@@ -18,6 +18,7 @@
 
  */
 package edu.arizona.cs.javadict;
+
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
@@ -33,15 +34,20 @@ import java.util.StringTokenizer;
 // name is a string of 10 or less kanji with the best match first.
 
 public class DrawPanel {
-	public List<List<Integer>> xstrokes = new ArrayList<List<Integer>>();
-	public List<List<Integer>> ystrokes = new ArrayList<List<Integer>>();
+	private final ClassLoader classLoader;
+	public final List<List<Integer>> xstrokes = new ArrayList<List<Integer>>();
+	public final List<List<Integer>> ystrokes = new ArrayList<List<Integer>>();
 	public List<Integer> curxvec = null;
 	public List<Integer> curyvec = null;
 
-	static final int NUMKAN = 5;
+	private static final int NUMKAN = 5;
 
 	private <T> T last(List<? extends T> list) {
 		return list.get(list.size() - 1);
+	}
+
+	public DrawPanel(final ClassLoader cl) {
+		classLoader = cl;
 	}
 
 	/**
@@ -55,7 +61,7 @@ public class DrawPanel {
 	}
 
 	private BufferedReader getResource(final int strokes) throws IOException {
-		final InputStream result = getClass().getClassLoader().getResourceAsStream("unistrok." + strokes);
+		final InputStream result = classLoader.getResourceAsStream("edu/arizona/cs/javadict/unistrok." + strokes);
 		if (result == null) {
 			return null;
 		}
@@ -79,7 +85,7 @@ public class DrawPanel {
 	public String analyzeKanji() throws IOException {
 		int sc;
 		List<Integer> minScores = new ArrayList<Integer>(); // sorted such that
-															// the best is last
+		// the best is last
 		List<String> minChars = new ArrayList<String>();
 		String curk;
 		final BufferedReader in = getResource(xstrokes.size());
@@ -172,8 +178,8 @@ public class DrawPanel {
 							case '|':
 								break WhileLoop;
 							default:
-								throw new IOException("unknown symbol in kanji database: "+line);
-//								continue;
+								throw new IOException("unknown symbol in kanji database: " + line);
+								// continue;
 							}
 						}
 						goline = goline + " ";
@@ -197,7 +203,7 @@ public class DrawPanel {
 								minindex = tok.indexOf("-");
 								if (minindex == -1) {
 									throw new IOException("bad filter");
-//									continue;
+									// continue;
 								}
 								String arg1, arg2;
 								arg1 = tok.substring(0, minindex);
@@ -245,7 +251,7 @@ public class DrawPanel {
 									break;
 								default:
 									throw new IOException("bad filter");
-//									continue;
+									// continue;
 								}
 								// now the same thing for arg2 & val2
 								switch (arg2.charAt(0)) {
@@ -276,7 +282,7 @@ public class DrawPanel {
 									break;
 								default:
 									throw new IOException("bad filter");
-//									continue;
+									// continue;
 								}
 								// so now val1 and val2 have the right values
 								ns = ns - (val1 - val2);
@@ -284,7 +290,7 @@ public class DrawPanel {
 									ns += 9999999;
 							} catch (Exception ez2) {
 								throw new RuntimeException("bad filter", ez2);
-//								continue;
+								// continue;
 							} // try-catch
 						} // while
 					}
@@ -382,8 +388,8 @@ public class DrawPanel {
 				myang = -Math.PI * 3 / 4;
 				break;
 			default:
-				throw new RuntimeException("Illegal char: "+dir.charAt(0));
-//				myang = 0;
+				throw new RuntimeException("Illegal char: " + dir.charAt(0));
+				// myang = 0;
 			}
 			double difang = myang - ang;
 			while (difang < 0)
