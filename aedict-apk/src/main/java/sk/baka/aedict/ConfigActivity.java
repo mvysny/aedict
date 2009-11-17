@@ -55,6 +55,16 @@ public class ConfigActivity extends Activity {
 				AedictApp.saveConfig(cfg);
 			}
 		}));
+		final CheckBox cfgUseRomaji = (CheckBox) findViewById(R.id.cfgUseRomaji);
+		cfgUseRomaji.setChecked(cfg.useRomaji);
+		cfgUseRomaji.setOnCheckedChangeListener(AedictApp.safe(new CompoundButton.OnCheckedChangeListener() {
+
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				final Config cfg = new Config(false);
+				cfg.useRomaji = isChecked;
+				AedictApp.saveConfig(cfg);
+			}
+		}));
 		final Button cleanup = (Button) findViewById(R.id.cleanupEdictFilesButton);
 		cleanup.setOnClickListener(AedictApp.safe(new View.OnClickListener() {
 

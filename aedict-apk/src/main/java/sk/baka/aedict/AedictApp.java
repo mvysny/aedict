@@ -126,6 +126,7 @@ public class AedictApp extends Application {
 			if (loadDefaults) {
 				romanization = RomanizationEnum.Hepburn;
 				isAlwaysAvailable = false;
+				useRomaji = false;
 			}
 		}
 
@@ -137,6 +138,10 @@ public class AedictApp extends Application {
 		 * If true then a notification icon is registered.
 		 */
 		public Boolean isAlwaysAvailable;
+		/**
+		 * If true then Romaji will be used instead of katakana/hiragana throughout the application.
+		 */
+		public Boolean useRomaji;
 	}
 
 	/**

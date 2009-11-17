@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import sk.baka.aedict.MiscUtils;
-
+import sk.baka.aedict.kanji.RomanizationEnum;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
@@ -347,9 +347,11 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 * 
 	 * @param item
 	 *            the item.
+	 * @param romanize
+	 *            if non-null then katakana/hiragana will be shown as romaji
 	 */
-	public void print(final TwoLineListItem item) {
-		print(item.getText1(), item.getText2());
+	public void print(final TwoLineListItem item, final RomanizationEnum romanize) {
+		print(item.getText1(), item.getText2(), romanize);
 	}
 
 	/**
@@ -359,8 +361,14 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 *            first, larger textview.
 	 * @param text2
 	 *            second, smaller textview.
+	 * @param romanize
+	 *            if non-null then katakana/hiragana will be shown as romaji
 	 */
-	public void print(final TextView text1, final TextView text2) {
+	public void print(final TextView text1, final TextView text2, final RomanizationEnum romanize) {
+		String reading = this.reading;
+		if (romanize != null) {
+			reading = romanize.toRomaji(reading);
+		}
 		final String t1;
 		if (kanji == null) {
 			if (reading == null) {

@@ -21,12 +21,12 @@ package sk.baka.aedict;
 import java.util.Collections;
 import java.util.List;
 
+import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.RomanizationEnum;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -119,6 +119,7 @@ public class ResultActivity extends ListActivity {
 				model = Collections.singletonList(EdictEntry.newErrorMsg(getString(R.string.no_results)));
 			}
 		}
+		final Config cfg = AedictApp.loadConfig();
 		setListAdapter(new ArrayAdapter<EdictEntry>(this, android.R.layout.simple_list_item_2, model) {
 
 			@Override
@@ -127,7 +128,7 @@ public class ResultActivity extends ListActivity {
 				if (view == null) {
 					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
 				}
-				model.get(position).print(view);
+				model.get(position).print(view, cfg.useRomaji ? cfg.romanization : null);
 				return view;
 			}
 

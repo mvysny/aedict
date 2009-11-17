@@ -18,6 +18,9 @@
 	<CheckBox android:layout_height="wrap_content"
 		android:layout_width="fill_parent" android:text="@string/always_available"
 		android:id="@+id/cfgNotifBar"/>
+	<CheckBox android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:text="@string/useRomaji"
+		android:id="@+id/cfgUseRomaji"/>
 	<TextView android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:text="@string/romanizationCaption"></TextView>
 	<Spinner android:layout_height="wrap_content"

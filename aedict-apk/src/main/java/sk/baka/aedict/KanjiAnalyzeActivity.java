@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
@@ -29,7 +30,6 @@ import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.Radicals;
 import sk.baka.aedict.kanji.RomanizationEnum;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -63,6 +63,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			model = new ArrayList<EdictEntry>();
 			model.add(EdictEntry.newErrorMsg("Analysis failed: " + e));
 		}
+		final Config cfg = AedictApp.loadConfig();
 		setListAdapter(new ArrayAdapter<EdictEntry>(this, R.layout.kanjidetail, model) {
 
 			@Override
@@ -72,7 +73,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 					v = getLayoutInflater().inflate(R.layout.kanjidetail, getListView(), false);
 				}
 				final EdictEntry e = model.get(position);
-				((TextView) v.findViewById(android.R.id.text1)).setText(e.reading);
+				((TextView) v.findViewById(android.R.id.text1)).setText(cfg.useRomaji ? cfg.romanization.toRomaji(e.reading) : e.reading);
 				final StringBuilder sb = new StringBuilder();
 				if (e.radical != null) {
 					// TODO mvy: show radicals as images when available?
