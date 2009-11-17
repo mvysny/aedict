@@ -18,20 +18,6 @@
 
  */
 package edu.arizona.cs.javadict;
-import java.awt.BorderLayout;
-import java.awt.Button;
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Panel;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
@@ -46,13 +32,12 @@ import java.util.StringTokenizer;
 // use as a panel. The ActionListener will receive an action whose
 // name is a string of 10 or less kanji with the best match first.
 
-public class DrawPanel extends Panel {
+public class DrawPanel {
 	public List<List<Integer>> xstrokes = new ArrayList<List<Integer>>();
 	public List<List<Integer>> ystrokes = new ArrayList<List<Integer>>();
 	public List<Integer> curxvec = null;
 	public List<Integer> curyvec = null;
 
-	public KCanvas c = new KCanvas(this);
 	static final int NUMKAN = 5;
 
 	private <T> T last(List<? extends T> list) {
@@ -67,9 +52,6 @@ public class DrawPanel extends Panel {
 		ystrokes.clear();
 		curxvec = null;
 		curyvec = null;
-		Rectangle r = c.getBounds();
-		c.getGraphics().clearRect(0, 0, r.width, r.height);
-		c.paint(c.getGraphics());
 	}
 
 	private BufferedReader getResource(final int strokes) throws IOException {
@@ -486,156 +468,5 @@ public class DrawPanel extends Panel {
 			 * alg.)
 			 */
 		}
-	}
-
-	private static class KCanvas extends Canvas implements MouseMotionListener, MouseListener {
-		DrawPanel paps;
-		int lastx, lasty;
-		static Color bg = new Color(30, 30, 50);
-		static Color fg1 = new Color(235, 255, 235);
-		static Color fg2 = new Color(160, 160, 255);
-
-		public KCanvas(DrawPanel paps) {
-			this.paps = paps;
-			addMouseMotionListener(this);
-			addMouseListener(this);
-			setBackground(bg);
-			setForeground(fg1);
-		}
-
-		public void mouseClicked(MouseEvent e) {
-		}
-
-		public void mousePressed(MouseEvent e) {
-			if (paps.curxvec != null) {
-				Graphics g = getGraphics();
-				g.setColor(fg2);
-				drawVec(g, paps.curxvec.iterator(), paps.curyvec.iterator());
-			}
-
-			paps.curxvec = new ArrayList<Integer>();
-			paps.curyvec = new ArrayList<Integer>();
-			paps.xstrokes.add(paps.curxvec);
-			paps.ystrokes.add(paps.curyvec);
-			lastx = e.getX();
-			lasty = e.getY();
-			paps.curxvec.add(lastx);
-			paps.curyvec.add(lasty);
-			// paint(getGraphics());
-		}
-
-		public void mouseReleased(MouseEvent e) {
-		}
-
-		public void mouseEntered(MouseEvent e) {
-		}
-
-		public void mouseExited(MouseEvent e) {
-		}
-
-		public void mouseDragged(MouseEvent e) {
-			int x, y;
-			x = e.getX();
-			y = e.getY();
-			paps.curxvec.add(x);
-			paps.curyvec.add(y);
-			getGraphics().setColor(fg1);
-			brushLine(getGraphics(), lastx, lasty, x, y);
-			lastx = x;
-			lasty = y;
-		}
-
-		public void brushLine(Graphics g, int x1, int y1, int x2, int y2) {
-			g.drawLine(x1, y1, x2, y2);
-		}
-
-		public void mouseMoved(MouseEvent e) {
-		}
-
-		public void drawVec(Graphics g, Iterator<Integer> xe2, Iterator<Integer> ye2) {
-			int lastx, lasty;
-			lastx = -1;
-			lasty = -1;
-			while (xe2.hasNext()) {
-				int x, y;
-				x = xe2.next();
-				y = ye2.next();
-				if (lastx != -1)
-					brushLine(g, lastx, lasty, x, y);
-				lastx = x;
-				lasty = y;
-			} // while xe2
-		}
-
-		public void paint(Graphics g) {
-			g.setColor(fg1);
-			Rectangle r = getBounds();
-			g.draw3DRect(0, 0, r.width, r.height, true);
-			Iterator<List<Integer>> xe = paps.xstrokes.iterator();
-			Iterator<List<Integer>> ye = paps.ystrokes.iterator();
-			while (xe.hasNext()) {
-				List<Integer> xvec, yvec;
-				xvec = xe.next();
-				yvec = ye.next();
-				Iterator<Integer> xe2 = xvec.iterator();
-				Iterator<Integer> ye2 = yvec.iterator();
-				if (xvec != paps.curxvec)
-					g.setColor(fg2);
-				else
-					g.setColor(fg1);
-				drawVec(g, xe2, ye2);
-			} // while xe
-		}
-	}
-
-	public DrawPanel() {
-		super();
-		setLayout(new BorderLayout());
-		c.setSize(100, 100);
-		add(c, "Center");
-		c.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-		// Button b = new Button("Clear");
-		// add(b);
-		// b.addActionListener(this);
-		// b.setActionCommand("Clear");
-	}
-
-	public static void main(String[] args) {
-		Frame f = new Frame("Test");
-		final DrawPanel dp = new DrawPanel();
-		f.add(dp, "Center");
-		Panel lower = new Panel();
-		f.add(lower, "South");
-
-		Button testb = new Button("Lookup");
-		lower.add(testb);
-		testb.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					System.out.println(dp.analyzeKanji());
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-			}
-
-		});
-		testb.setActionCommand("Lookup");
-
-		Button testb2 = new Button("Clear");
-		lower.add(testb2);
-		testb2.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dp.clear();
-			}
-
-		});
-		testb2.setActionCommand("Clear");
-
-		f.pack();
-		f.show();
 	}
 }
