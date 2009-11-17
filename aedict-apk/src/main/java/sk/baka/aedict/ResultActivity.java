@@ -201,7 +201,8 @@ public class ResultActivity extends ListActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		AbstractActivity.addActivityLauncher(this, menu, R.string.showkanaTable, R.drawable.kanamenuitem, KanaTableActivity.class);
-		AbstractActivity.addActivityLauncher(this, menu, R.string.configuration, android.R.drawable.ic_menu_manage, ConfigActivity.class);
+		AbstractActivity.addActivityLauncher(this, menu, R.string.kanjiDrawLookup, R.drawable.ic_menu_compose, KanjiDrawActivity.class);
+		AbstractActivity.addActivityLauncher(this, menu, R.string.kanjiRadicalLookup, android.R.drawable.ic_menu_search, KanjiSearchRadicalActivity.class);
 		return true;
 	}
 }

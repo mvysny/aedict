@@ -72,7 +72,8 @@ public class EntryDetailActivity extends AbstractActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		addActivityLauncher(menu, R.string.showkanaTable, R.drawable.kanamenuitem, KanaTableActivity.class);
-		addActivityLauncher(menu, R.string.configuration, android.R.drawable.ic_menu_manage, ConfigActivity.class);
+		addActivityLauncher(menu, R.string.kanjiDrawLookup, R.drawable.ic_menu_compose, KanjiDrawActivity.class);
+		addActivityLauncher(menu, R.string.kanjiRadicalLookup, android.R.drawable.ic_menu_search, KanjiSearchRadicalActivity.class);
 		return true;
 	}
 }

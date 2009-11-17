@@ -35,18 +35,16 @@ public class MainActivity extends AbstractActivity {
 		final SearchUtils utils = new SearchUtils(this);
 		utils.registerSearch(R.id.jpExactMatch, R.id.jpSearchEdit, false, R.id.jpSearch, true);
 		utils.registerSearch(R.id.engExactMatch, R.id.engSearchEdit, false, R.id.engSearch, false);
-		setButtonActivityLauncher(R.id.kanjiRadicalLookup, KanjiSearchRadicalActivity.class);
-		setButtonActivityLauncher(R.id.kanjiDrawLookup, KanjiDrawActivity.class);
+		setButtonActivityLauncher(R.id.btnConfiguration, ConfigActivity.class);
 		// check for dictionary file and download it if it is missing.
 		utils.checkDictionaryFile(DownloadDictTask.EDICT_LUCENE_ZIP, DownloadDictTask.LUCENE_INDEX, 20L * 1024 * 1024, "EDict");
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		addActivityLauncher(menu, R.string.aboutCaption, android.R.drawable.ic_menu_info_details, AboutActivity.class);
 		addActivityLauncher(menu, R.string.showkanaTable, R.drawable.kanamenuitem, KanaTableActivity.class);
-		addActivityLauncher(menu, R.string.configuration, android.R.drawable.ic_menu_manage, ConfigActivity.class);
+		addActivityLauncher(menu, R.string.kanjiDrawLookup, R.drawable.ic_menu_compose, KanjiDrawActivity.class);
+		addActivityLauncher(menu, R.string.kanjiRadicalLookup, android.R.drawable.ic_menu_search, KanjiSearchRadicalActivity.class);
 		return true;
 	}
-
 }

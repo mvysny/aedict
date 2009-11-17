@@ -44,14 +44,11 @@
 		android:layout_width="fill_parent" android:hint="@string/enterWordOrExpression"
 		android:inputType="text" android:imeOptions="actionDone"></EditText>
 	<TextView android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:text="@string/kanjiLookup" android:textColor="#FFF" android:background="#666"/>
+		android:layout_height="wrap_content" android:text="@string/other" android:textColor="#FFF" android:background="#666"/>
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content">
 		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/kanjiRadicalLookup"
-			android:id="@+id/kanjiRadicalLookup"/>
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/kanjiDrawLookup"
-			android:id="@+id/kanjiDrawLookup"/>
+			android:layout_height="wrap_content" android:text="@string/configuration"
+			android:id="@+id/btnConfiguration"/>
 		</LinearLayout>
 </LinearLayout>
