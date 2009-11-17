@@ -40,7 +40,7 @@ public class DrawPanel {
 	public List<Integer> curxvec = null;
 	public List<Integer> curyvec = null;
 
-	private static final int NUMKAN = 5;
+	private static final int NUMKAN = 15;
 
 	private <T> T last(List<? extends T> list) {
 		return list.get(list.size() - 1);
