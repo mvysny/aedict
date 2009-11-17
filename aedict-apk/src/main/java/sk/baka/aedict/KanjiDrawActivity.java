@@ -18,13 +18,64 @@
 
 package sk.baka.aedict;
 
-import android.app.Activity;
+import java.util.ArrayList;
+import java.util.List;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.View.OnTouchListener;
 
 /**
  * Allows user to draw a kanji and perform a Kanji lookup.
  * 
  * @author Martin Vysny
  */
-public class KanjiDrawActivity extends Activity {
+public class KanjiDrawActivity extends AbstractActivity {
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.kanjidraw);
+		((ViewGroup) findViewById(R.id.kanjidrawRoot)).addView(new PainterView(this));
+	}
 
+	private static class PainterView extends View implements OnTouchListener {
+		List<Point> points = new ArrayList<Point>();
+		Paint paint = new Paint();
+
+		public PainterView(Context context) {
+			super(context);
+			setFocusable(true);
+			setFocusableInTouchMode(true);
+
+			this.setOnTouchListener(this);
+
+			paint.setColor(Color.WHITE);
+			paint.setAntiAlias(true);
+		}
+
+		@Override
+		public void onDraw(Canvas canvas) {
+			for (Point point : points) {
+				canvas.drawCircle(point.x, point.y, 5, paint);
+			}
+		}
+
+		public boolean onTouch(View view, MotionEvent event) {
+			// if(event.getAction() != MotionEvent.ACTION_DOWN)
+			// return super.onTouchEvent(event);
+			Point point = new Point();
+			point.x = (int) event.getX();
+			point.y = (int) event.getY();
+			points.add(point);
+			invalidate();
+			return true;
+		}
+	}
 }

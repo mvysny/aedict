@@ -24,7 +24,7 @@
 			android:layout_weight="1"></CheckBox>
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/search"
-			android:id="@+id/jpSearch"></Button>
+			android:id="@+id/jpSearch"/>
 	</LinearLayout>
 	<EditText android:layout_height="wrap_content" android:id="@+id/jpSearchEdit"
 		android:layout_width="fill_parent" android:hint="@string/enterRomajiWord"
@@ -38,7 +38,7 @@
 			android:layout_height="wrap_content" android:text="@string/exactMatch"></CheckBox>
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/search"
-			android:id="@+id/engSearch"></Button>
+			android:id="@+id/engSearch"/>
 	</LinearLayout>
 	<EditText android:layout_height="wrap_content" android:id="@+id/engSearchEdit"
 		android:layout_width="fill_parent" android:hint="@string/enterWordOrExpression"
@@ -49,6 +49,9 @@
 		android:layout_height="wrap_content">
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/kanjiRadicalLookup"
-			android:id="@+id/kanjiRadicalLookup"></Button>
+			android:id="@+id/kanjiRadicalLookup"/>
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/kanjiDrawLookup"
+			android:id="@+id/kanjiDrawLookup"/>
 		</LinearLayout>
 </LinearLayout>
