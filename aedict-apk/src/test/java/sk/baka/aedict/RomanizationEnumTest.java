@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import sk.baka.aedict.kanji.RomanizationEnum;
+
 /**
  * Tests the {@link RomanizationEnum} class.
  * @author Martin Vysny
@@ -29,7 +31,7 @@ import org.junit.Test;
 public class RomanizationEnumTest {
 	
 	/**
-	 * Test method for {@link sk.baka.aedict.RomanizationEnum#toHiragana(java.lang.String)}.
+	 * Test method for {@link sk.baka.aedict.kanji.RomanizationEnum#toHiragana(java.lang.String)}.
 	 */
 	@Test
 	public void testHepburnToHiragana() {
@@ -47,7 +49,7 @@ public class RomanizationEnumTest {
 	}
 
 	/**
-	 * Test method for {@link sk.baka.aedict.RomanizationEnum#toKatakana(java.lang.String)}.
+	 * Test method for {@link sk.baka.aedict.kanji.RomanizationEnum#toKatakana(java.lang.String)}.
 	 */
 	@Test
 	public void testHepburnToKatakana() {
@@ -61,7 +63,7 @@ public class RomanizationEnumTest {
 	}
 
 	/**
-	 * Test method for {@link sk.baka.aedict.RomanizationEnum#toRomaji(java.lang.String)}.
+	 * Test method for {@link sk.baka.aedict.kanji.RomanizationEnum#toRomaji(java.lang.String)}.
 	 */
 	@Test
 	public void testHepburnToRomaji() {

@@ -25,6 +25,7 @@ import java.util.Set;
 
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.kanji.Radicals;
 
 import android.content.Intent;
 import android.os.Bundle;

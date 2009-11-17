@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sk.baka.aedict.AedictApp.Config;
+import sk.baka.aedict.kanji.RomanizationEnum;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;

@@ -27,6 +27,8 @@ import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.kanji.Radicals;
+import sk.baka.aedict.kanji.RomanizationEnum;
 
 import android.app.ListActivity;
 import android.content.Intent;

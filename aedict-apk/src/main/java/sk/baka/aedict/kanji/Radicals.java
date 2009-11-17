@@ -16,12 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package sk.baka.aedict;
+package sk.baka.aedict.kanji;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import sk.baka.aedict.R;
 
 /**
  * Enumerates all radicals and appropriate characters.

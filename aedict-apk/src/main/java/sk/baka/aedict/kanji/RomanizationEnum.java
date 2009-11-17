@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package sk.baka.aedict;
+package sk.baka.aedict.kanji;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,6 +25,8 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import sk.baka.aedict.MiscUtils;
 
 /**
  * Japan language related stuff.
