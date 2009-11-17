@@ -19,6 +19,7 @@
 package sk.baka.aedict;
 
 import sk.baka.aedict.AedictApp.Config;
+import sk.baka.aedict.dict.EdictEntry;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;

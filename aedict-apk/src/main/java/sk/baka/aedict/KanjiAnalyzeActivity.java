@@ -22,6 +22,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import sk.baka.aedict.dict.DownloadDictTask;
+import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.aedict.dict.LuceneSearch;
+import sk.baka.aedict.dict.MatcherEnum;
+import sk.baka.aedict.dict.SearchQuery;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -110,7 +116,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		final LuceneSearch lsEdict = new LuceneSearch(false);
 		try {
 			LuceneSearch lsKanjidic = null;
-			if (DownloadEdictTask.isComplete(DownloadEdictTask.LUCENE_INDEX_KANJIDIC)) {
+			if (DownloadDictTask.isComplete(DownloadDictTask.LUCENE_INDEX_KANJIDIC)) {
 				lsKanjidic = new LuceneSearch(true);
 			}
 			try {

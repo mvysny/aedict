@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package sk.baka.aedict;
+package sk.baka.aedict.dict;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -33,6 +33,8 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.TopDocs;
+
+import sk.baka.aedict.MiscUtils;
 
 /**
  * Allows Lucene search for a query.
@@ -60,7 +62,7 @@ public final class LuceneSearch implements Closeable {
 	 */
 	public LuceneSearch(final boolean kanjidic) throws IOException {
 		this.kanjidic = kanjidic;
-		reader = IndexReader.open(kanjidic ? DownloadEdictTask.LUCENE_INDEX_KANJIDIC : DownloadEdictTask.LUCENE_INDEX);
+		reader = IndexReader.open(kanjidic ? DownloadDictTask.LUCENE_INDEX_KANJIDIC : DownloadDictTask.LUCENE_INDEX);
 		searcher = new IndexSearcher(reader);
 		parser = new QueryParser("contents", new StandardAnalyzer());
 	}

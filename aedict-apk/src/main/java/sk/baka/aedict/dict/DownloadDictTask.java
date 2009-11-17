@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package sk.baka.aedict;
+package sk.baka.aedict.dict;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -31,6 +31,10 @@ import java.net.URLConnection;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import sk.baka.aedict.AedictApp;
+import sk.baka.aedict.MiscUtils;
+import sk.baka.aedict.R;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -43,7 +47,7 @@ import android.util.Log;
  * 
  * @author Martin Vysny
  */
-public final class DownloadEdictTask extends AsyncTask<Void, DownloadEdictTask.Progress, Void> {
+public final class DownloadDictTask extends AsyncTask<Void, DownloadDictTask.Progress, Void> {
 
 	/**
 	 * Contains data about a progress.
@@ -141,7 +145,7 @@ public final class DownloadEdictTask extends AsyncTask<Void, DownloadEdictTask.P
 	 *            the dictionary name.
 	 * @param expectedSize the expected file size of unpacked dictionary.
 	 */
-	public DownloadEdictTask(final Context context, final URL source, final String targetDir, final String dictName, final long expectedSize) {
+	public DownloadDictTask(final Context context, final URL source, final String targetDir, final String dictName, final long expectedSize) {
 		this.context = context;
 		this.source = source;
 		this.targetDir = targetDir;
@@ -211,11 +215,11 @@ public final class DownloadEdictTask extends AsyncTask<Void, DownloadEdictTask.P
 			edictDownloadAndUnpack();
 		} catch (Exception ex) {
 			if (!isCancelled()) {
-				Log.e(DownloadEdictTask.class.getSimpleName(), context.getString(R.string.error), ex);
+				Log.e(DownloadDictTask.class.getSimpleName(), context.getString(R.string.error), ex);
 				isError = true;
 				publishProgress(new Progress(ex));
 			} else {
-				Log.i(DownloadEdictTask.class.getSimpleName(), context.getString(R.string.interrupted), ex);
+				Log.i(DownloadDictTask.class.getSimpleName(), context.getString(R.string.interrupted), ex);
 			}
 			deleteDirQuietly(new File(targetDir));
 		}
@@ -226,7 +230,7 @@ public final class DownloadEdictTask extends AsyncTask<Void, DownloadEdictTask.P
 		try {
 			MiscUtils.deleteDir(dir);
 		} catch (IOException e) {
-			Log.e(DownloadEdictTask.class.getSimpleName(), "Failed to delete the directory", e);
+			Log.e(DownloadDictTask.class.getSimpleName(), "Failed to delete the directory", e);
 		}
 	}
 

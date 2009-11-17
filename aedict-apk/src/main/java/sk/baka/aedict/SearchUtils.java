@@ -21,6 +21,9 @@ package sk.baka.aedict;
 import java.net.URL;
 
 import sk.baka.aedict.AedictApp.Config;
+import sk.baka.aedict.dict.DownloadDictTask;
+import sk.baka.aedict.dict.MatcherEnum;
+import sk.baka.aedict.dict.SearchQuery;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -204,7 +207,7 @@ public final class SearchUtils {
 	 * @return true if the files are available, false otherwise.
 	 */
 	public boolean checkDictionaryFile(final URL source, final String targetDir, final long expectedSize, final String dictName) {
-		if (!DownloadEdictTask.isComplete(targetDir)) {
+		if (!DownloadDictTask.isComplete(targetDir)) {
 			final StatFs stats = new StatFs("/sdcard");
 			final long free = ((long) stats.getBlockSize()) * stats.getAvailableBlocks();
 			final StringBuilder msg = new StringBuilder(activity.getString(R.string.dictionary_missing_download, dictName));
@@ -215,7 +218,7 @@ public final class SearchUtils {
 			new AndroidUtils(activity).showYesNoDialog(msg.toString(), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();
-					new DownloadEdictTask(activity, source, targetDir, dictName, expectedSize).execute();
+					new DownloadDictTask(activity, source, targetDir, dictName, expectedSize).execute();
 				}
 			});
 			return false;
@@ -229,6 +232,6 @@ public final class SearchUtils {
 	 * @return true if the files are available, false otherwise.
 	 */
 	public boolean checkKanjiDic() {
-		return checkDictionaryFile(DownloadEdictTask.KANJIDIC_LUCENE_ZIP, DownloadEdictTask.LUCENE_INDEX_KANJIDIC, 1500 * 1024, "KanjiDic");
+		return checkDictionaryFile(DownloadDictTask.KANJIDIC_LUCENE_ZIP, DownloadDictTask.LUCENE_INDEX_KANJIDIC, 1500 * 1024, "KanjiDic");
 	}
 }

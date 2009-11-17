@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 import java.text.ParseException;
 import org.junit.Test;
 
+import sk.baka.aedict.dict.EdictEntry;
+
 /**
  * Tests the {@link EdictEntry} class.
  * 

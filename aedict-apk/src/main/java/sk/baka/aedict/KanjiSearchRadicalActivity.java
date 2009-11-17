@@ -23,6 +23,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import sk.baka.aedict.dict.LuceneSearch;
+import sk.baka.aedict.dict.SearchQuery;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;

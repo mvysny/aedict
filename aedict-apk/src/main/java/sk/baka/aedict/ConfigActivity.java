@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 
 import sk.baka.aedict.AedictApp.Config;
+import sk.baka.aedict.dict.DownloadDictTask;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -78,12 +79,12 @@ public class ConfigActivity extends Activity {
 
 	private void cleanup() {
 		final AndroidUtils utils = new AndroidUtils(this);
-		utils.showYesNoDialog(AedictApp.format(R.string.deleteDictionaryFiles, MiscUtils.getLength(new File(DownloadEdictTask.BASE_DIR)) / 1024), new DialogInterface.OnClickListener() {
+		utils.showYesNoDialog(AedictApp.format(R.string.deleteDictionaryFiles, MiscUtils.getLength(new File(DownloadDictTask.BASE_DIR)) / 1024), new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
 				try {
-					MiscUtils.deleteDir(new File(DownloadEdictTask.BASE_DIR));
+					MiscUtils.deleteDir(new File(DownloadDictTask.BASE_DIR));
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}

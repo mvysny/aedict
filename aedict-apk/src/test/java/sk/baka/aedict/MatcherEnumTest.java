@@ -19,6 +19,8 @@
 package sk.baka.aedict;
 
 import org.junit.Test;
+
+import sk.baka.aedict.dict.MatcherEnum;
 import static org.junit.Assert.*;
 
 /**

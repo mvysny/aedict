@@ -18,6 +18,7 @@
 
 package sk.baka.aedict;
 
+import sk.baka.aedict.dict.DownloadDictTask;
 import android.os.Bundle;
 import android.view.Menu;
 
@@ -36,7 +37,7 @@ public class MainActivity extends AbstractActivity {
 		utils.registerSearch(R.id.engExactMatch, R.id.engSearchEdit, false, R.id.engSearch, false);
 		setButtonActivityLauncher(R.id.kanjiRadicalLookup, KanjiSearchRadicalActivity.class);
 		// check for dictionary file and download it if it is missing.
-		utils.checkDictionaryFile(DownloadEdictTask.EDICT_LUCENE_ZIP, DownloadEdictTask.LUCENE_INDEX, 20L * 1024 * 1024, "EDict");
+		utils.checkDictionaryFile(DownloadDictTask.EDICT_LUCENE_ZIP, DownloadDictTask.LUCENE_INDEX, 20L * 1024 * 1024, "EDict");
 	}
 
 	@Override

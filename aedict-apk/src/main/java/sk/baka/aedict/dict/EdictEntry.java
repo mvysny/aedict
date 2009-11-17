@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package sk.baka.aedict;
+package sk.baka.aedict.dict;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import sk.baka.aedict.MiscUtils;
 
 import android.util.Log;
 import android.widget.TextView;
