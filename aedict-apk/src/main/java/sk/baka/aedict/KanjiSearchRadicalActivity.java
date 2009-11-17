@@ -56,7 +56,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 		// there is no stupid flow layout in the great Android. Oh well. Let's
 		// emulate that with a table.
 		radicalsPerRow = getWindowManager().getDefaultDisplay().getWidth() / (SIZE + 2 * PADDING);
-		currentColumn = 0;
+		currentColumn = -1;
 		row = null;
 		int strokeCount = -1;
 		// general idea: add two-state pushbutton-like textviews for each
@@ -85,7 +85,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 
 	private int radicalsPerRow;
 	private TableRow row = null;
-	private int currentColumn = 0;
+	private int currentColumn = -1;
 
 	/**
 	 * 
@@ -94,7 +94,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 	 * @param strokes
 	 */
 	private void addRadicalToggle(final TableLayout v, final Character radical, final int strokes) {
-		if (currentColumn++ >= radicalsPerRow) {
+		if (++currentColumn >= radicalsPerRow) {
 			row = null;
 			currentColumn = 0;
 		}
