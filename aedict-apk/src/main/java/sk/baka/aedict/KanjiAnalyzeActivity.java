@@ -20,6 +20,7 @@ package sk.baka.aedict;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import sk.baka.aedict.AedictApp.Config;
@@ -50,18 +51,28 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	 * The string word to analyze.
 	 */
 	public static final String INTENTKEY_WORD = "word";
+	/**
+	 * A list of {@link EdictEntry} with all information filled (radical, stroke count, etc).
+	 */
+	public static final String INTENTKEY_ENTRYLIST = "entrylist";
 	private List<EdictEntry> model = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		final String word = getIntent().getStringExtra(INTENTKEY_WORD);
-		setTitle(AedictApp.format(R.string.kanjiAnalysisOf, word));
-		try {
-			model = analyze(word);
-		} catch (IOException e) {
-			model = new ArrayList<EdictEntry>();
-			model.add(EdictEntry.newErrorMsg("Analysis failed: " + e));
+		model = (List<EdictEntry>) getIntent().getSerializableExtra(INTENTKEY_ENTRYLIST);
+		if (word == null && model == null) {
+			throw new IllegalArgumentException("Both word and entrylist are null");
+		}
+		setTitle(AedictApp.format(R.string.kanjiAnalysisOf, model == null ? word : getWord(model)));
+		if (model == null) {
+			try {
+				model = analyze(word);
+			} catch (IOException e) {
+				model = new ArrayList<EdictEntry>();
+				model.add(EdictEntry.newErrorMsg("Analysis failed: " + e));
+			}
 		}
 		final Config cfg = AedictApp.loadConfig();
 		setListAdapter(new ArrayAdapter<EdictEntry>(this, R.layout.kanjidetail, model) {
@@ -101,6 +112,14 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		});
 		// check that KANJIDIC exists
 		new SearchUtils(this).checkKanjiDic();
+	}
+	
+	private String getWord(Collection<? extends EdictEntry> entries) {
+		final StringBuilder sb = new StringBuilder(entries.size());
+		for (final EdictEntry e : entries) {
+			sb.append(e.getJapanese());
+		}
+		return sb.toString();
 	}
 
 	/**

@@ -63,4 +63,5 @@
     <string name="other">Other</string>
     <string name="useRomaji">Use romaji instead of katakana/hiragana</string>
     <string name="strokes">Strokes: %d</string>
+    <string name="plusMinusBetween0And2">The +- number must be 0..2</string>
 </resources>

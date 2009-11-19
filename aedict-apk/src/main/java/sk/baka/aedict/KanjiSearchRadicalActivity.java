@@ -19,14 +19,16 @@
 package sk.baka.aedict;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.Radicals;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -203,38 +205,32 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 		final Integer strokes = getInt(R.id.editKanjiStrokes);
 		Integer plusMinus = getInt(R.id.editKanjiStrokesPlusMinus);
 		if (plusMinus != null) {
-			if (plusMinus < 0) {
-				plusMinus = -plusMinus;
-			}
-			if (plusMinus > 3) {
-				plusMinus = 3;
+			if (plusMinus < 0 || plusMinus > 2) {
+				new AndroidUtils(this).showErrorDialog(R.string.plusMinusBetween0And2);
+				return;
 			}
 		}
 		final Set<Character> matches = Radicals.getKanjisWithRadicals(radicals.toCharArray());
+		final List<EdictEntry> entries = new ArrayList<EdictEntry>();
 		// filter the matches based on stroke count
-		if (strokes != null) {
-			final LuceneSearch ls = new LuceneSearch(true);
-			try {
-				for (final Iterator<Character> kanjis = matches.iterator(); kanjis.hasNext();) {
-					final char kanji = kanjis.next();
-					final SearchQuery sq = SearchQuery.kanjiSearch(kanji, strokes, plusMinus);
-					final List<String> result = ls.search(sq);
-					if (result.isEmpty()) {
-						// the kanji didn't matched
-						kanjis.remove();
-					}
+		final LuceneSearch ls = new LuceneSearch(true);
+		try {
+			for (final Iterator<Character> kanjis = matches.iterator(); kanjis.hasNext();) {
+				final char kanji = kanjis.next();
+				final SearchQuery sq = SearchQuery.kanjiSearch(kanji, strokes, plusMinus);
+				final List<String> result = ls.search(sq);
+				if (!result.isEmpty()) {
+					// the kanji matched
+					final EdictEntry entry = EdictEntry.tryParseKanjidic(result.get(0));
+					entries.add(entry);
 				}
-			} finally {
-				MiscUtils.closeQuietly(ls);
 			}
+		} finally {
+			MiscUtils.closeQuietly(ls);
 		}
-		// we have the kanjis. launch the analyze activity
-		final StringBuilder kanjis = new StringBuilder();
-		for (final Character kanji : matches) {
-			kanjis.append(kanji);
-		}
+		// we have the kanji list. launch the analyze activity
 		final Intent i = new Intent(this, KanjiAnalyzeActivity.class);
-		i.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, kanjis.toString());
+		i.putExtra(KanjiAnalyzeActivity.INTENTKEY_ENTRYLIST, (Serializable) entries);
 		startActivity(i);
 	}
 }

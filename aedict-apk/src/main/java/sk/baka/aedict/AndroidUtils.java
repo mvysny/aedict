@@ -67,6 +67,15 @@ public final class AndroidUtils {
 	/**
 	 * Shows an error dialog.
 	 * 
+	 * @param messageRes
+	 *            the message to show.
+	 */
+	public void showErrorDialog(final int messageRes) {
+		showErrorDialog(ctx.getString(messageRes));
+	}
+	/**
+	 * Shows an error dialog.
+	 * 
 	 * @param message
 	 *            the message to show.
 	 */
