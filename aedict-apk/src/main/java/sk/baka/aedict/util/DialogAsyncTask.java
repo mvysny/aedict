@@ -19,6 +19,7 @@
 package sk.baka.aedict.util;
 
 import sk.baka.aedict.AedictApp;
+import sk.baka.aedict.AndroidUtils;
 import sk.baka.aedict.dict.DownloadDictTask;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -98,7 +99,7 @@ public abstract class DialogAsyncTask<P, R> extends AsyncTask<P, DialogAsyncTask
 		 * @param t
 		 *            the error, must not be null.
 		 */
-		public Progress(final Throwable t) {
+		private Progress(final Throwable t) {
 			progress = 0;
 			message = context.getString(sk.baka.aedict.R.string.error) + ": " + t;
 			error = t;
@@ -218,8 +219,10 @@ public abstract class DialogAsyncTask<P, R> extends AsyncTask<P, DialogAsyncTask
 				message = t.toString();
 			}
 			// This throws NPE on android 1.5???
-//			dlg.setMessage(message);
-			dlg.setTitle(message);
+			// dlg.setMessage(message);
+			// the title is too short to display a complex exception. Dismiss the dialog and show a new one.
+			dlg.dismiss();
+			new AndroidUtils(context).showErrorDialog(t.toString());
 		} else {
 			if (msg != null) {
 				dlg.setTitle(msg);
