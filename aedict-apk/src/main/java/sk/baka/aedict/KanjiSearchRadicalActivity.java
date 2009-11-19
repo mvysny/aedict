@@ -29,6 +29,8 @@ import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.Radicals;
+import sk.baka.aedict.util.DialogAsyncTask;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -210,27 +212,61 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 				return;
 			}
 		}
-		final Set<Character> matches = Radicals.getKanjisWithRadicals(radicals.toCharArray());
-		final List<EdictEntry> entries = new ArrayList<EdictEntry>();
-		// filter the matches based on stroke count
-		final LuceneSearch ls = new LuceneSearch(true);
-		try {
-			for (final Iterator<Character> kanjis = matches.iterator(); kanjis.hasNext();) {
-				final char kanji = kanjis.next();
-				final SearchQuery sq = SearchQuery.kanjiSearch(kanji, strokes, plusMinus);
-				final List<String> result = ls.search(sq);
-				if (!result.isEmpty()) {
-					// the kanji matched
-					final EdictEntry entry = EdictEntry.tryParseKanjidic(result.get(0));
-					entries.add(entry);
-				}
-			}
-		} finally {
-			MiscUtils.closeQuietly(ls);
+		new KanjiMatchTask(this).execute(radicals, strokes, plusMinus);
+	}
+
+	private class KanjiMatchTask extends DialogAsyncTask<Object, List<EdictEntry>> {
+		protected KanjiMatchTask(Context context) {
+			super(context);
 		}
-		// we have the kanji list. launch the analyze activity
-		final Intent i = new Intent(this, KanjiAnalyzeActivity.class);
-		i.putExtra(KanjiAnalyzeActivity.INTENTKEY_ENTRYLIST, (Serializable) entries);
-		startActivity(i);
+
+		private final int REPORT_EACH_XTH_CHAR = 5;
+
+		@Override
+		protected List<EdictEntry> protectedDoInBackground(Object... params) throws Exception {
+			publishProgress(new Progress(R.string.searching, 0, 100));
+			int charsReportCountdown = 0;
+			int totalCharsProcessed = 0;
+			final Set<Character> matches = Radicals.getKanjisWithRadicals(((String) params[0]).toCharArray());
+			final List<EdictEntry> entries = new ArrayList<EdictEntry>();
+			// filter the matches based on stroke count
+			final LuceneSearch ls = new LuceneSearch(true);
+			try {
+				for (final Iterator<Character> kanjis = matches.iterator(); kanjis.hasNext();) {
+					final char kanji = kanjis.next();
+					final SearchQuery sq = SearchQuery.kanjiSearch(kanji, (Integer) params[1], (Integer) params[2]);
+					final List<String> result = ls.search(sq);
+					if (!result.isEmpty()) {
+						// the kanji matched
+						final EdictEntry entry = EdictEntry.tryParseKanjidic(result.get(0));
+						entries.add(entry);
+					}
+					totalCharsProcessed++;
+					if (++charsReportCountdown >= REPORT_EACH_XTH_CHAR) {
+						charsReportCountdown = 0;
+						publishProgress(new Progress(null, totalCharsProcessed, matches.size()));
+					}
+					if (isCancelled()) {
+						return null;
+					}
+				}
+			} finally {
+				MiscUtils.closeQuietly(ls);
+			}
+			return entries;
+		}
+
+		@Override
+		protected void cleanupAfterError() {
+			// do nothing
+		}
+
+		@Override
+		protected void onTaskSucceeded(List<EdictEntry> result) {
+			// we have the kanji list. launch the analyze activity
+			final Intent i = new Intent(KanjiSearchRadicalActivity.this, KanjiAnalyzeActivity.class);
+			i.putExtra(KanjiAnalyzeActivity.INTENTKEY_ENTRYLIST, (Serializable) result);
+			startActivity(i);
+		}
 	}
 }

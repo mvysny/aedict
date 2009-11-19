@@ -34,12 +34,8 @@ import java.util.zip.ZipInputStream;
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.MiscUtils;
 import sk.baka.aedict.R;
-
-import android.app.ProgressDialog;
+import sk.baka.aedict.util.DialogAsyncTask;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
-import android.os.AsyncTask;
 import android.util.Log;
 
 /**
@@ -47,67 +43,7 @@ import android.util.Log;
  * 
  * @author Martin Vysny
  */
-public final class DownloadDictTask extends AsyncTask<Void, DownloadDictTask.Progress, Void> {
-
-	/**
-	 * Contains data about a progress.
-	 * 
-	 * @author Martin Vysny
-	 */
-	protected final class Progress {
-		/**
-		 * Creates instance with given message and a progress.
-		 * 
-		 * @param message
-		 *            the message to display
-		 * @param progress
-		 *            a progress
-		 */
-		public Progress(final String message, final int progress) {
-			this.message = message;
-			this.progress = progress;
-			error = null;
-		}
-
-		/**
-		 * Creates instance with given message and a progress.
-		 * 
-		 * @param messageRes
-		 *            the message to display
-		 * @param progress
-		 *            a progress
-		 */
-		public Progress(final int messageRes, final int progress) {
-			this.message = context.getString(messageRes);
-			this.progress = progress;
-			error = null;
-		}
-
-		/**
-		 * The message to show.
-		 */
-		public final String message;
-		/**
-		 * A progress being made.
-		 */
-		public final int progress;
-		/**
-		 * Optional error (if the download failed).
-		 */
-		public final Throwable error;
-
-		/**
-		 * Creates the progress object from an error.
-		 * 
-		 * @param t
-		 *            the error, must not be null.
-		 */
-		public Progress(final Throwable t) {
-			progress = -1;
-			message = AedictApp.format(R.string.failed_to_download_dictionary, dictName) + t;
-			error = t;
-		}
-	}
+public final class DownloadDictTask extends DialogAsyncTask<Void, Void> {
 
 	/**
 	 * A zipped Lucene-indexed EDICT location.
@@ -125,7 +61,6 @@ public final class DownloadDictTask extends AsyncTask<Void, DownloadDictTask.Pro
 			throw new RuntimeException(e);
 		}
 	}
-	private final Context context;
 	private final URL source;
 	private final String targetDir;
 	private final String dictName;
@@ -143,35 +78,17 @@ public final class DownloadDictTask extends AsyncTask<Void, DownloadDictTask.Pro
 	 *            unzip the files here
 	 * @param dictName
 	 *            the dictionary name.
-	 * @param expectedSize the expected file size of unpacked dictionary.
+	 * @param expectedSize
+	 *            the expected file size of unpacked dictionary.
 	 */
 	public DownloadDictTask(final Context context, final URL source, final String targetDir, final String dictName, final long expectedSize) {
-		this.context = context;
+		super(context);
 		this.source = source;
 		this.targetDir = targetDir;
 		this.dictName = dictName;
 		this.expectedSize = expectedSize;
 	}
 
-	private ProgressDialog dlg;
-
-	@Override
-	protected void onPreExecute() {
-		dlg = new ProgressDialog(context);
-		dlg.setCancelable(true);
-		dlg.setOnCancelListener(AedictApp.safe(new OnCancelListener() {
-			public void onCancel(DialogInterface dialog) {
-				cancel(true);
-				dlg.setTitle("Cancelling");
-			}
-		}));
-		dlg.setIndeterminate(false);
-		dlg.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		dlg.setTitle(R.string.connecting);
-		dlg.show();
-	}
-
-	private volatile boolean isError = false;
 	/**
 	 * The base temporary directory, located on the sdcard, where EDICT and
 	 * index files are stored.
@@ -210,19 +127,13 @@ public final class DownloadDictTask extends AsyncTask<Void, DownloadDictTask.Pro
 	}
 
 	@Override
-	protected Void doInBackground(Void... params) {
-		try {
-			edictDownloadAndUnpack();
-		} catch (Exception ex) {
-			if (!isCancelled()) {
-				Log.e(DownloadDictTask.class.getSimpleName(), context.getString(R.string.error), ex);
-				isError = true;
-				publishProgress(new Progress(ex));
-			} else {
-				Log.i(DownloadDictTask.class.getSimpleName(), context.getString(R.string.interrupted), ex);
-			}
-			deleteDirQuietly(new File(targetDir));
-		}
+	protected void cleanupAfterError() {
+		deleteDirQuietly(new File(targetDir));
+	}
+
+	@Override
+	protected Void protectedDoInBackground(Void... params) throws Exception {
+		edictDownloadAndUnpack();
 		return null;
 	}
 
@@ -245,7 +156,7 @@ public final class DownloadDictTask extends AsyncTask<Void, DownloadDictTask.Pro
 		if (isComplete(targetDir)) {
 			return;
 		}
-		publishProgress(new Progress(R.string.connecting, 0));
+		publishProgress(new Progress(R.string.connecting, 0, 100));
 		final URLConnection conn = source.openConnection();
 		// this is the unpacked edict file size.
 		final File dir = new File(targetDir);
@@ -280,7 +191,7 @@ public final class DownloadDictTask extends AsyncTask<Void, DownloadDictTask.Pro
 	 *             on i/o error
 	 */
 	private void copy(final InputStream in, final ZipInputStream zip) throws IOException {
-		publishProgress(new Progress(AedictApp.format(R.string.downloading_dictionary, dictName), 0));
+		publishProgress(new Progress(AedictApp.format(R.string.downloading_dictionary, dictName), 0, 100));
 		for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
 			final OutputStream out = new FileOutputStream(targetDir + "/" + entry.getName());
 			try {
@@ -297,8 +208,8 @@ public final class DownloadDictTask extends AsyncTask<Void, DownloadDictTask.Pro
 		if (size < 0) {
 			size = expectedSize;
 		}
-		dlg.setMax((int) (size / 1024));
-		publishProgress(new Progress(null, 0));
+		final int max = (int) (size / 1024);
+		publishProgress(new Progress(null, 0, max));
 		int downloaded = 0;
 		int reportCountdown = REPORT_EACH_XTH_BYTE;
 		final byte[] buf = new byte[BUFFER_SIZE];
@@ -311,33 +222,14 @@ public final class DownloadDictTask extends AsyncTask<Void, DownloadDictTask.Pro
 			}
 			reportCountdown -= bufLen;
 			if (reportCountdown <= 0) {
-				publishProgress(new Progress(null, downloaded / 1024));
+				publishProgress(new Progress(null, downloaded / 1024, max));
 				reportCountdown = REPORT_EACH_XTH_BYTE;
 			}
 		}
 	}
 
 	@Override
-	protected void onPostExecute(Void result) {
-		if (!isError) {
-			dlg.dismiss();
-		}
-	}
-
-	@Override
-	protected void onProgressUpdate(Progress... values) {
-		int p = values[0].progress;
-		dlg.setProgress(p);
-		String msg = values[0].message;
-		final Throwable t = values[0].error;
-		if (t != null) {
-			dlg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			dlg.setMessage(msg == null ? t.toString() : msg);
-			dlg.setTitle(R.string.error);
-		} else {
-			if (msg != null) {
-				dlg.setTitle(msg);
-			}
-		}
+	protected void onTaskSucceeded(Void result) {
+		// do nothing
 	}
 }

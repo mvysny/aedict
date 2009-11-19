@@ -45,6 +45,7 @@
     <string name="exactMatch">Exact match</string>
     <string name="enterRomajiWord">Enter a word in romaji</string>
     <string name="search">Search</string>
+    <string name="searching">Searching</string>
     <string name="englishSearch">English search</string>
     <string name="enterWordOrExpression">Enter word or expression</string>
     <string name="entryDetail">Entry detail</string>
