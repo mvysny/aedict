@@ -27,6 +27,8 @@ import java.lang.reflect.Proxy;
 import java.util.Formatter;
 
 import sk.baka.aedict.kanji.RomanizationEnum;
+import sk.baka.aedict.util.AndroidUtils;
+import sk.baka.aedict.util.MiscUtils;
 
 import android.app.Application;
 import android.app.Notification;

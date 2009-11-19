@@ -26,7 +26,7 @@ import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import sk.baka.aedict.MiscUtils;
+import sk.baka.aedict.util.MiscUtils;
 
 /**
  * Japan language related stuff.

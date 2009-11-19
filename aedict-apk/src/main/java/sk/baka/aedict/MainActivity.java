@@ -19,6 +19,7 @@
 package sk.baka.aedict;
 
 import sk.baka.aedict.dict.DownloadDictTask;
+import sk.baka.aedict.util.SearchUtils;
 import android.os.Bundle;
 import android.view.Menu;
 

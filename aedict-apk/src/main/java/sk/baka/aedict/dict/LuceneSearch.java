@@ -34,7 +34,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.TopDocs;
 
-import sk.baka.aedict.MiscUtils;
+import sk.baka.aedict.util.MiscUtils;
 
 /**
  * Allows Lucene search for a query.

@@ -16,8 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package sk.baka.aedict;
+package sk.baka.aedict.util;
 
+import sk.baka.aedict.AedictApp;
+import sk.baka.aedict.R;
+import sk.baka.aedict.R.string;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;

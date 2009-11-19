@@ -24,6 +24,8 @@ import java.io.IOException;
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.aedict.kanji.RomanizationEnum;
+import sk.baka.aedict.util.AndroidUtils;
+import sk.baka.aedict.util.MiscUtils;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;

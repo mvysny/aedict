@@ -19,7 +19,6 @@
 package sk.baka.aedict.util;
 
 import sk.baka.aedict.AedictApp;
-import sk.baka.aedict.AndroidUtils;
 import sk.baka.aedict.dict.DownloadDictTask;
 import android.app.ProgressDialog;
 import android.content.Context;

@@ -32,9 +32,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import sk.baka.aedict.AedictApp;
-import sk.baka.aedict.MiscUtils;
 import sk.baka.aedict.R;
 import sk.baka.aedict.util.DialogAsyncTask;
+import sk.baka.aedict.util.MiscUtils;
 import android.content.Context;
 import android.util.Log;
 
