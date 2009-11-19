@@ -24,7 +24,6 @@ import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.R;
 import sk.baka.aedict.ResultActivity;
 import sk.baka.aedict.AedictApp.Config;
-import sk.baka.aedict.R.string;
 import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
