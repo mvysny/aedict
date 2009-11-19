@@ -33,6 +33,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
+import android.widget.TextView;
 import edu.arizona.cs.javadict.DrawPanel;
 
 /**
@@ -41,17 +42,20 @@ import edu.arizona.cs.javadict.DrawPanel;
  * @author Martin Vysny
  */
 public class KanjiDrawActivity extends AbstractActivity {
+	private DrawPanel recognizer;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.kanjidraw);
-		final DrawPanel recognizer = new DrawPanel(getClassLoader());
+		recognizer = new DrawPanel(getClassLoader());
+		updateStrokes();
 		final PainterView view = new PainterView(this, recognizer);
 		((ViewGroup) findViewById(R.id.kanjidrawRoot)).addView(view);
 		findViewById(R.id.btnKanjiClear).setOnClickListener(AedictApp.safe(new View.OnClickListener() {
 
 			public void onClick(View v) {
 				recognizer.clear();
+				updateStrokes();
 				view.invalidate();
 			}
 		}));
@@ -70,12 +74,16 @@ public class KanjiDrawActivity extends AbstractActivity {
 		}));
 	}
 
+	private void updateStrokes() {
+		((TextView) findViewById(R.id.textStrokes)).setText(AedictApp.format(R.string.strokes, recognizer.xstrokes.size()));
+	}
+
 	/**
 	 * Uses the DrawPanel class to paint and recognize Kanjis.
 	 * 
 	 * @author Martin Vysny
 	 */
-	private static class PainterView extends View implements OnTouchListener {
+	private class PainterView extends View implements OnTouchListener {
 		private final DrawPanel recognizer;
 		private final Paint bg = new Paint();
 		private final Paint fg1 = new Paint();
@@ -129,6 +137,7 @@ public class KanjiDrawActivity extends AbstractActivity {
 				recognizer.ystrokes.add(recognizer.curyvec);
 				recognizer.curxvec.add(x);
 				recognizer.curyvec.add(y);
+				updateStrokes();
 			} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
 				recognizer.curxvec.add(x);
 				recognizer.curyvec.add(y);

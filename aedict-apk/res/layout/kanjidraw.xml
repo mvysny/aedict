@@ -18,6 +18,9 @@
 	<LinearLayout android:orientation="horizontal"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:gravity="center">
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/textStrokes"/>
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/clear"
 			android:id="@+id/btnKanjiClear"></Button>
