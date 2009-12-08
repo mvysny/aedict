@@ -17,7 +17,7 @@
 	<LinearLayout android:orientation="vertical" android:layout_width="fill_parent"
 		android:layout_height="fill_parent">
 		<TextView android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:text="@string/skip1" />
+			android:layout_height="wrap_content" android:text="@string/skip" />
 		<ImageView android:src="@android:drawable/divider_horizontal_dark"
 			android:layout_width="fill_parent" android:layout_height="wrap_content" />
 		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

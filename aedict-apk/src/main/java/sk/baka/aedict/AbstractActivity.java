@@ -18,7 +18,7 @@
 
 package sk.baka.aedict;
 
-import sk.baka.aedict.skip.Skip1Activity;
+import sk.baka.aedict.skip.SkipActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -124,6 +124,6 @@ public abstract class AbstractActivity extends Activity {
 		addActivityLauncher(activity, menu, R.string.showkanaTable, R.drawable.kanamenuitem, KanaTableActivity.class);
 		addActivityLauncher(activity, menu, R.string.kanjiDrawLookup, R.drawable.ic_menu_compose, KanjiDrawActivity.class);
 		addActivityLauncher(activity, menu, R.string.kanjiRadicalLookup, android.R.drawable.ic_menu_search, KanjiSearchRadicalActivity.class);
-		addActivityLauncher(activity, menu, R.string.skipLookup, R.drawable.skipmenuitem, Skip1Activity.class);
+		addActivityLauncher(activity, menu, R.string.skipLookup, R.drawable.skipmenuitem, SkipActivity.class);
 	}
 }

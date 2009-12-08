@@ -29,7 +29,7 @@ import java.util.Formatter;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.AndroidUtils;
 import sk.baka.aedict.util.MiscUtils;
-
+import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -254,11 +254,11 @@ public class AedictApp extends Application {
 	 *            the instance
 	 * @return a protected proxy
 	 */
-	public static <T> T safe(final Class<T> intf, final T instance) {
+	public static <T> T safe(final Activity activity, final Class<T> intf, final T instance) {
 		if (!intf.isInterface()) {
 			throw new IllegalArgumentException("Must be an interface: " + intf);
 		}
-		return intf.cast(Proxy.newProxyInstance(AedictApp.instance.getClassLoader(), new Class<?>[] { intf }, new Safe(instance)));
+		return intf.cast(Proxy.newProxyInstance(AedictApp.instance.getClassLoader(), new Class<?>[] { intf }, new Safe(activity, instance)));
 	}
 
 	/**
@@ -272,7 +272,7 @@ public class AedictApp extends Application {
 	 * @return a protected proxy
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T safe(final T instance) {
+	public static <T> T safe(final Activity activity, final T instance) {
 		final Class<?>[] intfs = instance.getClass().getInterfaces();
 		if (intfs.length == 0) {
 			throw new IllegalArgumentException("Given class " + instance.getClass() + " does not implement any interfaces");
@@ -281,7 +281,7 @@ public class AedictApp extends Application {
 			throw new IllegalArgumentException("Given class " + instance.getClass() + " implements multiple interfaces");
 		}
 		final Class<Object> intf = (Class) intfs[0];
-		final Object safe = safe(intf, instance);
+		final Object safe = safe(activity, intf, instance);
 		// this is a bit ugly. The safe object will not of type T anymore, but
 		// this cast will succeed (because it is silently ignored by Java).
 		return (T) safe;
@@ -291,14 +291,14 @@ public class AedictApp extends Application {
 
 		private final Object instance;
 
-		public Safe(Object instance) {
+		public Safe(final Activity activity, final Object instance) {
 			this.instance = instance;
 		}
 
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			try {
 				return method.invoke(instance, args);
-			} catch (InvocationTargetException ex) {
+			} catch (Exception ex) {
 				final Throwable cause = unwrap(ex);
 				Log.e(instance.getClass().getSimpleName(), "Exception thrown while invoking " + method, cause);
 				new AndroidUtils(AedictApp.getApp()).showErrorDialog("An application problem occured: " + cause.toString());

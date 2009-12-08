@@ -66,7 +66,7 @@
     <string name="strokes">Strokes: %d</string>
     <string name="plusMinusBetween0And2">The +- number must be 0..2</string>
     <string name="skipLookup">Skip Lookup</string>
-    <string name="skip1">Please select the visual style of the kanji. Look at the kanji in question and decide if it can visually be divided as (choose the first that applies):</string>
+    <string name="skip">Please select the visual style of the kanji. Look at the kanji in question and decide if it can visually be divided as (choose the first that applies):</string>
     <string name="skip11">1 八</string>
     <string name="skip11explanation">into <b>left</b> and right sides, such as: 行 引 相 時 八 噛</string>
     <string name="skip12">2 二</string>
@@ -75,4 +75,13 @@
     <string name="skip13explanation">into an <b>enclosing</b> structure and an internal structure, such as: 気 週 間 広 国 月 通</string>
     <string name="skip14">4 西</string>
     <string name="skip14explanation">none of the above, such as: 下 西 士 自 中 事 火 女</string>
+    <string name="skip1tutorial">Count the strokes in the leftmost part and then the number of strokes left in the right part. For example, in kanji 引, leftmost part has three strokes, and the right half has one.</string>
+    <string name="skip2tutorial">Count the strokes in the topmost part and then the number of strokes left in the lower part. For example, in kanji 春, topmost part has five strokes, and the lower half has four.</string>
+    <string name="skip3tutorial">Count the strokes in the enclosing part and then the number of strokes left in the internal part. For example, in kanji 通, enclosing part has three strokes, and the internal part has seven.</string>
+    <string name="skip1first">Number of strokes in the leftmost part</string>
+    <string name="skip1second">Number of strokes in the right part</string>
+    <string name="skip2first">Number of strokes in the topmost part</string>
+    <string name="skip2second">Number of strokes in the lower part</string>
+    <string name="skip3first">Number of strokes in the enclosing part</string>
+    <string name="skip3second">Number of strokes in the internal part</string>
 </resources>
