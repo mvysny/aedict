@@ -19,6 +19,7 @@
 package sk.baka.aedict;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import sk.baka.aedict.AedictApp.Config;
@@ -110,7 +111,7 @@ public class ResultActivity extends ListActivity {
 			try {
 				model = EdictEntry.tryParseEdict(LuceneSearch.singleSearch(query, false));
 				if (!model.isEmpty()) {
-					Collections.sort(model);
+					Collections.sort(model, new EdictComparator());
 				}
 			} catch (Exception ex) {
 				Log.e(ResultActivity.class.getSimpleName(), "Failed to perform search", ex);
@@ -150,6 +151,35 @@ public class ResultActivity extends ListActivity {
 				}
 			}));
 		}
+	}
+
+	/**
+	 * A comparator which imposes order upon an edict entry. First,
+	 * {@link EdictEntry#isCommon common} words are preferred; next, shortest
+	 * {@link EdictEntry#getJapanese() japanese} words are preferred (as they
+	 * are the best matches); finally, the EdictEntry native comparator is used.
+	 * 
+	 * @author Martin Vysny
+	 */
+	public static class EdictComparator implements Comparator<EdictEntry> {
+
+		public int compare(EdictEntry object1, EdictEntry object2) {
+			// common words first
+			int result = -isCommon(object1).compareTo(isCommon(object2));
+			if (result != 0) {
+				return result;
+			}
+			result = object1.getJapanese().length() - object2.getJapanese().length();
+			if (result != 0) {
+				return result;
+			}
+			return object1.compareTo(object2);
+		}
+
+		private Boolean isCommon(final EdictEntry e) {
+			return e.isCommon == null ? false : e.isCommon;
+		}
+
 	}
 
 	/**

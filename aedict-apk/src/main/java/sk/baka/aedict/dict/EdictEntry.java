@@ -74,6 +74,10 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 * parsed from KANJIDIC.
 	 */
 	public final Integer grade;
+	/**
+	 * if true then this word is a common one. null if not known.
+	 */
+	public final Boolean isCommon;
 
 	/**
 	 * Creates new entry instance.
@@ -87,7 +91,7 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 *            the English translation
 	 */
 	public EdictEntry(final String kanji, final String reading, final String english) {
-		this(kanji, reading, english, null, null, null, null);
+		this(kanji, reading, english, null, null, null, null, null);
 	}
 
 	/**
@@ -118,8 +122,9 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 *            elementary schooling in Japan. Non-null only when
 	 *            {@link #kanji} is a single kanji and this entry was parsed
 	 *            from KANJIDIC.
+	 * @param isCommon if true then this word is a common one. null if not known.
 	 */
-	public EdictEntry(final String kanji, final String reading, final String english, final Integer radical, final Integer strokes, final String skip, final Integer grade) {
+	public EdictEntry(final String kanji, final String reading, final String english, final Integer radical, final Integer strokes, final String skip, final Integer grade, final Boolean isCommon) {
 		this.kanji = kanji;
 		this.reading = reading;
 		this.english = english;
@@ -127,6 +132,7 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 		this.strokes = strokes;
 		this.skip = skip;
 		this.grade = grade;
+		this.isCommon = isCommon;
 	}
 
 	/**
@@ -219,7 +225,8 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 			final int closingSquareBracket = jpPart.indexOf(']');
 			reading = jpPart.substring(openSquareBracket + 1, closingSquareBracket).trim();
 		}
-		return new EdictEntry(kanji, reading, englishPart);
+		final boolean isCommon = edictEntry.contains("(P)");
+		return new EdictEntry(kanji, reading, englishPart, null, null, null, null, isCommon);
 	}
 
 	/**
@@ -301,7 +308,7 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 		if (!namesReading.isEmpty()) {
 			reading.add("[" + namesReading + "]");
 		}
-		return new EdictEntry(String.valueOf(kanji), reading.toString(), english.toString(), radicalNumber, strokeCount, skip, grade);
+		return new EdictEntry(String.valueOf(kanji), reading.toString(), english.toString(), radicalNumber, strokeCount, skip, grade, null);
 	}
 
 	private static Integer parse(final String str) {
