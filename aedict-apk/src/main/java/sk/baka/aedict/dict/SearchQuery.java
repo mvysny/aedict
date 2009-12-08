@@ -20,6 +20,7 @@ package sk.baka.aedict.dict;
 
 import java.io.Serializable;
 
+import sk.baka.aedict.util.ListBuilder;
 
 import android.content.Intent;
 
@@ -79,6 +80,9 @@ public final class SearchQuery implements Serializable {
 	 * @return true if the line matched, false otherwise.
 	 */
 	public boolean matches(final String line) {
+		if (query == null) {
+			return true;
+		}
 		for (final String q : query) {
 			if (matcher.matches(q, line)) {
 				return true;
@@ -96,48 +100,51 @@ public final class SearchQuery implements Serializable {
 	 * @return the Apache Lucene query
 	 */
 	public String getLuceneQuery(final boolean kanjidic) {
-		final StringBuilder sb = new StringBuilder();
 		if (!kanjidic) {
+			final StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < query.length; i++) {
 				sb.append(query[i].trim());
 				if (i < query.length - 1) {
 					sb.append(" OR ");
 				}
 			}
-		} else {
-			// query can be null in case we are performing e.g. a pure SKIP
-			// lookup
-			if (query != null) {
-				if (query.length != 1) {
-					throw new IllegalStateException("Kanjidic search requires a single kanji character search");
-				}
-				sb.append("kanji:").append(query[0].trim());
-			}
-			if (strokeCount != null) {
-				sb.append(" AND (");
-				boolean first = true;
-				final int plusMinus = strokesPlusMinus == null ? 0 : strokesPlusMinus;
-				if ((plusMinus > 3) || (plusMinus < 0)) {
-					throw new IllegalStateException("Invalid value: " + strokesPlusMinus);
-				}
-				for (int strokes = strokeCount - plusMinus; strokes <= strokeCount + plusMinus; strokes++) {
-					if (first) {
-						first = false;
-					} else {
-						sb.append(" OR ");
-					}
-					sb.append("strokes:").append(strokes);
-				}
-				sb.append(')');
-			}
-			if (skip != null) {
-				sb.append(" AND skip:").append(skip);
-			}
-			if (radical != null) {
-				sb.append(" AND radical:").append(radical);
-			}
+			return sb.toString();
 		}
-		return sb.toString();
+		// query can be null in case we are performing e.g. a pure SKIP
+		// lookup
+		final ListBuilder qb = new ListBuilder(" AND ");
+		if (query != null) {
+			if (query.length != 1) {
+				throw new IllegalStateException("Kanjidic search requires a single kanji character search");
+			}
+			qb.add("kanji:" + query[0].trim());
+		}
+		if (strokeCount != null) {
+			final StringBuilder sb = new StringBuilder();
+			sb.append('(');
+			boolean first = true;
+			final int plusMinus = strokesPlusMinus == null ? 0 : strokesPlusMinus;
+			if ((plusMinus > 3) || (plusMinus < 0)) {
+				throw new IllegalStateException("Invalid value: " + strokesPlusMinus);
+			}
+			for (int strokes = strokeCount - plusMinus; strokes <= strokeCount + plusMinus; strokes++) {
+				if (first) {
+					first = false;
+				} else {
+					sb.append(" OR ");
+				}
+				sb.append("strokes:").append(strokes);
+			}
+			sb.append(')');
+			qb.add(sb.toString());
+		}
+		if (skip != null) {
+			qb.add("skip:" + skip);
+		}
+		if (radical != null) {
+			qb.add("radical:" + radical);
+		}
+		return qb.toString();
 	}
 
 	/**

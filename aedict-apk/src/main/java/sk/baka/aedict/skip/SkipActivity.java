@@ -20,6 +20,7 @@ package sk.baka.aedict.skip;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 import sk.baka.aedict.AedictApp;
@@ -93,6 +94,8 @@ public class SkipActivity extends Activity {
 		try {
 			final List<String> result = LuceneSearch.singleSearch(query, true);
 			final List<EdictEntry> parsedResult = EdictEntry.parseKanjidic(result);
+			// no need to sort on the number of strokes as all results will have the same amount of strokes
+			Collections.sort(parsedResult);
 			final Intent intent = new Intent(activity, KanjiAnalyzeActivity.class);
 			intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_ENTRYLIST, (Serializable) parsedResult);
 			activity.startActivity(intent);

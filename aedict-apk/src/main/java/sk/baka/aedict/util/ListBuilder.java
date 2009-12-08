@@ -55,6 +55,10 @@ public class ListBuilder {
 		return this;
 	}
 
+	/**
+	 * Checks if nothing has been added yet.
+	 * @return true if nothing has been added yet.
+	 */
 	public boolean isEmpty() {
 		return isFirst;
 	}
