@@ -34,6 +34,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -227,5 +228,11 @@ public class ResultActivity extends ListActivity {
 			intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, e);
 			startActivity(intent);
 		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		AbstractActivity.addMenuItems(this, menu);
+		return true;
 	}
 }

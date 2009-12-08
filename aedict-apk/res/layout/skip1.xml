@@ -12,57 +12,59 @@
 		should have received a copy of the GNU General Public License along
 		with this program. If not, see <http://www.gnu.org/licenses/>.
 	-->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
-	<TextView android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:text="@string/skip1" />
-	<ImageView android:src="@android:drawable/divider_horizontal_dark" android:layout_width="fill_parent"
-		android:layout_height="wrap_content"/>
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:orientation="horizontal" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:gravity="center">
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/skip11"
-			android:id="@+id/skip11" android:textSize="40px" />
-		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/skip11explanation"
-			android:textAppearance="?android:attr/textAppearanceLarge" />
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="fill_parent"
+	android:layout_width="fill_parent">
+	<LinearLayout android:orientation="vertical" android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		<TextView android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="@string/skip1" />
+		<ImageView android:src="@android:drawable/divider_horizontal_dark"
+			android:layout_width="fill_parent" android:layout_height="wrap_content" />
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:orientation="horizontal" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:gravity="center">
+			<Button android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/skip11"
+				android:id="@+id/skip11" android:textSize="40px" />
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/skip11explanation"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</LinearLayout>
+		<ImageView android:src="@android:drawable/divider_horizontal_dark"
+			android:layout_width="fill_parent" android:layout_height="wrap_content" />
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:orientation="horizontal" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:gravity="center">
+			<Button android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/skip12"
+				android:id="@+id/skip12" android:textSize="40px" />
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/skip12explanation"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</LinearLayout>
+		<ImageView android:src="@android:drawable/divider_horizontal_dark"
+			android:layout_width="fill_parent" android:layout_height="wrap_content" />
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:orientation="horizontal" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:gravity="center">
+			<Button android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/skip13"
+				android:id="@+id/skip13" android:textSize="40px" />
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/skip13explanation"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</LinearLayout>
+		<ImageView android:src="@android:drawable/divider_horizontal_dark"
+			android:layout_width="fill_parent" android:layout_height="wrap_content" />
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:orientation="horizontal" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:gravity="center">
+			<Button android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/skip14"
+				android:id="@+id/skip14" android:textSize="40px" />
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/skip14explanation"
+				android:textAppearance="?android:attr/textAppearanceLarge" />
+		</LinearLayout>
 	</LinearLayout>
-	<ImageView android:src="@android:drawable/divider_horizontal_dark" android:layout_width="fill_parent"
-		android:layout_height="wrap_content"/>
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:orientation="horizontal" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:gravity="center">
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/skip12"
-			android:id="@+id/skip12" android:textSize="40px" />
-		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/skip12explanation"
-			android:textAppearance="?android:attr/textAppearanceLarge" />
-	</LinearLayout>
-	<ImageView android:src="@android:drawable/divider_horizontal_dark" android:layout_width="fill_parent"
-		android:layout_height="wrap_content"/>
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:orientation="horizontal" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:gravity="center">
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/skip13"
-			android:id="@+id/skip13" android:textSize="40px" />
-		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/skip13explanation"
-			android:textAppearance="?android:attr/textAppearanceLarge" />
-	</LinearLayout>
-	<ImageView android:src="@android:drawable/divider_horizontal_dark" android:layout_width="fill_parent"
-		android:layout_height="wrap_content"/>
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:orientation="horizontal" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:gravity="center">
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/skip14"
-			android:id="@+id/skip14" android:textSize="40px" />
-		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/skip14explanation"
-			android:textAppearance="?android:attr/textAppearanceLarge" />
-	</LinearLayout>
-</LinearLayout>
+</ScrollView>
