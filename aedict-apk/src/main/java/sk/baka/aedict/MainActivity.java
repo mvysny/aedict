@@ -19,10 +19,8 @@
 package sk.baka.aedict;
 
 import sk.baka.aedict.dict.DownloadDictTask;
-import sk.baka.aedict.skip.Skip1Activity;
 import sk.baka.aedict.util.SearchUtils;
 import android.os.Bundle;
-import android.view.Menu;
 
 /**
  * Provides means to search the edict dictionary file.
@@ -41,14 +39,5 @@ public class MainActivity extends AbstractActivity {
 		setButtonActivityLauncher(R.id.btnAbout, AboutActivity.class);
 		// check for dictionary file and download it if it is missing.
 		utils.checkDictionaryFile(DownloadDictTask.EDICT_LUCENE_ZIP, DownloadDictTask.LUCENE_INDEX, 20L * 1024 * 1024, "EDict");
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		addActivityLauncher(menu, R.string.showkanaTable, R.drawable.kanamenuitem, KanaTableActivity.class);
-		addActivityLauncher(menu, R.string.kanjiDrawLookup, R.drawable.ic_menu_compose, KanjiDrawActivity.class);
-		addActivityLauncher(menu, R.string.kanjiRadicalLookup, android.R.drawable.ic_menu_search, KanjiSearchRadicalActivity.class);
-		addActivityLauncher(menu, R.string.skipLookup, R.drawable.skipmenuitem, Skip1Activity.class);
-		return true;
 	}
 }

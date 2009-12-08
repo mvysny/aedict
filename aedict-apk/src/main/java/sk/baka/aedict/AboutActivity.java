@@ -18,6 +18,7 @@
 
 package sk.baka.aedict;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -26,7 +27,7 @@ import android.widget.TextView;
  * 
  * @author Martin Vysny
  */
-public final class AboutActivity extends AbstractActivity {
+public final class AboutActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle icicle) {
 		super.onCreate(icicle);

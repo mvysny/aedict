@@ -34,7 +34,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -228,13 +227,5 @@ public class ResultActivity extends ListActivity {
 			intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, e);
 			startActivity(intent);
 		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		AbstractActivity.addActivityLauncher(this, menu, R.string.showkanaTable, R.drawable.kanamenuitem, KanaTableActivity.class);
-		AbstractActivity.addActivityLauncher(this, menu, R.string.kanjiDrawLookup, R.drawable.ic_menu_compose, KanjiDrawActivity.class);
-		AbstractActivity.addActivityLauncher(this, menu, R.string.kanjiRadicalLookup, android.R.drawable.ic_menu_search, KanjiSearchRadicalActivity.class);
-		return true;
 	}
 }

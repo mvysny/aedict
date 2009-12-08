@@ -36,7 +36,6 @@ import sk.baka.aedict.util.SearchUtils;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -194,13 +193,5 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		final Intent intent = new Intent(this, EntryDetailActivity.class);
 		intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, e);
 		startActivity(intent);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		AbstractActivity.addActivityLauncher(this, menu, R.string.showkanaTable, R.drawable.kanamenuitem, KanaTableActivity.class);
-		AbstractActivity.addActivityLauncher(this, menu, R.string.kanjiDrawLookup, R.drawable.ic_menu_compose, KanjiDrawActivity.class);
-		AbstractActivity.addActivityLauncher(this, menu, R.string.kanjiRadicalLookup, android.R.drawable.ic_menu_search, KanjiSearchRadicalActivity.class);
-		return true;
 	}
 }

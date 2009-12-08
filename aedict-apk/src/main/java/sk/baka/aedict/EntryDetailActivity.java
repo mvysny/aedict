@@ -23,7 +23,6 @@ import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.util.SearchUtils;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -69,12 +68,4 @@ public class EntryDetailActivity extends AbstractActivity {
 	 * The activity expects {@link EdictEntry} in the intent keys.
 	 */
 	public static final String INTENTKEY_ENTRY = "entry";
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		addActivityLauncher(menu, R.string.showkanaTable, R.drawable.kanamenuitem, KanaTableActivity.class);
-		addActivityLauncher(menu, R.string.kanjiDrawLookup, R.drawable.ic_menu_compose, KanjiDrawActivity.class);
-		addActivityLauncher(menu, R.string.kanjiRadicalLookup, android.R.drawable.ic_menu_search, KanjiSearchRadicalActivity.class);
-		return true;
-	}
 }
