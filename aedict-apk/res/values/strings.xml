@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- 
  Aedict - an EDICT browser for Android
  Copyright (C) 2007 Martin Vysny
@@ -65,4 +65,14 @@
     <string name="useRomaji">Show romaji instead of katakana/hiragana</string>
     <string name="strokes">Strokes: %d</string>
     <string name="plusMinusBetween0And2">The +- number must be 0..2</string>
+    <string name="skipLookup">Skip Lookup</string>
+    <string name="skip1">Please select the visual style of the kanji. Look at the kanji in question and decide if it can visually be divided as (choose the first that applies):</string>
+    <string name="skip11">1 引</string>
+    <string name="skip11explanation">into <b>left</b> and right sides, such as: 行 引 相 時 八 噛</string>
+    <string name="skip12">2 学</string>
+    <string name="skip12explanation">into <b>top</b> and bottom parts, such as: 学 見 京 字 分 二 春</string>
+    <string name="skip13">3 凶</string>
+    <string name="skip13explanation">into an <b>enclosing</b> structure and an internal structure, such as: 気 週 間 広 国 月 通</string>
+    <string name="skip14">4 下</string>
+    <string name="skip14explanation">none of the above, such as: 下 西 士 自 中 事 火 女</string>
 </resources>

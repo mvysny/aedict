@@ -19,6 +19,7 @@
 package sk.baka.aedict;
 
 import sk.baka.aedict.dict.DownloadDictTask;
+import sk.baka.aedict.skip.Skip1Activity;
 import sk.baka.aedict.util.SearchUtils;
 import android.os.Bundle;
 import android.view.Menu;
@@ -47,6 +48,7 @@ public class MainActivity extends AbstractActivity {
 		addActivityLauncher(menu, R.string.showkanaTable, R.drawable.kanamenuitem, KanaTableActivity.class);
 		addActivityLauncher(menu, R.string.kanjiDrawLookup, R.drawable.ic_menu_compose, KanjiDrawActivity.class);
 		addActivityLauncher(menu, R.string.kanjiRadicalLookup, android.R.drawable.ic_menu_search, KanjiSearchRadicalActivity.class);
+		addActivityLauncher(menu, R.string.skipLookup, R.drawable.skipmenuitem, Skip1Activity.class);
 		return true;
 	}
 }
