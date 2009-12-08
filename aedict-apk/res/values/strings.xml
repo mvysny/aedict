@@ -39,7 +39,7 @@
     <string name="searchResults">Aedict: Search Results</string>
     <string name="deleteDictionaryFiles">Dictionary data files are currently taking up to %d kb. Do you wish to clean the files?</string>
     <string name="searchResultsFor">Search results for %s</string>
-    <string name="about">http://code.google.com/p/aedict\n\nCopyright (C) 2009 Martin Vyšný\n\nLicensed under GPL3: http://www.gnu.org/licenses/gpl-3.0.html\n\nWhat\'s new: http://baka.sk/aedict/changes-report.html\n\nReferences:\nEDict: http://www.csse.monash.edu.au/~jwb/edict.html\nLucene: http://lucene.apache.org/java/docs/\nKanji recognizer (C) by Todd David Rudick, http://www.cs.arizona.edu/projects/japan/JavaDict/</string>
+    <string name="about">http://code.google.com/p/aedict\n\nCopyright (C) 2009 Martin Vyšný\n\nLicensed under GPL3: http://www.gnu.org/licenses/gpl-3.0.html\n\nWhat\'s new: http://baka.sk/aedict/changes-report.html\n\nReferences:\nEDict: http://www.csse.monash.edu.au/~jwb/edict.html\nLucene: http://lucene.apache.org/java/docs/\nKanji recognizer (C) by Todd David Rudick, http://www.cs.arizona.edu/projects/japan/JavaDict/\nSKIP code system (C) by Jack Halpern</string>
     <string name="aboutCaption">About</string>
     <string name="jpSearch">Japanese search (romaji is automatically translated both to hiragana and katakana)</string>
     <string name="exactMatch">Exact match</string>
