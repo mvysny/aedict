@@ -21,6 +21,8 @@ package sk.baka.aedict;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -266,10 +268,34 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 
 		@Override
 		protected void onTaskSucceeded(List<EdictEntry> result) {
-			// we have the kanji list. launch the analyze activity
+			// we have the kanji list. first, sort the result list
+			Collections.sort(result, new KanjipadComparator());
+			// launch the analyze activity
 			final Intent i = new Intent(KanjiSearchRadicalActivity.this, KanjiAnalyzeActivity.class);
 			i.putExtra(KanjiAnalyzeActivity.INTENTKEY_ENTRYLIST, (Serializable) result);
 			startActivity(i);
+		}
+	}
+	
+	/**
+	 * Imposes an order upon kanjipad entries, such that: first, kanjis with
+	 * lowest stroke counts are returned; next, the native EdictEntry comparator
+	 * is used.
+	 * 
+	 * @author Martin Vysny
+	 */
+	public static class KanjipadComparator implements Comparator<EdictEntry> {
+
+		public int compare(EdictEntry object1, EdictEntry object2) {
+			final int result = getStrokes(object1).compareTo(getStrokes(object2));
+			if (result != 0) {
+				return result;
+			}
+			return object1.compareTo(object2);
+		}
+
+		private Integer getStrokes(final EdictEntry e) {
+			return e.strokes == null ? Integer.MAX_VALUE : e.strokes;
 		}
 	}
 }
