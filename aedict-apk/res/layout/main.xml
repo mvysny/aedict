@@ -50,5 +50,8 @@
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/configuration"
 			android:id="@+id/btnConfiguration"/>
-		</LinearLayout>
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/aboutCaption"
+			android:id="@+id/btnAbout"/>
+	</LinearLayout>
 </LinearLayout>
