@@ -35,7 +35,7 @@ import sk.baka.aedict.util.AndroidUtils;
 import sk.baka.aedict.util.DialogAsyncTask;
 import sk.baka.aedict.util.MiscUtils;
 import sk.baka.aedict.util.SearchUtils;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -78,7 +78,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 			}
 			addRadicalToggle(v, radical, strokes);
 		}
-		findViewById(R.id.btnRadicalsSearch).setOnClickListener(AedictApp.safe(new View.OnClickListener() {
+		findViewById(R.id.btnRadicalsSearch).setOnClickListener(AedictApp.safe(this, new View.OnClickListener() {
 
 			public void onClick(View v) {
 				try {
@@ -221,7 +221,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 	}
 
 	private class KanjiMatchTask extends DialogAsyncTask<Object, List<EdictEntry>> {
-		protected KanjiMatchTask(Context context) {
+		protected KanjiMatchTask(Activity context) {
 			super(context);
 		}
 

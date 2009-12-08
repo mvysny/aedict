@@ -51,7 +51,7 @@ public class KanjiDrawActivity extends AbstractActivity {
 		updateStrokes();
 		final PainterView view = new PainterView(this, recognizer);
 		((ViewGroup) findViewById(R.id.kanjidrawRoot)).addView(view);
-		findViewById(R.id.btnKanjiClear).setOnClickListener(AedictApp.safe(new View.OnClickListener() {
+		findViewById(R.id.btnKanjiClear).setOnClickListener(AedictApp.safe(this, new View.OnClickListener() {
 
 			public void onClick(View v) {
 				recognizer.clear();
@@ -59,7 +59,7 @@ public class KanjiDrawActivity extends AbstractActivity {
 				view.invalidate();
 			}
 		}));
-		findViewById(R.id.btnKanjiSearch).setOnClickListener(AedictApp.safe(new View.OnClickListener() {
+		findViewById(R.id.btnKanjiSearch).setOnClickListener(AedictApp.safe(this, new View.OnClickListener() {
 
 			public void onClick(View v) {
 				try {

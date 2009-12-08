@@ -51,7 +51,7 @@ public class SkipActivity extends Activity {
 
 	private void configureButtonFor123SkipWizardContinuation(final int buttonId, final int skipType) {
 		final Button btn = (Button) findViewById(buttonId);
-		btn.setOnClickListener(AedictApp.safe(new View.OnClickListener() {
+		btn.setOnClickListener(AedictApp.safe(this, new View.OnClickListener() {
 
 			public void onClick(View v) {
 				final Intent intent = new Intent(SkipActivity.this, Skip123Activity.class);

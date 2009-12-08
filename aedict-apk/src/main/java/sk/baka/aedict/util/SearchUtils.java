@@ -122,8 +122,8 @@ public final class SearchUtils {
 		final EditText searchEdit = (EditText) activity.findViewById(searchEditText);
 		final Button searchBtn = (Button) activity.findViewById(searchButton);
 		final SearchText handler = new SearchText(isExactCheckBox, searchEditText, handleSelections, isJapanSearch);
-		searchEdit.setOnEditorActionListener(AedictApp.safe(OnEditorActionListener.class, handler));
-		searchBtn.setOnClickListener(AedictApp.safe(OnClickListener.class, handler));
+		searchEdit.setOnEditorActionListener(AedictApp.safe(activity, OnEditorActionListener.class, handler));
+		searchBtn.setOnClickListener(AedictApp.safe(activity, OnClickListener.class, handler));
 	}
 
 	private class SearchText implements TextView.OnEditorActionListener, View.OnClickListener {
@@ -183,7 +183,7 @@ public final class SearchUtils {
 	public void setupCopyButton(final int copyButton, final int textView) {
 		final Button btn = (Button) activity.findViewById(copyButton);
 		final TextView text = (TextView) activity.findViewById(textView);
-		btn.setOnClickListener(AedictApp.safe(new View.OnClickListener() {
+		btn.setOnClickListener(AedictApp.safe(activity, new View.OnClickListener() {
 
 			public void onClick(View v) {
 				final ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);

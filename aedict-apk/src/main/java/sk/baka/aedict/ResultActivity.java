@@ -136,7 +136,7 @@ public class ResultActivity extends ListActivity {
 
 		});
 		if (isSimeji) {
-			getListView().setOnCreateContextMenuListener(AedictApp.safe(new View.OnCreateContextMenuListener() {
+			getListView().setOnCreateContextMenuListener(AedictApp.safe(this, new View.OnCreateContextMenuListener() {
 
 				public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 					final EdictEntry ee = model.get(((AdapterContextMenuInfo) menuInfo).position);

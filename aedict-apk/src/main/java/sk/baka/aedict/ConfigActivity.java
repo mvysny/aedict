@@ -49,7 +49,7 @@ public class ConfigActivity extends Activity {
 		final Config cfg = AedictApp.loadConfig();
 		final CheckBox cfgNotifBar = (CheckBox) findViewById(R.id.cfgNotifBar);
 		cfgNotifBar.setChecked(cfg.isAlwaysAvailable);
-		cfgNotifBar.setOnCheckedChangeListener(AedictApp.safe(new CompoundButton.OnCheckedChangeListener() {
+		cfgNotifBar.setOnCheckedChangeListener(AedictApp.safe(this, new CompoundButton.OnCheckedChangeListener() {
 
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				final Config cfg = new Config(false);
@@ -59,7 +59,7 @@ public class ConfigActivity extends Activity {
 		}));
 		final CheckBox cfgUseRomaji = (CheckBox) findViewById(R.id.cfgUseRomaji);
 		cfgUseRomaji.setChecked(cfg.useRomaji);
-		cfgUseRomaji.setOnCheckedChangeListener(AedictApp.safe(new CompoundButton.OnCheckedChangeListener() {
+		cfgUseRomaji.setOnCheckedChangeListener(AedictApp.safe(this, new CompoundButton.OnCheckedChangeListener() {
 
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				final Config cfg = new Config(false);
@@ -68,7 +68,7 @@ public class ConfigActivity extends Activity {
 			}
 		}));
 		final Button cleanup = (Button) findViewById(R.id.cleanupEdictFilesButton);
-		cleanup.setOnClickListener(AedictApp.safe(new View.OnClickListener() {
+		cleanup.setOnClickListener(AedictApp.safe(this, new View.OnClickListener() {
 
 			public void onClick(View v) {
 				cleanup();
@@ -77,7 +77,7 @@ public class ConfigActivity extends Activity {
 		}));
 		final Spinner s = (Spinner) findViewById(R.id.romanizationSystem);
 		s.setSelection(cfg.romanization.ordinal());
-		s.setOnItemSelectedListener(AedictApp.safe(new AdapterView.OnItemSelectedListener() {
+		s.setOnItemSelectedListener(AedictApp.safe(this, new AdapterView.OnItemSelectedListener() {
 
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				final Config cfg = new Config(false);

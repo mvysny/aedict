@@ -35,7 +35,7 @@ import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.R;
 import sk.baka.aedict.util.DialogAsyncTask;
 import sk.baka.aedict.util.MiscUtils;
-import android.content.Context;
+import android.app.Activity;
 import android.util.Log;
 
 /**
@@ -81,7 +81,7 @@ public final class DownloadDictTask extends DialogAsyncTask<Void, Void> {
 	 * @param expectedSize
 	 *            the expected file size of unpacked dictionary.
 	 */
-	public DownloadDictTask(final Context context, final URL source, final String targetDir, final String dictName, final long expectedSize) {
+	public DownloadDictTask(final Activity context, final URL source, final String targetDir, final String dictName, final long expectedSize) {
 		super(context);
 		this.source = source;
 		this.targetDir = targetDir;

@@ -252,6 +252,7 @@ public class AedictApp extends Application {
 	 *            the interface class
 	 * @param instance
 	 *            the instance
+	 * @param activity owning activity which will show the error dialog. Android 1.5 is not able to show a dialog belonging to an Application object.
 	 * @return a protected proxy
 	 */
 	public static <T> T safe(final Activity activity, final Class<T> intf, final T instance) {
@@ -267,6 +268,7 @@ public class AedictApp extends Application {
 	 * 
 	 * @param <T>
 	 *            the interface type
+	 * @param activity owning activity which will show the error dialog. Android 1.5 is not able to show a dialog belonging to an Application object.
 	 * @param instance
 	 *            the instance. The object must implement exactly one interface.
 	 * @return a protected proxy
@@ -290,8 +292,10 @@ public class AedictApp extends Application {
 	private static class Safe implements InvocationHandler {
 
 		private final Object instance;
+		private final Activity activity;
 
 		public Safe(final Activity activity, final Object instance) {
+			this.activity = activity;
 			this.instance = instance;
 		}
 
@@ -301,7 +305,7 @@ public class AedictApp extends Application {
 			} catch (Exception ex) {
 				final Throwable cause = unwrap(ex);
 				Log.e(instance.getClass().getSimpleName(), "Exception thrown while invoking " + method, cause);
-				new AndroidUtils(AedictApp.getApp()).showErrorDialog("An application problem occured: " + cause.toString());
+				new AndroidUtils(activity).showErrorDialog("An application problem occured: " + cause.toString());
 				if (method.getReturnType() == Boolean.class || method.getReturnType() == boolean.class) {
 					return false;
 				}

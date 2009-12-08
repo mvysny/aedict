@@ -20,8 +20,8 @@ package sk.baka.aedict.util;
 
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.dict.DownloadDictTask;
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
@@ -109,7 +109,7 @@ public abstract class DialogAsyncTask<P, R> extends AsyncTask<P, DialogAsyncTask
 	/**
 	 * A context reference.
 	 */
-	protected final Context context;
+	protected final Activity context;
 
 	/**
 	 * Creates the task instance.
@@ -117,7 +117,7 @@ public abstract class DialogAsyncTask<P, R> extends AsyncTask<P, DialogAsyncTask
 	 * @param context
 	 *            a context reference, used to create a dialog.
 	 */
-	protected DialogAsyncTask(final Context context) {
+	protected DialogAsyncTask(final Activity context) {
 		this.context = context;
 	}
 
@@ -127,7 +127,7 @@ public abstract class DialogAsyncTask<P, R> extends AsyncTask<P, DialogAsyncTask
 	protected final void onPreExecute() {
 		dlg = new ProgressDialog(context);
 		dlg.setCancelable(true);
-		dlg.setOnCancelListener(AedictApp.safe(new OnCancelListener() {
+		dlg.setOnCancelListener(AedictApp.safe(context, new OnCancelListener() {
 			public void onCancel(DialogInterface dialog) {
 				cancel(true);
 				dlg.setTitle("Cancelling");

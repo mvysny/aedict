@@ -20,6 +20,7 @@ package sk.baka.aedict.util;
 
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.R;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -51,12 +52,12 @@ public final class AndroidUtils {
 	 * @param message
 	 *            the message to show
 	 * @param yesListener
-	 *            invoked when the Yes button is pressed. The listener is automatically {@link AedictApp#safe(Class, Object) safe-protected}.
+	 *            invoked when the Yes button is pressed. The listener is automatically {@link AedictApp#safe(Activity, Class, Object) safe-protected}.
 	 */
 	public void showYesNoDialog(final String message, final DialogInterface.OnClickListener yesListener) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
 		builder.setMessage(message);
-		builder.setPositiveButton(R.string.yes, AedictApp.safe(DialogInterface.OnClickListener.class, yesListener));
+		builder.setPositiveButton(R.string.yes, AedictApp.safe((Activity)ctx, DialogInterface.OnClickListener.class, yesListener));
 		builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {

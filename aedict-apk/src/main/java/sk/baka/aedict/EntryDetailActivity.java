@@ -54,7 +54,7 @@ public class EntryDetailActivity extends AbstractActivity {
 		utils.setupCopyButton(R.id.readingCopy, R.id.readingSearchEdit);
 		utils.setupCopyButton(R.id.englishCopy, R.id.englishSearchEdit);
 		final Button analyze = (Button) findViewById(R.id.kanjiAnalyze);
-		analyze.setOnClickListener(AedictApp.safe(new View.OnClickListener() {
+		analyze.setOnClickListener(AedictApp.safe(this, new View.OnClickListener() {
 
 			public void onClick(View v) {
 				final Intent intent = new Intent(EntryDetailActivity.this, KanjiAnalyzeActivity.class);
