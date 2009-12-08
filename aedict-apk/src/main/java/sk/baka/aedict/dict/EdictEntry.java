@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import sk.baka.aedict.kanji.RomanizationEnum;
+import sk.baka.aedict.util.ListBuilder;
 import sk.baka.aedict.util.MiscUtils;
 import android.util.Log;
 import android.widget.TextView;
@@ -317,35 +318,6 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 		} catch (NumberFormatException ex) {
 			Log.e(EdictEntry.class.getSimpleName(), "Failed to parse integer " + str, ex);
 			return null;
-		}
-	}
-
-	private static class ListBuilder {
-		private final String separator;
-		private boolean isFirst = true;
-		private final StringBuilder sb = new StringBuilder();
-
-		public ListBuilder(final String separator) {
-			this.separator = separator;
-		}
-
-		public ListBuilder add(final String string) {
-			if (isFirst) {
-				isFirst = false;
-			} else {
-				sb.append(separator);
-			}
-			sb.append(string);
-			return this;
-		}
-
-		public boolean isEmpty() {
-			return isFirst;
-		}
-
-		@Override
-		public String toString() {
-			return sb.toString();
 		}
 	}
 

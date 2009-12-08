@@ -105,10 +105,14 @@ public final class SearchQuery implements Serializable {
 				}
 			}
 		} else {
-			if (query.length != 1) {
-				throw new IllegalStateException("Kanjidic search requires a single kanji character search");
+			// query can be null in case we are performing e.g. a pure SKIP
+			// lookup
+			if (query != null) {
+				if (query.length != 1) {
+					throw new IllegalStateException("Kanjidic search requires a single kanji character search");
+				}
+				sb.append("kanji:").append(query[0].trim());
 			}
-			sb.append("kanji:").append(query[0].trim());
 			if (strokeCount != null) {
 				sb.append(" AND (");
 				boolean first = true;

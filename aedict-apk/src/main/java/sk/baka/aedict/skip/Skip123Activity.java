@@ -59,8 +59,8 @@ public class Skip123Activity extends Activity {
 
 	private void performSearch() {
 		final int first = skipType;
-		final int second = Integer.parseInt(((TextView) findViewById(R.id.textSkipFirst)).getText().toString());
-		final int third = Integer.parseInt(((TextView) findViewById(R.id.textSkipSecond)).getText().toString());
+		final int second = Integer.parseInt(((TextView) findViewById(R.id.editSkipFirst)).getText().toString());
+		final int third = Integer.parseInt(((TextView) findViewById(R.id.editSkipSecond)).getText().toString());
 		final String skip = SkipActivity.getSkipCode(first, second, third);
 		SkipActivity.searchForSkip(this, skip);
 	}
