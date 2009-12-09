@@ -20,6 +20,9 @@ package sk.baka.aedict.skip;
 
 import sk.baka.aedict.R;
 import sk.baka.autils.AndroidUtils;
+import sk.baka.autils.bind.AndroidViewMapper;
+import sk.baka.autils.bind.BindToView;
+import sk.baka.autils.bind.Binder;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -57,11 +60,18 @@ public class Skip123Activity extends Activity {
 		}));
 	}
 
+	private static class SecondThird {
+		@BindToView(R.id.editSkipFirst)
+		public int second;
+		@BindToView(R.id.editSkipSecond)
+		public int third;
+	}
+
 	private void performSearch() {
 		final int first = skipType;
-		final int second = Integer.parseInt(((TextView) findViewById(R.id.editSkipFirst)).getText().toString());
-		final int third = Integer.parseInt(((TextView) findViewById(R.id.editSkipSecond)).getText().toString());
-		final String skip = SkipActivity.getSkipCode(first, second, third);
+		final SecondThird st = new SecondThird();
+		new Binder().bindFromComponent(st, new AndroidViewMapper(), this, true);
+		final String skip = SkipActivity.getSkipCode(first, st.second, st.third);
 		SkipActivity.searchForSkip(this, skip);
 	}
 }
