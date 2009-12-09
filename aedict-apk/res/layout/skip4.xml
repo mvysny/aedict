@@ -34,10 +34,10 @@
 			android:orientation="horizontal" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:gravity="center">
 			<Button android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:text="@string/skip11"
-				android:id="@+id/skip11" android:textSize="40px" />
+				android:layout_height="wrap_content" android:text="@string/skip41"
+				android:id="@+id/skip41" android:textSize="40px" />
 			<TextView android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:text="@string/skip11explanation"
+				android:layout_height="wrap_content" android:text="@string/skip41explanation"
 				android:textAppearance="?android:attr/textAppearanceLarge" />
 		</LinearLayout>
 		<ImageView android:src="@android:drawable/divider_horizontal_dark"
@@ -46,10 +46,10 @@
 			android:orientation="horizontal" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:gravity="center">
 			<Button android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:text="@string/skip12"
-				android:id="@+id/skip12" android:textSize="40px" />
+				android:layout_height="wrap_content" android:text="@string/skip42"
+				android:id="@+id/skip42" android:textSize="40px" />
 			<TextView android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:text="@string/skip12explanation"
+				android:layout_height="wrap_content" android:text="@string/skip42explanation"
 				android:textAppearance="?android:attr/textAppearanceLarge" />
 		</LinearLayout>
 		<ImageView android:src="@android:drawable/divider_horizontal_dark"
@@ -58,10 +58,10 @@
 			android:orientation="horizontal" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:gravity="center">
 			<Button android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:text="@string/skip13"
-				android:id="@+id/skip13" android:textSize="40px" />
+				android:layout_height="wrap_content" android:text="@string/skip43"
+				android:id="@+id/skip43" android:textSize="40px" />
 			<TextView android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:text="@string/skip13explanation"
+				android:layout_height="wrap_content" android:text="@string/skip43explanation"
 				android:textAppearance="?android:attr/textAppearanceLarge" />
 		</LinearLayout>
 		<ImageView android:src="@android:drawable/divider_horizontal_dark"
@@ -70,10 +70,10 @@
 			android:orientation="horizontal" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:gravity="center">
 			<Button android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:text="@string/skip14"
-				android:id="@+id/skip14" android:textSize="40px" />
+				android:layout_height="wrap_content" android:text="@string/skip44"
+				android:id="@+id/skip44" android:textSize="40px" />
 			<TextView android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:text="@string/skip14explanation"
+				android:layout_height="wrap_content" android:text="@string/skip44explanation"
 				android:textAppearance="?android:attr/textAppearanceLarge" />
 		</LinearLayout>
 	</LinearLayout>

@@ -76,6 +76,14 @@
     <string name="skip13explanation">into an <b>enclosing</b> structure and an internal structure, such as: 気 週 間 広 国 月 通</string>
     <string name="skip14">4 西</string>
     <string name="skip14explanation">none of the above, such as: 下 西 士 自 中 事 火 女</string>
+    <string name="skip41">1 下</string>
+    <string name="skip41explanation">has a <b>horizontal line at the top</b> (e.g. 下, 西)</string>
+    <string name="skip42">2 士</string>
+    <string name="skip42explanation">has a <b>horizontal line at the bottom</b> (e.g. 士, 自).</string>
+    <string name="skip43">3 中</string>
+    <string name="skip43explanation">has a <b>vertical line through</b> (e.g. 中, 事)</string>
+    <string name="skip44">4 女</string>
+    <string name="skip44explanation">none of the above (e.g. 火, 女)</string>
     <string name="skip1tutorial">Count the strokes in the leftmost part and then the number of strokes left in the right part. For example, in kanji 引, leftmost part has three strokes, and the right half has one.</string>
     <string name="skip2tutorial">Count the strokes in the topmost part and then the number of strokes left in the lower part. For example, in kanji 春, topmost part has five strokes, and the lower half has four.</string>
     <string name="skip3tutorial">Count the strokes in the enclosing part and then the number of strokes left in the internal part. For example, in kanji 通, enclosing part has three strokes, and the internal part has seven.</string>

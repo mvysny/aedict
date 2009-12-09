@@ -19,8 +19,14 @@
 package sk.baka.aedict.skip;
 
 import sk.baka.aedict.R;
+import sk.baka.autils.AndroidUtils;
+import sk.baka.autils.bind.AndroidViewMapper;
+import sk.baka.autils.bind.BindToView;
+import sk.baka.autils.bind.Binder;
+import sk.baka.autils.bind.validator.Range;
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 
 /**
  * Handles the SKIP type 4 codes.
@@ -32,5 +38,41 @@ public class Skip4Activity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.skip4);
+		final View.OnClickListener search = AndroidUtils.safe(this, new View.OnClickListener() {
+			public void onClick(View v) {
+				final int type;
+				switch (v.getId()) {
+				case R.id.skip41:
+					type = 1;
+					break;
+				case R.id.skip42:
+					type = 2;
+					break;
+				case R.id.skip43:
+					type = 3;
+					break;
+				default:
+					type = 4;
+					break;
+				}
+				performSearch(type);
+			}
+		});
+		findViewById(R.id.skip41).setOnClickListener(search);
+		findViewById(R.id.skip42).setOnClickListener(search);
+		findViewById(R.id.skip43).setOnClickListener(search);
+		findViewById(R.id.skip44).setOnClickListener(search);
+	}
+
+	private static class Strokes {
+		@BindToView(R.id.editSkipNumberOfStrokes)
+		@Range(min = 1, max = 30)
+		public int strokes;
+	}
+
+	private void performSearch(final int type) {
+		final Strokes bean = new Strokes();
+		new Binder().bindFromComponent(bean, new AndroidViewMapper(), this, true);
+		SkipActivity.searchForSkip(this, SkipActivity.getSkipCode(4, bean.strokes, type));
 	}
 }
