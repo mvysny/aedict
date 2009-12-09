@@ -23,6 +23,7 @@ import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.bind.AndroidViewMapper;
 import sk.baka.autils.bind.BindToView;
 import sk.baka.autils.bind.Binder;
+import sk.baka.autils.bind.validator.Range;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -62,8 +63,10 @@ public class Skip123Activity extends Activity {
 
 	private static class SecondThird {
 		@BindToView(R.id.editSkipFirst)
+		@Range(min = 1, max = 30)
 		public int second;
 		@BindToView(R.id.editSkipSecond)
+		@Range(min = 1, max = 30)
 		public int third;
 	}
 
