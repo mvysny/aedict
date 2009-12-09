@@ -27,6 +27,8 @@ import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.autils.AndroidUtils;
+import sk.baka.autils.DialogUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -122,8 +124,8 @@ public final class SearchUtils {
 		final EditText searchEdit = (EditText) activity.findViewById(searchEditText);
 		final Button searchBtn = (Button) activity.findViewById(searchButton);
 		final SearchText handler = new SearchText(isExactCheckBox, searchEditText, handleSelections, isJapanSearch);
-		searchEdit.setOnEditorActionListener(AedictApp.safe(activity, OnEditorActionListener.class, handler));
-		searchBtn.setOnClickListener(AedictApp.safe(activity, OnClickListener.class, handler));
+		searchEdit.setOnEditorActionListener(AndroidUtils.safe(activity, OnEditorActionListener.class, handler));
+		searchBtn.setOnClickListener(AndroidUtils.safe(activity, OnClickListener.class, handler));
 	}
 
 	private class SearchText implements TextView.OnEditorActionListener, View.OnClickListener {
@@ -183,7 +185,7 @@ public final class SearchUtils {
 	public void setupCopyButton(final int copyButton, final int textView) {
 		final Button btn = (Button) activity.findViewById(copyButton);
 		final TextView text = (TextView) activity.findViewById(textView);
-		btn.setOnClickListener(AedictApp.safe(activity, new View.OnClickListener() {
+		btn.setOnClickListener(AndroidUtils.safe(activity, new View.OnClickListener() {
 
 			public void onClick(View v) {
 				final ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -218,7 +220,7 @@ public final class SearchUtils {
 				msg.append('\n');
 				msg.append(AedictApp.format(R.string.warning_less_than_x_mb_free, expectedSize / 1024, free / 1024));
 			}
-			new AndroidUtils(activity).showYesNoDialog(msg.toString(), new DialogInterface.OnClickListener() {
+			new DialogUtils(activity).showYesNoDialog(msg.toString(), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();
 					new DownloadDictTask(activity, source, targetDir, dictName, expectedSize).execute();

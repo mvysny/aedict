@@ -28,6 +28,7 @@ import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.RomanizationEnum;
+import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -136,7 +137,7 @@ public class ResultActivity extends ListActivity {
 
 		});
 		if (isSimeji) {
-			getListView().setOnCreateContextMenuListener(AedictApp.safe(this, new View.OnCreateContextMenuListener() {
+			getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
 
 				public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 					final EdictEntry ee = model.get(((AdapterContextMenuInfo) menuInfo).position);

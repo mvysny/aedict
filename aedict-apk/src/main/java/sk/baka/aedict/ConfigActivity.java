@@ -24,7 +24,8 @@ import java.io.IOException;
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.aedict.kanji.RomanizationEnum;
-import sk.baka.aedict.util.AndroidUtils;
+import sk.baka.autils.AndroidUtils;
+import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -49,7 +50,7 @@ public class ConfigActivity extends Activity {
 		final Config cfg = AedictApp.loadConfig();
 		final CheckBox cfgNotifBar = (CheckBox) findViewById(R.id.cfgNotifBar);
 		cfgNotifBar.setChecked(cfg.isAlwaysAvailable);
-		cfgNotifBar.setOnCheckedChangeListener(AedictApp.safe(this, new CompoundButton.OnCheckedChangeListener() {
+		cfgNotifBar.setOnCheckedChangeListener(AndroidUtils.safe(this, new CompoundButton.OnCheckedChangeListener() {
 
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				final Config cfg = new Config(false);
@@ -59,7 +60,7 @@ public class ConfigActivity extends Activity {
 		}));
 		final CheckBox cfgUseRomaji = (CheckBox) findViewById(R.id.cfgUseRomaji);
 		cfgUseRomaji.setChecked(cfg.useRomaji);
-		cfgUseRomaji.setOnCheckedChangeListener(AedictApp.safe(this, new CompoundButton.OnCheckedChangeListener() {
+		cfgUseRomaji.setOnCheckedChangeListener(AndroidUtils.safe(this, new CompoundButton.OnCheckedChangeListener() {
 
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				final Config cfg = new Config(false);
@@ -68,7 +69,7 @@ public class ConfigActivity extends Activity {
 			}
 		}));
 		final Button cleanup = (Button) findViewById(R.id.cleanupEdictFilesButton);
-		cleanup.setOnClickListener(AedictApp.safe(this, new View.OnClickListener() {
+		cleanup.setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
 
 			public void onClick(View v) {
 				cleanup();
@@ -77,7 +78,7 @@ public class ConfigActivity extends Activity {
 		}));
 		final Spinner s = (Spinner) findViewById(R.id.romanizationSystem);
 		s.setSelection(cfg.romanization.ordinal());
-		s.setOnItemSelectedListener(AedictApp.safe(this, new AdapterView.OnItemSelectedListener() {
+		s.setOnItemSelectedListener(AndroidUtils.safe(this, new AdapterView.OnItemSelectedListener() {
 
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				final Config cfg = new Config(false);
@@ -91,7 +92,7 @@ public class ConfigActivity extends Activity {
 	}
 
 	private void cleanup() {
-		final AndroidUtils utils = new AndroidUtils(this);
+		final DialogUtils utils = new DialogUtils(this);
 		utils.showYesNoDialog(AedictApp.format(R.string.deleteDictionaryFiles, MiscUtils.getLength(new File(DownloadDictTask.BASE_DIR)) / 1024), new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
@@ -101,7 +102,7 @@ public class ConfigActivity extends Activity {
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
-				utils.showInfoDialog(R.string.data_files_removed);
+				utils.showToast(R.string.data_files_removed);
 			}
 
 		});

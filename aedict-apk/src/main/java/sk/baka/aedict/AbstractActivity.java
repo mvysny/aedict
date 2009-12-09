@@ -19,6 +19,7 @@
 package sk.baka.aedict;
 
 import sk.baka.aedict.skip.SkipActivity;
+import sk.baka.autils.AndroidUtils;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
@@ -65,7 +66,7 @@ public abstract class AbstractActivity extends Activity {
 	public static void addActivityLauncher(final Activity context, final Menu menu, final int caption, final int icon, final Class<? extends Activity> activity) {
 		final MenuItem item2 = menu.add(caption);
 		item2.setIcon(icon);
-		item2.setOnMenuItemClickListener(AedictApp.safe(context, new MenuItem.OnMenuItemClickListener() {
+		item2.setOnMenuItemClickListener(AndroidUtils.safe(context, new MenuItem.OnMenuItemClickListener() {
 
 			public boolean onMenuItemClick(MenuItem item) {
 				final Intent intent = new Intent(context, activity);

@@ -31,9 +31,10 @@ import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.Radicals;
-import sk.baka.aedict.util.AndroidUtils;
 import sk.baka.aedict.util.DialogAsyncTask;
 import sk.baka.aedict.util.SearchUtils;
+import sk.baka.autils.AndroidUtils;
+import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.Activity;
 import android.content.Intent;
@@ -78,7 +79,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 			}
 			addRadicalToggle(v, radical, strokes);
 		}
-		findViewById(R.id.btnRadicalsSearch).setOnClickListener(AedictApp.safe(this, new View.OnClickListener() {
+		findViewById(R.id.btnRadicalsSearch).setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
 
 			public void onClick(View v) {
 				try {
@@ -206,14 +207,14 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 	private void performSearch() throws IOException {
 		final String radicals = getRadicals();
 		if (radicals.length() == 0) {
-			new AndroidUtils(this).showErrorDialog(R.string.no_radicals_selected);
+			new DialogUtils(this).showErrorDialog(R.string.no_radicals_selected);
 			return;
 		}
 		final Integer strokes = getInt(R.id.editKanjiStrokes);
 		Integer plusMinus = getInt(R.id.editKanjiStrokesPlusMinus);
 		if (plusMinus != null) {
 			if (plusMinus < 0 || plusMinus > 2) {
-				new AndroidUtils(this).showErrorDialog(R.string.plusMinusBetween0And2);
+				new DialogUtils(this).showErrorDialog(R.string.plusMinusBetween0And2);
 				return;
 			}
 		}

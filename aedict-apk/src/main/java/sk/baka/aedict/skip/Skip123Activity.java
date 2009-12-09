@@ -18,8 +18,8 @@
 
 package sk.baka.aedict.skip;
 
-import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.R;
+import sk.baka.autils.AndroidUtils;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -49,7 +49,7 @@ public class Skip123Activity extends Activity {
 		first.setText(skipType == 1 ? R.string.skip1first : skipType == 2 ? R.string.skip2first : R.string.skip3first);
 		final TextView second = (TextView) findViewById(R.id.textSkipSecond);
 		second.setText(skipType == 1 ? R.string.skip1second : skipType == 2 ? R.string.skip2second : R.string.skip3second);
-		findViewById(R.id.btnSkip123Search).setOnClickListener(AedictApp.safe(this, new View.OnClickListener() {
+		findViewById(R.id.btnSkip123Search).setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
 
 			public void onClick(View v) {
 				performSearch();

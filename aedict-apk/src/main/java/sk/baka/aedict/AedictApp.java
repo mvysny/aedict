@@ -20,16 +20,11 @@ package sk.baka.aedict;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.Formatter;
 
 import sk.baka.aedict.kanji.RomanizationEnum;
-import sk.baka.aedict.util.AndroidUtils;
+import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
-import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -53,6 +48,7 @@ public class AedictApp extends Application {
 			throw new IllegalStateException("Not a singleton");
 		}
 		instance = this;
+		DialogUtils.resError = R.string.error;
 		apply(loadConfig());
 	}
 
@@ -240,96 +236,5 @@ public class AedictApp extends Application {
 			notification.flags = Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 			nm.notify(NOTIFICATION_ID, notification);
 		}
-	}
-
-	/**
-	 * Returns a safe wrapper for given interface. Any exceptions thrown from
-	 * interface methods are catched, logged and shown in a dialog.
-	 * 
-	 * @param <T>
-	 *            the interface type
-	 * @param intf
-	 *            the interface class
-	 * @param instance
-	 *            the instance
-	 * @param activity owning activity which will show the error dialog. Android 1.6 is not able to show a dialog belonging to an Application object.
-	 * @return a protected proxy
-	 */
-	public static <T> T safe(final Activity activity, final Class<T> intf, final T instance) {
-		if (!intf.isInterface()) {
-			throw new IllegalArgumentException("Must be an interface: " + intf);
-		}
-		return intf.cast(Proxy.newProxyInstance(AedictApp.instance.getClassLoader(), new Class<?>[] { intf }, new Safe(activity, instance)));
-	}
-
-	/**
-	 * Returns a safe wrapper for given interface. Any exceptions thrown from
-	 * interface methods are catched, logged and shown in a dialog.
-	 * 
-	 * @param <T>
-	 *            the interface type
-	 * @param activity owning activity which will show the error dialog. Android 1.5 is not able to show a dialog belonging to an Application object.
-	 * @param instance
-	 *            the instance. The object must implement exactly one interface.
-	 * @return a protected proxy
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T safe(final Activity activity, final T instance) {
-		final Class<?>[] intfs = instance.getClass().getInterfaces();
-		if (intfs.length == 0) {
-			throw new IllegalArgumentException("Given class " + instance.getClass() + " does not implement any interfaces");
-		}
-		if (intfs.length > 1) {
-			throw new IllegalArgumentException("Given class " + instance.getClass() + " implements multiple interfaces");
-		}
-		final Class<Object> intf = (Class) intfs[0];
-		final Object safe = safe(activity, intf, instance);
-		// this is a bit ugly. The safe object will not of type T anymore, but
-		// this cast will succeed (because it is silently ignored by Java).
-		return (T) safe;
-	}
-
-	private static class Safe implements InvocationHandler {
-
-		private final Object instance;
-		private final Activity activity;
-
-		public Safe(final Activity activity, final Object instance) {
-			this.activity = activity;
-			this.instance = instance;
-		}
-
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			try {
-				return method.invoke(instance, args);
-			} catch (Exception ex) {
-				final Throwable cause = unwrap(ex);
-				Log.e(instance.getClass().getSimpleName(), "Exception thrown while invoking " + method, cause);
-				new AndroidUtils(activity).showErrorDialog("An application problem occured: " + cause.toString());
-				if (method.getReturnType() == Boolean.class || method.getReturnType() == boolean.class) {
-					return false;
-				}
-				return null;
-			}
-		}
-	}
-
-	/**
-	 * Unwrap all {@link RuntimeException}s and
-	 * {@link InvocationTargetException}s.
-	 * 
-	 * @param t
-	 *            the exception type
-	 * @return unwrapped throwable.
-	 */
-	public static Throwable unwrap(final Throwable t) {
-		Throwable current = t;
-		while (current instanceof RuntimeException || current instanceof InvocationTargetException) {
-			if (current.getCause() == null) {
-				return current;
-			}
-			current = current.getCause();
-		}
-		return current;
 	}
 }

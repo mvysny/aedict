@@ -18,8 +18,9 @@
 
 package sk.baka.aedict.util;
 
-import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.dict.DownloadDictTask;
+import sk.baka.autils.AndroidUtils;
+import sk.baka.autils.DialogUtils;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -127,7 +128,7 @@ public abstract class DialogAsyncTask<P, R> extends AsyncTask<P, DialogAsyncTask
 	protected final void onPreExecute() {
 		dlg = new ProgressDialog(context);
 		dlg.setCancelable(true);
-		dlg.setOnCancelListener(AedictApp.safe(context, new OnCancelListener() {
+		dlg.setOnCancelListener(AndroidUtils.safe(context, new OnCancelListener() {
 			public void onCancel(DialogInterface dialog) {
 				cancel(true);
 				dlg.setTitle("Cancelling");
@@ -221,7 +222,7 @@ public abstract class DialogAsyncTask<P, R> extends AsyncTask<P, DialogAsyncTask
 			// dlg.setMessage(message);
 			// the title is too short to display a complex exception. Dismiss the dialog and show a new one.
 			dlg.dismiss();
-			new AndroidUtils(context).showErrorDialog(t.toString());
+			new DialogUtils(context).showErrorDialog(t.toString());
 		} else {
 			if (msg != null) {
 				dlg.setTitle(msg);

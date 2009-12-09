@@ -24,12 +24,12 @@ import java.util.Collections;
 import java.util.List;
 
 import sk.baka.aedict.AbstractActivity;
-import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.autils.AndroidUtils;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -54,7 +54,7 @@ public class SkipActivity extends Activity {
 
 	private void configureButtonFor123SkipWizardContinuation(final int buttonId, final int skipType) {
 		final Button btn = (Button) findViewById(buttonId);
-		btn.setOnClickListener(AedictApp.safe(this, new View.OnClickListener() {
+		btn.setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
 
 			public void onClick(View v) {
 				final Intent intent = new Intent(SkipActivity.this, Skip123Activity.class);
