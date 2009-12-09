@@ -26,7 +26,10 @@ package sk.baka.aedict.util;
 public class ListBuilder {
 	private final String separator;
 	private boolean isFirst = true;
-	private final StringBuilder sb = new StringBuilder();
+	/**
+	 * The underlying string builder.
+	 */
+	public final StringBuilder sb = new StringBuilder();
 
 	/**
 	 * Creates new list with given separator.

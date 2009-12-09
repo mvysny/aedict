@@ -46,6 +46,11 @@
 			<version>2.4.1</version>
 			<classifier>android</classifier>
 		</dependency>
+		<dependency>
+			<groupId>sk.baka.autils</groupId>
+			<artifactId>autils</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
    
 	<!-- Build environment -->

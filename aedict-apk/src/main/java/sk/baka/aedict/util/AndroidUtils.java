@@ -33,15 +33,17 @@ import android.widget.Toast;
  * @author Martin Vysny
  */
 public final class AndroidUtils {
-	private final Context ctx;
+	private final Activity ctx;
 
 	/**
 	 * Creates new utility class.
 	 * 
 	 * @param ctx
-	 *            the context to use.
+	 *            owning activity which will show the dialogs. Android 1.6 is
+	 *            not able to show a dialog belonging to an Application object
+	 *            so you cannot use {@link Context} anymore.
 	 */
-	public AndroidUtils(final Context ctx) {
+	public AndroidUtils(final Activity ctx) {
 		this.ctx = ctx;
 	}
 
@@ -52,12 +54,14 @@ public final class AndroidUtils {
 	 * @param message
 	 *            the message to show
 	 * @param yesListener
-	 *            invoked when the Yes button is pressed. The listener is automatically {@link AedictApp#safe(Activity, Class, Object) safe-protected}.
+	 *            invoked when the Yes button is pressed. The listener is
+	 *            automatically {@link AedictApp#safe(Activity, Class, Object)
+	 *            safe-protected}.
 	 */
 	public void showYesNoDialog(final String message, final DialogInterface.OnClickListener yesListener) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
 		builder.setMessage(message);
-		builder.setPositiveButton(R.string.yes, AedictApp.safe((Activity)ctx, DialogInterface.OnClickListener.class, yesListener));
+		builder.setPositiveButton(R.string.yes, AedictApp.safe(ctx, DialogInterface.OnClickListener.class, yesListener));
 		builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
@@ -76,6 +80,7 @@ public final class AndroidUtils {
 	public void showErrorDialog(final int messageRes) {
 		showErrorDialog(ctx.getString(messageRes));
 	}
+
 	/**
 	 * Shows an error dialog.
 	 * 

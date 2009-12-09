@@ -28,7 +28,7 @@ import java.util.Formatter;
 
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.AndroidUtils;
-import sk.baka.aedict.util.MiscUtils;
+import sk.baka.autils.MiscUtils;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
@@ -252,7 +252,7 @@ public class AedictApp extends Application {
 	 *            the interface class
 	 * @param instance
 	 *            the instance
-	 * @param activity owning activity which will show the error dialog. Android 1.5 is not able to show a dialog belonging to an Application object.
+	 * @param activity owning activity which will show the error dialog. Android 1.6 is not able to show a dialog belonging to an Application object.
 	 * @return a protected proxy
 	 */
 	public static <T> T safe(final Activity activity, final Class<T> intf, final T instance) {

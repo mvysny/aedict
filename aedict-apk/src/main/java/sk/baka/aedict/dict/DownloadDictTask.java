@@ -34,7 +34,7 @@ import java.util.zip.ZipInputStream;
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.R;
 import sk.baka.aedict.util.DialogAsyncTask;
-import sk.baka.aedict.util.MiscUtils;
+import sk.baka.autils.MiscUtils;
 import android.app.Activity;
 import android.util.Log;
 
