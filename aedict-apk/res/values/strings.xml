@@ -17,6 +17,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  -->
 <resources>
+    <string name="no_radicals_selected">No radicals selected</string>
     <string name="configuration">Configuration</string>
     <string name="always_available">Aedict available at all times</string>
     <string name="kanjiEntryText">Kanji (tip: to select and/or copy-paste just long-click the edit box. To search for a part of a word just select it and press search)</string>
@@ -84,4 +85,5 @@
     <string name="skip2second">Number of strokes in the lower part</string>
     <string name="skip3first">Number of strokes in the enclosing part</string>
     <string name="skip3second">Number of strokes in the internal part</string>
+    <string name="skip4">Please count all the strokes in the character, and then choose the first from the options listed below:</string>
 </resources>

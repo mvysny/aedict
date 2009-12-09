@@ -206,7 +206,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 	private void performSearch() throws IOException {
 		final String radicals = getRadicals();
 		if (radicals.length() == 0) {
-			new AndroidUtils(this).showErrorDialog("No radicals selected");
+			new AndroidUtils(this).showErrorDialog(R.string.no_radicals_selected);
 			return;
 		}
 		final Integer strokes = getInt(R.id.editKanjiStrokes);
