@@ -20,8 +20,7 @@ package sk.baka.aedict.dict;
 
 import java.io.Serializable;
 
-import sk.baka.aedict.util.ListBuilder;
-
+import sk.baka.autils.ListBuilder;
 import android.content.Intent;
 
 /**

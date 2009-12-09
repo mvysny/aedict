@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import sk.baka.aedict.kanji.RomanizationEnum;
-import sk.baka.aedict.util.ListBuilder;
+import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
 import android.util.Log;
 import android.widget.TextView;
