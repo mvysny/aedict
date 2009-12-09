@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
+import sk.baka.aedict.AbstractActivity;
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
@@ -48,6 +49,7 @@ public class SkipActivity extends Activity {
 		configureButtonFor123SkipWizardContinuation(R.id.skip11, 1);
 		configureButtonFor123SkipWizardContinuation(R.id.skip12, 2);
 		configureButtonFor123SkipWizardContinuation(R.id.skip13, 3);
+		AbstractActivity.setButtonActivityLauncher(this, R.id.skip14, Skip4Activity.class);
 	}
 
 	private void configureButtonFor123SkipWizardContinuation(final int buttonId, final int skipType) {
@@ -94,7 +96,8 @@ public class SkipActivity extends Activity {
 		try {
 			final List<String> result = LuceneSearch.singleSearch(query, true);
 			final List<EdictEntry> parsedResult = EdictEntry.parseKanjidic(result);
-			// no need to sort on the number of strokes as all results will have the same amount of strokes
+			// no need to sort on the number of strokes as all results will have
+			// the same amount of strokes
 			Collections.sort(parsedResult);
 			final Intent intent = new Intent(activity, KanjiAnalyzeActivity.class);
 			intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_ENTRYLIST, (Serializable) parsedResult);

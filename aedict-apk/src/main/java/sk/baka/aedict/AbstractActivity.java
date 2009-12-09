@@ -80,11 +80,25 @@ public abstract class AbstractActivity extends Activity {
 	 * 
 	 * @param buttonId
 	 *            the button ID
-	 * @param activity
+	 * @param activityToLaunch
 	 *            the activity class
 	 */
-	public void setButtonActivityLauncher(final int buttonId, final Class<? extends Activity> activity) {
-		setButtonActivityLauncher((Button) findViewById(buttonId), activity);
+	public void setButtonActivityLauncher(final int buttonId, final Class<? extends Activity> activityToLaunch) {
+		setButtonActivityLauncher(this, buttonId, activityToLaunch);
+	}
+
+	/**
+	 * Sets given button to be an activity launcher.
+	 * 
+	 * @param activity
+	 *            current activity
+	 * @param buttonId
+	 *            the button ID
+	 * @param activityToLaunch
+	 *            the activity class to launch
+	 */
+	public static void setButtonActivityLauncher(final Activity activity, final int buttonId, final Class<? extends Activity> activityToLaunch) {
+		setButtonActivityLauncher(activity, (Button) activity.findViewById(buttonId), activityToLaunch);
 	}
 
 	/**
@@ -92,15 +106,29 @@ public abstract class AbstractActivity extends Activity {
 	 * 
 	 * @param button
 	 *            the button
-	 * @param activity
-	 *            the activity class
+	 * @param activityToLaunch
+	 *            the activity class to launch
 	 */
-	public void setButtonActivityLauncher(final Button button, final Class<? extends Activity> activity) {
+	public void setButtonActivityLauncher(final Button button, final Class<? extends Activity> activityToLaunch) {
+		setButtonActivityLauncher(this, button, activityToLaunch);
+	}
+
+	/**
+	 * Sets given button to be an activity launcher.
+	 * 
+	 * @param activity
+	 *            current activity
+	 * @param button
+	 *            the button
+	 * @param activityToLaunch
+	 *            the activity class to launch
+	 */
+	public static void setButtonActivityLauncher(final Activity activity, final Button button, final Class<? extends Activity> activityToLaunch) {
 		button.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
-				final Intent intent = new Intent(AbstractActivity.this, activity);
-				startActivity(intent);
+				final Intent intent = new Intent(activity, activityToLaunch);
+				activity.startActivity(intent);
 			}
 		});
 	}

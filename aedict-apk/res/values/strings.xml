@@ -79,11 +79,12 @@
     <string name="skip1tutorial">Count the strokes in the leftmost part and then the number of strokes left in the right part. For example, in kanji 引, leftmost part has three strokes, and the right half has one.</string>
     <string name="skip2tutorial">Count the strokes in the topmost part and then the number of strokes left in the lower part. For example, in kanji 春, topmost part has five strokes, and the lower half has four.</string>
     <string name="skip3tutorial">Count the strokes in the enclosing part and then the number of strokes left in the internal part. For example, in kanji 通, enclosing part has three strokes, and the internal part has seven.</string>
-    <string name="skip1first">Number of strokes in the leftmost part</string>
-    <string name="skip1second">Number of strokes in the right part</string>
-    <string name="skip2first">Number of strokes in the topmost part</string>
-    <string name="skip2second">Number of strokes in the lower part</string>
-    <string name="skip3first">Number of strokes in the enclosing part</string>
-    <string name="skip3second">Number of strokes in the internal part</string>
+    <string name="skip1first">Number of strokes in the leftmost part:</string>
+    <string name="skip1second">Number of strokes in the right part:</string>
+    <string name="skip2first">Number of strokes in the topmost part:</string>
+    <string name="skip2second">Number of strokes in the lower part:</string>
+    <string name="skip3first">Number of strokes in the enclosing part:</string>
+    <string name="skip3second">Number of strokes in the internal part:</string>
     <string name="skip4">Please count all the strokes in the character, and then choose the first from the options listed below:</string>
+    <string name="numberOfStrokes">Number of strokes:</string>
 </resources>
