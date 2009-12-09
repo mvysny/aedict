@@ -4,6 +4,17 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
+		<release version="0.6" date="10. December 2009">
+			<action dev="vyzivus" type="add" issue="20">
+				Implemented the SKIP system lookup.
+			</action>
+			<action dev="vyzivus" type="fix" issue="21">
+				Fixed regression: added back the missing about dialog.
+			</action>
+			<action dev="vyzivus" type="update" issue="22">
+				Exact matches first: When performing a search, best matches and common words are shown first.
+			</action>
+		</release>
 		<release version="0.5" date="15. November 2009">
 			<action dev="vyzivus" type="add" issue="19">
 				Optionally show Romaji instead of katakana/hiragana
