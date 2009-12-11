@@ -111,7 +111,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			}
 
 		});
-		// check that KANJIDIC exists
+		// check that the KANJIDIC dictionary file is available
 		new SearchUtils(this).checkKanjiDic();
 	}
 	

@@ -29,6 +29,7 @@ import sk.baka.aedict.R;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.util.SearchUtils;
 import sk.baka.autils.AndroidUtils;
 import android.app.Activity;
 import android.content.Intent;
@@ -50,6 +51,8 @@ public class SkipActivity extends Activity {
 		configureButtonFor123SkipWizardContinuation(R.id.skip12, 2);
 		configureButtonFor123SkipWizardContinuation(R.id.skip13, 3);
 		AbstractActivity.setButtonActivityLauncher(this, R.id.skip14, Skip4Activity.class);
+		// check that the KANJIDIC dictionary file is available
+		new SearchUtils(this).checkKanjiDic();
 	}
 
 	private void configureButtonFor123SkipWizardContinuation(final int buttonId, final int skipType) {
