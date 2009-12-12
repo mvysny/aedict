@@ -5,6 +5,9 @@
 	</properties>
 	<body>
 		<release version="0.6" date="10. December 2009">
+			<action dev="vyzivus" type="add" issue="13">
+				Added support for multiple EDICT dictionaries.
+			</action>
 			<action dev="vyzivus" type="add" issue="20">
 				Implemented the SKIP system lookup.
 			</action>
