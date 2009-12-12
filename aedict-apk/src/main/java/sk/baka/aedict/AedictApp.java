@@ -140,6 +140,10 @@ public class AedictApp extends Application {
 		 * If true then Romaji will be used instead of katakana/hiragana throughout the application.
 		 */
 		public Boolean useRomaji;
+		/**
+		 * The dictionary to use. If null then the default one should be used.
+		 */
+		public String dictionaryName;
 	}
 
 	/**

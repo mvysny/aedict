@@ -19,7 +19,13 @@
 package sk.baka.aedict;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DownloadDictTask;
@@ -32,6 +38,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -89,8 +96,15 @@ public class ConfigActivity extends Activity {
 			public void onNothingSelected(AdapterView<?> arg0) {
 			}
 		}));
+		final Spinner dictPicker = (Spinner) findViewById(R.id.spinDictionaryPicker);
+		final List<String> dictionaries = new ArrayList<String>(listEdictDictionaries().keySet());
+		Collections.sort(dictionaries);
+		dictPicker.setAdapter(new ArrayAdapter<String>(this, -1, dictionaries));
 	}
 
+	/**
+	 * Deletes all dictionary files.
+	 */
 	private void cleanup() {
 		final DialogUtils utils = new DialogUtils(this);
 		utils.showYesNoDialog(AedictApp.format(R.string.deleteDictionaryFiles, MiscUtils.getLength(new File(DownloadDictTask.BASE_DIR)) / 1024), new DialogInterface.OnClickListener() {
@@ -106,5 +120,30 @@ public class ConfigActivity extends Activity {
 			}
 
 		});
+	}
+
+	/**
+	 * Lists all available edict dictionaries.
+	 * 
+	 * @return maps a dictionary name to to an absolute directory name (e.g.
+	 *         /sdcard/aedict/index). The list will always contain the default
+	 *         dictionary.
+	 */
+	private Map<String, String> listEdictDictionaries() {
+		final Map<String, String> result = new HashMap<String, String>();
+		result.put("Default", "/sdcard/aedict/index");
+		final File aedict = new File("/sdcard/aedict");
+		if (aedict.exists() && aedict.isDirectory()) {
+			final String[] dictionaries = aedict.list(new FilenameFilter() {
+
+				public boolean accept(File dir, String filename) {
+					return filename.toLowerCase().startsWith("index-");
+				}
+			});
+			for (final String dict : dictionaries) {
+				result.put(dict.substring("index-".length()), "/sdcard/aedict/" + dict);
+			}
+		}
+		return result;
 	}
 }
