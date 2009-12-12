@@ -22,10 +22,14 @@
 		android:layout_width="fill_parent" android:text="@string/useRomaji"
 		android:id="@+id/cfgUseRomaji"/>
 	<TextView android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="@string/romanizationCaption"></TextView>
+		android:layout_height="wrap_content" android:text="@string/romanizationCaption"/>
 	<Spinner android:layout_height="wrap_content"
 		android:layout_width="fill_parent" android:id="@+id/romanizationSystem"
 		android:entries="@array/romanizations"/>
+	<TextView android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="@string/dictionaryPickerHint"/>
+	<Spinner android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:id="@+id/spinDictionaryPicker"/>
 	<Button android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:text="@string/cleanup"
 		android:id="@+id/cleanupEdictFilesButton"/>
