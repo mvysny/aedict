@@ -128,7 +128,7 @@ public class ConfigActivity extends Activity {
 	}
 
 	/**
-	 * Lists all available edict dictionaries.
+	 * Lists all available edict dictionaries, omitting kanjidic.
 	 * 
 	 * @return maps a dictionary name to to an absolute directory name (e.g.
 	 *         /sdcard/aedict/index). The list will always contain the default
@@ -146,7 +146,11 @@ public class ConfigActivity extends Activity {
 				}
 			});
 			for (final String dict : dictionaries) {
-				result.put(dict.substring("index-".length()), "/sdcard/aedict/" + dict);
+				final String dictName = dict.substring("index-".length());
+				if (dictName.equalsIgnoreCase("kanjidic")) {
+					continue;
+				}
+				result.put(dictName, "/sdcard/aedict/" + dict);
 			}
 		}
 		return result;
