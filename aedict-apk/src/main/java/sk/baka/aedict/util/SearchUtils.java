@@ -142,6 +142,10 @@ public final class SearchUtils {
 		}
 
 		public void onClick(View v) {
+			performSearch();
+		}
+
+		private void performSearch() {
 			final EditText searchEdit = (EditText) activity.findViewById(searchEditText);
 			final CheckBox exactMatch = (CheckBox) activity.findViewById(isExactCheckBox);
 			String query = searchEdit.getText().toString();
@@ -166,9 +170,9 @@ public final class SearchUtils {
 				searchForEnglish(query, isExact);
 			}
 		}
-
+		
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-			onClick(v);
+			performSearch();
 			return true;
 		}
 	}
