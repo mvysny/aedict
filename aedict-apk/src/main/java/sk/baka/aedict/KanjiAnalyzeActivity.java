@@ -137,11 +137,11 @@ public class KanjiAnalyzeActivity extends ListActivity {
 
 	private List<EdictEntry> analyze(final String word) throws IOException {
 		final List<EdictEntry> result = new ArrayList<EdictEntry>(word.length());
-		final LuceneSearch lsEdict = new LuceneSearch(false);
+		final LuceneSearch lsEdict = new LuceneSearch(false, AedictApp.getDictionaryLoc());
 		try {
 			LuceneSearch lsKanjidic = null;
 			if (DownloadDictTask.isComplete(DownloadDictTask.LUCENE_INDEX_KANJIDIC)) {
-				lsKanjidic = new LuceneSearch(true);
+				lsKanjidic = new LuceneSearch(true, null);
 			}
 			try {
 				for (char c : word.toCharArray()) {

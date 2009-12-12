@@ -97,7 +97,7 @@ public class SkipActivity extends Activity {
 		final SearchQuery query = new SearchQuery();
 		query.skip = skip;
 		try {
-			final List<String> result = LuceneSearch.singleSearch(query, true);
+			final List<String> result = LuceneSearch.singleSearch(query, true, null);
 			final List<EdictEntry> parsedResult = EdictEntry.parseKanjidic(result);
 			// no need to sort on the number of strokes as all results will have
 			// the same amount of strokes

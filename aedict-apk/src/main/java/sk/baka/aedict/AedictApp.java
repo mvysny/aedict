@@ -18,9 +18,11 @@
 
 package sk.baka.aedict;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Formatter;
 
+import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
@@ -211,5 +213,19 @@ public class AedictApp extends Application {
 			notification.flags = Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 			nm.notify(NOTIFICATION_ID, notification);
 		}
+	}
+
+	/**
+	 * Returns the dictionary location on the SD card of the EDICT dictionary..
+	 * @return absolute OS-specific location of the dictionary.
+	 */
+	public static String getDictionaryLoc() {
+		final String dictionaryName = loadConfig().dictionaryName;
+		if (dictionaryName == null || dictionaryName.equals(Config.DEFAULT_DICTIONARY_NAME)) {
+			return DownloadDictTask.LUCENE_INDEX;
+		}
+		final String loc = DownloadDictTask.LUCENE_INDEX + "-" + dictionaryName;
+		final File f = new File(loc);
+		return f.exists() && f.isDirectory() ? loc : DownloadDictTask.LUCENE_INDEX;
 	}
 }

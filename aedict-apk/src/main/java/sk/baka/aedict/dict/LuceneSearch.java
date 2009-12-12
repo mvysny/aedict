@@ -57,12 +57,15 @@ public final class LuceneSearch implements Closeable {
 	 * @param kanjidic
 	 *            If true then we are using Kanjidic for search. If false, we
 	 *            are using edict.
+	 * @param dictionaryPath
+	 *            overrides default dictionary location if non-null. An absolute
+	 *            os-specific path, e.g. /sdcard/aedict/index.
 	 * @throws IOException
 	 *             on I/O error.
 	 */
-	public LuceneSearch(final boolean kanjidic) throws IOException {
+	public LuceneSearch(final boolean kanjidic, final String dictionaryPath) throws IOException {
 		this.kanjidic = kanjidic;
-		reader = IndexReader.open(kanjidic ? DownloadDictTask.LUCENE_INDEX_KANJIDIC : DownloadDictTask.LUCENE_INDEX);
+		reader = IndexReader.open(dictionaryPath != null ? dictionaryPath : kanjidic ? DownloadDictTask.LUCENE_INDEX_KANJIDIC : DownloadDictTask.LUCENE_INDEX);
 		searcher = new IndexSearcher(reader);
 		parser = new QueryParser("contents", new StandardAnalyzer());
 	}
@@ -111,12 +114,15 @@ public final class LuceneSearch implements Closeable {
 	 * @param kanjidic
 	 *            If true then we are using Kanjidic for search. If false, we
 	 *            are using edict.
+	 * @param dictionaryPath
+	 *            overrides default dictionary location if non-null. An absolute
+	 *            os-specific path, e.g. /sdcard/aedict/index.
 	 * @return a list of matched lines, never null.
 	 * @throws IOException
 	 *             on I/O error.
 	 */
-	public static List<String> singleSearch(final SearchQuery query, final boolean kanjidic) throws IOException {
-		final LuceneSearch s = new LuceneSearch(kanjidic);
+	public static List<String> singleSearch(final SearchQuery query, final boolean kanjidic, final String dictionaryPath) throws IOException {
+		final LuceneSearch s = new LuceneSearch(kanjidic, dictionaryPath);
 		try {
 			return s.search(query);
 		} finally {

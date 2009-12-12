@@ -110,7 +110,7 @@ public class ResultActivity extends ListActivity {
 			model = Collections.singletonList(EdictEntry.newErrorMsg(getString(R.string.nothing_to_search_for)));
 		} else {
 			try {
-				model = EdictEntry.tryParseEdict(LuceneSearch.singleSearch(query, false));
+				model = EdictEntry.tryParseEdict(LuceneSearch.singleSearch(query, false, AedictApp.getDictionaryLoc()));
 				if (!model.isEmpty()) {
 					Collections.sort(model, new EdictComparator());
 				}
