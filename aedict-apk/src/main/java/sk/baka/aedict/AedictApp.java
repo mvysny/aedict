@@ -19,12 +19,15 @@
 package sk.baka.aedict;
 
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.util.Formatter;
 
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
+import sk.baka.autils.bind.BindToView;
+import sk.baka.autils.bind.Binder;
+import sk.baka.autils.bind.SharedPref;
+import sk.baka.autils.bind.SharedPrefsMapper;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -115,34 +118,51 @@ public class AedictApp extends Application {
 	 */
 	public static class Config {
 		/**
-		 * Creates new configuration object.
-		 * 
-		 * @param loadDefaults
-		 *            if true then the default values are set to the fields.
+		 * Loads default values to null fields.
 		 */
-		public Config(final boolean loadDefaults) {
-			if (loadDefaults) {
+		public void setDefaults() {
+			if (romanization == null) {
 				romanization = RomanizationEnum.Hepburn;
+			}
+			if (isAlwaysAvailable == null) {
 				isAlwaysAvailable = false;
+			}
+			if (useRomaji == null) {
 				useRomaji = false;
+			}
+			if (dictionaryName == null) {
+				dictionaryName = DEFAULT_DICTIONARY_NAME;
 			}
 		}
 
 		/**
+		 * The name of the default dictionary.
+		 */
+		public static final String DEFAULT_DICTIONARY_NAME = "Default";
+		/**
 		 * Which romanization system to use. Defaults to Hepburn.
 		 */
+		@SharedPref(key = "romanization", removeOnNull = false)
+		@BindToView(R.id.romanizationSystem)
 		public RomanizationEnum romanization;
 		/**
 		 * If true then a notification icon is registered.
 		 */
+		@SharedPref(key = "isAlwaysAvailable", removeOnNull = false)
+		@BindToView(R.id.cfgNotifBar)
 		public Boolean isAlwaysAvailable;
 		/**
-		 * If true then Romaji will be used instead of katakana/hiragana throughout the application.
+		 * If true then Romaji will be used instead of katakana/hiragana
+		 * throughout the application.
 		 */
+		@SharedPref(key = "useRomaji", removeOnNull = false)
+		@BindToView(R.id.cfgUseRomaji)
 		public Boolean useRomaji;
 		/**
 		 * The dictionary to use. If null then the default one should be used.
 		 */
+		@SharedPref(key = "dictionaryName", removeOnNull = false)
+		@BindToView(R.id.spinDictionaryPicker)
 		public String dictionaryName;
 	}
 
@@ -153,33 +173,9 @@ public class AedictApp extends Application {
 	 */
 	public static Config loadConfig() {
 		final SharedPreferences prefs = instance.getSharedPreferences("cfg", Context.MODE_PRIVATE);
-		final Config result = new Config(true);
-		for (final Field f : Config.class.getFields()) {
-			final Class<?> type = f.getType();
-			final String key = f.getName();
-			final Object value;
-			if (type == boolean.class || type == Boolean.class) {
-				value = prefs.getBoolean(key, false);
-			} else if (type == String.class) {
-				value = prefs.getString(key, null);
-			} else if (Enum.class.isAssignableFrom(type)) {
-				final String name = prefs.getString(key, null);
-				value = name == null ? null : Enum.valueOf((Class<Enum>) type, name);
-			} else if (type == Integer.class || type == int.class) {
-				value = prefs.getInt(key, 0);
-			} else {
-				throw new IllegalArgumentException("Unsupported class: " + type);
-			}
-			if (value == null) {
-				// leave the default value
-				continue;
-			}
-			try {
-				f.set(result, value);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
+		final Config result = new Config();
+		new Binder().bindToBean(result, new SharedPrefsMapper(), prefs, false);
+		result.setDefaults();
 		return result;
 	}
 
@@ -190,33 +186,8 @@ public class AedictApp extends Application {
 	 *            the configuration, must not be null.
 	 */
 	public static void saveConfig(final Config cfg) {
-		final SharedPreferences.Editor prefs = instance.getSharedPreferences("cfg", Context.MODE_PRIVATE).edit();
-		for (final Field f : Config.class.getFields()) {
-			final Class<?> type = f.getType();
-			final String key = f.getName();
-			final Object value;
-			try {
-				value = f.get(cfg);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-			if (value == null) {
-				// do not alter this value
-				continue;
-			}
-			if (type == boolean.class || type == Boolean.class) {
-				prefs.putBoolean(key, (Boolean) value);
-			} else if (type == String.class) {
-				prefs.putString(key, (String) value);
-			} else if (Enum.class.isAssignableFrom(type)) {
-				prefs.putString(key, ((Enum<?>) value).name());
-			} else if (type == Integer.class || type == int.class) {
-				prefs.putInt(key, (Integer) value);
-			} else {
-				throw new IllegalArgumentException("Unsupported class: " + type);
-			}
-		}
-		prefs.commit();
+		final SharedPreferences prefs = instance.getSharedPreferences("cfg", Context.MODE_PRIVATE);
+		new Binder().bindFromBean(cfg, new SharedPrefsMapper(), prefs, false);
 		apply(loadConfig());
 	}
 

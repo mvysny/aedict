@@ -73,7 +73,7 @@ public class Skip123Activity extends Activity {
 	private void performSearch() {
 		final int first = skipType;
 		final SecondThird st = new SecondThird();
-		new Binder().bindFromComponent(st, new AndroidViewMapper(), this, true);
+		new Binder().bindToBean(st, new AndroidViewMapper(false), this, true);
 		final String skip = SkipActivity.getSkipCode(first, st.second, st.third);
 		SkipActivity.searchForSkip(this, skip);
 	}

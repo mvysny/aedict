@@ -72,7 +72,7 @@ public class Skip4Activity extends Activity {
 
 	private void performSearch(final int type) {
 		final Strokes bean = new Strokes();
-		new Binder().bindFromComponent(bean, new AndroidViewMapper(), this, true);
+		new Binder().bindToBean(bean, new AndroidViewMapper(false), this, true);
 		SkipActivity.searchForSkip(this, SkipActivity.getSkipCode(4, bean.strokes, type));
 	}
 }
