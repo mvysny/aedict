@@ -21,7 +21,7 @@
 	<parent>
 		<groupId>sk.baka.aedict</groupId>
 		<artifactId>aedict</artifactId>
-		<version>0.6</version>
+		<version>0.7-SNAPSHOT</version>
 	</parent>
 	<artifactId>aedict-apk</artifactId>
 	<packaging>android:apk</packaging>
