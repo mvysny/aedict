@@ -153,5 +153,6 @@ public abstract class AbstractActivity extends Activity {
 		addActivityLauncher(activity, menu, R.string.kanjiDrawLookup, R.drawable.ic_menu_compose, KanjiDrawActivity.class);
 		addActivityLauncher(activity, menu, R.string.kanjiRadicalLookup, android.R.drawable.ic_menu_search, KanjiSearchRadicalActivity.class);
 		addActivityLauncher(activity, menu, R.string.skipLookup, R.drawable.skipmenuitem, SkipActivity.class);
+		addActivityLauncher(activity, menu, R.string.configuration, android.R.drawable.ic_menu_preferences, ConfigActivity.class);
 	}
 }
