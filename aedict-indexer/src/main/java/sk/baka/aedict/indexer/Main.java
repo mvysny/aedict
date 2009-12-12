@@ -154,13 +154,14 @@ public class Main {
         System.out.println(sb.toString());
         indexWithLucene();
         zipLuceneIndex();
-        final String aedictDir = "aedict/index" + (isKanjidic ? "-kanjidic" : "") + "/";
+        final String aedictDir = "aedict/index" + (isKanjidic ? "-kanjidic" : "DICTIONARY_NAME") + "/";
         System.out.println("Finished - the index file '" + targetFileName + "' was created.");
         System.out.println("To use the indexed file with Aedict, you'll have to:");
         System.out.println("1. Connect your phone as a mass storage device to your computer");
         System.out.println("2. Browse the SDCard contents and delete the aedict/ directory if it is present");
         System.out.println("3. Create the " + aedictDir + " directory");
         System.out.println("4. Unzip the " + targetFileName + " file to the " + aedictDir + " directory");
+        System.out.println("See http://code.google.com/p/aedict/wiki/CustomEdictFile for details");
     }
 
     private InputStream readEdict() throws IOException {
