@@ -60,6 +60,11 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	 * count, etc).
 	 */
 	public static final String INTENTKEY_ENTRYLIST = "entrylist";
+	/**
+	 * Boolean value: False if we parsed given word on a per-character basis,
+	 * true on a per-word basis.
+	 */
+	public static final String INTENTKEY_WORD_ANALYSIS = "wordAnalysis";
 	private List<EdictEntry> model = null;
 	/**
 	 * The word to analyze. If null then we were simply given a list of
@@ -67,27 +72,23 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	 */
 	private String word;
 	/**
-	 * True if we parsed given word on a per-character basis, or a per-word
-	 * basis.
+	 * True if we parsed given word on a per-character basis, false on a
+	 * per-word basis.
 	 */
-	private boolean isShowingPerCharacter = true;
+	private boolean isAnalysisPerCharacter = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		word = getIntent().getStringExtra(INTENTKEY_WORD);
 		model = (List<EdictEntry>) getIntent().getSerializableExtra(INTENTKEY_ENTRYLIST);
+		isAnalysisPerCharacter = !getIntent().getBooleanExtra(INTENTKEY_WORD_ANALYSIS, false);
 		if (word == null && model == null) {
 			throw new IllegalArgumentException("Both word and entrylist are null");
 		}
 		setTitle(AedictApp.format(R.string.kanjiAnalysisOf, word != null ? word : EdictEntry.getJapaneseWord(model)));
 		if (model == null) {
-			try {
-				model = analyzeByCharacters(word);
-			} catch (IOException e) {
-				model = new ArrayList<EdictEntry>();
-				model.add(EdictEntry.newErrorMsg("Analysis failed: " + e));
-			}
+			recomputeModel();
 		}
 		setListAdapter(newAdapter());
 		// check that the KANJIDIC dictionary file is available
@@ -235,7 +236,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		if (word == null) {
 			return false;
 		}
-		if (!isShowingPerCharacter) {
+		if (!isAnalysisPerCharacter) {
 			final MenuItem item = menu.add(0, ANALYZE_CHARACTERS, Menu.NONE, R.string.analyzeCharacters);
 			item.setIcon(android.R.drawable.ic_menu_zoom);
 		} else {
@@ -250,24 +251,23 @@ public class KanjiAnalyzeActivity extends ListActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		isAnalysisPerCharacter = item.getItemId() == ANALYZE_CHARACTERS;
+		recomputeModel();
+		return true;
+	}
+
+	private void recomputeModel() {
 		try {
-			switch (item.getItemId()) {
-			case ANALYZE_CHARACTERS: {
+			if (isAnalysisPerCharacter) {
 				model = analyzeByCharacters(word);
-				setListAdapter(newAdapter());
-				isShowingPerCharacter = true;
-			}
-				break;
-			case ANALYZE_WORDS: {
+			} else {
 				model = analyzeByWords(word);
-				setListAdapter(newAdapter());
-				isShowingPerCharacter = false;
-			}
-				break;
 			}
 		} catch (Exception ex) {
 			AndroidUtils.handleError(ex, this, this.getClass(), null);
+			model = new ArrayList<EdictEntry>();
+			model.add(EdictEntry.newErrorMsg("Analysis failed: " + ex));
 		}
-		return true;
+		setListAdapter(newAdapter());
 	}
 }
