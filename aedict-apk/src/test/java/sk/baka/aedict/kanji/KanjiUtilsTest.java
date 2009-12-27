@@ -23,13 +23,28 @@ import static org.junit.Assert.*;
 
 /**
  * Tests the {@link KanjiUtils} class.
+ * 
  * @author Martin Vysny
  */
 public class KanjiUtilsTest {
 	@Test
-	public void testKanji(){
+	public void testKanji() {
 		assertTrue(KanjiUtils.isKanji('艦'));
 		assertFalse(KanjiUtils.isKanji('か'));
 		assertFalse(KanjiUtils.isKanji('キ'));
+	}
+
+	@Test
+	public void testKatakana() {
+		assertFalse(KanjiUtils.isKatakana('艦'));
+		assertFalse(KanjiUtils.isKatakana('か'));
+		assertTrue(KanjiUtils.isKatakana('キ'));
+	}
+
+	@Test
+	public void testHiragana() {
+		assertFalse(KanjiUtils.isHiragana('艦'));
+		assertTrue(KanjiUtils.isHiragana('か'));
+		assertFalse(KanjiUtils.isHiragana('キ'));
 	}
 }

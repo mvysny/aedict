@@ -196,6 +196,16 @@ public enum RomanizationEnum {
 	}
 
 	/**
+	 * Converts a text in hiragana or katakana to romaji. Does not transform any other characters.
+	 * 
+	 * @param hiraganaOrKatakana
+	 *            hiragana or katakana character
+	 * @return romaji
+	 */
+	public String toRomaji(final char hiraganaOrKatakana) {
+		return toRomaji(String.valueOf(hiraganaOrKatakana));
+	}
+	/**
 	 * Converts a text in hiragana or katakana to romaji. Does not handle kanji.
 	 * 
 	 * @param hiraganaOrKatakana

@@ -72,6 +72,8 @@ public class KanaTableActivity extends AbstractActivity {
 			row2.addView(new TextView(this));
 			for (int i = 0; i < columns; i++) {
 				String kana = table.get(r * columns + i);
+				// RomanizationEnum.NihonShiki is okay here as it is used both in the
+				// GOJUUON and in the YOUON constants
 				kana = hiragana ? RomanizationEnum.NihonShiki.toHiragana(kana) : RomanizationEnum.NihonShiki.toKatakana(kana);
 				add(row, row2, kana, cfg);
 			}

@@ -31,7 +31,6 @@ import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.Radicals;
-import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.ListActivity;
