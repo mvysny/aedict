@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -123,7 +124,8 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 *            elementary schooling in Japan. Non-null only when
 	 *            {@link #kanji} is a single kanji and this entry was parsed
 	 *            from KANJIDIC.
-	 * @param isCommon if true then this word is a common one. null if not known.
+	 * @param isCommon
+	 *            if true then this word is a common one. null if not known.
 	 */
 	public EdictEntry(final String kanji, final String reading, final String english, final Integer radical, final Integer strokes, final String skip, final Integer grade, final Boolean isCommon) {
 		this.kanji = kanji;
@@ -173,6 +175,22 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 			Log.e(EdictEntry.class.getSimpleName(), "Failed to parse an entry '" + edictEntry + "'", ex);
 			return new EdictEntry(null, null, ex.toString());
 		}
+	}
+
+	/**
+	 * Removes invalid entries from given collection.
+	 * 
+	 * @param edictEntries
+	 *            a list of entries.
+	 * @return edictEntries
+	 */
+	public static Collection<? extends EdictEntry> removeInvalid(final Collection<? extends EdictEntry> edictEntries) {
+		for (final Iterator<? extends EdictEntry> i = edictEntries.iterator(); i.hasNext();) {
+			if (!i.next().isValid()) {
+				i.remove();
+			}
+		}
+		return edictEntries;
 	}
 
 	/**
@@ -383,5 +401,21 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 			return -1;
 		}
 		return getJapanese().compareTo(another.getJapanese());
+	}
+
+	/**
+	 * Returns a japanese word, formed as a concatenation of
+	 * {@link EdictEntry#getJapanese()} from all entries.
+	 * 
+	 * @param entries
+	 *            the list of entries
+	 * @return the japanese word.
+	 */
+	public static String getJapaneseWord(Collection<? extends EdictEntry> entries) {
+		final StringBuilder sb = new StringBuilder(entries.size());
+		for (final EdictEntry e : entries) {
+			sb.append(e.getJapanese());
+		}
+		return sb.toString();
 	}
 }
