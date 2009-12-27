@@ -21,11 +21,7 @@ package sk.baka.aedict;
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.util.SearchUtils;
-import sk.baka.autils.AndroidUtils;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 /**
@@ -41,7 +37,7 @@ public class EntryDetailActivity extends AbstractActivity {
 		setContentView(R.layout.entrydetail);
 		final EdictEntry entry = (EdictEntry) getIntent().getSerializableExtra(INTENTKEY_ENTRY);
 		final EditText kanjiSearchEdit = (EditText) findViewById(R.id.kanjiSearchEdit);
-		kanjiSearchEdit.setText(entry.kanji != null ? entry.kanji : entry.reading);
+		kanjiSearchEdit.setText(entry.getJapanese());
 		final EditText readingSearchEdit = (EditText) findViewById(R.id.readingSearchEdit);
 		final Config cfg = AedictApp.loadConfig();
 		readingSearchEdit.setText(cfg.useRomaji ? cfg.romanization.toRomaji(entry.reading) : entry.reading);
@@ -54,15 +50,7 @@ public class EntryDetailActivity extends AbstractActivity {
 		utils.setupCopyButton(R.id.kanjiCopy, R.id.kanjiSearchEdit);
 		utils.setupCopyButton(R.id.readingCopy, R.id.readingSearchEdit);
 		utils.setupCopyButton(R.id.englishCopy, R.id.englishSearchEdit);
-		final Button analyze = (Button) findViewById(R.id.kanjiAnalyze);
-		analyze.setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
-
-			public void onClick(View v) {
-				final Intent intent = new Intent(EntryDetailActivity.this, KanjiAnalyzeActivity.class);
-				intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, entry.getJapanese());
-				startActivity(intent);
-			}
-		}));
+		utils.setupAnalysisControls(R.id.kanjiAnalyze, R.id.kanjiSearchEdit, false);
 	}
 
 	/**

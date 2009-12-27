@@ -21,6 +21,7 @@ package sk.baka.aedict.util;
 import java.net.URL;
 
 import sk.baka.aedict.AedictApp;
+import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.ResultActivity;
 import sk.baka.aedict.AedictApp.Config;
@@ -170,7 +171,7 @@ public final class SearchUtils {
 				searchForEnglish(query, isExact);
 			}
 		}
-		
+
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			performSearch();
 			return true;
@@ -196,6 +197,32 @@ public final class SearchUtils {
 				cm.setText(text.getText());
 				final Toast toast = Toast.makeText(activity, AedictApp.format(R.string.copied, text.getText()), Toast.LENGTH_SHORT);
 				toast.show();
+			}
+		}));
+	}
+
+	/**
+	 * Configures given button to perform an analysis of japanese text from
+	 * given edit.
+	 * 
+	 * @param analysisButton
+	 *            performs analysis on click on this button
+	 * @param textView
+	 *            analyzes text from this {@link TextView}
+	 * @param startWordAnalysis
+	 *            if true then a word analysis will be shown, if false then
+	 *            character-based analysis will be shown by default.
+	 */
+	public void setupAnalysisControls(final int analysisButton, final int textView, final boolean startWordAnalysis) {
+		final Button analyze = (Button) activity.findViewById(analysisButton);
+		final TextView text = (TextView) activity.findViewById(textView);
+		analyze.setOnClickListener(AndroidUtils.safe(activity, new View.OnClickListener() {
+
+			public void onClick(View v) {
+				final Intent intent = new Intent(activity, KanjiAnalyzeActivity.class);
+				intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, text.getText().toString().trim());
+				intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD_ANALYSIS, startWordAnalysis);
+				activity.startActivity(intent);
 			}
 		}));
 	}
@@ -238,6 +265,7 @@ public final class SearchUtils {
 	/**
 	 * Checks if KANJIDIC exists. If not, user is prompted for a download and
 	 * the files are downloaded if requested.
+	 * 
 	 * @return true if the files are available, false otherwise.
 	 */
 	public boolean checkKanjiDic() {
