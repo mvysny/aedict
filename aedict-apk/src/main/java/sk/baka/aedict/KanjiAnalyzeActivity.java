@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DownloadDictTask;
@@ -140,7 +141,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 				lsKanjidic = new LuceneSearch(true, null);
 			}
 			try {
-				for (char c : word.toCharArray()) {
+				for (char c : MiscUtils.removeWhitespaces(word).toCharArray()) {
 					final boolean isKanji = KanjiUtils.isKanji(c);
 					if (!isKanji) {
 						result.add(new EdictEntry(String.valueOf(c), String.valueOf(c), ""));
@@ -181,11 +182,13 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		final List<EdictEntry> result = new ArrayList<EdictEntry>();
 		final LuceneSearch lsEdict = new LuceneSearch(false, AedictApp.getDictionaryLoc());
 		try {
-			String w = word;
-			while (w.length() > 0) {
-				final EdictEntry entry = findLongestWord(w, lsEdict);
-				result.add(entry);
-				w = w.substring(entry.getJapanese().length());
+			for (final StringTokenizer t = new StringTokenizer(word); t.hasMoreTokens();) {
+				String w = t.nextToken();
+				while (w.length() > 0) {
+					final EdictEntry entry = findLongestWord(w, lsEdict);
+					result.add(entry);
+					w = w.substring(entry.getJapanese().length());
+				}
 			}
 			return result;
 		} finally {
