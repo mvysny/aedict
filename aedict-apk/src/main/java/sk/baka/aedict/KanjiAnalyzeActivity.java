@@ -27,15 +27,17 @@ import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
-import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.Radicals;
 import sk.baka.aedict.util.SearchUtils;
+import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -53,20 +55,31 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	 */
 	public static final String INTENTKEY_WORD = "word";
 	/**
-	 * A list of {@link EdictEntry} with all information filled (radical, stroke count, etc).
+	 * A list of {@link EdictEntry} with all information filled (radical, stroke
+	 * count, etc).
 	 */
 	public static final String INTENTKEY_ENTRYLIST = "entrylist";
 	private List<EdictEntry> model = null;
+	/**
+	 * The word to analyze. If null then we were simply given a list of
+	 * EdictEntry directly.
+	 */
+	private String word;
+	/**
+	 * True if we parsed given word on a per-character basis, or a per-word
+	 * basis.
+	 */
+	private boolean isShowingPerCharacter = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		final String word = getIntent().getStringExtra(INTENTKEY_WORD);
+		word = getIntent().getStringExtra(INTENTKEY_WORD);
 		model = (List<EdictEntry>) getIntent().getSerializableExtra(INTENTKEY_ENTRYLIST);
 		if (word == null && model == null) {
 			throw new IllegalArgumentException("Both word and entrylist are null");
 		}
-		setTitle(AedictApp.format(R.string.kanjiAnalysisOf, model == null ? word : getWord(model)));
+		setTitle(AedictApp.format(R.string.kanjiAnalysisOf, word != null ? word : EdictEntry.getJapaneseWord(model)));
 		if (model == null) {
 			try {
 				model = analyzeByCharacters(word);
@@ -75,8 +88,14 @@ public class KanjiAnalyzeActivity extends ListActivity {
 				model.add(EdictEntry.newErrorMsg("Analysis failed: " + e));
 			}
 		}
+		setListAdapter(newAdapter());
+		// check that the KANJIDIC dictionary file is available
+		new SearchUtils(this).checkKanjiDic();
+	}
+
+	private ArrayAdapter<EdictEntry> newAdapter() {
 		final Config cfg = AedictApp.loadConfig();
-		setListAdapter(new ArrayAdapter<EdictEntry>(this, R.layout.kanjidetail, model) {
+		return new ArrayAdapter<EdictEntry>(this, R.layout.kanjidetail, model) {
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
@@ -109,18 +128,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 				tv.setText(e.getJapanese());
 				return v;
 			}
-
-		});
-		// check that the KANJIDIC dictionary file is available
-		new SearchUtils(this).checkKanjiDic();
-	}
-	
-	private String getWord(Collection<? extends EdictEntry> entries) {
-		final StringBuilder sb = new StringBuilder(entries.size());
-		for (final EdictEntry e : entries) {
-			sb.append(e.getJapanese());
-		}
-		return sb.toString();
+		};
 	}
 
 	private List<EdictEntry> analyzeByCharacters(final String word) throws IOException {
@@ -138,10 +146,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 						result.add(new EdictEntry(String.valueOf(c), String.valueOf(c), ""));
 					} else {
 						// it is a kanji. search for it in the dictionary.
-						final SearchQuery q = new SearchQuery();
-						q.isJapanese = true;
-						q.matcher = MatcherEnum.ExactMatchEng;
-						q.query = new String[] { String.valueOf(c) };
+						final SearchQuery q = SearchQuery.searchForJapanese(String.valueOf(c), true);
 						List<String> matches = null;
 						EdictEntry ee = null;
 						if (lsKanjidic != null) {
@@ -172,6 +177,44 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		}
 	}
 
+	private List<EdictEntry> analyzeByWords(final String word) throws IOException {
+		final List<EdictEntry> result = new ArrayList<EdictEntry>();
+		final LuceneSearch lsEdict = new LuceneSearch(false, AedictApp.getDictionaryLoc());
+		try {
+			String w = word;
+			while (w.length() > 0) {
+				final EdictEntry entry = findLongestWord(w, lsEdict);
+				result.add(entry);
+				w = w.substring(entry.getJapanese().length());
+			}
+			return result;
+		} finally {
+			MiscUtils.closeQuietly(lsEdict);
+		}
+	}
+
+	/**
+	 * Tries to find longest word which is present in the EDICT dictionary. The
+	 * search starts with given word, then cuts the last character off, etc.
+	 * 
+	 * @param word
+	 *            the word to analyze
+	 * @return longest word found or an entry consisting of the first character
+	 *         if we were unable to find nothing
+	 * @throws IOException
+	 */
+	private EdictEntry findLongestWord(final String word, final LuceneSearch edict) throws IOException {
+		String w = word;
+		while (w.length() > 0) {
+			final Collection<? extends EdictEntry> result = EdictEntry.removeInvalid(EdictEntry.tryParseEdict(edict.search(SearchQuery.searchForJapanese(w, true))));
+			if (!result.isEmpty()) {
+				return result.iterator().next();
+			}
+			w = w.substring(0, w.length() - 1);
+		}
+		return new EdictEntry(word.substring(0, 1), "", "");
+	}
+
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		final EdictEntry e = model.get(position);
@@ -181,5 +224,47 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		final Intent intent = new Intent(this, EntryDetailActivity.class);
 		intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, e);
 		startActivity(intent);
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.removeGroup(0);
+		if (word == null) {
+			return false;
+		}
+		if (!isShowingPerCharacter) {
+			final MenuItem item = menu.add(0, ANALYZE_CHARACTERS, Menu.NONE, R.string.analyzeCharacters);
+			item.setIcon(android.R.drawable.ic_menu_zoom);
+		} else {
+			final MenuItem item = menu.add(0, ANALYZE_WORDS, Menu.NONE, R.string.analyzeWords);
+			item.setIcon(android.R.drawable.ic_menu_search);
+		}
+		return true;
+	}
+
+	private static final int ANALYZE_CHARACTERS = 0;
+	private static final int ANALYZE_WORDS = 1;
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		try {
+			switch (item.getItemId()) {
+			case ANALYZE_CHARACTERS: {
+				model = analyzeByCharacters(word);
+				setListAdapter(newAdapter());
+				isShowingPerCharacter = true;
+			}
+				break;
+			case ANALYZE_WORDS: {
+				model = analyzeByWords(word);
+				setListAdapter(newAdapter());
+				isShowingPerCharacter = false;
+			}
+				break;
+			}
+		} catch (Exception ex) {
+			AndroidUtils.handleError(ex, this, this.getClass(), null);
+		}
+		return true;
 	}
 }
