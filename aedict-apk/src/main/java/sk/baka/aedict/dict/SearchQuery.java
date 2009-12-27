@@ -267,4 +267,22 @@ public final class SearchQuery implements Serializable {
 		result.strokesPlusMinus = strokesPlusMinus;
 		return result;
 	}
+
+	/**
+	 * Creates a query which searches for a japanese term.
+	 * 
+	 * @param word
+	 *            the word to search, in japan language
+	 * @param exact
+	 *            if true then performs exact search, if false then performs a
+	 *            substring search.
+	 * @return search query
+	 */
+	public static SearchQuery searchForJapanese(final String word, final boolean exact) {
+		final SearchQuery result = new SearchQuery();
+		result.query = new String[] { word };
+		result.isJapanese = true;
+		result.matcher = exact ? MatcherEnum.ExactMatchEng : MatcherEnum.SubstringMatch;
+		return result;
+	}
 }
