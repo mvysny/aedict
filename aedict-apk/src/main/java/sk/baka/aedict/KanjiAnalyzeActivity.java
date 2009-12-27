@@ -29,6 +29,7 @@ import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.Radicals;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
@@ -69,7 +70,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		setTitle(AedictApp.format(R.string.kanjiAnalysisOf, model == null ? word : getWord(model)));
 		if (model == null) {
 			try {
-				model = analyze(word);
+				model = analyzeByCharacters(word);
 			} catch (IOException e) {
 				model = new ArrayList<EdictEntry>();
 				model.add(EdictEntry.newErrorMsg("Analysis failed: " + e));
@@ -123,19 +124,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		return sb.toString();
 	}
 
-	/**
-	 * A very simple check for kanji. Works only on a mixture of kanji, katakana
-	 * and hiragana.
-	 * 
-	 * @param c
-	 *            the character to analyze.
-	 * @return true if it is a kanji, false otherwise.
-	 */
-	private boolean isKanji(char c) {
-		return RomanizationEnum.Hepburn.toRomaji(String.valueOf(c)).charAt(0) == c;
-	}
-
-	private List<EdictEntry> analyze(final String word) throws IOException {
+	private List<EdictEntry> analyzeByCharacters(final String word) throws IOException {
 		final List<EdictEntry> result = new ArrayList<EdictEntry>(word.length());
 		final LuceneSearch lsEdict = new LuceneSearch(false, AedictApp.getDictionaryLoc());
 		try {
@@ -145,7 +134,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			}
 			try {
 				for (char c : word.toCharArray()) {
-					final boolean isKanji = isKanji(c);
+					final boolean isKanji = KanjiUtils.isKanji(c);
 					if (!isKanji) {
 						result.add(new EdictEntry(String.valueOf(c), String.valueOf(c), ""));
 					} else {
