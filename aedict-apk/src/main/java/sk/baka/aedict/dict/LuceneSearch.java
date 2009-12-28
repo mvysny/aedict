@@ -71,7 +71,7 @@ public final class LuceneSearch implements Closeable {
 	}
 
 	/**
-	 * Performs a search.
+	 * Performs a search. Returns a maximum of 100 results.
 	 * 
 	 * @param query
 	 *            the query to search for.
@@ -80,6 +80,21 @@ public final class LuceneSearch implements Closeable {
 	 *             on I/O error.
 	 */
 	public List<String> search(final SearchQuery query) throws IOException {
+		return search(query, 100);
+	}
+
+	/**
+	 * Performs a search.
+	 * 
+	 * @param query
+	 *            the query to search for.
+	 * @param maxResults
+	 *            the maximum number of results to list
+	 * @return a result list, never null, may be empty.
+	 * @throws IOException
+	 *             on I/O error.
+	 */
+	public List<String> search(final SearchQuery query, final int maxResults) throws IOException {
 		final List<String> r = new ArrayList<String>();
 		final Query parsedQuery;
 		try {
@@ -89,7 +104,7 @@ public final class LuceneSearch implements Closeable {
 			// strings... indicates a bug in Aedict code.
 			throw new RuntimeException(e);
 		}
-		final TopDocs result = searcher.search(parsedQuery, null, 100);
+		final TopDocs result = searcher.search(parsedQuery, null, maxResults);
 		for (final ScoreDoc sd : result.scoreDocs) {
 			final Document doc = searcher.doc(sd.doc);
 			final String contents = doc.get("contents");

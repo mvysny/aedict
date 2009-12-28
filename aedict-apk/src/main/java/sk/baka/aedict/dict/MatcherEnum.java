@@ -25,6 +25,15 @@ package sk.baka.aedict.dict;
  */
 public enum MatcherEnum {
 	/**
+	 * Matches anything. Useful when searching for Lucene-specific terms.
+	 */
+	AnyMatch {
+		@Override
+		public boolean matches(String query, String line) {
+			return true;
+		}
+	},
+	/**
 	 * Matches when the query is a substring of given line.
 	 */
 	SubstringMatch {
