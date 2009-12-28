@@ -149,107 +149,6 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		};
 	}
 
-	private List<EdictEntry> analyzeByCharacters(final String word) throws IOException {
-		final List<EdictEntry> result = new ArrayList<EdictEntry>(word.length());
-		final LuceneSearch lsEdict = new LuceneSearch(false, AedictApp.getDictionaryLoc());
-		try {
-			LuceneSearch lsKanjidic = null;
-			if (DownloadDictTask.isComplete(DownloadDictTask.LUCENE_INDEX_KANJIDIC)) {
-				lsKanjidic = new LuceneSearch(true, null);
-			}
-			try {
-				for (char c : MiscUtils.removeWhitespaces(word).toCharArray()) {
-					final boolean isKanji = KanjiUtils.isKanji(c);
-					if (!isKanji) {
-						result.add(new EdictEntry(String.valueOf(c), String.valueOf(c), ""));
-					} else {
-						// it is a kanji. search for it in the dictionary.
-						final SearchQuery q = SearchQuery.searchForJapanese(String.valueOf(c), true);
-						List<String> matches = null;
-						EdictEntry ee = null;
-						if (lsKanjidic != null) {
-							matches = lsKanjidic.search(q);
-						}
-						if (matches != null && !matches.isEmpty()) {
-							ee = EdictEntry.tryParseKanjidic(matches.get(0));
-						}
-						if (ee == null) {
-							matches = lsEdict.search(q);
-							if (matches.size() > 0) {
-								ee = EdictEntry.tryParseEdict(matches.get(0));
-							}
-						}
-						if (ee == null) {
-							// no luck. Just add the kanji
-							ee = new EdictEntry(String.valueOf(c), "", "");
-						}
-						result.add(ee);
-					}
-				}
-				return result;
-			} finally {
-				MiscUtils.closeQuietly(lsKanjidic);
-			}
-		} finally {
-			MiscUtils.closeQuietly(lsEdict);
-		}
-	}
-
-	private List<EdictEntry> analyzeByWords(final String sentence) throws IOException {
-		final List<EdictEntry> result = new ArrayList<EdictEntry>();
-		final LuceneSearch lsEdict = new LuceneSearch(false, AedictApp.getDictionaryLoc());
-		try {
-			for (final String word : getWords(sentence)) {
-				String w = word.trim();
-				while (w.length() > 0) {
-					final EdictEntry entry = findLongestWord(w, lsEdict);
-					result.add(entry);
-					w = w.substring(entry.getJapanese().length());
-				}
-			}
-			return result;
-		} finally {
-			MiscUtils.closeQuietly(lsEdict);
-		}
-	}
-
-	private static final String[] getWords(final String sentence) {
-		return sentence.split("[^\\p{javaLetter}]+");
-	}
-
-	/**
-	 * Tries to find longest word which is present in the EDICT dictionary. The
-	 * search starts with given word, then cuts the last character off, etc.
-	 * 
-	 * @param word
-	 *            the word to analyze
-	 * @return longest word found or an entry consisting of the first character
-	 *         if we were unable to find nothing
-	 * @throws IOException
-	 */
-	private EdictEntry findLongestWord(final String word, final LuceneSearch edict) throws IOException {
-		String w = word;
-		if (w.length() > 10) {
-			// optimization to avoid quadratic search complexity
-			w = w.substring(0, 10);
-		}
-		while (w.length() > 0) {
-			final List<EdictEntry> result = EdictEntry.tryParseEdict(edict.search(SearchQuery.searchForJapanese(w, true)));
-			EdictEntry.removeInvalid(result);
-			Collections.sort(result);
-			if (!result.isEmpty()) {
-				for (final EdictEntry e : result) {
-					if (e.getJapanese().equals(w)) {
-						return e;
-					}
-				}
-				// no luck, continue with the search
-			}
-			w = w.substring(0, w.length() - 1);
-		}
-		return new EdictEntry(word.substring(0, 1), "", "");
-	}
-
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		final EdictEntry e = model.get(position);
@@ -310,12 +209,120 @@ public class KanjiAnalyzeActivity extends ListActivity {
 
 		@Override
 		protected List<EdictEntry> protectedDoInBackground(String... params) throws Exception {
+			onProgressUpdate(new Progress(R.string.analyzing, 0, 100));
 			if (isAnalysisPerCharacter) {
 				// remove all non-letter characters
 				final String w = word.replaceAll("[^\\p{javaLetter}]+", "");
 				return analyzeByCharacters(w);
 			} else {
 				return analyzeByWords(word);
+			}
+		}
+
+		private List<EdictEntry> analyzeByWords(final String sentence) throws IOException {
+			final List<EdictEntry> result = new ArrayList<EdictEntry>();
+			final LuceneSearch lsEdict = new LuceneSearch(false, AedictApp.getDictionaryLoc());
+			try {
+				final String[] words = getWords(sentence);
+				for (int i = 0; i < words.length; i++) {
+					onProgressUpdate(new Progress(null, i, words.length));
+					String w = words[i].trim();
+					while (w.length() > 0) {
+						final EdictEntry entry = findLongestWord(w, lsEdict);
+						result.add(entry);
+						w = w.substring(entry.getJapanese().length());
+					}
+				}
+				return result;
+			} finally {
+				MiscUtils.closeQuietly(lsEdict);
+			}
+		}
+
+		private final String[] getWords(final String sentence) {
+			return sentence.split("[^\\p{javaLetter}]+");
+		}
+
+		/**
+		 * Tries to find longest word which is present in the EDICT dictionary.
+		 * The search starts with given word, then cuts the last character off,
+		 * etc.
+		 * 
+		 * @param word
+		 *            the word to analyze
+		 * @return longest word found or an entry consisting of the first
+		 *         character if we were unable to find nothing
+		 * @throws IOException
+		 */
+		private EdictEntry findLongestWord(final String word, final LuceneSearch edict) throws IOException {
+			String w = word;
+			if (w.length() > 10) {
+				// optimization to avoid quadratic search complexity
+				w = w.substring(0, 10);
+			}
+			while (w.length() > 0) {
+				final List<EdictEntry> result = EdictEntry.tryParseEdict(edict.search(SearchQuery.searchForJapanese(w, true)));
+				EdictEntry.removeInvalid(result);
+				Collections.sort(result);
+				if (!result.isEmpty()) {
+					for (final EdictEntry e : result) {
+						if (e.getJapanese().equals(w)) {
+							return e;
+						}
+					}
+					// no luck, continue with the search
+				}
+				w = w.substring(0, w.length() - 1);
+			}
+			return new EdictEntry(word.substring(0, 1), "", "");
+		}
+
+		private List<EdictEntry> analyzeByCharacters(final String word) throws IOException {
+			final List<EdictEntry> result = new ArrayList<EdictEntry>(word.length());
+			final LuceneSearch lsEdict = new LuceneSearch(false, AedictApp.getDictionaryLoc());
+			try {
+				LuceneSearch lsKanjidic = null;
+				if (DownloadDictTask.isComplete(DownloadDictTask.LUCENE_INDEX_KANJIDIC)) {
+					lsKanjidic = new LuceneSearch(true, null);
+				}
+				try {
+					final String w = MiscUtils.removeWhitespaces(word);
+					for (int i = 0; i < w.length(); i++) {
+						onProgressUpdate(new Progress(null, i, w.length()));
+						final char c = w.charAt(i);
+						final boolean isKanji = KanjiUtils.isKanji(c);
+						if (!isKanji) {
+							result.add(new EdictEntry(String.valueOf(c), String.valueOf(c), ""));
+						} else {
+							// it is a kanji. search for it in the dictionary.
+							final SearchQuery q = SearchQuery.searchForJapanese(String.valueOf(c), true);
+							List<String> matches = null;
+							EdictEntry ee = null;
+							if (lsKanjidic != null) {
+								matches = lsKanjidic.search(q);
+							}
+							if (matches != null && !matches.isEmpty()) {
+								ee = EdictEntry.tryParseKanjidic(matches.get(0));
+							}
+							if (ee == null) {
+								matches = lsEdict.search(q);
+								if (matches.size() > 0) {
+									ee = EdictEntry.tryParseEdict(matches.get(0));
+								}
+							}
+							if (ee == null) {
+								// no luck. Just add the kanji
+								ee = new EdictEntry(String.valueOf(c), "", "");
+							}
+							result.add(ee);
+						}
+					}
+					return result;
+				} finally {
+					MiscUtils.closeQuietly(lsKanjidic);
+				}
+			} finally {
+				MiscUtils.closeQuietly(lsEdict);
 			}
 		}
 	}
