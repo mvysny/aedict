@@ -20,9 +20,8 @@ package sk.baka.aedict;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DownloadDictTask;
@@ -127,8 +126,25 @@ public class KanjiAnalyzeActivity extends ListActivity {
 				sb.insert(0, e.english);
 				((TextView) v.findViewById(android.R.id.text2)).setText(sb.toString());
 				final TextView tv = (TextView) v.findViewById(R.id.kanjiBig);
-				tv.setText(e.getJapanese());
+				// if the japanese word is too big the reading and the
+				// translation is not shown anymore
+				// workaround: add \n character after each third char
+				tv.setText(splitToRows(e.getJapanese()));
 				return v;
+			}
+
+			private String splitToRows(final String str) {
+				if (str == null) {
+					return "";
+				}
+				final StringBuilder sb = new StringBuilder(str.length() * 4 / 3);
+				for (int i = 0; i < str.length(); i++) {
+					if ((i > 0) && (i % 3 == 0)) {
+						sb.append('\n');
+					}
+					sb.append(str.charAt(i));
+				}
+				return sb.toString();
 			}
 		};
 	}
@@ -179,22 +195,26 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		}
 	}
 
-	private List<EdictEntry> analyzeByWords(final String word) throws IOException {
+	private List<EdictEntry> analyzeByWords(final String sentence) throws IOException {
 		final List<EdictEntry> result = new ArrayList<EdictEntry>();
 		final LuceneSearch lsEdict = new LuceneSearch(false, AedictApp.getDictionaryLoc());
 		try {
-			for (final StringTokenizer t = new StringTokenizer(word); t.hasMoreTokens();) {
-				String w = t.nextToken();
+			for (final String word : getWords(sentence)) {
+				String w = word;
 				while (w.length() > 0) {
-					final EdictEntry entry = findLongestWord(w, lsEdict);
-					result.add(entry);
-					w = w.substring(entry.getJapanese().length());
+					final MatchedWord entry = findLongestWord(w, lsEdict);
+					result.add(entry.entry);
+					w = w.substring(entry.matchedWordLength);
 				}
 			}
 			return result;
 		} finally {
 			MiscUtils.closeQuietly(lsEdict);
 		}
+	}
+
+	private static final String[] getWords(final String sentence) {
+		return sentence.split("[^\\p{javaLetter}]+");
 	}
 
 	/**
@@ -207,16 +227,37 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	 *         if we were unable to find nothing
 	 * @throws IOException
 	 */
-	private EdictEntry findLongestWord(final String word, final LuceneSearch edict) throws IOException {
+	private MatchedWord findLongestWord(final String word, final LuceneSearch edict) throws IOException {
 		String w = word;
+		if (w.length() > 10) {
+			// optimization to avoid quadratic search complexity
+			w = w.substring(0, 10);
+		}
 		while (w.length() > 0) {
-			final Collection<? extends EdictEntry> result = EdictEntry.removeInvalid(EdictEntry.tryParseEdict(edict.search(SearchQuery.searchForJapanese(w, true))));
+			final List<EdictEntry> result = EdictEntry.tryParseEdict(edict.search(SearchQuery.searchForJapanese(w, true)));
+			EdictEntry.removeInvalid(result);
+			Collections.sort(result);
 			if (!result.isEmpty()) {
-				return result.iterator().next();
+				for (final EdictEntry e : result) {
+					if (e.getJapanese().equals(w)) {
+						return new MatchedWord(e, w.length());
+					}
+				}
+				// no luck, continue with the search
 			}
 			w = w.substring(0, w.length() - 1);
 		}
-		return new EdictEntry(word.substring(0, 1), "", "");
+		return new MatchedWord(new EdictEntry(word.substring(0, 1), "", ""), 1);
+	}
+
+	private static class MatchedWord {
+		public MatchedWord(EdictEntry entry, final int matchedWordLength) {
+			this.entry = entry;
+			this.matchedWordLength = matchedWordLength;
+		}
+
+		public final EdictEntry entry;
+		public final int matchedWordLength;
 	}
 
 	@Override

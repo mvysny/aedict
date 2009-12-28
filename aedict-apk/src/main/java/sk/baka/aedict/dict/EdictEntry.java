@@ -390,6 +390,18 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 		return kanji != null ? kanji : reading;
 	}
 
+	/**
+	 * A comparator which imposes order upon an edict entry, according to the
+	 * following rules:
+	 * <ul>
+	 * <li>Invalid entries are placed last,</li>
+	 * <li>
+	 * {@link EdictEntry#isCommon common} words are preferred;</li>
+	 * <li>next, shortest {@link EdictEntry#getJapanese() japanese} words are
+	 * preferred (as they usually are the best matches)</li>
+	 * <li>finally, {@link #getJapanese()} values are compared</li>
+	 * </ul>
+	 */
 	public int compareTo(EdictEntry another) {
 		if (!isValid()) {
 			if (another.isValid()) {
@@ -400,7 +412,20 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 		if (!another.isValid()) {
 			return -1;
 		}
+		// common words first
+		int result = -isCommonNotNull().compareTo(another.isCommonNotNull());
+		if (result != 0) {
+			return result;
+		}
+		result = getJapanese().length() - another.getJapanese().length();
+		if (result != 0) {
+			return result;
+		}
 		return getJapanese().compareTo(another.getJapanese());
+	}
+
+	private Boolean isCommonNotNull() {
+		return isCommon == null ? false : isCommon;
 	}
 
 	/**
