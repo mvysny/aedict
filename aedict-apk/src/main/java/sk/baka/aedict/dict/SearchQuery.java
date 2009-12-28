@@ -100,12 +100,9 @@ public final class SearchQuery implements Serializable {
 	 */
 	public String getLuceneQuery(final boolean kanjidic) {
 		if (!kanjidic) {
-			final StringBuilder sb = new StringBuilder();
+			final ListBuilder sb = new ListBuilder(" OR ");
 			for (int i = 0; i < query.length; i++) {
-				sb.append(query[i].trim());
-				if (i < query.length - 1) {
-					sb.append(" OR ");
-				}
+				sb.add(query[i].trim());
 			}
 			return sb.toString();
 		}
@@ -119,23 +116,15 @@ public final class SearchQuery implements Serializable {
 			qb.add("kanji:" + query[0].trim());
 		}
 		if (strokeCount != null) {
-			final StringBuilder sb = new StringBuilder();
-			sb.append('(');
-			boolean first = true;
+			final ListBuilder sb = new ListBuilder(" OR ");
 			final int plusMinus = strokesPlusMinus == null ? 0 : strokesPlusMinus;
 			if ((plusMinus > 3) || (plusMinus < 0)) {
 				throw new IllegalStateException("Invalid value: " + strokesPlusMinus);
 			}
 			for (int strokes = strokeCount - plusMinus; strokes <= strokeCount + plusMinus; strokes++) {
-				if (first) {
-					first = false;
-				} else {
-					sb.append(" OR ");
-				}
-				sb.append("strokes:").append(strokes);
+				sb.add("strokes:" + strokes);
 			}
-			sb.append(')');
-			qb.add(sb.toString());
+			qb.add("(" + sb.toString() + ")");
 		}
 		if (skip != null) {
 			qb.add("skip:" + skip);
