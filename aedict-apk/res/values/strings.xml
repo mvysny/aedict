@@ -99,5 +99,5 @@
     <string name="analyzeWords">Analyze as words</string>
     <string name="analyzeCharacters">Analyze as characters</string>
     <string name="translate">Translate</string>
-    <string name="jpTranslate">Translate japanese text. Copy-paste the text here (e.g. from a browser)</string>
+    <string name="jpTranslate">Translate japanese text. Copy-paste the text here (e.g. from a browser). Simple, stupid and slow :-)</string>
 </resources>

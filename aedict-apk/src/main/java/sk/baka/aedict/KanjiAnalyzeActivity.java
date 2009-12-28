@@ -31,8 +31,9 @@ import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.Radicals;
 import sk.baka.aedict.util.SearchUtils;
-import sk.baka.autils.AndroidUtils;
+import sk.baka.autils.DialogAsyncTask;
 import sk.baka.autils.MiscUtils;
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -89,7 +90,6 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		if (model == null) {
 			recomputeModel();
 		}
-		setListAdapter(newAdapter());
 		// check that the KANJIDIC dictionary file is available
 		new SearchUtils(this).checkKanjiDic();
 	}
@@ -288,17 +288,35 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	}
 
 	private void recomputeModel() {
-		try {
-			if (isAnalysisPerCharacter) {
-				model = analyzeByCharacters(word);
-			} else {
-				model = analyzeByWords(word);
-			}
-		} catch (Exception ex) {
-			AndroidUtils.handleError(ex, this, this.getClass(), null);
-			model = new ArrayList<EdictEntry>();
-			model.add(EdictEntry.newErrorMsg("Analysis failed: " + ex));
+		new RecomputeModel(this).execute(word);
+	}
+
+	private class RecomputeModel extends DialogAsyncTask<String, List<EdictEntry>> {
+
+		public RecomputeModel(Activity context) {
+			super(context);
 		}
-		setListAdapter(newAdapter());
+
+		@Override
+		protected void cleanupAfterError() {
+			// nothing to do
+		}
+
+		@Override
+		protected void onTaskSucceeded(List<EdictEntry> result) {
+			model = result;
+			setListAdapter(newAdapter());
+		}
+
+		@Override
+		protected List<EdictEntry> protectedDoInBackground(String... params) throws Exception {
+			if (isAnalysisPerCharacter) {
+				// remove all non-letter characters
+				final String w = word.replaceAll("[^\\p{javaLetter}]+", "");
+				return analyzeByCharacters(w);
+			} else {
+				return analyzeByWords(word);
+			}
+		}
 	}
 }
