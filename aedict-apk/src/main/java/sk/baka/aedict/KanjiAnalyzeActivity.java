@@ -226,6 +226,9 @@ public class KanjiAnalyzeActivity extends ListActivity {
 				final String[] words = getWords(sentence);
 				for (int i = 0; i < words.length; i++) {
 					onProgressUpdate(new Progress(null, i, words.length));
+					if (isCancelled()) {
+						return null;
+					}
 					String w = words[i].trim();
 					while (w.length() > 0) {
 						final EdictEntry entry = findLongestWord(w, lsEdict);
@@ -289,6 +292,9 @@ public class KanjiAnalyzeActivity extends ListActivity {
 					final String w = MiscUtils.removeWhitespaces(word);
 					for (int i = 0; i < w.length(); i++) {
 						onProgressUpdate(new Progress(null, i, w.length()));
+						if (isCancelled()) {
+							return null;
+						}
 						final char c = w.charAt(i);
 						final boolean isKanji = KanjiUtils.isKanji(c);
 						if (!isKanji) {
