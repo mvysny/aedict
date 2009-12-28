@@ -4,6 +4,14 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
+		<release version="0.7" date="31. December 2009">
+			<action dev="vyzivus" type="add" issue="24">
+				A very simple and slow sentence translation added.
+			</action>
+			<action dev="vyzivus" type="add" issue="23">
+				Added support for analyzing words, not just kanjis.
+			</action>
+		</release>
 		<release version="0.6" date="10. December 2009">
 			<action dev="vyzivus" type="add" issue="13">
 				Added support for multiple EDICT dictionaries.
