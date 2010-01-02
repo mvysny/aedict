@@ -20,10 +20,11 @@ package sk.baka.aedict.kanji;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import sk.baka.autils.MiscUtils;
@@ -82,17 +83,21 @@ public enum RomanizationEnum {
 	 */
 	protected abstract String getKatakanaTable();
 
-	private final ConcurrentMap<String, String> katakanaToRomaji = new ConcurrentHashMap<String, String>();
-	private final ConcurrentMap<String, String> hiraganaToRomaji = new ConcurrentHashMap<String, String>();
-	private final ConcurrentMap<String, String> romajiToKatakana = new ConcurrentHashMap<String, String>();
-	private final ConcurrentMap<String, String> romajiToHiragana = new ConcurrentHashMap<String, String>();
+	// no need for ConcurrentHashMap here: the map is only modified in the constructor;
+	// any alterations of properties of a final reference in a constructor happens-before
+	// any code after the object is constructed, thus all threads will see the changes.
+	// Moreover, enum constants are initialized in a static initializer, which is thread-safe anyway.
+	private final Map<String, String> katakanaToRomaji = new HashMap<String, String>();
+	private final Map<String, String> hiraganaToRomaji = new HashMap<String, String>();
+	private final Map<String, String> romajiToKatakana = new HashMap<String, String>();
+	private final Map<String, String> romajiToHiragana = new HashMap<String, String>();
 
 	private RomanizationEnum() {
 		parse(new StringTokenizer(getKatakanaTable(), ";"), katakanaToRomaji, romajiToKatakana);
 		parse(new StringTokenizer(getHiraganaTable(), ";"), hiraganaToRomaji, romajiToHiragana);
 	}
 
-	private static void parse(final StringTokenizer kanaStream, ConcurrentMap<String, String> kanaToRomaji, ConcurrentMap<String, String> romajiToKana) {
+	private static void parse(final StringTokenizer kanaStream, Map<String, String> kanaToRomaji, Map<String, String> romajiToKana) {
 		for (final Object entry : Collections.list(kanaStream)) {
 			final String[] mapping = ((String) entry).split("\\=");
 			final String kana = mapping[0];
@@ -130,7 +135,7 @@ public enum RomanizationEnum {
 		return toKana(romajiToKatakana, romaji, true);
 	}
 
-	private static String toKana(ConcurrentMap<String, String> romajiToKana, String romaji, final boolean isKatakana) {
+	private static String toKana(final Map<String, String> romajiToKana, String romaji, final boolean isKatakana) {
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < romaji.length(); i++) {
 			// optimization - only convert ascii letters
