@@ -213,9 +213,9 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			if (isAnalysisPerCharacter) {
 				// remove all non-letter characters
 				final String w = word.replaceAll("[^\\p{javaLetter}]+", "");
-				return analyzeByCharacters(w);
+				return analyzeByCharacters(KanjiUtils.halfwidthToKatakana(w));
 			} else {
-				return analyzeByWords(word);
+				return analyzeByWords(KanjiUtils.halfwidthToKatakana(word));
 			}
 		}
 

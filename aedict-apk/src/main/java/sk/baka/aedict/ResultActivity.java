@@ -26,7 +26,7 @@ import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
-import sk.baka.aedict.kanji.RomanizationEnum;
+import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.ListActivity;
@@ -85,11 +85,9 @@ public class ResultActivity extends ListActivity {
 			String searchFor = it.getStringExtra(SIMEJI_INTENTKEY_REPLACE);
 			if (!MiscUtils.isBlank(searchFor)) {
 				searchFor = searchFor.trim();
-				final String firstChar = searchFor.substring(0, 1);
-				// try to convert the first character to romaji. If the
-				// conversion succeeds then we are searching for a
+				// If the first character is a japanese character then we are searching for a
 				// katakana/hiragana string
-				result.isJapanese = !firstChar.equals(RomanizationEnum.Hepburn.toRomaji(firstChar));
+				result.isJapanese = KanjiUtils.isJapanese(searchFor.charAt(0));
 				result.query = new String[] { searchFor };
 			}
 		} else {

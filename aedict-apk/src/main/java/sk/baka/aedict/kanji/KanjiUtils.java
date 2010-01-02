@@ -150,4 +150,18 @@ public final class KanjiUtils {
 		}
 		return result.toString();
 	}
+
+	/**
+	 * Checks whether given character is a japanese character:
+	 * {@link #isKanji(char) kanji}, {@link #isHiragana(char) hiragana},
+	 * {@link #isKatakana(char) katakana} or {@link #isHalfwidth(char)
+	 * half-width katakana} character.
+	 * 
+	 * @param ch
+	 *            the character to check
+	 * @return true if it is japanese character, false otherwise.
+	 */
+	public static boolean isJapanese(char ch) {
+		return isKatakana(ch) || isHiragana(ch) || isHalfwidth(ch) || isKanji(ch);
+	}
 }

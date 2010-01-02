@@ -20,6 +20,8 @@ package sk.baka.aedict.dict;
 
 import java.io.Serializable;
 
+import sk.baka.aedict.kanji.KanjiUtils;
+import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.ListBuilder;
 import android.content.Intent;
 
@@ -261,7 +263,8 @@ public final class SearchQuery implements Serializable {
 	 * Creates a query which searches for a japanese term.
 	 * 
 	 * @param word
-	 *            the word to search, in japan language
+	 *            the word to search, in japanese language. Full-width katakana
+	 *            conversion is not performed automatically.
 	 * @param exact
 	 *            if true then performs exact search, if false then performs a
 	 *            substring search.
@@ -270,6 +273,29 @@ public final class SearchQuery implements Serializable {
 	public static SearchQuery searchForJapanese(final String word, final boolean exact) {
 		final SearchQuery result = new SearchQuery();
 		result.query = new String[] { word };
+		result.isJapanese = true;
+		result.matcher = exact ? MatcherEnum.ExactMatchEng : MatcherEnum.SubstringMatch;
+		return result;
+	}
+
+	/**
+	 * Creates a query which searches for a japanese term.
+	 * 
+	 * @param word
+	 *            the word to search, in japanese language, may contain romaji.
+	 *            Full-width katakana conversion is performed automatically. Not
+	 *            null
+	 * @param romanization
+	 *            the romanization system to use, not null.
+	 * @param exact
+	 *            if true then performs exact search, if false then performs a
+	 *            substring search.
+	 * @return search query, never null
+	 */
+	public static SearchQuery searchForRomaji(final String word, final RomanizationEnum romanization, final boolean exact) {
+		final SearchQuery result = new SearchQuery();
+		String conv = KanjiUtils.halfwidthToKatakana(word);
+		result.query = new String[] { romanization.toKatakana(conv), romanization.toHiragana(conv) };
 		result.isJapanese = true;
 		result.matcher = exact ? MatcherEnum.ExactMatchEng : MatcherEnum.SubstringMatch;
 		return result;

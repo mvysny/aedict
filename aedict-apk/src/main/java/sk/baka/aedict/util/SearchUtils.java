@@ -75,10 +75,7 @@ public final class SearchUtils {
 	 */
 	public void searchForJapan(final String romaji, final boolean isExact) {
 		final Config cfg = AedictApp.loadConfig();
-		final SearchQuery q = new SearchQuery();
-		q.isJapanese = true;
-		q.query = new String[] { cfg.romanization.toHiragana(romaji), cfg.romanization.toKatakana(romaji) };
-		q.matcher = isExact ? MatcherEnum.ExactMatchEng : MatcherEnum.SubstringMatch;
+		final SearchQuery q = SearchQuery.searchForRomaji(romaji, cfg.romanization, isExact);
 		performSearch(q);
 	}
 
