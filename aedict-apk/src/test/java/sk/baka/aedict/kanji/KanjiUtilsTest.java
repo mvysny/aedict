@@ -47,4 +47,28 @@ public class KanjiUtilsTest {
 		assertTrue(KanjiUtils.isHiragana('か'));
 		assertFalse(KanjiUtils.isHiragana('キ'));
 	}
+
+	@Test
+	public void testHalfwidthKatakana() {
+		assertFalse(KanjiUtils.isHalfwidth('艦'));
+		assertFalse(KanjiUtils.isHalfwidth('か'));
+		assertFalse(KanjiUtils.isHalfwidth('キ'));
+		assertTrue(KanjiUtils.isHalfwidth('ｶ'));
+	}
+
+	@Test
+	public void testToHalfwidthKatakana() {
+		assertEquals("ﾊﾟﾊﾟ", KanjiUtils.toHalfwidth("パパ"));
+		assertEquals("ｺﾝﾋﾟｭｰﾀｰ", KanjiUtils.toHalfwidth("コンピューター"));
+		assertEquals("JOZOﾊﾟﾊﾟFOO", KanjiUtils.toHalfwidth("JOZOパパFOO"));
+		assertEquals("FOOBARBAZ", KanjiUtils.toHalfwidth("FOOBARBAZ"));
+	}
+
+	@Test
+	public void testToFullwidthKatakana() {
+		assertEquals("パパ", KanjiUtils.halfwidthToKatakana("ﾊﾟﾊﾟ"));
+		assertEquals("コンピューター", KanjiUtils.halfwidthToKatakana("ｺﾝﾋﾟｭｰﾀｰ"));
+		assertEquals("JOZOパパFOO", KanjiUtils.halfwidthToKatakana("JOZOﾊﾟﾊﾟFOO"));
+		assertEquals("FOOBARBAZ", KanjiUtils.halfwidthToKatakana("FOOBARBAZ"));
+	}
 }
