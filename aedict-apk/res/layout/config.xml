@@ -12,28 +12,30 @@
 		should have received a copy of the GNU General Public License along
 		with this program. If not, see <http://www.gnu.org/licenses/>.
 	-->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="fill_parent"
-	android:layout_width="fill_parent">
-<LinearLayout
-	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="wrap_content">
-	<CheckBox android:layout_height="wrap_content"
-		android:layout_width="fill_parent" android:text="@string/always_available"
-		android:id="@+id/cfgNotifBar"/>
-	<CheckBox android:layout_height="wrap_content"
-		android:layout_width="fill_parent" android:text="@string/useRomaji"
-		android:id="@+id/cfgUseRomaji"/>
-	<TextView android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="@string/romanizationCaption"/>
-	<Spinner android:layout_height="wrap_content"
-		android:layout_width="fill_parent" android:id="@+id/romanizationSystem"
-		android:entries="@array/romanizations"/>
-	<TextView android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="@string/dictionaryPickerHint"/>
-	<Spinner android:layout_height="wrap_content"
-		android:layout_width="fill_parent" android:id="@+id/spinDictionaryPicker"/>
-	<Button android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="@string/cleanup"
-		android:id="@+id/cleanupEdictFilesButton"/>
-</LinearLayout>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent" android:layout_width="fill_parent">
+	<LinearLayout android:orientation="vertical"
+		android:layout_width="fill_parent" android:layout_height="wrap_content">
+		<CheckBox android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:text="@string/always_available"
+			android:id="@+id/cfgNotifBar" />
+		<CheckBox android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:text="@string/useRomaji"
+			android:id="@+id/cfgUseRomaji" />
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/romanizationCaption" />
+		<Spinner android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:id="@+id/romanizationSystem"
+			android:entries="@array/romanizations" />
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/dictionaryPickerHint" />
+		<Spinner android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:id="@+id/spinDictionaryPicker" />
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/downloadDictionaryCaption"
+			android:id="@+id/btnDownloadDictionary" />
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/cleanup"
+			android:id="@+id/cleanupEdictFilesButton" />
+	</LinearLayout>
 </ScrollView>
