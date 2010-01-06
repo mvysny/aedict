@@ -60,6 +60,10 @@ public class ResultActivity extends ListActivity {
 	 */
 	private boolean isSimeji = false;
 	/**
+	 * true if romaji is shown instead of katakana/hiragana.
+	 */
+	private boolean isShowingRomaji;
+	/**
 	 * The query.
 	 */
 	private SearchQuery query;
@@ -85,7 +89,8 @@ public class ResultActivity extends ListActivity {
 			String searchFor = it.getStringExtra(SIMEJI_INTENTKEY_REPLACE);
 			if (!MiscUtils.isBlank(searchFor)) {
 				searchFor = searchFor.trim();
-				// If the first character is a japanese character then we are searching for a
+				// If the first character is a japanese character then we are
+				// searching for a
 				// katakana/hiragana string
 				result.isJapanese = KanjiUtils.isJapanese(searchFor.charAt(0));
 				result.query = new String[] { searchFor };
@@ -118,6 +123,7 @@ public class ResultActivity extends ListActivity {
 			}
 		}
 		final Config cfg = AedictApp.loadConfig();
+		isShowingRomaji = cfg.useRomaji;
 		setListAdapter(new ArrayAdapter<EdictEntry>(this, android.R.layout.simple_list_item_2, model) {
 
 			@Override
@@ -126,16 +132,25 @@ public class ResultActivity extends ListActivity {
 				if (view == null) {
 					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
 				}
-				model.get(position).print(view, cfg.useRomaji ? cfg.romanization : null);
+				model.get(position).print(view, isShowingRomaji ? cfg.romanization : null);
 				return view;
 			}
 
 		});
-		if (isSimeji) {
-			getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
+		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
 
-				public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-					final EdictEntry ee = model.get(((AdapterContextMenuInfo) menuInfo).position);
+			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+				final EdictEntry ee = model.get(((AdapterContextMenuInfo) menuInfo).position);
+				menu.add(isShowingRomaji ? "Show kana" : "Show romaji").setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+					public boolean onMenuItemClick(MenuItem item) {
+						isShowingRomaji = !isShowingRomaji;
+						((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
+						return true;
+					}
+
+				}));
+				if (isSimeji) {
 					if (!ee.isValid()) {
 						return;
 					}
@@ -145,8 +160,8 @@ public class ResultActivity extends ListActivity {
 					menu.add("Return " + ee.reading).setOnMenuItemClickListener(new SimejiReturn(ee.reading));
 					menu.add("Return " + ee.english).setOnMenuItemClickListener(new SimejiReturn(ee.english));
 				}
-			}));
-		}
+			}
+		}));
 	}
 
 	/**

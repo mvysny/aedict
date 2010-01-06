@@ -31,16 +31,19 @@ import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.Radicals;
 import sk.baka.aedict.util.SearchUtils;
+import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogAsyncTask;
 import sk.baka.autils.MiscUtils;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -76,10 +79,15 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	 * per-word basis.
 	 */
 	private boolean isAnalysisPerCharacter = true;
+	/**
+	 * true if romaji is shown instead of katakana/hiragana.
+	 */
+	private boolean isShowingRomaji;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		isShowingRomaji = AedictApp.loadConfig().useRomaji;
 		word = getIntent().getStringExtra(INTENTKEY_WORD);
 		model = (List<EdictEntry>) getIntent().getSerializableExtra(INTENTKEY_ENTRYLIST);
 		isAnalysisPerCharacter = !getIntent().getBooleanExtra(INTENTKEY_WORD_ANALYSIS, false);
@@ -92,6 +100,19 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		}
 		// check that the KANJIDIC dictionary file is available
 		new SearchUtils(this).checkKanjiDic();
+		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
+
+			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+				menu.add(isShowingRomaji ? "Show kana" : "Show romaji").setOnMenuItemClickListener(AndroidUtils.safe(KanjiAnalyzeActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+					public boolean onMenuItemClick(MenuItem item) {
+						isShowingRomaji = !isShowingRomaji;
+						((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
+						return true;
+					}
+				}));
+			}
+		}));
 	}
 
 	private ArrayAdapter<EdictEntry> newAdapter() {
@@ -105,7 +126,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 					v = getLayoutInflater().inflate(R.layout.kanjidetail, getListView(), false);
 				}
 				final EdictEntry e = model.get(position);
-				((TextView) v.findViewById(android.R.id.text1)).setText(cfg.useRomaji ? cfg.romanization.toRomaji(e.reading) : e.reading);
+				((TextView) v.findViewById(android.R.id.text1)).setText(isShowingRomaji ? cfg.romanization.toRomaji(e.reading) : e.reading);
 				final StringBuilder sb = new StringBuilder();
 				if (e.radical != null) {
 					// TODO mvy: show radicals as images when available?
