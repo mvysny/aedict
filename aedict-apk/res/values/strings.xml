@@ -104,4 +104,7 @@
     <string name="translate">Translate</string>
     <string name="jpTranslate">Translate japanese text. Copy-paste the text here (e.g. from a browser). Simple, stupid and slow :-)</string>
     <string name="analyzing">Analyzing</string>
+    <string name="downloadDictionaryCaption">Download additional dictionaries</string>
+    <string name="downloadingDictionaryList">Downloading list of dictionaries</string>
+    <string name="availableDicts">Available dictionaries (click on the name to install)</string>
 </resources>
