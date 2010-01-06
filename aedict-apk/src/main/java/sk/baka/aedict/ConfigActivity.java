@@ -58,7 +58,7 @@ public class ConfigActivity extends Activity {
 		setContentView(R.layout.config);
 		// initialize the components
 		final Spinner dictPicker = (Spinner) findViewById(R.id.spinDictionaryPicker);
-		final List<String> dictionaries = new ArrayList<String>(listEdictDictionaries().keySet());
+		final List<String> dictionaries = new ArrayList<String>(DownloadDictTask.listEdictDictionaries().keySet());
 		Collections.sort(dictionaries);
 		dictPicker.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, dictionaries));
 		// fill in the components
@@ -80,6 +80,7 @@ public class ConfigActivity extends Activity {
 		final Spinner s = (Spinner) findViewById(R.id.romanizationSystem);
 		s.setOnItemSelectedListener(new ModificationHandler());
 		dictPicker.setOnItemSelectedListener(new ModificationHandler());
+		AbstractActivity.setButtonActivityLauncher(this, R.id.btnDownloadDictionary, DownloadDictionaryActivity.class);
 	}
 
 	private class ModificationHandler implements CompoundButton.OnCheckedChangeListener, AdapterView.OnItemSelectedListener {
@@ -125,34 +126,5 @@ public class ConfigActivity extends Activity {
 			}
 
 		});
-	}
-
-	/**
-	 * Lists all available edict dictionaries, omitting kanjidic.
-	 * 
-	 * @return maps a dictionary name to to an absolute directory name (e.g.
-	 *         /sdcard/aedict/index). The list will always contain the default
-	 *         dictionary.
-	 */
-	private Map<String, String> listEdictDictionaries() {
-		final Map<String, String> result = new HashMap<String, String>();
-		result.put(AedictApp.Config.DEFAULT_DICTIONARY_NAME, "/sdcard/aedict/index");
-		final File aedict = new File("/sdcard/aedict");
-		if (aedict.exists() && aedict.isDirectory()) {
-			final String[] dictionaries = aedict.list(new FilenameFilter() {
-
-				public boolean accept(File dir, String filename) {
-					return filename.toLowerCase().startsWith("index-");
-				}
-			});
-			for (final String dict : dictionaries) {
-				final String dictName = dict.substring("index-".length());
-				if (dictName.equalsIgnoreCase("kanjidic")) {
-					continue;
-				}
-				result.put(dictName, "/sdcard/aedict/" + dict);
-			}
-		}
-		return result;
 	}
 }

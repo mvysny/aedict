@@ -21,6 +21,7 @@ package sk.baka.aedict.dict;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
@@ -28,6 +29,8 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -53,10 +56,14 @@ public final class DownloadDictTask extends DialogAsyncTask<Void, Void> {
 	 * A zipped Lucene-indexed KANJIDIC location.
 	 */
 	public static final URL KANJIDIC_LUCENE_ZIP;
+	/**
+	 * A base http:// location of the dictionary files.
+	 */
+	public static final String DICT_BASE_LOCATION_URL = "http://baka.sk/aedict/";
 	static {
 		try {
-			EDICT_LUCENE_ZIP = new URL("http://baka.sk/aedict/edict-lucene.zip");
-			KANJIDIC_LUCENE_ZIP = new URL("http://baka.sk/aedict/kanjidic-lucene.zip");
+			EDICT_LUCENE_ZIP = new URL(DICT_BASE_LOCATION_URL + "edict-lucene.zip");
+			KANJIDIC_LUCENE_ZIP = new URL(DICT_BASE_LOCATION_URL + "kanjidic-lucene.zip");
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
@@ -231,5 +238,34 @@ public final class DownloadDictTask extends DialogAsyncTask<Void, Void> {
 	@Override
 	protected void onTaskSucceeded(Void result) {
 		// do nothing
+	}
+
+	/**
+	 * Lists all available edict dictionaries, omitting kanjidic.
+	 * 
+	 * @return maps a dictionary name to to an absolute directory name (e.g.
+	 *         /sdcard/aedict/index). The list will always contain the default
+	 *         dictionary.
+	 */
+	public static Map<String, String> listEdictDictionaries() {
+		final Map<String, String> result = new HashMap<String, String>();
+		result.put(AedictApp.Config.DEFAULT_DICTIONARY_NAME, "/sdcard/aedict/index");
+		final File aedict = new File("/sdcard/aedict");
+		if (aedict.exists() && aedict.isDirectory()) {
+			final String[] dictionaries = aedict.list(new FilenameFilter() {
+
+				public boolean accept(File dir, String filename) {
+					return filename.toLowerCase().startsWith("index-");
+				}
+			});
+			for (final String dict : dictionaries) {
+				final String dictName = dict.substring("index-".length());
+				if (dictName.equalsIgnoreCase("kanjidic")) {
+					continue;
+				}
+				result.put(dictName, "/sdcard/aedict/" + dict);
+			}
+		}
+		return result;
 	}
 }
