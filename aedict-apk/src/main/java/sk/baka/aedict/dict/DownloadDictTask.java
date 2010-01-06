@@ -46,7 +46,7 @@ import android.util.Log;
  * 
  * @author Martin Vysny
  */
-public final class DownloadDictTask extends DialogAsyncTask<Void, Void> {
+public class DownloadDictTask extends DialogAsyncTask<Void, Void> {
 
 	/**
 	 * A zipped Lucene-indexed EDICT location.
@@ -217,7 +217,7 @@ public final class DownloadDictTask extends DialogAsyncTask<Void, Void> {
 		}
 		final int max = (int) (size / 1024);
 		publishProgress(new Progress(null, 0, max));
-		int downloaded = 0;
+		long downloaded = 0;
 		int reportCountdown = REPORT_EACH_XTH_BYTE;
 		final byte[] buf = new byte[BUFFER_SIZE];
 		int bufLen;
@@ -229,7 +229,7 @@ public final class DownloadDictTask extends DialogAsyncTask<Void, Void> {
 			}
 			reportCountdown -= bufLen;
 			if (reportCountdown <= 0) {
-				publishProgress(new Progress(null, downloaded / 1024, max));
+				publishProgress(new Progress(null, (int)(downloaded / 1024L), max));
 				reportCountdown = REPORT_EACH_XTH_BYTE;
 			}
 		}

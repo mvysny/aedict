@@ -20,16 +20,22 @@ package sk.baka.aedict;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.autils.DialogAsyncTask;
 import sk.baka.autils.MiscUtils;
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 /**
  * Serves for download of additional EDICT dictionaries (e.g. compdic.zip and
@@ -45,7 +51,7 @@ public class DownloadDictionaryActivity extends ListActivity {
 		new DownloadDictionaryListTask().execute();
 	}
 
-	private static class DownloadableDictionaryInfo {
+	private static class DownloadableDictionaryInfo implements Comparable<DownloadableDictionaryInfo> {
 		/**
 		 * The dictionary printable name.
 		 */
@@ -53,7 +59,7 @@ public class DownloadDictionaryActivity extends ListActivity {
 		/**
 		 * A http URL pointing to the zipped file.
 		 */
-		public String url;
+		public URL url;
 		/**
 		 * The size of the zip file.
 		 */
@@ -66,12 +72,14 @@ public class DownloadDictionaryActivity extends ListActivity {
 		 * @param line
 		 *            the file line
 		 * @return parsed dictionary object
+		 * @throws MalformedURLException
+		 *             if the URL is malformed.
 		 */
-		public static DownloadableDictionaryInfo parse(final String line) {
+		public static DownloadableDictionaryInfo parse(final String line) throws MalformedURLException {
 			final String[] parsed = line.split("\\,");
 			final DownloadableDictionaryInfo result = new DownloadableDictionaryInfo();
 			result.name = parsed[1].trim();
-			result.url = DownloadDictTask.DICT_BASE_LOCATION_URL + parsed[0].trim();
+			result.url = new URL(DownloadDictTask.DICT_BASE_LOCATION_URL + parsed[0].trim());
 			result.zippedSize = Integer.valueOf(parsed[2].trim());
 			return result;
 		}
@@ -79,6 +87,10 @@ public class DownloadDictionaryActivity extends ListActivity {
 		@Override
 		public String toString() {
 			return name + " (" + (zippedSize / 1024) + "kB)";
+		}
+
+		public int compareTo(DownloadableDictionaryInfo another) {
+			return name.compareToIgnoreCase(another.name);
 		}
 	}
 
@@ -108,7 +120,7 @@ public class DownloadDictionaryActivity extends ListActivity {
 		@Override
 		protected List<DownloadableDictionaryInfo> protectedDoInBackground(Void... params) throws Exception {
 			publishProgress(new Progress(R.string.downloadingDictionaryList, 0, 1));
-			final List<DownloadableDictionaryInfo> result = new ArrayList<DownloadableDictionaryInfo>();
+			final Map<String, DownloadableDictionaryInfo> result = new HashMap<String, DownloadableDictionaryInfo>();
 			final BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(DICT_LIST_URL).openStream(), "UTF-8"));
 			try {
 				while (true) {
@@ -119,13 +131,31 @@ public class DownloadDictionaryActivity extends ListActivity {
 					if (MiscUtils.isBlank(line)) {
 						continue;
 					}
-					result.add(DownloadableDictionaryInfo.parse(line));
+					final DownloadableDictionaryInfo info = DownloadableDictionaryInfo.parse(line);
+					result.put(info.name, info);
 				}
 			} finally {
 				MiscUtils.closeQuietly(reader);
 			}
-			return result;
+			// remove all dictionaries which are already downloaded
+			result.keySet().removeAll(DownloadDictTask.listEdictDictionaries().keySet());
+			final List<DownloadableDictionaryInfo> items = new ArrayList<DownloadableDictionaryInfo>(result.values());
+			Collections.sort(items);
+			return items;
 		}
 
+	}
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		final DownloadableDictionaryInfo e = (DownloadableDictionaryInfo) getListAdapter().getItem(position);
+		new DownloadDictTask(this, e.url, DownloadDictTask.BASE_DIR + "/index-" + e.name, e.name, e.zippedSize) {
+
+			@Override
+			protected void onTaskSucceeded(Void result) {
+				new DownloadDictionaryListTask().execute();
+			}
+
+		}.execute();
 	}
 }
