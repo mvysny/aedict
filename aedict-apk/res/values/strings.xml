@@ -107,4 +107,6 @@
     <string name="downloadDictionaryCaption">Download additional dictionaries</string>
     <string name="downloadingDictionaryList">Downloading list of dictionaries</string>
     <string name="availableDicts">Available dictionaries (click on the name to install)</string>
+    <string name="notepad">Notepad</string>
+    <string name="delete">Delete</string>
 </resources>

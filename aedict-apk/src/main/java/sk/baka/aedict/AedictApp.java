@@ -135,6 +135,9 @@ public class AedictApp extends Application {
 			if (dictionaryName == null) {
 				dictionaryName = DEFAULT_DICTIONARY_NAME;
 			}
+			if (notepadItems == null) {
+				notepadItems = "";
+			}
 		}
 
 		/**
@@ -161,11 +164,18 @@ public class AedictApp extends Application {
 		@BindToView(R.id.cfgUseRomaji)
 		public Boolean useRomaji;
 		/**
-		 * The dictionary to use. If null then the default one should be used.
+		 * The dictionary name to use. If null then the default one should be
+		 * used.
 		 */
 		@SharedPref(key = "dictionaryName", removeOnNull = false)
 		@BindToView(R.id.spinDictionaryPicker)
 		public String dictionaryName;
+		/**
+		 * Persisted notepad items. A mixture of Japanese kanjis, hiragana and
+		 * katakana, comma-separated.
+		 */
+		@SharedPref(key = "notepadItems", removeOnNull = false)
+		public String notepadItems;
 	}
 
 	/**
@@ -182,7 +192,7 @@ public class AedictApp extends Application {
 	}
 
 	/**
-	 * Stores new configuration.
+	 * Stores new configuration. null values are left unchanged.
 	 * 
 	 * @param cfg
 	 *            the configuration, must not be null.
@@ -217,6 +227,7 @@ public class AedictApp extends Application {
 
 	/**
 	 * Returns the dictionary location on the SD card of the EDICT dictionary..
+	 * 
 	 * @return absolute OS-specific location of the dictionary.
 	 */
 	public static String getDictionaryLoc() {
