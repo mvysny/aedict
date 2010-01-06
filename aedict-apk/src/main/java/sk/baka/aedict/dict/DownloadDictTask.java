@@ -199,10 +199,11 @@ public class DownloadDictTask extends DialogAsyncTask<Void, Void> {
 	 */
 	private void copy(final InputStream in, final ZipInputStream zip) throws IOException {
 		publishProgress(new Progress(AedictApp.format(R.string.downloading_dictionary, dictName), 0, 100));
+		long downloaded = 0;
 		for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
 			final OutputStream out = new FileOutputStream(targetDir + "/" + entry.getName());
 			try {
-				copy(entry, zip, out);
+				downloaded = copy(downloaded, entry, zip, out);
 			} finally {
 				MiscUtils.closeQuietly(out);
 			}
@@ -210,14 +211,14 @@ public class DownloadDictTask extends DialogAsyncTask<Void, Void> {
 		}
 	}
 
-	private void copy(final ZipEntry entry, final InputStream in, final OutputStream out) throws IOException {
+	private long copy(final long downloadedUntilNow, final ZipEntry entry, final InputStream in, final OutputStream out) throws IOException {
 		long size = entry.getSize();
 		if (size < 0) {
 			size = expectedSize;
 		}
 		final int max = (int) (size / 1024);
-		publishProgress(new Progress(null, 0, max));
-		long downloaded = 0;
+		long downloaded = downloadedUntilNow;
+		publishProgress(new Progress(null, (int) (downloaded / 1024L), max));
 		int reportCountdown = REPORT_EACH_XTH_BYTE;
 		final byte[] buf = new byte[BUFFER_SIZE];
 		int bufLen;
@@ -229,10 +230,12 @@ public class DownloadDictTask extends DialogAsyncTask<Void, Void> {
 			}
 			reportCountdown -= bufLen;
 			if (reportCountdown <= 0) {
-				publishProgress(new Progress(null, (int)(downloaded / 1024L), max));
+				final int progress = (int) (downloaded / 1024L);
+				publishProgress(new Progress(null, progress, max));
 				reportCountdown = REPORT_EACH_XTH_BYTE;
 			}
 		}
+		return downloaded;
 	}
 
 	@Override
