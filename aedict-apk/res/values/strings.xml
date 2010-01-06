@@ -17,6 +17,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  -->
 <resources>
+    <string name="return_">Return %s</string>
+    <string name="show_romaji">Show romaji</string>
+    <string name="show_kana">Show kana</string>
     <string name="no_radicals_selected">No radicals selected</string>
     <string name="configuration">Configuration</string>
     <string name="always_available">Aedict available at all times</string>

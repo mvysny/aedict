@@ -141,7 +141,7 @@ public class ResultActivity extends ListActivity {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 				final EdictEntry ee = model.get(((AdapterContextMenuInfo) menuInfo).position);
-				menu.add(isShowingRomaji ? "Show kana" : "Show romaji").setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
+				menu.add(isShowingRomaji ? R.string.show_kana : R.string.show_romaji).setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
 
 					public boolean onMenuItemClick(MenuItem item) {
 						isShowingRomaji = !isShowingRomaji;
@@ -155,10 +155,10 @@ public class ResultActivity extends ListActivity {
 						return;
 					}
 					if (ee.kanji != null) {
-						menu.add("Return " + ee.kanji).setOnMenuItemClickListener(new SimejiReturn(ee.kanji));
+						menu.add(AedictApp.format(R.string.return_, ee.kanji)).setOnMenuItemClickListener(new SimejiReturn(ee.kanji));
 					}
-					menu.add("Return " + ee.reading).setOnMenuItemClickListener(new SimejiReturn(ee.reading));
-					menu.add("Return " + ee.english).setOnMenuItemClickListener(new SimejiReturn(ee.english));
+					menu.add(AedictApp.format(R.string.return_, ee.reading)).setOnMenuItemClickListener(new SimejiReturn(ee.reading));
+					menu.add(AedictApp.format(R.string.return_, ee.english)).setOnMenuItemClickListener(new SimejiReturn(ee.english));
 				}
 			}
 		}));

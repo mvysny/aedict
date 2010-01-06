@@ -39,7 +39,7 @@ import android.app.Activity;
 import android.util.Log;
 
 /**
- * Downloads the EDICT dictionary.
+ * Downloads an EDICT/KANJIDIC dictionary.
  * 
  * @author Martin Vysny
  */
