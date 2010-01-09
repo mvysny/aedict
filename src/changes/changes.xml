@@ -4,7 +4,10 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
-		<release version="0.7" date="31. December 2009">
+		<release version="0.7" date="09. January 2010">
+			<action dev="vyzivus" type="add">
+				Search Result Browser now shows the dictionary used for the search
+			</action>
 			<action dev="vyzivus" type="add" issue="25">
 				Added a notepad functionality
 			</action>
