@@ -21,7 +21,7 @@
 				A very simple and slow sentence translation added.
 			</action>
 			<action dev="vyzivus" type="add" issue="23">
-				Added support for analyzing words and sentences, not just kanjis.
+				Added support for analyzing words, not just kanjis.
 			</action>
 		</release>
 		<release version="0.6" date="10. December 2009">
