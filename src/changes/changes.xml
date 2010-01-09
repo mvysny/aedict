@@ -5,6 +5,9 @@
 	</properties>
 	<body>
 		<release version="0.7" date="31. December 2009">
+			<action dev="vyzivus" type="add" issue="25">
+				Added a notepad functionality
+			</action>
 			<action dev="vyzivus" type="add" issue="28">
 				Show hint on reading: Long click on SearchResult and Analysis activity should allow user to see romaji reading of all hiragana/katakana characters
 			</action>
@@ -15,7 +18,7 @@
 				A very simple and slow sentence translation added.
 			</action>
 			<action dev="vyzivus" type="add" issue="23">
-				Added support for analyzing words, not just kanjis.
+				Added support for analyzing words and sentences, not just kanjis.
 			</action>
 		</release>
 		<release version="0.6" date="10. December 2009">
