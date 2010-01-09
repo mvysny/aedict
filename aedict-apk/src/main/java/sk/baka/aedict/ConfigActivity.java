@@ -56,13 +56,18 @@ public class ConfigActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.config);
-		// initialize the components
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// fill in the components
+		final Config cfg = AedictApp.loadConfig();
 		final Spinner dictPicker = (Spinner) findViewById(R.id.spinDictionaryPicker);
 		final List<String> dictionaries = new ArrayList<String>(DownloadDictTask.listEdictDictionaries().keySet());
 		Collections.sort(dictionaries);
 		dictPicker.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, dictionaries));
-		// fill in the components
-		final Config cfg = AedictApp.loadConfig();
+		dictPicker.setOnItemSelectedListener(new ModificationHandler());
 		new Binder().bindFromBean(cfg, new AndroidViewMapper(true), this, false);
 		// add modification handlers
 		final CheckBox cfgNotifBar = (CheckBox) findViewById(R.id.cfgNotifBar);
@@ -79,7 +84,6 @@ public class ConfigActivity extends Activity {
 		}));
 		final Spinner s = (Spinner) findViewById(R.id.romanizationSystem);
 		s.setOnItemSelectedListener(new ModificationHandler());
-		dictPicker.setOnItemSelectedListener(new ModificationHandler());
 		AbstractActivity.setButtonActivityLauncher(this, R.id.btnDownloadDictionary, DownloadDictionaryActivity.class);
 	}
 
