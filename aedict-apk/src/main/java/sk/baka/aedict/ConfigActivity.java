@@ -61,6 +61,8 @@ public class ConfigActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		// components are now initialized in onResume phase, to refresh
+		// dictionary list when a new dictionary is downloaded
 		// fill in the components
 		final Config cfg = AedictApp.loadConfig();
 		final Spinner dictPicker = (Spinner) findViewById(R.id.spinDictionaryPicker);
