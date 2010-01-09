@@ -150,6 +150,15 @@ public class ResultActivity extends ListActivity {
 					}
 
 				}));
+				menu.add(R.string.addToNotepad).setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+					public boolean onMenuItemClick(MenuItem item) {
+						final Intent intent = new Intent(ResultActivity.this, NotepadActivity.class);
+						intent.putExtra(NotepadActivity.INTENTKEY_ADD_ENTRY, ee);
+						startActivity(intent);
+						return true;
+					}
+				}));
 				if (isSimeji) {
 					if (!ee.isValid()) {
 						return;

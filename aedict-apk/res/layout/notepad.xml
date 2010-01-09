@@ -15,15 +15,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="wrap_content" android:gravity="center">
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text="@string/notepadHint" />
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:orientation="horizontal">
-		<EditText android:layout_height="wrap_content" android:id="@+id/editNotepadSearch"
-			android:layout_width="wrap_content" android:layout_weight="1"
-			android:inputType="text" android:imeOptions="actionDone"></EditText>
+		<CheckBox android:layout_height="wrap_content" android:id="@+id/notepadExactMatch"
+			android:text="@string/exactMatch" android:layout_width="wrap_content"
+			android:layout_weight="1"></CheckBox>
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/search"
 			android:id="@+id/btnNotepadSearch"></Button>
 	</LinearLayout>
+	<EditText android:layout_height="wrap_content" android:id="@+id/editNotepadSearch"
+		android:layout_width="fill_parent" android:inputType="text" android:imeOptions="actionDone"></EditText>
 	<ListView android:layout_width="fill_parent"
 		android:layout_height="fill_parent" android:id="@android:id/list" />
 </LinearLayout>

@@ -47,6 +47,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 /**
  * Analyzes each kanji in given word.
@@ -103,11 +104,21 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+				final EdictEntry ee = model.get(((AdapterContextMenuInfo) menuInfo).position);
 				menu.add(isShowingRomaji ? R.string.show_kana : R.string.show_romaji).setOnMenuItemClickListener(AndroidUtils.safe(KanjiAnalyzeActivity.this, new MenuItem.OnMenuItemClickListener() {
 
 					public boolean onMenuItemClick(MenuItem item) {
 						isShowingRomaji = !isShowingRomaji;
 						((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
+						return true;
+					}
+				}));
+				menu.add(R.string.addToNotepad).setOnMenuItemClickListener(AndroidUtils.safe(KanjiAnalyzeActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+					public boolean onMenuItemClick(MenuItem item) {
+						final Intent intent = new Intent(KanjiAnalyzeActivity.this, NotepadActivity.class);
+						intent.putExtra(NotepadActivity.INTENTKEY_ADD_ENTRY, ee);
+						startActivity(intent);
 						return true;
 					}
 				}));

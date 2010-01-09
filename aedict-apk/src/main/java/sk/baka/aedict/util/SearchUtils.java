@@ -107,7 +107,7 @@ public final class SearchUtils {
 	 * button.
 	 * 
 	 * @param isExactCheckBox
-	 *            the "IsExact" check box resource id
+	 *            the "IsExact" check box resource id. If null then an exact search will always be performed.
 	 * @param searchEditText
 	 *            the search query edit box
 	 * @param handleSelections
@@ -118,7 +118,7 @@ public final class SearchUtils {
 	 * @param isJapanSearch
 	 *            if true then we are searching for japanese text (in romaji).
 	 */
-	public void registerSearch(final int isExactCheckBox, final int searchEditText, final boolean handleSelections, final int searchButton, final boolean isJapanSearch) {
+	public void registerSearch(final Integer isExactCheckBox, final int searchEditText, final boolean handleSelections, final int searchButton, final boolean isJapanSearch) {
 		final EditText searchEdit = (EditText) activity.findViewById(searchEditText);
 		final Button searchBtn = (Button) activity.findViewById(searchButton);
 		final SearchText handler = new SearchText(isExactCheckBox, searchEditText, handleSelections, isJapanSearch);
@@ -127,12 +127,12 @@ public final class SearchUtils {
 	}
 
 	private class SearchText implements TextView.OnEditorActionListener, View.OnClickListener {
-		private final int isExactCheckBox;
+		private final Integer isExactCheckBox;
 		private final int searchEditText;
 		private final boolean handleSelections;
 		private final boolean isJapanSearch;
 
-		public SearchText(final int isExactCheckBox, final int searchEditText, final boolean handleSelections, final boolean isJapanSearch) {
+		public SearchText(final Integer isExactCheckBox, final int searchEditText, final boolean handleSelections, final boolean isJapanSearch) {
 			this.isExactCheckBox = isExactCheckBox;
 			this.searchEditText = searchEditText;
 			this.handleSelections = handleSelections;
@@ -145,7 +145,7 @@ public final class SearchUtils {
 
 		private void performSearch() {
 			final EditText searchEdit = (EditText) activity.findViewById(searchEditText);
-			final CheckBox exactMatch = (CheckBox) activity.findViewById(isExactCheckBox);
+			final CheckBox exactMatch = isExactCheckBox==null?null:(CheckBox) activity.findViewById(isExactCheckBox);
 			String query = searchEdit.getText().toString();
 			if (handleSelections) {
 				int start = searchEdit.getSelectionStart();
@@ -161,7 +161,7 @@ public final class SearchUtils {
 					}
 				}
 			}
-			final boolean isExact = exactMatch.isChecked();
+			final boolean isExact = exactMatch == null ? true : exactMatch.isChecked();
 			if (isJapanSearch) {
 				searchForJapan(query, isExact);
 			} else {

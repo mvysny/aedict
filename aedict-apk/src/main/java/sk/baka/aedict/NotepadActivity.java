@@ -25,11 +25,13 @@ import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.util.SearchUtils;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogAsyncTask;
 import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -59,6 +61,12 @@ public class NotepadActivity extends ListActivity {
 	 */
 	private boolean isShowingRomaji;
 
+	/**
+	 * Expects {@link EdictEntry} as a value. Adds given entry to the model
+	 * list.
+	 */
+	public static final String INTENTKEY_ADD_ENTRY = "addEntry";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -86,6 +94,32 @@ public class NotepadActivity extends ListActivity {
 				}));
 			}
 		}));
+		new SearchUtils(this).registerSearch(R.id.notepadExactMatch, R.id.editNotepadSearch, false, R.id.btnNotepadSearch, true);
+		processIntent();
+	}
+
+	private void processIntent() {
+		final Intent intent = getIntent();
+		if (intent.hasExtra(INTENTKEY_ADD_ENTRY)) {
+			final EdictEntry e = (EdictEntry) intent.getSerializableExtra(INTENTKEY_ADD_ENTRY);
+			if (modelCache == null) {
+				final Config cfg = AedictApp.loadConfig();
+				if (MiscUtils.isBlank(cfg.notepadItems)) {
+					cfg.notepadItems = e.getJapanese();
+				} else {
+					cfg.notepadItems = cfg.notepadItems + "," + e.getJapanese();
+				}
+				AedictApp.saveConfig(cfg);
+			} else {
+				modelCache.add(e);
+				onModelChanged();
+			}
+		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
 		updateModel();
 	}
 
@@ -97,6 +131,10 @@ public class NotepadActivity extends ListActivity {
 		edit.setText(text + entry.getJapanese());
 	}
 
+	/**
+	 * Persists the model to the {@link Config configuration}. Invoked after
+	 * each change.
+	 */
 	private void onModelChanged() {
 		final ListBuilder b = new ListBuilder(",");
 		for (final EdictEntry entry : modelCache) {
@@ -105,7 +143,10 @@ public class NotepadActivity extends ListActivity {
 		final Config cfg = new Config();
 		cfg.notepadItems = b.toString();
 		AedictApp.saveConfig(cfg);
-		((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
+		if (getListAdapter() != null) {
+			// the adapter may be null if this method is invoked from onCreate() method
+			((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
+		}
 	}
 
 	private void updateModel() {
@@ -156,7 +197,7 @@ public class NotepadActivity extends ListActivity {
 		@Override
 		protected List<EdictEntry> protectedDoInBackground(Void... params) throws Exception {
 			final Config cfg = AedictApp.loadConfig();
-			final String[] items = cfg.notepadItems.split("\\,");
+			final String[] items = MiscUtils.isBlank(cfg.notepadItems) ? new String[0] : cfg.notepadItems.split("\\,");
 			final List<EdictEntry> result = new ArrayList<EdictEntry>(items.length);
 			final LuceneSearch lsEdict = new LuceneSearch(false, AedictApp.getDictionaryLoc());
 			try {
