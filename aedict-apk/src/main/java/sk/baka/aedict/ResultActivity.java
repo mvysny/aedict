@@ -41,6 +41,7 @@ import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.TwoLineListItem;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
@@ -105,6 +106,7 @@ public class ResultActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.searchresult);
 		query = fromIntent().trim();
 		setTitle(AedictApp.format(R.string.searchResultsFor, query.prettyPrintQuery()));
 		if (MiscUtils.isBlank(query.query)) {
@@ -123,6 +125,7 @@ public class ResultActivity extends ListActivity {
 			}
 		}
 		final Config cfg = AedictApp.loadConfig();
+		((TextView) findViewById(R.id.textSelectedDictionary)).setText(AedictApp.format(R.string.searchingInDictionary, cfg.dictionaryName));
 		isShowingRomaji = cfg.useRomaji;
 		setListAdapter(new ArrayAdapter<EdictEntry>(this, android.R.layout.simple_list_item_2, model) {
 
