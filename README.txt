@@ -6,5 +6,7 @@ Releasing:
 
 3. upload the target/checkout/aedict-apk/target/aedict-apk-*-signed.apk to the Android Market
 
-4. Increase the version in AndroidManifest.xml: both android:versionCode and android:versionName
+4. upload the target/checkout/aedict-apk/target/aedict-apk-*-signed.apk to http://appslib.com
+
+5. Increase the version in AndroidManifest.xml: both android:versionCode and android:versionName
 
