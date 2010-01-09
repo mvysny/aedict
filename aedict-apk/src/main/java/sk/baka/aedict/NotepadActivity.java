@@ -92,6 +92,13 @@ public class NotepadActivity extends ListActivity {
 						return true;
 					}
 				}));
+				menu.add(R.string.deleteAll).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
+					public boolean onMenuItemClick(MenuItem item) {
+						modelCache.clear();
+						onModelChanged();
+						return true;
+					}
+				}));
 			}
 		}));
 		new SearchUtils(this).registerSearch(R.id.notepadExactMatch, R.id.editNotepadSearch, false, R.id.btnNotepadSearch, true);
