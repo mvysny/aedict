@@ -21,7 +21,7 @@
 	<groupId>sk.baka.aedict</groupId>
 	<artifactId>aedict</artifactId>
 	<packaging>pom</packaging>
-	<version>0.7-SNAPSHOT</version>
+	<version>0.7</version>
 	<name>Aedict</name>
 	<inceptionYear>2009</inceptionYear>
 	<description>An english-japanese dictionary which uses Jim Breen's edict data. Does not require japanese keyboard.</description>
