@@ -21,6 +21,8 @@ package sk.baka.aedict;
 import android.app.Activity;
 import android.content.Intent;
 import android.test.ActivityUnitTestCase;
+import android.widget.Button;
+import android.widget.TextView;
 
 /**
  * Contains several useful methods which helps activity testing.
@@ -64,5 +66,27 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 			throw new AssertionError("The activity did not requested a start of another activity yet");
 		}
 		assertEquals(activity.getName(), i.getComponent().getClassName());
+	}
+
+	/**
+	 * Sets text of given {@link TextView}.
+	 * 
+	 * @param textViewId
+	 *            the text view ID
+	 * @param text
+	 *            the text to set
+	 */
+	protected void setText(final int textViewId, final String text) {
+		((TextView) getActivity().findViewById(textViewId)).setText(text);
+	}
+
+	/**
+	 * Clicks on given {@link Button}.
+	 * 
+	 * @param buttonId
+	 *            the button id
+	 */
+	protected void click(final int buttonId) {
+		((Button) getActivity().findViewById(buttonId)).performClick();
 	}
 }

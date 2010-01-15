@@ -21,9 +21,6 @@ package sk.baka.aedict;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.RomanizationEnum;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 
 /**
  * Tests the main activity.
@@ -41,8 +38,8 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 	 */
 	public void testSimpleJapanSearch() {
 		startActivity();
-		((EditText) getActivity().findViewById(R.id.jpSearchEdit)).setText("haha");
-		((Button) getActivity().findViewById(R.id.jpSearch)).performClick();
+		setText(R.id.jpSearchEdit, "haha");
+		click(R.id.jpSearch);
 		assertStartedActivity(ResultActivity.class);
 		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
 		assertEquals(RomanizationEnum.Hepburn.toHiragana("haha"), q.query[1]);
@@ -57,14 +54,20 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 	 */
 	public void testSimpleEnglishSearch() {
 		startActivity();
-		((EditText) getActivity().findViewById(R.id.engSearchEdit)).setText("mother");
-		((CheckBox) getActivity().findViewById(R.id.engExactMatch)).performClick();
-		((Button) getActivity().findViewById(R.id.engSearch)).performClick();
+		setText(R.id.engSearchEdit, "mother");
+		click(R.id.engExactMatch);
+		click(R.id.engSearch);
 		assertStartedActivity(ResultActivity.class);
 		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
 		assertEquals("mother", q.query[0]);
 		assertEquals(1, q.query.length);
 		assertFalse(q.isJapanese);
 		assertEquals(MatcherEnum.ExactMatchEng, q.matcher);
+	}
+
+	public void testLaunchAboutActivity() {
+		startActivity();
+		click(R.id.btnAbout);
+		assertStartedActivity(AboutActivity.class);
 	}
 }
