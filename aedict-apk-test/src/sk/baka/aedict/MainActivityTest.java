@@ -21,8 +21,6 @@ package sk.baka.aedict;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.RomanizationEnum;
-import android.content.Intent;
-import android.test.ActivityUnitTestCase;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -32,7 +30,7 @@ import android.widget.EditText;
  * 
  * @author Martin Vysny
  */
-public class MainActivityTest extends ActivityUnitTestCase<MainActivity> {
+public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 
 	public MainActivityTest() {
 		super(MainActivity.class);
@@ -42,9 +40,10 @@ public class MainActivityTest extends ActivityUnitTestCase<MainActivity> {
 	 * Tests that a search request is sent when japanese search is requested.
 	 */
 	public void testSimpleJapanSearch() {
-		startActivity(new Intent(Intent.ACTION_MAIN), null, null);
+		startActivity();
 		((EditText) getActivity().findViewById(R.id.jpSearchEdit)).setText("haha");
 		((Button) getActivity().findViewById(R.id.jpSearch)).performClick();
+		assertStartedActivity(ResultActivity.class);
 		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
 		assertEquals(RomanizationEnum.Hepburn.toHiragana("haha"), q.query[1]);
 		assertEquals(RomanizationEnum.Hepburn.toKatakana("haha"), q.query[0]);
@@ -57,10 +56,11 @@ public class MainActivityTest extends ActivityUnitTestCase<MainActivity> {
 	 * Tests that a search request is sent when english search is requested.
 	 */
 	public void testSimpleEnglishSearch() {
-		startActivity(new Intent(Intent.ACTION_MAIN), null, null);
+		startActivity();
 		((EditText) getActivity().findViewById(R.id.engSearchEdit)).setText("mother");
 		((CheckBox) getActivity().findViewById(R.id.engExactMatch)).performClick();
 		((Button) getActivity().findViewById(R.id.engSearch)).performClick();
+		assertStartedActivity(ResultActivity.class);
 		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
 		assertEquals("mother", q.query[0]);
 		assertEquals(1, q.query.length);
