@@ -49,9 +49,10 @@ public class AedictApp extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		if (instance != null) {
-			throw new IllegalStateException("Not a singleton");
-		}
+//		tests will create multiple instances of this class
+//		if (instance != null) {
+//			throw new IllegalStateException("Not a singleton");
+//		}
 		instance = this;
 		DialogUtils.resError = R.string.error;
 		apply(loadConfig());
