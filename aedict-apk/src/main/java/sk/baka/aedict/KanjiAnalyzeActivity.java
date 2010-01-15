@@ -98,6 +98,10 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		setTitle(AedictApp.format(R.string.kanjiAnalysisOf, word != null ? word : EdictEntry.getJapaneseWord(model)));
 		if (model == null) {
 			recomputeModel();
+		} else {
+			// if the activity received a list of EdictEntry instead of a word, the model was not set to the activity and the activity shown an empty list
+			// fixes http://code.google.com/p/aedict/issues/detail?id=29
+			setListAdapter(newAdapter());
 		}
 		// check that the KANJIDIC dictionary file is available
 		new SearchUtils(this).checkKanjiDic();
