@@ -50,6 +50,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		final EdictEntry entry = (EdictEntry) lv.getItemAtPosition(0);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
+		assertEquals("はは", entry.reading);
 	}
 
 	public void testSimpleJapaneseSearch() {
@@ -65,5 +66,23 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		final EdictEntry entry = (EdictEntry) lv.getItemAtPosition(0);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
+	}
+
+	public void testSwitchToRomaji() {
+		testSimpleEnglishSearch();
+		final ListView lv = getActivity().getListView();
+		contextMenu(lv, 0, 0);
+		assertTrue(getActivity().isShowingRomaji());
+	}
+
+	public void testShowEntryDetail() {
+		testSimpleEnglishSearch();
+		final ListView lv = getActivity().getListView();
+		lv.performItemClick(null, 0, 0);
+		assertStartedActivity(EntryDetailActivity.class);
+		final EdictEntry entry = (EdictEntry) getStartedActivityIntent().getSerializableExtra(EntryDetailActivity.INTENTKEY_ENTRY);
+		assertEquals("(n) (hum) mother/(P)", entry.english);
+		assertEquals("母", entry.getJapanese());
+		assertEquals("はは", entry.reading);
 	}
 }

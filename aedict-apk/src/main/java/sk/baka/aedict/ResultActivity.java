@@ -64,6 +64,11 @@ public class ResultActivity extends ListActivity {
 	 * true if romaji is shown instead of katakana/hiragana.
 	 */
 	private boolean isShowingRomaji;
+
+	boolean isShowingRomaji() {
+		return isShowingRomaji;
+	}
+
 	/**
 	 * The query.
 	 */
@@ -143,8 +148,10 @@ public class ResultActivity extends ListActivity {
 		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-				final EdictEntry ee = model.get(((AdapterContextMenuInfo) menuInfo).position);
-				menu.add(isShowingRomaji ? R.string.show_kana : R.string.show_romaji).setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
+				final int position = ((AdapterContextMenuInfo) menuInfo).position;
+				final EdictEntry ee = model.get(position);
+				final MenuItem miShowRomaji = menu.add(Menu.NONE, 0, 0, isShowingRomaji ? R.string.show_kana : R.string.show_romaji);
+				miShowRomaji.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
 
 					public boolean onMenuItemClick(MenuItem item) {
 						isShowingRomaji = !isShowingRomaji;
@@ -153,7 +160,8 @@ public class ResultActivity extends ListActivity {
 					}
 
 				}));
-				menu.add(R.string.addToNotepad).setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
+				final MenuItem miAddToNotepad = menu.add(Menu.NONE, 1, 1, R.string.addToNotepad);
+				miAddToNotepad.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
 
 					public boolean onMenuItemClick(MenuItem item) {
 						final Intent intent = new Intent(ResultActivity.this, NotepadActivity.class);
@@ -167,10 +175,10 @@ public class ResultActivity extends ListActivity {
 						return;
 					}
 					if (ee.kanji != null) {
-						menu.add(AedictApp.format(R.string.return_, ee.kanji)).setOnMenuItemClickListener(new SimejiReturn(ee.kanji));
+						menu.add(Menu.NONE, 2, 2, AedictApp.format(R.string.return_, ee.kanji)).setOnMenuItemClickListener(new SimejiReturn(ee.kanji));
 					}
-					menu.add(AedictApp.format(R.string.return_, ee.reading)).setOnMenuItemClickListener(new SimejiReturn(ee.reading));
-					menu.add(AedictApp.format(R.string.return_, ee.english)).setOnMenuItemClickListener(new SimejiReturn(ee.english));
+					menu.add(Menu.NONE, 3, 3, AedictApp.format(R.string.return_, ee.reading)).setOnMenuItemClickListener(new SimejiReturn(ee.reading));
+					menu.add(Menu.NONE, 4, 4, AedictApp.format(R.string.return_, ee.english)).setOnMenuItemClickListener(new SimejiReturn(ee.english));
 				}
 			}
 		}));
