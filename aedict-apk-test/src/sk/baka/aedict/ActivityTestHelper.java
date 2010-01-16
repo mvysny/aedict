@@ -195,4 +195,25 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 			return null;
 		}
 	}
+
+	/**
+	 * Returns intent set via invocation to the
+	 * {@link Activity#setResult(int, Intent)} call. Fails if no such intent was
+	 * set.
+	 * 
+	 * @return intent, never null.
+	 */
+	protected Intent getResultIntent() {
+		try {
+			final Field f = Activity.class.getDeclaredField("mResultData");
+			f.setAccessible(true);
+			final Intent result = (Intent) f.get(getActivity());
+			if (result == null) {
+				throw new AssertionError("result intent was not set via the setResult() call");
+			}
+			return result;
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
 }

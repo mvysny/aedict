@@ -22,6 +22,7 @@ import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.RomanizationEnum;
+import android.app.Activity;
 import android.content.Intent;
 import android.widget.ListView;
 
@@ -84,5 +85,54 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
 		assertEquals("はは", entry.reading);
+	}
+
+	public void testAddToNotepad() {
+		testSimpleEnglishSearch();
+		final ListView lv = getActivity().getListView();
+		contextMenu(lv, 1, 0);
+		assertStartedActivity(NotepadActivity.class);
+		final EdictEntry entry = (EdictEntry) getStartedActivityIntent().getSerializableExtra(NotepadActivity.INTENTKEY_ADD_ENTRY);
+		assertEquals("(n) (hum) mother/(P)", entry.english);
+		assertEquals("母", entry.getJapanese());
+		assertEquals("はは", entry.reading);
+	}
+
+	private void initSimejiSearchEnv() {
+		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
+		i.setAction(ResultActivity.SIMEJI_ACTION_INTERCEPT);
+		i.putExtra(ResultActivity.SIMEJI_INTENTKEY_REPLACE, "mother");
+		startActivity(i);
+		final ListView lv = getActivity().getListView();
+		final EdictEntry entry = (EdictEntry) lv.getItemAtPosition(0);
+		assertEquals("(n) (hum) mother/(P)", entry.english);
+		assertEquals("母", entry.getJapanese());
+		assertEquals("はは", entry.reading);
+	}
+
+	public void testSimejiSearchKanji() {
+		initSimejiSearchEnv();
+		final ListView lv = getActivity().getListView();
+		contextMenu(lv, 2, 0);
+		assertSimejiReturn("母");
+	}
+
+	public void testSimejiSearchReading() {
+		initSimejiSearchEnv();
+		final ListView lv = getActivity().getListView();
+		contextMenu(lv, 3, 0);
+		assertSimejiReturn("はは");
+	}
+
+	public void testSimejiSearchEnglish() {
+		initSimejiSearchEnv();
+		final ListView lv = getActivity().getListView();
+		contextMenu(lv, 4, 0);
+		assertSimejiReturn("(n) (hum) mother/(P)");
+	}
+
+	private void assertSimejiReturn(final String expected) {
+		assertEquals(Activity.RESULT_OK,getFinishedActivityRequest());
+		assertEquals(expected, getResultIntent().getStringExtra(ResultActivity.SIMEJI_INTENTKEY_REPLACE));
 	}
 }

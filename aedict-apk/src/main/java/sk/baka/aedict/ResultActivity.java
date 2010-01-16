@@ -73,12 +73,15 @@ public class ResultActivity extends ListActivity {
 	 * The query.
 	 */
 	private SearchQuery query;
-	private static final String SIMEJI_ACTION_INTERCEPT = "com.adamrocker.android.simeji.ACTION_INTERCEPT";
+	/**
+	 * Simeji will send this action when requesting word translation.
+	 */
+	public static final String SIMEJI_ACTION_INTERCEPT = "com.adamrocker.android.simeji.ACTION_INTERCEPT";
 	/**
 	 * Simeji expects a string stored under this key. This is the replacement
 	 * string.
 	 */
-	private static final String SIMEJI_INTENTKEY_REPLACE = "replace_key";
+	public static final String SIMEJI_INTENTKEY_REPLACE = "replace_key";
 	/**
 	 * boolean - if true then we were launched from Simeji.
 	 */
