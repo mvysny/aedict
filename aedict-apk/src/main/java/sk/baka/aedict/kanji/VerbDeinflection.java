@@ -30,7 +30,7 @@ import java.util.Set;
  */
 public final class VerbDeinflection {
 	private static class IrregularDeinflector extends EndsWithDeinflector {
-		public IrregularDeinflector(final String[] inflected, final String base) {
+		public IrregularDeinflector(final String[] inflected, final String... base) {
 			super(inflected, true, true, base);
 		}
 	}
@@ -170,11 +170,19 @@ public final class VerbDeinflection {
 		public abstract boolean stopIfMatch();
 	}
 
+	private static AbstractDeinflector basicSuffix(final String endsWith, final String... replaceBy) {
+		return new EndsWithDeinflector(new String[] { endsWith }, false, true, replaceBy);
+	}
+
+	private static AbstractDeinflector basicSuffix(final String[] endsWith, final String... replaceBy) {
+		return new EndsWithDeinflector(endsWith, false, true, replaceBy);
+	}
+
 	private final static List<? extends AbstractDeinflector> DEINFLECTORS;
 	static {
 		final List<AbstractDeinflector> d = new ArrayList<AbstractDeinflector>();
-		d.add(new IrregularDeinflector(new String[] { "dewaarimasen", "dehaarimasen", "de wa arimasen", "de ha arimasen","ja arimasen","jaarimasen" }, "desu"));
-		d.add(new IrregularDeinflector(new String[] { "dewaarimasendeshita", "dehaarimasendeshita", "de wa arimasen deshita", "de ha arimasen deshita","ja arimasen deshita","jaarimasendeshita" }, "desu"));
+		d.add(new IrregularDeinflector(new String[] { "dewaarimasen", "dehaarimasen", "de wa arimasen", "de ha arimasen", "ja arimasen", "jaarimasen" }, "desu"));
+		d.add(new IrregularDeinflector(new String[] { "dewaarimasendeshita", "dehaarimasendeshita", "de wa arimasen deshita", "de ha arimasen deshita", "ja arimasen deshita", "jaarimasendeshita" }, "desu"));
 		// the -masu deinflector
 		d.add(new EndsWithDeinflector(new String[] { "masen", "mashita", "masendeshita", "masen deshita" }, "masu"));
 		// the -nakatta deinflector
@@ -186,17 +194,23 @@ public final class VerbDeinflection {
 		d.add(new IrregularDeinflector(new String[] { "da", "dewanai", "janai", "datta", "deshita", "de", "dehanai", "de ha nai", "dewanai", "de wa nai", "dehaaru", "de ha aru", "de wa aru", "dewaaru" }, "desu"));
 		d.add(new IrregularDeinflector(new String[] { "itta", "itte", "ikimasu" }, "iku"));
 		d.add(new IrregularDeinflector(new String[] { "ikareru", "ikarenai", "ikareta" }, "ikareru"));
-		d.add(new IrregularDeinflector(new String[] { "nai", "atta", "nakatta", "atte", "arimasu" }, "aru"));
+		d.add(new IrregularDeinflector(new String[] { "nai", "nakatta", "arimasu" }, "aru"));
+		d.add(new IrregularDeinflector(new String[] { "atte", "atta" }, "aru", "au"));
 		// regular inflections
-		d.add(new EndsWithDeinflector(new String[] { "rarenai", "rareta", "rareru" }, false, true, "rareru"));
-		d.add(new EndsWithDeinflector("anai", "u"));
-		d.add(new EndsWithDeinflector("itai", "u"));
+		d.add(basicSuffix(new String[] { "arenai", "areta", "areru" }, "areru"));
+		d.add(basicSuffix("wanai", "u"));
+		d.add(basicSuffix("anai", "u"));
+		// further deinflect -eru
+		d.add(new EndsWithDeinflector("enai", "eru"));
+		// e.g. minai -> miru
+		d.add(basicSuffix("inai", "iru"));
+		d.add(basicSuffix("itai", "u"));
+		// further deinflect -eru
 		d.add(new EndsWithDeinflector("etai", "eru"));
-		d.add(new EndsWithDeinflector("eba", "u"));
+		d.add(basicSuffix("eba", "u"));
 		d.add(new EndsWithDeinflector("emasu", "u", "eru"));
-		d.add(new EndsWithDeinflector("imasu", "u", "iru"));
-		d.add(new EndsWithDeinflector(new String[] { "imasu" }, true, true, "iru"));
-		d.add(new EndsWithDeinflector(new String[] { "outosuru", "ou to suru" }, "u"));
+		d.add(new EndsWithDeinflector("imasu", "u","iru"));
+		d.add(basicSuffix(new String[] { "outosuru", "ou to suru" }, "u"));
 		// this is dangerous - it will deinflect all ichidan verbs. however,
 		// this rule is also required, to correctly deinflect e.g.
 		// aetai. list as a last rule. Make the rule produce the old verb and
@@ -204,13 +218,13 @@ public final class VerbDeinflection {
 		d.add(new EruDeinflector());
 		// and finally, the -ta and -te deinflectors
 		// -ite may be a godan -ku but also ichidan -iru verb
-		d.add(new EndsWithDeinflector(new String[] { "ita", "ite" }, "ku", "iru"));
+		d.add(basicSuffix(new String[] { "ita", "ite" }, "ku", "iru"));
 		// this is purely for ichidan -eru verb
-		d.add(new EndsWithDeinflector(new String[] { "eta", "ete" }, "eru"));
-		d.add(new EndsWithDeinflector(new String[] { "ida", "ide" }, "gu"));
-		d.add(new EndsWithDeinflector(new String[] { "shita", "shite" }, "su"));
-		d.add(new EndsWithDeinflector(new String[] { "tta", "tte" }, "tsu", "u", "ru"));
-		d.add(new EndsWithDeinflector(new String[] { "nda", "nde" }, "nu", "bu", "mu"));
+		d.add(basicSuffix(new String[] { "eta", "ete" }, "eru"));
+		d.add(basicSuffix(new String[] { "ida", "ide" }, "gu"));
+		d.add(basicSuffix(new String[] { "shita", "shite" }, "su"));
+		d.add(basicSuffix(new String[] { "tta", "tte" }, "tsu", "u", "ru"));
+		d.add(basicSuffix(new String[] { "nda", "nde" }, "nu", "bu", "mu"));
 		DEINFLECTORS = d;
 	}
 
