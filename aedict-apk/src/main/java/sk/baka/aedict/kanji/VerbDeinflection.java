@@ -19,17 +19,27 @@
 package sk.baka.aedict.kanji;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Performs a simple verb deinflection.
  * 
  * @author Martin Vysny
  */
-public class VerbDeinflection {
+public final class VerbDeinflection {
+	private static class IrregularDeinflector extends EndsWithDeinflector {
+		public IrregularDeinflector(final String[] inflected, final String base) {
+			super(inflected, true, true, base);
+		}
+	}
+
 	private static class EndsWithDeinflector extends AbstractDeinflector {
 		private final String[] endsWith;
 		private final String[] replaceBy;
+		private final boolean isAllowEntireWordMatch;
+		private final boolean isStopIfMatch;
 
 		/**
 		 * Deinflects a verb if it ends with one of the following strings.
@@ -40,10 +50,31 @@ public class VerbDeinflection {
 		 * @param replaceBy
 		 *            the ending is replaced by this string.
 		 */
-		public EndsWithDeinflector(final String[] endsWith,
-				final String... replaceBy) {
+		public EndsWithDeinflector(final String[] endsWith, final String... replaceBy) {
+			this(endsWith, false, false, replaceBy);
+		}
+
+		/**
+		 * Deinflects a verb if it ends with one of the following strings.
+		 * 
+		 * @param endsWith
+		 *            a non-empty non-null list of possible endings, lower-case
+		 *            trimmed romaji.
+		 * @param isAllowEntireWordMatch
+		 *            if true then an entire word must match, if false then only
+		 *            a suffix (not an entire word) must match. This is often
+		 *            not wanted, e.g. the itai suffix would match the itai
+		 *            word.
+		 * @param isStopIfMatch
+		 *            defines the return value of {@link #stopIfMatch()}.
+		 * @param replaceBy
+		 *            the ending is replaced by this string.
+		 */
+		public EndsWithDeinflector(final String[] endsWith, final boolean isAllowEntireWordMatch, final boolean isStopIfMatch, final String... replaceBy) {
 			this.endsWith = endsWith;
 			this.replaceBy = replaceBy;
+			this.isAllowEntireWordMatch = isAllowEntireWordMatch;
+			this.isStopIfMatch = isStopIfMatch;
 		}
 
 		/**
@@ -55,27 +86,64 @@ public class VerbDeinflection {
 		 * @param replaceBy
 		 *            the ending is replaced by this string.
 		 */
-		public EndsWithDeinflector(final String endsWith,
-				final String... replaceBy) {
+		public EndsWithDeinflector(final String endsWith, final String... replaceBy) {
 			this(new String[] { endsWith }, replaceBy);
 		}
 
 		@Override
-		public String[] deinflect(String romaji) {
+		public Set<String> deinflect(String romaji) {
+			final String ending = isMatch(romaji);
+			if (ending == null) {
+				// nothing matched
+				return null;
+			}
+			final Set<String> result = new HashSet<String>(replaceBy.length);
+			final String verbPart = romaji.substring(0, romaji.length() - ending.length());
+			for (final String rb : replaceBy) {
+				result.add(verbPart + rb);
+			}
+			return result;
+		}
+
+		private String isMatch(final String romaji) {
 			for (String ending : endsWith) {
-				if (romaji.endsWith(ending) && !romaji.equals(ending)) {
-					final String[] result = new String[replaceBy.length];
-					final String verbPart = romaji.substring(0, romaji.length()
-							- ending.length());
-					int i = 0;
-					for (final String rb : replaceBy) {
-						result[i++] = verbPart + rb;
+				if (isAllowEntireWordMatch && romaji.equals(ending)) {
+					return ending;
+				}
+				if (!isAllowEntireWordMatch) {
+					if (romaji.endsWith(ending) && !romaji.equals(ending)) {
+						return ending;
 					}
-					return result;
 				}
 			}
-			// nothing matched, return null
 			return null;
+		}
+
+		@Override
+		public boolean stopIfMatch() {
+			return isStopIfMatch;
+		}
+	}
+
+	private static class EruDeinflector extends AbstractDeinflector {
+		// this rule is also required, to correctly deinflect e.g.
+		// aetai. list as a last rule. Make the rule produce the old verb and
+		// also the deinflected one.
+		private final AbstractDeinflector eruDeinflector = new EndsWithDeinflector("eru", "eru", "u");
+
+		@Override
+		public Set<String> deinflect(String romaji) {
+			// do not deinflect -rareru
+			if (romaji.endsWith("rareru")) {
+				return null;
+			}
+			return eruDeinflector.deinflect(romaji);
+		}
+
+		@Override
+		public boolean stopIfMatch() {
+			// if the -eru is deinflected, there is nothing more to match
+			return true;
 		}
 	}
 
@@ -90,26 +158,94 @@ public class VerbDeinflection {
 		 *         deinflect the verb, null or an empty array should be
 		 *         returned.
 		 */
-		public abstract String[] deinflect(String romaji);
+		public abstract Set<String> deinflect(String romaji);
+
+		/**
+		 * If true then there is nothing more to deinflect and the process can
+		 * be safely stopped.
+		 * 
+		 * @return true if there is nothing more to deinflect, false if the
+		 *         deinflection should continue.
+		 */
+		public abstract boolean stopIfMatch();
 	}
 
 	private final static List<? extends AbstractDeinflector> DEINFLECTORS;
 	static {
 		final List<AbstractDeinflector> d = new ArrayList<AbstractDeinflector>();
+		d.add(new IrregularDeinflector(new String[] { "dewaarimasen", "dehaarimasen", "de wa arimasen", "de ha arimasen","ja arimasen","jaarimasen" }, "desu"));
+		d.add(new IrregularDeinflector(new String[] { "dewaarimasendeshita", "dehaarimasendeshita", "de wa arimasen deshita", "de ha arimasen deshita","ja arimasen deshita","jaarimasendeshita" }, "desu"));
 		// the -masu deinflector
-		d.add(new EndsWithDeinflector(new String[] { "masen", "mashita",
-				"masendeshita", "masen deshita" }, "masu"));
+		d.add(new EndsWithDeinflector(new String[] { "masen", "mashita", "masendeshita", "masen deshita" }, "masu"));
 		// the -nakatta deinflector
 		d.add(new EndsWithDeinflector("nakatta", "nai"));
+		// irregulars deinflector
+		d.add(new IrregularDeinflector(new String[] { "shinai", "shita", "shite", "shimasu", "shiyou" }, "suru"));
+		d.add(new IrregularDeinflector(new String[] { "sareru", "sarenai", "sareta" }, "sareru"));
+		d.add(new IrregularDeinflector(new String[] { "konai", "kita", "kite", "kimasu", "koyou" }, "kuru"));
+		d.add(new IrregularDeinflector(new String[] { "da", "dewanai", "janai", "datta", "deshita", "de", "dehanai", "de ha nai", "dewanai", "de wa nai", "dehaaru", "de ha aru", "de wa aru", "dewaaru" }, "desu"));
+		d.add(new IrregularDeinflector(new String[] { "itta", "itte", "ikimasu" }, "iku"));
+		d.add(new IrregularDeinflector(new String[] { "ikareru", "ikarenai", "ikareta" }, "ikareru"));
+		d.add(new IrregularDeinflector(new String[] { "nai", "atta", "nakatta", "atte", "arimasu" }, "aru"));
+		// regular inflections
+		d.add(new EndsWithDeinflector(new String[] { "rarenai", "rareta", "rareru" }, false, true, "rareru"));
 		d.add(new EndsWithDeinflector("anai", "u"));
 		d.add(new EndsWithDeinflector("itai", "u"));
 		d.add(new EndsWithDeinflector("etai", "eru"));
 		d.add(new EndsWithDeinflector("eba", "u"));
-		d.add(new EndsWithDeinflector("emasu", "u"));
-		d.add(new EndsWithDeinflector(new String[]{"outosuru","ou to suru"}, "u"));
-		// this is dangerous - it will deinflect all ichidan verbs. however, this rule is also required, to correctly deinflect e.g.
-		// aetai. list as a last rule. Make the rule produce the old verb and also the deinflected one.
-		d.add(new EndsWithDeinflector("eru", "eru","u"));
+		d.add(new EndsWithDeinflector("emasu", "u", "eru"));
+		d.add(new EndsWithDeinflector("imasu", "u", "iru"));
+		d.add(new EndsWithDeinflector(new String[] { "imasu" }, true, true, "iru"));
+		d.add(new EndsWithDeinflector(new String[] { "outosuru", "ou to suru" }, "u"));
+		// this is dangerous - it will deinflect all ichidan verbs. however,
+		// this rule is also required, to correctly deinflect e.g.
+		// aetai. list as a last rule. Make the rule produce the old verb and
+		// also the deinflected one.
+		d.add(new EruDeinflector());
+		// and finally, the -ta and -te deinflectors
+		// -ite may be a godan -ku but also ichidan -iru verb
+		d.add(new EndsWithDeinflector(new String[] { "ita", "ite" }, "ku", "iru"));
+		// this is purely for ichidan -eru verb
+		d.add(new EndsWithDeinflector(new String[] { "eta", "ete" }, "eru"));
+		d.add(new EndsWithDeinflector(new String[] { "ida", "ide" }, "gu"));
+		d.add(new EndsWithDeinflector(new String[] { "shita", "shite" }, "su"));
+		d.add(new EndsWithDeinflector(new String[] { "tta", "tte" }, "tsu", "u", "ru"));
+		d.add(new EndsWithDeinflector(new String[] { "nda", "nde" }, "nu", "bu", "mu"));
 		DEINFLECTORS = d;
+	}
+
+	/**
+	 * Attempts to deinflect given verb.
+	 * 
+	 * @param japanese
+	 * @return
+	 */
+	public static Set<String> deinflect(final String japanese) {
+		Set<String> result = new HashSet<String>();
+		Set<String> finalDeinflect = new HashSet<String>();
+		result.add(RomanizationEnum.Hepburn.toRomaji(japanese).trim());
+		for (final AbstractDeinflector deinflector : DEINFLECTORS) {
+			final Set<String> newResult = new HashSet<String>(result);
+			for (final String romaji : result) {
+				final Set<String> deinflected = deinflector.deinflect(romaji);
+				if (deinflected != null && !deinflected.isEmpty()) {
+					// successfully deinflected. remove the old verb and add the
+					// deinflected one.
+					newResult.remove(romaji);
+					if (deinflector.stopIfMatch()) {
+						finalDeinflect.addAll(deinflected);
+					} else {
+						newResult.addAll(deinflected);
+					}
+				}
+			}
+			result = newResult;
+		}
+		result.addAll(finalDeinflect);
+		return result;
+	}
+
+	private VerbDeinflection() {
+		throw new AssertionError();
 	}
 }
