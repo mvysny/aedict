@@ -181,17 +181,17 @@ public final class VerbDeinflection {
 	private final static List<? extends AbstractDeinflector> DEINFLECTORS;
 	static {
 		final List<AbstractDeinflector> d = new ArrayList<AbstractDeinflector>();
-		d.add(new IrregularDeinflector(new String[] { "dewaarimasen", "dehaarimasen", "de wa arimasen", "de ha arimasen", "ja arimasen", "jaarimasen" }, "desu"));
-		d.add(new IrregularDeinflector(new String[] { "dewaarimasendeshita", "dehaarimasendeshita", "de wa arimasen deshita", "de ha arimasen deshita", "ja arimasen deshita", "jaarimasendeshita" }, "desu"));
+		d.add(new IrregularDeinflector(new String[] { "dewaarimasen", "dehaarimasen", "de wa arimasen", "de ha arimasen", "zya arimasen", "zyaarimasen" }, "desu"));
+		d.add(new IrregularDeinflector(new String[] { "dewaarimasendesita", "dehaarimasendesita", "de wa arimasen desita", "de ha arimasen desita", "zya arimasen desita", "zyaarimasendesita" }, "desu"));
 		// the -masu deinflector
-		d.add(new EndsWithDeinflector(new String[] { "masen", "mashita", "masendeshita", "masen deshita" }, "masu"));
+		d.add(new EndsWithDeinflector(new String[] { "masen", "masita", "masendesita", "masen desita" }, "masu"));
 		// the -nakatta deinflector
 		d.add(new EndsWithDeinflector("nakatta", "nai"));
 		// irregulars deinflector
-		d.add(new IrregularDeinflector(new String[] { "shinai", "shita", "shite", "shimasu", "shiyou" }, "suru"));
+		d.add(new IrregularDeinflector(new String[] { "sinai", "sita", "site", "simasu", "siyou" }, "suru"));
 		d.add(new IrregularDeinflector(new String[] { "sareru", "sarenai", "sareta" }, "sareru"));
 		d.add(new IrregularDeinflector(new String[] { "konai", "kita", "kite", "kimasu", "koyou" }, "kuru"));
-		d.add(new IrregularDeinflector(new String[] { "da", "dewanai", "janai", "datta", "deshita", "de", "dehanai", "de ha nai", "dewanai", "de wa nai", "dehaaru", "de ha aru", "de wa aru", "dewaaru" }, "desu"));
+		d.add(new IrregularDeinflector(new String[] { "da", "dewanai", "zyanai", "datta", "desita", "de", "dehanai", "de ha nai", "dewanai", "de wa nai", "dehaaru", "de ha aru", "de wa aru", "dewaaru" }, "desu"));
 		d.add(new IrregularDeinflector(new String[] { "itta", "itte", "ikimasu" }, "iku"));
 		d.add(new IrregularDeinflector(new String[] { "ikareru", "ikarenai", "ikareta" }, "ikareru"));
 		d.add(new IrregularDeinflector(new String[] { "nai", "nakatta", "arimasu" }, "aru"));
@@ -209,7 +209,7 @@ public final class VerbDeinflection {
 		d.add(new EndsWithDeinflector("etai", "eru"));
 		d.add(basicSuffix("eba", "u"));
 		d.add(new EndsWithDeinflector("emasu", "u", "eru"));
-		d.add(new EndsWithDeinflector("imasu", "u","iru"));
+		d.add(new EndsWithDeinflector("imasu", "u", "iru"));
 		d.add(basicSuffix(new String[] { "outosuru", "ou to suru" }, "u"));
 		// this is dangerous - it will deinflect all ichidan verbs. however,
 		// this rule is also required, to correctly deinflect e.g.
@@ -217,13 +217,13 @@ public final class VerbDeinflection {
 		// also the deinflected one.
 		d.add(new EruDeinflector());
 		// and finally, the -ta and -te deinflectors
+		d.add(basicSuffix(new String[] { "sita", "site" }, "su"));
 		// -ite may be a godan -ku but also ichidan -iru verb
 		d.add(basicSuffix(new String[] { "ita", "ite" }, "ku", "iru"));
 		// this is purely for ichidan -eru verb
 		d.add(basicSuffix(new String[] { "eta", "ete" }, "eru"));
 		d.add(basicSuffix(new String[] { "ida", "ide" }, "gu"));
-		d.add(basicSuffix(new String[] { "shita", "shite" }, "su"));
-		d.add(basicSuffix(new String[] { "tta", "tte" }, "tsu", "u", "ru"));
+		d.add(basicSuffix(new String[] { "tta", "tte" }, "tu", "u", "ru"));
 		d.add(basicSuffix(new String[] { "nda", "nde" }, "nu", "bu", "mu"));
 		DEINFLECTORS = d;
 	}
@@ -232,12 +232,15 @@ public final class VerbDeinflection {
 	 * Attempts to deinflect given verb.
 	 * 
 	 * @param japanese
-	 * @return
+	 *            {@link RomanizationEnum#NihonShiki} romaji or hiragana.
+	 * @return deinflected verb(s) in {@link RomanizationEnum#NihonShiki}
+	 *         romanization. If the expression cannot be deinflected the
+	 *         expression is returned.
 	 */
 	public static Set<String> deinflect(final String japanese) {
 		Set<String> result = new HashSet<String>();
 		Set<String> finalDeinflect = new HashSet<String>();
-		result.add(RomanizationEnum.Hepburn.toRomaji(japanese).trim());
+		result.add(RomanizationEnum.NihonShiki.toRomaji(japanese).trim());
 		for (final AbstractDeinflector deinflector : DEINFLECTORS) {
 			final Set<String> newResult = new HashSet<String>(result);
 			for (final String romaji : result) {

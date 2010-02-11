@@ -89,6 +89,32 @@ public class VerbDeinflectionTest {
 	}
 
 	@Test
+	public void testDeinflectIsogu() {
+		assertDeinflected("isogu", "isoida", "isoide", "isogu", "isoganai", "isoganakatta");
+		assertDeinflected(Arrays.asList("isogu", "isogiru"), "isogimasu", "isogimasen", "isogimashita", "isogimasen deshita");
+	}
+
+	@Test
+	public void testDeinflectKasu() {
+		assertDeinflected("kasu", "kashita", "kashite", "kasu", "kasanai", "kasanakatta");
+		assertDeinflected(Arrays.asList("kasu", "kasiru"), "kashimasu", "kashimasen", "kashimashita", "kashimasen deshita");
+	}
+
+	@Test
+	public void testDeinflectMatsu() {
+		assertDeinflected(Arrays.asList("matu", "maru", "mau"), "matta", "matte");
+		assertDeinflected("matu", "matsu", "matanai", "matanakatta");
+		assertDeinflected(Arrays.asList("matu", "matiru"), "machimasu", "machimasen", "machimashita", "machimasen deshita");
+	}
+
+	@Test
+	public void testDeinflectShinu() {
+		assertDeinflected(Arrays.asList("sinu", "simu", "sibu"), "しんだ", "しんで");
+		assertDeinflected("sinu", "しぬ", "しなない", "しななかった");
+		assertDeinflected(Arrays.asList("sinu", "siniru"), "しにます", "しにません", "しにました", "しにませんでした");
+	}
+
+	@Test
 	public void testDeinflectMiru() {
 		// a bit weird to deinflect taberu to tabu, however we have to be able
 		// to also deinflect aeru to au
@@ -101,7 +127,7 @@ public class VerbDeinflectionTest {
 	public void testDeinflectKau() {
 		assertDeinflected("kau", "かう", "かわない", "かわなかった");
 		assertDeinflected(Arrays.asList("kau", "kairu"), "かいます", "かいません", "かいました", "かいませんでした");
-		assertDeinflected(Arrays.asList("kau", "katsu", "karu"), "かった", "かって");
+		assertDeinflected(Arrays.asList("kau", "katu", "karu"), "かった", "かって");
 		assertDeinflected("kawareru", "かわれる", "かわれない", "かわれた");
 	}
 
@@ -114,13 +140,41 @@ public class VerbDeinflectionTest {
 		assertDeinflected(Arrays.asList("au", "aeru"), "aenai");
 	}
 
+	@Test
+	public void testDeinflectAsobu() {
+		assertDeinflected(Arrays.asList("asobu", "asobiru"), "あそびます", "あそびませんでした");
+		assertDeinflected(Arrays.asList("asobu", "asonu", "asomu"), "あそんだ", "あそんで");
+		assertDeinflected("asobu", "あそぶ", "あそばない", "あそばなかった");
+	}
+
+	@Test
+	public void testDeinflectYomu() {
+		assertDeinflected(Arrays.asList("yomu", "yomiru"), "yomimasen deshita");
+		assertDeinflected("yomu", "yomu", "yomanai", "yomanakatta");
+		assertDeinflected(Arrays.asList("yomu", "yonu", "yobu"), "yonda", "yonde");
+	}
+
+	@Test
+	public void testDeinflectKaeru() {
+		assertDeinflected(Arrays.asList("kaeru", "kaeriru", "kau"), "kaerimasen deshita");
+		assertDeinflected(Arrays.asList("kaeru", "kau"), "kaeru");
+		assertDeinflected(Arrays.asList("kaeru"), "kaeranai", "kaeranakatta");
+		assertDeinflected(Arrays.asList("kaeru", "kaeu", "kaetu"), "kaetta", "kaette");
+	}
+
 	private void assertDeinflected(final String expected, final String... deinflects) {
 		assertDeinflected(Arrays.asList(expected), deinflects);
 	}
 
 	private void assertDeinflected(final List<String> expected, final String... deinflects) {
 		for (final String deinflect : deinflects) {
-			assertArrayEqualsNoOrder(VerbDeinflection.deinflect(deinflect), expected, "Deinflecting " + deinflect);
+			String deinflectNihonShiki = deinflect;
+			if (!KanjiUtils.isHiragana(deinflectNihonShiki.charAt(0))) {
+				// convert to nihon-shiki
+				deinflectNihonShiki = RomanizationEnum.Hepburn.toHiragana(deinflectNihonShiki);
+				deinflectNihonShiki = RomanizationEnum.NihonShiki.toRomaji(deinflectNihonShiki);
+			}
+			assertArrayEqualsNoOrder(VerbDeinflection.deinflect(deinflectNihonShiki), expected, "Deinflecting " + deinflectNihonShiki);
 		}
 	}
 }
