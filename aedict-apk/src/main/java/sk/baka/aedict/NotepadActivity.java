@@ -78,6 +78,16 @@ public class NotepadActivity extends ListActivity {
 		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, final ContextMenuInfo menuInfo) {
+				final int pos = ((AdapterContextMenuInfo) menuInfo).position;
+				menu.add(R.string.analyze).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+					public boolean onMenuItemClick(MenuItem item) {
+						final Intent intent = new Intent(NotepadActivity.this, KanjiAnalyzeActivity.class);
+						intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, modelCache.get(pos).getJapanese());
+						startActivity(intent);
+						return true;
+					}
+				}));
 				menu.add(isShowingRomaji ? R.string.show_kana : R.string.show_romaji).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
 
 					public boolean onMenuItemClick(MenuItem item) {
@@ -86,7 +96,6 @@ public class NotepadActivity extends ListActivity {
 						return true;
 					}
 				}));
-				final int pos = ((AdapterContextMenuInfo) menuInfo).position;
 				menu.add(R.string.delete).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
 						modelCache.remove(pos);
