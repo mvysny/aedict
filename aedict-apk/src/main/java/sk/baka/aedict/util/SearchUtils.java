@@ -41,9 +41,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView.OnEditorActionListener;
 
 /**
@@ -73,9 +75,9 @@ public final class SearchUtils {
 	 * @param isExact
 	 *            if true then only exact matches are returned.
 	 */
-	public void searchForJapan(final String romaji, final boolean isExact) {
+	public void searchForJapan(final String romaji, final boolean isExact, final boolean isDeinflect) {
 		final Config cfg = AedictApp.loadConfig();
-		final SearchQuery q = SearchQuery.searchForRomaji(romaji, cfg.romanization, isExact);
+		final SearchQuery q = SearchQuery.searchForRomaji(romaji, cfg.romanization, isExact, isDeinflect);
 		performSearch(q);
 	}
 
@@ -107,7 +109,8 @@ public final class SearchUtils {
 	 * button.
 	 * 
 	 * @param isExactCheckBox
-	 *            the "IsExact" check box resource id. If null then an exact search will always be performed.
+	 *            the "IsExact" check box resource id. If null then an exact
+	 *            search will always be performed.
 	 * @param searchEditText
 	 *            the search query edit box
 	 * @param handleSelections
@@ -118,22 +121,28 @@ public final class SearchUtils {
 	 * @param isJapanSearch
 	 *            if true then we are searching for japanese text (in romaji).
 	 */
-	public void registerSearch(final Integer isExactCheckBox, final int searchEditText, final boolean handleSelections, final int searchButton, final boolean isJapanSearch) {
+	public void registerSearch(final Integer isExactCheckBox, final Integer deinflectCheckBox, final int searchEditText, final boolean handleSelections, final int searchButton, final boolean isJapanSearch) {
 		final EditText searchEdit = (EditText) activity.findViewById(searchEditText);
 		final Button searchBtn = (Button) activity.findViewById(searchButton);
-		final SearchText handler = new SearchText(isExactCheckBox, searchEditText, handleSelections, isJapanSearch);
+		final SearchText handler = new SearchText(isExactCheckBox, deinflectCheckBox, searchEditText, handleSelections, isJapanSearch);
 		searchEdit.setOnEditorActionListener(AndroidUtils.safe(activity, OnEditorActionListener.class, handler));
 		searchBtn.setOnClickListener(AndroidUtils.safe(activity, OnClickListener.class, handler));
+		if (isExactCheckBox != null && deinflectCheckBox != null) {
+			final CheckBox deinflect = (CheckBox) activity.findViewById(deinflectCheckBox);
+			deinflect.setOnCheckedChangeListener(AndroidUtils.safe(activity, OnCheckedChangeListener.class, handler));
+		}
 	}
 
-	private class SearchText implements TextView.OnEditorActionListener, View.OnClickListener {
+	private class SearchText implements TextView.OnEditorActionListener, View.OnClickListener, OnCheckedChangeListener {
 		private final Integer isExactCheckBox;
 		private final int searchEditText;
 		private final boolean handleSelections;
 		private final boolean isJapanSearch;
+		private final Integer deinflectCheckBox;
 
-		public SearchText(final Integer isExactCheckBox, final int searchEditText, final boolean handleSelections, final boolean isJapanSearch) {
+		public SearchText(final Integer isExactCheckBox, final Integer deinflectCheckBox, final int searchEditText, final boolean handleSelections, final boolean isJapanSearch) {
 			this.isExactCheckBox = isExactCheckBox;
+			this.deinflectCheckBox = deinflectCheckBox;
 			this.searchEditText = searchEditText;
 			this.handleSelections = handleSelections;
 			this.isJapanSearch = isJapanSearch;
@@ -145,7 +154,8 @@ public final class SearchUtils {
 
 		private void performSearch() {
 			final EditText searchEdit = (EditText) activity.findViewById(searchEditText);
-			final CheckBox exactMatch = isExactCheckBox==null?null:(CheckBox) activity.findViewById(isExactCheckBox);
+			final boolean isDeinflect = deinflectCheckBox == null ? false : ((CheckBox) activity.findViewById(deinflectCheckBox)).isChecked();
+			final boolean isExact = isDeinflect ? true : (isExactCheckBox == null ? true : ((CheckBox) activity.findViewById(isExactCheckBox)).isChecked());
 			String query = searchEdit.getText().toString();
 			if (handleSelections) {
 				int start = searchEdit.getSelectionStart();
@@ -161,9 +171,8 @@ public final class SearchUtils {
 					}
 				}
 			}
-			final boolean isExact = exactMatch == null ? true : exactMatch.isChecked();
 			if (isJapanSearch) {
-				searchForJapan(query, isExact);
+				searchForJapan(query, isExact, isDeinflect);
 			} else {
 				searchForEnglish(query, isExact);
 			}
@@ -172,6 +181,12 @@ public final class SearchUtils {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			performSearch();
 			return true;
+		}
+
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			if (isChecked) {
+				((CheckBox) activity.findViewById(isExactCheckBox)).setChecked(true);
+			}
 		}
 	}
 

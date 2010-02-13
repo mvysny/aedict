@@ -103,7 +103,7 @@ public class NotepadActivity extends ListActivity {
 				}));
 			}
 		}));
-		new SearchUtils(this).registerSearch(R.id.notepadExactMatch, R.id.editNotepadSearch, false, R.id.btnNotepadSearch, true);
+		new SearchUtils(this).registerSearch(R.id.notepadExactMatch, R.id.notepadDeinflect, R.id.editNotepadSearch, false, R.id.btnNotepadSearch, true);
 		processIntent();
 	}
 
@@ -153,7 +153,8 @@ public class NotepadActivity extends ListActivity {
 		cfg.notepadItems = b.toString();
 		AedictApp.saveConfig(cfg);
 		if (getListAdapter() != null) {
-			// the adapter may be null if this method is invoked from onCreate() method
+			// the adapter may be null if this method is invoked from onCreate()
+			// method
 			((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
 		}
 	}
@@ -204,7 +205,8 @@ public class NotepadActivity extends ListActivity {
 			final Config cfg = AedictApp.loadConfig();
 			final String[] items = MiscUtils.isBlank(cfg.notepadItems) ? new String[0] : cfg.notepadItems.split("\\,");
 			final List<EdictEntry> result = new ArrayList<EdictEntry>(items.length);
-			// always use the EDICT dictionary instead of user-selected dictionary
+			// always use the EDICT dictionary instead of user-selected
+			// dictionary
 			final LuceneSearch lsEdict = new LuceneSearch(false, DownloadDictTask.LUCENE_INDEX);
 			try {
 				for (int i = 0; i < items.length; i++) {

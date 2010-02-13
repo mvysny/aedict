@@ -22,6 +22,9 @@
 		<CheckBox android:layout_height="wrap_content" android:id="@+id/notepadExactMatch"
 			android:text="@string/exactMatch" android:layout_width="wrap_content"
 			android:layout_weight="1"></CheckBox>
+		<CheckBox android:layout_height="wrap_content" android:id="@+id/notepadDeinflect"
+			android:text="@string/deinflectVerbs" android:layout_width="wrap_content"
+			android:layout_weight="1"></CheckBox>
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/search"
 			android:id="@+id/btnNotepadSearch"></Button>

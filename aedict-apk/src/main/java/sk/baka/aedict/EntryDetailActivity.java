@@ -44,9 +44,9 @@ public class EntryDetailActivity extends AbstractActivity {
 		final EditText englishSearchEdit = (EditText) findViewById(R.id.englishSearchEdit);
 		englishSearchEdit.setText(entry.english);
 		final SearchUtils utils = new SearchUtils(this);
-		utils.registerSearch(R.id.kanjiExactMatch, R.id.kanjiSearchEdit, true, R.id.kanjiSearch, false);
-		utils.registerSearch(R.id.readingExactMatch, R.id.readingSearchEdit, true, R.id.readingSearch, true);
-		utils.registerSearch(R.id.englishExactMatch, R.id.englishSearchEdit, true, R.id.englishSearch, false);
+		utils.registerSearch(R.id.kanjiExactMatch, null, R.id.kanjiSearchEdit, true, R.id.kanjiSearch, false);
+		utils.registerSearch(R.id.readingExactMatch, null, R.id.readingSearchEdit, true, R.id.readingSearch, true);
+		utils.registerSearch(R.id.englishExactMatch, null, R.id.englishSearchEdit, true, R.id.englishSearch, false);
 		utils.setupCopyButton(R.id.kanjiCopy, R.id.kanjiSearchEdit);
 		utils.setupCopyButton(R.id.readingCopy, R.id.readingSearchEdit);
 		utils.setupCopyButton(R.id.englishCopy, R.id.englishSearchEdit);

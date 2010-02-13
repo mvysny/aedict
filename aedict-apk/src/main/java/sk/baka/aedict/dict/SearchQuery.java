@@ -19,9 +19,11 @@
 package sk.baka.aedict.dict;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
+import sk.baka.aedict.kanji.VerbDeinflection;
 import sk.baka.autils.ListBuilder;
 import android.content.Intent;
 
@@ -290,14 +292,27 @@ public final class SearchQuery implements Serializable {
 	 * @param exact
 	 *            if true then performs exact search, if false then performs a
 	 *            substring search.
+	 * @param exact
+	 *            if true then the word is expected to be a verb which is
+	 *            deinflected.
 	 * @return search query, never null
 	 */
-	public static SearchQuery searchForRomaji(final String word, final RomanizationEnum romanization, final boolean exact) {
+	public static SearchQuery searchForRomaji(final String word, final RomanizationEnum romanization, final boolean exact, final boolean isDeinflect) {
 		final SearchQuery result = new SearchQuery();
 		String conv = KanjiUtils.halfwidthToKatakana(word);
-		result.query = new String[] { romanization.toKatakana(conv), romanization.toHiragana(conv) };
+		if (isDeinflect) {
+			final String romaji = RomanizationEnum.NihonShiki.toRomaji(romanization.toHiragana(word));
+			final Set<String> deinflections = VerbDeinflection.deinflect(romaji);
+			result.query = new String[deinflections.size()];
+			int i = 0;
+			for (final String deinflect : deinflections) {
+				result.query[i++] = RomanizationEnum.NihonShiki.toHiragana(deinflect);
+			}
+		} else {
+			result.query = new String[] { romanization.toKatakana(conv), romanization.toHiragana(conv) };
+		}
 		result.isJapanese = true;
-		result.matcher = exact ? MatcherEnum.ExactMatchEng : MatcherEnum.SubstringMatch;
+		result.matcher = exact || isDeinflect ? MatcherEnum.ExactMatchEng : MatcherEnum.SubstringMatch;
 		return result;
 	}
 }

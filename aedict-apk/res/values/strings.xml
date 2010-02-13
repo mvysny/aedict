@@ -113,4 +113,5 @@
     <string name="deleteAll">Delete all</string>
     <string name="addToNotepad">Add to notepad</string>
     <string name="searchingInDictionary">Searching in the %s dictionary</string>
+    <string name="deinflectVerbs">Deinflect verbs</string>
 </resources>
