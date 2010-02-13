@@ -36,9 +36,9 @@ import java.util.zip.ZipInputStream;
 
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.R;
-import sk.baka.autils.DialogAsyncTask;
+import sk.baka.autils.AbstractTask;
 import sk.baka.autils.MiscUtils;
-import android.app.Activity;
+import sk.baka.autils.Progress;
 import android.util.Log;
 
 /**
@@ -46,7 +46,7 @@ import android.util.Log;
  * 
  * @author Martin Vysny
  */
-public class DownloadDictTask extends DialogAsyncTask<Void, Void> {
+public class DownloadDictTask extends AbstractTask<Void, Void> {
 
 	/**
 	 * A zipped Lucene-indexed EDICT location.
@@ -88,8 +88,7 @@ public class DownloadDictTask extends DialogAsyncTask<Void, Void> {
 	 * @param expectedSize
 	 *            the expected file size of unpacked dictionary.
 	 */
-	public DownloadDictTask(final Activity context, final URL source, final String targetDir, final String dictName, final long expectedSize) {
-		super(context);
+	public DownloadDictTask(final URL source, final String targetDir, final String dictName, final long expectedSize) {
 		this.source = source;
 		this.targetDir = targetDir;
 		this.dictName = dictName;
@@ -139,7 +138,7 @@ public class DownloadDictTask extends DialogAsyncTask<Void, Void> {
 	}
 
 	@Override
-	protected Void protectedDoInBackground(Void... params) throws Exception {
+	public Void impl(Void... params) throws Exception {
 		edictDownloadAndUnpack();
 		return null;
 	}
@@ -163,7 +162,7 @@ public class DownloadDictTask extends DialogAsyncTask<Void, Void> {
 		if (isComplete(targetDir)) {
 			return;
 		}
-		publishProgress(new Progress(R.string.connecting, 0, 100));
+		publish(new Progress(AedictApp.getStr(R.string.connecting), 0, 100));
 		final URLConnection conn = source.openConnection();
 		// this is the unpacked edict file size.
 		final File dir = new File(targetDir);
@@ -198,7 +197,7 @@ public class DownloadDictTask extends DialogAsyncTask<Void, Void> {
 	 *             on i/o error
 	 */
 	private void copy(final InputStream in, final ZipInputStream zip) throws IOException {
-		publishProgress(new Progress(AedictApp.format(R.string.downloading_dictionary, dictName), 0, 100));
+		publish(new Progress(AedictApp.format(R.string.downloading_dictionary, dictName), 0, 100));
 		long downloaded = 0;
 		for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
 			final OutputStream out = new FileOutputStream(targetDir + "/" + entry.getName());
@@ -218,7 +217,7 @@ public class DownloadDictTask extends DialogAsyncTask<Void, Void> {
 		}
 		final int max = (int) (size / 1024);
 		long downloaded = downloadedUntilNow;
-		publishProgress(new Progress(null, (int) (downloaded / 1024L), max));
+		publish(new Progress(null, (int) (downloaded / 1024L), max));
 		int reportCountdown = REPORT_EACH_XTH_BYTE;
 		final byte[] buf = new byte[BUFFER_SIZE];
 		int bufLen;
@@ -231,15 +230,14 @@ public class DownloadDictTask extends DialogAsyncTask<Void, Void> {
 			reportCountdown -= bufLen;
 			if (reportCountdown <= 0) {
 				final int progress = (int) (downloaded / 1024L);
-				publishProgress(new Progress(null, progress, max));
+				publish(new Progress(null, progress, max));
 				reportCountdown = REPORT_EACH_XTH_BYTE;
 			}
 		}
 		return downloaded;
 	}
 
-	@Override
-	protected void onTaskSucceeded(Void result) {
+	public void onSucceeded(Void result) {
 		// do nothing
 	}
 

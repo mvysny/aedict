@@ -29,8 +29,9 @@ import java.util.List;
 import java.util.Map;
 
 import sk.baka.aedict.dict.DownloadDictTask;
-import sk.baka.autils.DialogAsyncTask;
+import sk.baka.autils.AbstractTask;
 import sk.baka.autils.MiscUtils;
+import sk.baka.autils.Progress;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -48,7 +49,7 @@ public class DownloadDictionaryActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.downloaddict);
-		new DownloadDictionaryListTask().execute();
+		new DownloadDictionaryListTask().execute(this);
 	}
 
 	private static class DownloadableDictionaryInfo implements Comparable<DownloadableDictionaryInfo> {
@@ -101,25 +102,20 @@ public class DownloadDictionaryActivity extends ListActivity {
 	 * 
 	 * @author Martin Vysny
 	 */
-	private class DownloadDictionaryListTask extends DialogAsyncTask<Void, List<DownloadableDictionaryInfo>> {
-
-		protected DownloadDictionaryListTask() {
-			super(DownloadDictionaryActivity.this);
-		}
-
+	private class DownloadDictionaryListTask extends AbstractTask<Void, List<DownloadableDictionaryInfo>> {
 		@Override
 		protected void cleanupAfterError() {
 			// nothing to do
 		}
 
 		@Override
-		protected void onTaskSucceeded(List<DownloadableDictionaryInfo> result) {
+		protected void onSucceeded(List<DownloadableDictionaryInfo> result) {
 			setListAdapter(new ArrayAdapter<DownloadableDictionaryInfo>(DownloadDictionaryActivity.this, android.R.layout.simple_list_item_1, result));
 		}
 
 		@Override
-		protected List<DownloadableDictionaryInfo> protectedDoInBackground(Void... params) throws Exception {
-			publishProgress(new Progress(R.string.downloadingDictionaryList, 0, 1));
+		public List<DownloadableDictionaryInfo> impl(Void... params) throws Exception {
+			publish(new Progress(AedictApp.getStr(R.string.downloadingDictionaryList), 0, 1));
 			final Map<String, DownloadableDictionaryInfo> result = new HashMap<String, DownloadableDictionaryInfo>();
 			final BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(DICT_LIST_URL).openStream(), "UTF-8"));
 			try {
@@ -149,13 +145,13 @@ public class DownloadDictionaryActivity extends ListActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		final DownloadableDictionaryInfo e = (DownloadableDictionaryInfo) getListAdapter().getItem(position);
-		new DownloadDictTask(this, e.url, DownloadDictTask.BASE_DIR + "/index-" + e.name, e.name, e.zippedSize) {
+		new DownloadDictTask(e.url, DownloadDictTask.BASE_DIR + "/index-" + e.name, e.name, e.zippedSize) {
 
 			@Override
-			protected void onTaskSucceeded(Void result) {
-				new DownloadDictionaryListTask().execute();
+			public void onSucceeded(Void result) {
+				new DownloadDictionaryListTask().execute(DownloadDictionaryActivity.this);
 			}
 
-		}.execute();
+		}.execute(this);
 	}
 }

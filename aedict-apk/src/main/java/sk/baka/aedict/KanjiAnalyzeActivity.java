@@ -31,10 +31,10 @@ import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.Radicals;
 import sk.baka.aedict.util.SearchUtils;
+import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
-import sk.baka.autils.DialogAsyncTask;
 import sk.baka.autils.MiscUtils;
-import android.app.Activity;
+import sk.baka.autils.Progress;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -99,7 +99,9 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		if (model == null) {
 			recomputeModel();
 		} else {
-			// if the activity received a list of EdictEntry instead of a word, the model was not set to the activity and the activity shown an empty list
+			// if the activity received a list of EdictEntry instead of a word,
+			// the model was not set to the activity and the activity shown an
+			// empty list
 			// fixes http://code.google.com/p/aedict/issues/detail?id=29
 			setListAdapter(newAdapter());
 		}
@@ -223,14 +225,10 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	}
 
 	private void recomputeModel() {
-		new RecomputeModel(this).execute(word);
+		new RecomputeModel().execute(this, word);
 	}
 
-	private class RecomputeModel extends DialogAsyncTask<String, List<EdictEntry>> {
-
-		public RecomputeModel(Activity context) {
-			super(context);
-		}
+	private class RecomputeModel extends AbstractTask<String, List<EdictEntry>> {
 
 		@Override
 		protected void cleanupAfterError() {
@@ -238,14 +236,14 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		}
 
 		@Override
-		protected void onTaskSucceeded(List<EdictEntry> result) {
+		protected void onSucceeded(List<EdictEntry> result) {
 			model = result;
 			setListAdapter(newAdapter());
 		}
 
 		@Override
-		protected List<EdictEntry> protectedDoInBackground(String... params) throws Exception {
-			onProgressUpdate(new Progress(R.string.analyzing, 0, 100));
+		public List<EdictEntry> impl(String... params) throws Exception {
+			publish(new Progress(AedictApp.getStr(R.string.analyzing), 0, 100));
 			if (isAnalysisPerCharacter) {
 				// remove all non-letter characters
 				final String w = word.replaceAll("[^\\p{javaLetter}]+", "");
@@ -261,7 +259,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			try {
 				final String[] words = getWords(sentence);
 				for (int i = 0; i < words.length; i++) {
-					onProgressUpdate(new Progress(null, i, words.length));
+					publish(new Progress(null, i, words.length));
 					if (isCancelled()) {
 						return null;
 					}
@@ -327,7 +325,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 				try {
 					final String w = MiscUtils.removeWhitespaces(word);
 					for (int i = 0; i < w.length(); i++) {
-						onProgressUpdate(new Progress(null, i, w.length()));
+						publish(new Progress(null, i, w.length()));
 						if (isCancelled()) {
 							return null;
 						}

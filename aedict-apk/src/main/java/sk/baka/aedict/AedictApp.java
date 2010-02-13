@@ -82,8 +82,19 @@ public class AedictApp extends Application {
 	 * @return a formatted string.
 	 */
 	public static String format(final int resId, Object... args) {
-		final String formatStr = getApp().getString(resId);
+		final String formatStr = getStr(resId);
 		return new Formatter().format(formatStr, args).toString();
+	}
+
+	/**
+	 * Returns string associated with given resource ID.
+	 * 
+	 * @param resId
+	 *            the string id
+	 * @return a formatted string.
+	 */
+	public static String getStr(final int resId) {
+		return getApp().getString(resId);
 	}
 
 	/**

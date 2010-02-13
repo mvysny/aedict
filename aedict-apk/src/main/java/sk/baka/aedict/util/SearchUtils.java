@@ -251,7 +251,7 @@ public final class SearchUtils {
 			new DialogUtils(activity).showYesNoDialog(msg.toString(), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();
-					new DownloadDictTask(activity, source, targetDir, dictName, expectedSize).execute();
+					new DownloadDictTask(source, targetDir, dictName, expectedSize).execute(activity);
 				}
 			});
 			return false;

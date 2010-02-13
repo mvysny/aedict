@@ -27,10 +27,11 @@ import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.util.SearchUtils;
+import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
-import sk.baka.autils.DialogAsyncTask;
 import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
+import sk.baka.autils.Progress;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -159,7 +160,7 @@ public class NotepadActivity extends ListActivity {
 
 	private void updateModel() {
 		if (modelCache == null) {
-			new ComputeCacheTask().execute();
+			new ComputeCacheTask().execute(this);
 		} else {
 			setModel();
 		}
@@ -185,11 +186,7 @@ public class NotepadActivity extends ListActivity {
 		});
 	}
 
-	private class ComputeCacheTask extends DialogAsyncTask<Void, List<EdictEntry>> {
-
-		protected ComputeCacheTask() {
-			super(NotepadActivity.this);
-		}
+	private class ComputeCacheTask extends AbstractTask<Void, List<EdictEntry>> {
 
 		@Override
 		protected void cleanupAfterError() {
@@ -197,13 +194,13 @@ public class NotepadActivity extends ListActivity {
 		}
 
 		@Override
-		protected void onTaskSucceeded(List<EdictEntry> result) {
+		protected void onSucceeded(List<EdictEntry> result) {
 			modelCache = result;
 			setModel();
 		}
 
 		@Override
-		protected List<EdictEntry> protectedDoInBackground(Void... params) throws Exception {
+		public List<EdictEntry> impl(Void... params) throws Exception {
 			final Config cfg = AedictApp.loadConfig();
 			final String[] items = MiscUtils.isBlank(cfg.notepadItems) ? new String[0] : cfg.notepadItems.split("\\,");
 			final List<EdictEntry> result = new ArrayList<EdictEntry>(items.length);
@@ -212,7 +209,7 @@ public class NotepadActivity extends ListActivity {
 			try {
 				for (int i = 0; i < items.length; i++) {
 					final String item = items[i].trim();
-					onProgressUpdate(new Progress(null, i, items.length));
+					publish(new Progress(null, i, items.length));
 					if (isCancelled()) {
 						return null;
 					}

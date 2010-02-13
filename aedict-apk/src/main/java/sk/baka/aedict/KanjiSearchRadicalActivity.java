@@ -32,11 +32,11 @@ import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.Radicals;
 import sk.baka.aedict.util.SearchUtils;
+import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
-import sk.baka.autils.DialogAsyncTask;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
-import android.app.Activity;
+import sk.baka.autils.Progress;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -218,19 +218,15 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 				return;
 			}
 		}
-		new KanjiMatchTask(this).execute(radicals, strokes, plusMinus);
+		new KanjiMatchTask().execute(this, radicals, strokes, plusMinus);
 	}
 
-	private class KanjiMatchTask extends DialogAsyncTask<Object, List<EdictEntry>> {
-		protected KanjiMatchTask(Activity context) {
-			super(context);
-		}
-
+	private class KanjiMatchTask extends AbstractTask<Object, List<EdictEntry>> {
 		private final int REPORT_EACH_XTH_CHAR = 5;
 
 		@Override
-		protected List<EdictEntry> protectedDoInBackground(Object... params) throws Exception {
-			publishProgress(new Progress(R.string.searching, 0, 100));
+		public List<EdictEntry> impl(Object... params) throws Exception {
+			publish(new Progress(AedictApp.getStr(R.string.searching), 0, 100));
 			int charsReportCountdown = 0;
 			int totalCharsProcessed = 0;
 			final Set<Character> matches = Radicals.getKanjisWithRadicals(((String) params[0]).toCharArray());
@@ -250,7 +246,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 					totalCharsProcessed++;
 					if (++charsReportCountdown >= REPORT_EACH_XTH_CHAR) {
 						charsReportCountdown = 0;
-						publishProgress(new Progress(null, totalCharsProcessed, matches.size()));
+						publish(new Progress(null, totalCharsProcessed, matches.size()));
 					}
 					if (isCancelled()) {
 						return null;
@@ -268,7 +264,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 		}
 
 		@Override
-		protected void onTaskSucceeded(List<EdictEntry> result) {
+		protected void onSucceeded(List<EdictEntry> result) {
 			// we have the kanji list. first, sort the result list
 			Collections.sort(result, new KanjipadComparator());
 			// launch the analyze activity
