@@ -56,8 +56,8 @@ public class Main {
     private static final String EDICT_GZ = "http://ftp.monash.edu.au/pub/nihongo/edict.gz";
     private static final String KANJIDIC_GZ = "http://ftp.monash.edu.au/pub/nihongo/kanjidic.gz";
     private static final String BASE_DIR = "target";
-    private static final String LUCENE_INDEX = BASE_DIR + "/index";
-    private static final String LUCENE_INDEX_ZIP = "edict-lucene.zip";
+    static final String LUCENE_INDEX = BASE_DIR + "/index";
+    static final String LUCENE_INDEX_ZIP = "edict-lucene.zip";
     private static final String LUCENE_INDEX_ZIP_KANJIDIC = "kanjidic-lucene.zip";
 
     /**
@@ -104,7 +104,7 @@ public class Main {
         return opts;
     }
 
-    private Main(final String[] args) throws MalformedURLException, ParseException {
+    Main(final String[] args) throws MalformedURLException, ParseException {
         final CommandLineParser parser = new GnuParser();
         final CommandLine cl = parser.parse(getOptions(), args);
         if (cl.hasOption('?')) {
@@ -141,7 +141,7 @@ public class Main {
         f.printHelp("ai", "Aedict index file generator\nProduces a Lucene-indexed file from given EDict- or kanjidic-formatted dictionary file. To download and index the default english-japan edict file just use the -d switch - the file is downloaded automatically.", getOptions(), null, true);
     }
 
-    private void run() throws Exception {
+    void run() throws Exception {
         final StringBuilder sb = new StringBuilder();
         sb.append("Indexing ");
         if (isGzipped) {
