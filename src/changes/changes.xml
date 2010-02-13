@@ -5,6 +5,12 @@
 	</properties>
 	<body>
 		<release version="0.9" date="16. February 2010">
+			<action dev="vyzivus" type="add">
+				You can now directly perform analysis of a notepad entry
+			</action>
+			<action dev="vyzivus" type="add" issue="33">
+				Implemented the verb deinflection
+			</action>
 		</release>
 		<release version="0.8" date="16. January 2010">
 			<action dev="vyzivus" type="fix" issue="29">
