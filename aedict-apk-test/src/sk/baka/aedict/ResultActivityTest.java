@@ -47,7 +47,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		q.putTo(i);
 		startActivity(i);
 		final ListView lv = getActivity().getListView();
-		assertEquals(21, lv.getCount());
+		assertEquals(25, lv.getCount());
 		final EdictEntry entry = (EdictEntry) lv.getItemAtPosition(0);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
@@ -67,6 +67,28 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		final EdictEntry entry = (EdictEntry) lv.getItemAtPosition(0);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
+	}
+
+	/**
+	 * Test for the http://code.google.com/p/aedict/issues/detail?id=30 bug. The problem was that there are ~2500 matches for kyou however only the first
+	 * 100 were retrieved from Lucene and they were further filtered.
+	 */
+	public void testSearchForKyou() {
+		final SearchQuery q = new SearchQuery();
+		q.isJapanese = true;
+		q.matcher = MatcherEnum.ExactMatchEng;
+		q.query = new String[] { RomanizationEnum.Hepburn.toHiragana("kyou") };
+		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
+		q.putTo(i);
+		startActivity(i);
+		final ListView lv = getActivity().getListView();
+		assertEquals(18, lv.getCount());
+		EdictEntry entry = (EdictEntry) lv.getItemAtPosition(0);
+		assertEquals("(n) (1) imperial capital (esp. Kyoto)/(2) final word of an iroha-uta/(3) 10^16/10,000,000,000,000,000/ten quadrillion (American)/(obs) ten thousand billion (British)/(P)", entry.english);
+		assertEquals("京", entry.getJapanese());
+		entry = (EdictEntry) lv.getItemAtPosition(6);
+		assertEquals("(n-t) today/this day/(P)", entry.english);
+		assertEquals("今日", entry.getJapanese());
 	}
 
 	public void testSwitchToRomaji() {

@@ -226,8 +226,8 @@ public class NotepadActivity extends ListActivity {
 					}
 					final SearchQuery q = SearchQuery.searchForJapanese(item, true);
 					EdictEntry ee = null;
-					final List<String> matches = lsEdict.search(q);
-					if (matches.size() > 0) {
+					final List<String> matches = lsEdict.search(q, 1);
+					if (!matches.isEmpty()) {
 						ee = EdictEntry.tryParseEdict(matches.get(0));
 					}
 					if (ee == null) {

@@ -104,12 +104,16 @@ public final class LuceneSearch implements Closeable {
 			// strings... indicates a bug in Aedict code.
 			throw new RuntimeException(e);
 		}
-		final TopDocs result = searcher.search(parsedQuery, null, maxResults);
+		final int maxLuceneResults = query.matcher == MatcherEnum.ExactMatchEng ? 10000 : maxResults;
+		final TopDocs result = searcher.search(parsedQuery, null, maxLuceneResults);
 		for (final ScoreDoc sd : result.scoreDocs) {
 			final Document doc = searcher.doc(sd.doc);
 			final String contents = doc.get("contents");
 			if (query.matches(contents)) {
 				r.add(contents);
+				if (r.size() >= maxResults) {
+					break;
+				}
 			}
 		}
 		return r;

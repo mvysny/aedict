@@ -339,14 +339,14 @@ public class KanjiAnalyzeActivity extends ListActivity {
 							List<String> matches = null;
 							EdictEntry ee = null;
 							if (lsKanjidic != null) {
-								matches = lsKanjidic.search(q);
+								matches = lsKanjidic.search(q, 1);
 							}
 							if (matches != null && !matches.isEmpty()) {
 								ee = EdictEntry.tryParseKanjidic(matches.get(0));
 							}
 							if (ee == null) {
-								matches = lsEdict.search(q);
-								if (matches.size() > 0) {
+								matches = lsEdict.search(q, 1);
+								if (!matches.isEmpty()) {
 									ee = EdictEntry.tryParseEdict(matches.get(0));
 								}
 							}
