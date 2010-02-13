@@ -4,6 +4,8 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
+		<release version="0.9" date="16. February 2010">
+		</release>
 		<release version="0.8" date="16. January 2010">
 			<action dev="vyzivus" type="fix" issue="29">
 				Regression: SKIP search finds the kanjis but does not display them
