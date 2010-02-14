@@ -6,6 +6,12 @@
 	<body>
 		<release version="0.9" date="16. February 2010">
 			<action dev="vyzivus" type="add">
+				Added Japanese-German downloadable dictionary.
+			</action>
+			<action dev="vyzivus" type="add">
+				When downloading a dictionary, a copyright notice and a dictionary homepage is now shown
+			</action>
+			<action dev="vyzivus" type="add">
 				You can now directly perform analysis of a notepad entry
 			</action>
 			<action dev="vyzivus" type="add" issue="33">
