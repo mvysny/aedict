@@ -65,6 +65,11 @@ public class ResultActivity extends ListActivity {
 	 */
 	private boolean isShowingRomaji;
 
+	/**
+	 * True if the activity shows entries in romaji.
+	 * 
+	 * @return true if romaji is shown instead of katakana/hiragana.
+	 */
 	boolean isShowingRomaji() {
 		return isShowingRomaji;
 	}

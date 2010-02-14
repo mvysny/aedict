@@ -168,7 +168,7 @@ public class DownloadDictionaryActivity extends ListActivity {
 			}
 		}));
 		// show a browser with the homepage.
-		Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(e.homepage));
+		final Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(e.homepage));
 		startActivity(i);
 	}
 

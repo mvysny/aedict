@@ -20,7 +20,12 @@ package sk.baka.aedict;
 
 import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.aedict.util.SearchUtils;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 /**
  * Provides means to search the edict dictionary file.
@@ -39,5 +44,13 @@ public class MainActivity extends AbstractActivity {
 		setButtonActivityLauncher(R.id.btnAbout, AboutActivity.class);
 		// check for dictionary file and download it if it is missing.
 		utils.checkDictionaryFile(DownloadDictTask.EDICT_LUCENE_ZIP, DownloadDictTask.LUCENE_INDEX, 20L * 1024 * 1024, "EDict");
+		final Button btnDonate = (Button) findViewById(R.id.btnDonate);
+		btnDonate.setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+				final Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://code.google.com/p/aedict/#Donate"));
+				startActivity(i);
+			}
+		});
 	}
 }
