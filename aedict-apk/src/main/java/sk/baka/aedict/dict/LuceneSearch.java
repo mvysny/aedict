@@ -46,26 +46,24 @@ public final class LuceneSearch implements Closeable {
 	private final Searcher searcher;
 	private final QueryParser parser;
 	/**
-	 * If true then we are using Kanjidic for search. If false, we are using
-	 * edict.
+	 * The dictionary type.
 	 */
-	private final boolean kanjidic;
+	private final DictTypeEnum dictType;
 
 	/**
 	 * Creates the object and opens the index file.
 	 * 
-	 * @param kanjidic
-	 *            If true then we are using Kanjidic for search. If false, we
-	 *            are using edict.
+	 * @param dictType
+	 *            the dictionary we will use for the search.
 	 * @param dictionaryPath
 	 *            overrides default dictionary location if non-null. An absolute
 	 *            os-specific path, e.g. /sdcard/aedict/index.
 	 * @throws IOException
 	 *             on I/O error.
 	 */
-	public LuceneSearch(final boolean kanjidic, final String dictionaryPath) throws IOException {
-		this.kanjidic = kanjidic;
-		reader = IndexReader.open(dictionaryPath != null ? dictionaryPath : kanjidic ? DownloadDictTask.LUCENE_INDEX_KANJIDIC : DownloadDictTask.LUCENE_INDEX);
+	public LuceneSearch(final DictTypeEnum dictType, final String dictionaryPath) throws IOException {
+		this.dictType = dictType;
+		reader = IndexReader.open(dictionaryPath != null ? dictionaryPath : DownloadDictTask.BASE_DIR+"/"+dictType.getDefaultDictionaryLoc());
 		searcher = new IndexSearcher(reader);
 		parser = new QueryParser("contents", new StandardAnalyzer());
 	}
@@ -98,7 +96,7 @@ public final class LuceneSearch implements Closeable {
 		final List<String> r = new ArrayList<String>();
 		final Query parsedQuery;
 		try {
-			parsedQuery = parser.parse(query.getLuceneQuery(kanjidic));
+			parsedQuery = parser.parse(dictType.getLuceneQuery(query));
 		} catch (ParseException e) {
 			// not expected - the SearchQuery object should produce valid query
 			// strings... indicates a bug in Aedict code.
@@ -130,9 +128,6 @@ public final class LuceneSearch implements Closeable {
 	 * 
 	 * @param query
 	 *            the query
-	 * @param kanjidic
-	 *            If true then we are using Kanjidic for search. If false, we
-	 *            are using edict.
 	 * @param dictionaryPath
 	 *            overrides default dictionary location if non-null. An absolute
 	 *            os-specific path, e.g. /sdcard/aedict/index.
@@ -140,8 +135,8 @@ public final class LuceneSearch implements Closeable {
 	 * @throws IOException
 	 *             on I/O error.
 	 */
-	public static List<String> singleSearch(final SearchQuery query, final boolean kanjidic, final String dictionaryPath) throws IOException {
-		final LuceneSearch s = new LuceneSearch(kanjidic, dictionaryPath);
+	public static List<String> singleSearch(final SearchQuery query, final String dictionaryPath) throws IOException {
+		final LuceneSearch s = new LuceneSearch(query.dictType, dictionaryPath);
 		try {
 			return s.search(query);
 		} finally {

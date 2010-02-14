@@ -25,6 +25,7 @@ import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.ResultActivity;
 import sk.baka.aedict.AedictApp.Config;
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
@@ -85,7 +86,7 @@ public final class SearchUtils {
 	}
 
 	/**
-	 * Performs search for an english word or expression.
+	 * Performs EDICT search for an english word or expression.
 	 * 
 	 * @param text
 	 *            the text to search for.
@@ -93,7 +94,7 @@ public final class SearchUtils {
 	 *            if true then only exact matches are returned.
 	 */
 	public void searchForEnglish(final String text, final boolean isExact) {
-		final SearchQuery q = new SearchQuery();
+		final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
 		q.isJapanese = false;
 		q.query = new String[] { text };
 		q.matcher = isExact ? MatcherEnum.ExactMatchEng : MatcherEnum.SubstringMatch;
@@ -329,7 +330,20 @@ public final class SearchUtils {
 	 * 
 	 * @return true if the files are available, false otherwise.
 	 */
+	@Deprecated
 	public boolean checkKanjiDic() {
-		return checkDictionaryFile(DownloadDictTask.KANJIDIC_LUCENE_ZIP, DownloadDictTask.LUCENE_INDEX_KANJIDIC, 1500 * 1024, "KanjiDic");
+		return checkDic(DictTypeEnum.Kanjidic);
+	}
+
+	/**
+	 * Checks if KANJIDIC exists. If not, user is prompted for a download and
+	 * the files are downloaded if requested.
+	 * 
+	 * @param dict
+	 *            the dictionary type.
+	 * @return true if the files are available, false otherwise.
+	 */
+	public boolean checkDic(final DictTypeEnum dict) {
+		return checkDictionaryFile(dict.getDownloadSite(), DownloadDictTask.BASE_DIR + "/" + dict.getDefaultDictionaryLoc(), 1500 * 1024, "KanjiDic");
 	}
 }

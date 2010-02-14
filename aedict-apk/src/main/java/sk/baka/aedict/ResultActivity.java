@@ -64,6 +64,10 @@ public class ResultActivity extends ListActivity {
 	 * true if romaji is shown instead of katakana/hiragana.
 	 */
 	private boolean isShowingRomaji;
+	/**
+	 * if true then we will perform a search in the Tanaka Corpus.
+	 */
+	private boolean isTanaka=false;
 
 	/**
 	 * True if the activity shows entries in romaji.
@@ -91,6 +95,10 @@ public class ResultActivity extends ListActivity {
 	 * boolean - if true then we were launched from Simeji.
 	 */
 	public static final String INTENTKEY_SIMEJI = "simeji";
+	/**
+	 * boolean - if true then we will perform a search in the Tanaka Corpus.
+	 */
+	public static final String INTENTKEY_TANAKA = "tanaka";
 
 	private SearchQuery fromIntent() {
 		final Intent it = getIntent();
@@ -112,6 +120,7 @@ public class ResultActivity extends ListActivity {
 		} else {
 			result = SearchQuery.fromIntent(getIntent());
 			isSimeji = it.getBooleanExtra(INTENTKEY_SIMEJI, false);
+			isTanaka = it.getBooleanExtra(INTENTKEY_TANAKA, false);
 		}
 		return result.toLowerCase();
 	}
@@ -127,7 +136,11 @@ public class ResultActivity extends ListActivity {
 			model = Collections.singletonList(EdictEntry.newErrorMsg(getString(R.string.nothing_to_search_for)));
 		} else {
 			try {
+				if(isTanaka) {
+					
+				}else{
 				model = EdictEntry.tryParseEdict(LuceneSearch.singleSearch(query, false, AedictApp.getDictionaryLoc()));
+				}
 				Collections.sort(model);
 			} catch (Exception ex) {
 				Log.e(ResultActivity.class.getSimpleName(), "Failed to perform search", ex);

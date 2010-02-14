@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -47,27 +46,6 @@ import android.util.Log;
  * @author Martin Vysny
  */
 public class DownloadDictTask extends AbstractTask<Void, Void> {
-
-	/**
-	 * A zipped Lucene-indexed EDICT location.
-	 */
-	public static final URL EDICT_LUCENE_ZIP;
-	/**
-	 * A zipped Lucene-indexed KANJIDIC location.
-	 */
-	public static final URL KANJIDIC_LUCENE_ZIP;
-	/**
-	 * A base http:// location of the dictionary files.
-	 */
-	public static final String DICT_BASE_LOCATION_URL = "http://baka.sk/aedict/";
-	static {
-		try {
-			EDICT_LUCENE_ZIP = new URL(DICT_BASE_LOCATION_URL + "edict-lucene.zip");
-			KANJIDIC_LUCENE_ZIP = new URL(DICT_BASE_LOCATION_URL + "kanjidic-lucene.zip");
-		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);
-		}
-	}
 	private final URL source;
 	private final String targetDir;
 	private final String dictName;
@@ -75,9 +53,6 @@ public class DownloadDictTask extends AbstractTask<Void, Void> {
 
 	/**
 	 * Creates new dictionary downloader.
-	 * 
-	 * @param context
-	 *            parent context.
 	 * @param source
 	 *            download the dictionary files from here. A zipped Lucene index
 	 *            file is expected.
@@ -103,10 +78,12 @@ public class DownloadDictTask extends AbstractTask<Void, Void> {
 	/**
 	 * Directory where the Apache Lucene for the EDICT file index is stored.
 	 */
+	@Deprecated
 	public static final String LUCENE_INDEX = BASE_DIR + "/index";
 	/**
 	 * Directory where the Apache Lucene index for the KANJIDIC file is stored.
 	 */
+	@Deprecated
 	public static final String LUCENE_INDEX_KANJIDIC = BASE_DIR + "/index-kanjidic";
 
 	/**
@@ -237,6 +214,7 @@ public class DownloadDictTask extends AbstractTask<Void, Void> {
 		return downloaded;
 	}
 
+	@Override
 	public void onSucceeded(Void result) {
 		// do nothing
 	}

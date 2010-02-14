@@ -26,6 +26,7 @@ import java.util.List;
 import sk.baka.aedict.AbstractActivity;
 import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
@@ -52,7 +53,7 @@ public class SkipActivity extends Activity {
 		configureButtonFor123SkipWizardContinuation(R.id.skip13, 3);
 		AbstractActivity.setButtonActivityLauncher(this, R.id.skip14, Skip4Activity.class);
 		// check that the KANJIDIC dictionary file is available
-		new SearchUtils(this).checkKanjiDic();
+		new SearchUtils(this).checkDic(DictTypeEnum.Kanjidic);
 	}
 
 	private void configureButtonFor123SkipWizardContinuation(final int buttonId, final int skipType) {
@@ -94,10 +95,10 @@ public class SkipActivity extends Activity {
 	 *            the skip code
 	 */
 	public static void searchForSkip(final Activity activity, final String skip) {
-		final SearchQuery query = new SearchQuery();
+		final SearchQuery query = new SearchQuery(DictTypeEnum.Kanjidic);
 		query.skip = skip;
 		try {
-			final List<String> result = LuceneSearch.singleSearch(query, true, null);
+			final List<String> result = LuceneSearch.singleSearch(query, null);
 			final List<EdictEntry> parsedResult = EdictEntry.parseKanjidic(result);
 			// no need to sort on the number of strokes as all results will have
 			// the same amount of strokes

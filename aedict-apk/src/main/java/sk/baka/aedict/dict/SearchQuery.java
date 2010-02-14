@@ -24,7 +24,6 @@ import java.util.Set;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.kanji.VerbDeinflection;
-import sk.baka.autils.ListBuilder;
 import android.content.Intent;
 
 /**
@@ -69,10 +68,19 @@ public final class SearchQuery implements Serializable {
 	public Integer strokesPlusMinus;
 
 	/**
-	 * Creates an empty search query.
+	 * The dictionary to use for the search.
 	 */
-	public SearchQuery() {
+	public final DictTypeEnum dictType;
+
+	/**
+	 * Creates an empty search query.
+	 * 
+	 * @param dictType
+	 *            the dictionary type, must not be null.
+	 */
+	public SearchQuery(final DictTypeEnum dictType) {
 		super();
+		this.dictType = dictType;
 	}
 
 	/**
@@ -95,58 +103,13 @@ public final class SearchQuery implements Serializable {
 	}
 
 	/**
-	 * Returns a Lucene query which matches this query as close as possible.
-	 * 
-	 * @param kanjidic
-	 *            if true we will search in a kanjidic, if false, we will search
-	 *            in edict.
-	 * @return the Apache Lucene query
-	 */
-	public String getLuceneQuery(final boolean kanjidic) {
-		if (!kanjidic) {
-			final ListBuilder sb = new ListBuilder(" OR ");
-			for (int i = 0; i < query.length; i++) {
-				sb.add(query[i].trim());
-			}
-			return sb.toString();
-		}
-		// query can be null in case we are performing e.g. a pure SKIP
-		// lookup
-		final ListBuilder qb = new ListBuilder(" AND ");
-		if (query != null) {
-			if (query.length != 1) {
-				throw new IllegalStateException("Kanjidic search requires a single kanji character search");
-			}
-			qb.add("kanji:" + query[0].trim());
-		}
-		if (strokeCount != null) {
-			final ListBuilder sb = new ListBuilder(" OR ");
-			final int plusMinus = strokesPlusMinus == null ? 0 : strokesPlusMinus;
-			if ((plusMinus > 3) || (plusMinus < 0)) {
-				throw new IllegalStateException("Invalid value: " + strokesPlusMinus);
-			}
-			for (int strokes = strokeCount - plusMinus; strokes <= strokeCount + plusMinus; strokes++) {
-				sb.add("strokes:" + strokes);
-			}
-			qb.add("(" + sb.toString() + ")");
-		}
-		if (skip != null) {
-			qb.add("skip:" + skip);
-		}
-		if (radical != null) {
-			qb.add("radical:" + radical);
-		}
-		return qb.toString();
-	}
-
-	/**
 	 * Clones given search query.
 	 * 
 	 * @param other
 	 *            query to clone
 	 */
 	public SearchQuery(SearchQuery other) {
-		this();
+		this(other.dictType);
 		query = other.query.clone();
 		isJapanese = other.isJapanese;
 		matcher = other.matcher;
@@ -252,7 +215,7 @@ public final class SearchQuery implements Serializable {
 	 * @return a search query instance, never null.
 	 */
 	public static SearchQuery kanjiSearch(final char kanji, final Integer strokes, final Integer strokesPlusMinus) {
-		final SearchQuery result = new SearchQuery();
+		final SearchQuery result = new SearchQuery(DictTypeEnum.Kanjidic);
 		result.isJapanese = true;
 		result.matcher = MatcherEnum.ExactMatchEng;
 		result.query = new String[] { String.valueOf(kanji) };
@@ -262,7 +225,7 @@ public final class SearchQuery implements Serializable {
 	}
 
 	/**
-	 * Creates a query which searches for a japanese term.
+	 * Creates an EDICT query which searches for a japanese term.
 	 * 
 	 * @param word
 	 *            the word to search, in japanese language. Full-width katakana
@@ -273,7 +236,7 @@ public final class SearchQuery implements Serializable {
 	 * @return search query
 	 */
 	public static SearchQuery searchForJapanese(final String word, final boolean exact) {
-		final SearchQuery result = new SearchQuery();
+		final SearchQuery result = new SearchQuery(DictTypeEnum.Edict);
 		result.query = new String[] { word };
 		result.isJapanese = true;
 		result.matcher = exact ? MatcherEnum.ExactMatchEng : MatcherEnum.SubstringMatch;
@@ -281,7 +244,7 @@ public final class SearchQuery implements Serializable {
 	}
 
 	/**
-	 * Creates a query which searches for a japanese term.
+	 * Creates an EDICT query which searches for a japanese term.
 	 * 
 	 * @param word
 	 *            the word to search, in japanese language, may contain romaji.
@@ -292,13 +255,13 @@ public final class SearchQuery implements Serializable {
 	 * @param exact
 	 *            if true then performs exact search, if false then performs a
 	 *            substring search.
-	 * @param exact
+	 * @param isDeinflect
 	 *            if true then the word is expected to be a verb which is
 	 *            deinflected.
 	 * @return search query, never null
 	 */
 	public static SearchQuery searchForRomaji(final String word, final RomanizationEnum romanization, final boolean exact, final boolean isDeinflect) {
-		final SearchQuery result = new SearchQuery();
+		final SearchQuery result = new SearchQuery(DictTypeEnum.Edict);
 		String conv = KanjiUtils.halfwidthToKatakana(word);
 		if (isDeinflect) {
 			final String romaji = RomanizationEnum.NihonShiki.toRomaji(romanization.toHiragana(word));
