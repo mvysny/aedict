@@ -117,6 +117,9 @@ public final class SearchUtils {
 	 * @param deinflectCheckBox
 	 *            the "deinflect" check box reference. If null then no
 	 *            deinflection attempt will be made.
+	 * @param searchInExamplesCheckBox
+	 *            the "Search in examples" check box reference. If null then a
+	 *            regular search will be performed.
 	 * @param searchEditText
 	 *            the search query edit box
 	 * @param handleSelections
@@ -127,15 +130,19 @@ public final class SearchUtils {
 	 * @param isJapanSearch
 	 *            if true then we are searching for japanese text (in romaji).
 	 */
-	public void registerSearch(final Integer isExactCheckBox, final Integer deinflectCheckBox, final int searchEditText, final boolean handleSelections, final int searchButton, final boolean isJapanSearch) {
+	public void registerSearch(final Integer isExactCheckBox, final Integer deinflectCheckBox, final Integer searchInExamplesCheckBox, final int searchEditText, final boolean handleSelections, final int searchButton, final boolean isJapanSearch) {
 		final EditText searchEdit = (EditText) activity.findViewById(searchEditText);
 		final Button searchBtn = (Button) activity.findViewById(searchButton);
-		final SearchText handler = new SearchText(isExactCheckBox, deinflectCheckBox, searchEditText, handleSelections, isJapanSearch);
+		final SearchText handler = new SearchText(isExactCheckBox, deinflectCheckBox, searchInExamplesCheckBox, searchEditText, handleSelections, isJapanSearch);
 		searchEdit.setOnEditorActionListener(AndroidUtils.safe(activity, OnEditorActionListener.class, handler));
 		searchBtn.setOnClickListener(AndroidUtils.safe(activity, OnClickListener.class, handler));
 		if (isExactCheckBox != null && deinflectCheckBox != null) {
 			final CheckBox deinflect = (CheckBox) activity.findViewById(deinflectCheckBox);
 			deinflect.setOnCheckedChangeListener(AndroidUtils.safe(activity, OnCheckedChangeListener.class, handler));
+		}
+		if (isExactCheckBox != null && searchInExamplesCheckBox != null) {
+			final CheckBox search = (CheckBox) activity.findViewById(searchInExamplesCheckBox);
+			search.setOnCheckedChangeListener(AndroidUtils.safe(activity, OnCheckedChangeListener.class, handler));
 		}
 	}
 
@@ -150,6 +157,7 @@ public final class SearchUtils {
 		private final boolean handleSelections;
 		private final boolean isJapanSearch;
 		private final Integer deinflectCheckBox;
+		private final Integer searchInExamplesCheckBox;
 
 		/**
 		 * Creates new search instance.
@@ -160,6 +168,9 @@ public final class SearchUtils {
 		 * @param deinflectCheckBox
 		 *            the "deinflect" check box reference. If null then no
 		 *            deinflection attempt will be made.
+		 * @param searchInExamplesCheckBox
+		 *            the "Search in examples" check box reference. If null then
+		 *            a regular search will be performed.
 		 * @param searchEditText
 		 *            the search query edit box
 		 * @param handleSelections
@@ -169,9 +180,13 @@ public final class SearchUtils {
 		 *            if true then we are searching for japanese text (in
 		 *            romaji).
 		 */
-		public SearchText(final Integer isExactCheckBox, final Integer deinflectCheckBox, final int searchEditText, final boolean handleSelections, final boolean isJapanSearch) {
+		public SearchText(final Integer isExactCheckBox, final Integer deinflectCheckBox, final Integer searchInExamplesCheckBox, final int searchEditText, final boolean handleSelections, final boolean isJapanSearch) {
+			if (deinflectCheckBox != null && searchInExamplesCheckBox != null) {
+				throw new IllegalArgumentException("deinflectCheckBox and searchInExamplesCheckBox cannot both be non-null");
+			}
 			this.isExactCheckBox = isExactCheckBox;
 			this.deinflectCheckBox = deinflectCheckBox;
+			this.searchInExamplesCheckBox = searchInExamplesCheckBox;
 			this.searchEditText = searchEditText;
 			this.handleSelections = handleSelections;
 			this.isJapanSearch = isJapanSearch;
@@ -184,7 +199,8 @@ public final class SearchUtils {
 		private void performSearch() {
 			final EditText searchEdit = (EditText) activity.findViewById(searchEditText);
 			final boolean isDeinflect = deinflectCheckBox == null ? false : ((CheckBox) activity.findViewById(deinflectCheckBox)).isChecked();
-			final boolean isExact = isDeinflect ? true : (isExactCheckBox == null ? true : ((CheckBox) activity.findViewById(isExactCheckBox)).isChecked());
+			final boolean isSearchInExamples = searchInExamplesCheckBox == null ? false : ((CheckBox) activity.findViewById(searchInExamplesCheckBox)).isChecked();
+			final boolean isExact = isDeinflect ? true : (isSearchInExamples ? false : (isExactCheckBox == null ? true : ((CheckBox) activity.findViewById(isExactCheckBox)).isChecked()));
 			String query = searchEdit.getText().toString();
 			if (handleSelections) {
 				int start = searchEdit.getSelectionStart();
@@ -214,7 +230,11 @@ public final class SearchUtils {
 
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if (isChecked) {
-				((CheckBox) activity.findViewById(isExactCheckBox)).setChecked(true);
+				if (deinflectCheckBox != null) {
+					((CheckBox) activity.findViewById(isExactCheckBox)).setChecked(true);
+				} else if (searchInExamplesCheckBox != null) {
+					((CheckBox) activity.findViewById(isExactCheckBox)).setChecked(false);
+				}
 			}
 		}
 	}

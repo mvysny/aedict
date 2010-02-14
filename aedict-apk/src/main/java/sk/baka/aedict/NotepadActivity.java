@@ -112,7 +112,7 @@ public class NotepadActivity extends ListActivity {
 				}));
 			}
 		}));
-		new SearchUtils(this).registerSearch(R.id.notepadExactMatch, R.id.notepadDeinflect, R.id.editNotepadSearch, false, R.id.btnNotepadSearch, true);
+		new SearchUtils(this).registerSearch(R.id.notepadExactMatch, R.id.notepadDeinflect, null, R.id.editNotepadSearch, false, R.id.btnNotepadSearch, true);
 		processIntent();
 	}
 
