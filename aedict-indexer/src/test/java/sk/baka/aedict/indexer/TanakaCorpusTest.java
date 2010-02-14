@@ -42,9 +42,33 @@ public class TanakaCorpusTest extends AbstractLuceneSearchTest {
     public void testSimpleEnglishSearch() throws Exception {
         List<String> s = search(null, "pretty");
         assertEquals(210, s.size());
-        assertEquals("\"That's the new head of the student council?\" \"Cool, isn't he?\" \"Rather, pretty boy?\"", s.get(0));
-        s = search("japanese", "pretty");
+        assertEquals("\"How are you feeling this morning?\" \"Pretty good, thanks.\"", s.get(0));
+        s = search("japanese", "english:pretty");
         assertEquals(210, s.size());
-        assertEquals("「これはとてもおもしろそうだね」と博が言います。", s.get(0));
+        assertEquals("「あれが生徒会長？」「かっこよくない？」「つーか、美形？」", s.get(0));
+    }
+
+    @Test
+    public void testSimpleJapaneseSearch() throws Exception {
+        List<String> s = search(null, "japanese:きれい");
+        assertEquals(211, s.size());
+    }
+
+    @Test
+    public void testSimpleJapaneseSearch2() throws Exception {
+        List<String> s = search(null, "japanese:きれい");
+        assertEquals("\"How pretty she is!\" said Ben to himself.", s.get(0));
+    }
+
+    @Test
+    public void testSimpleJapaneseSearch3() throws Exception {
+        List<String> s = search("japanese", "japanese:きれい");
+        assertEquals(211, s.size());
+    }
+
+    @Test
+    public void testSimpleJapaneseSearch4() throws Exception {
+        List<String> s = search("japanese", "japanese:きれい");
+        assertEquals("「きれいな宝石ですね」、適当な話題かどうかわからないが、とりあえずそう水を向けてみた。", s.get(0));
     }
 }

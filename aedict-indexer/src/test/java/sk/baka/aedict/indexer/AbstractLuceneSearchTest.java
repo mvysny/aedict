@@ -31,6 +31,7 @@ import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.TopDocs;
 import org.junit.After;
 import org.junit.Before;
+import static org.junit.Assert.*;
 
 /**
  * Contains support for Lucene search.
@@ -62,7 +63,8 @@ public abstract class AbstractLuceneSearchTest {
         final List<String> result = new ArrayList<String>();
         for (final ScoreDoc sd : docs.scoreDocs) {
             final Document doc = searcher.doc(sd.doc);
-            final String contents = doc.get(fieldName == null ? getDefaultFieldName() : "contents");
+            final String contents = doc.get(fieldName == null ? getDefaultFieldName() : fieldName);
+            assertNotNull(contents, "Column " + contents + " has null value. Make sure that it is present.");
             result.add(contents);
         }
         Collections.sort(result);
