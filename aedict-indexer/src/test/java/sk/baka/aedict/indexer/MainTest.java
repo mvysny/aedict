@@ -17,24 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sk.baka.aedict.indexer;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.FileUtils;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.Searcher;
-import org.apache.lucene.search.TopDocs;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -43,54 +28,28 @@ import static org.junit.Assert.*;
  * Tests the indexer.
  * @author Martin Vysny
  */
-public class MainTest {
+public class MainTest extends AbstractLuceneSearchTest {
 
     @BeforeClass
     public static void index() throws Exception {
-
-        final URL edictGz = Thread.currentThread().getContextClassLoader().getResource("edict.gz");
-        if (edictGz == null) {
-            throw new AssertionError("The edict.gz resource is missing");
-        }
-        new Main(new String[]{"-u", edictGz.toString(), "-g"}).run();
-        // check that the target file exists
-        assertTrue(new File(FileTypeEnum.Edict.getTargetFileName()).exists());
-        final File targetFile = new File("target/" + FileTypeEnum.Edict.getTargetFileName());
-        targetFile.delete();
-        FileUtils.moveFile(new File(FileTypeEnum.Edict.getTargetFileName()), targetFile);
+        Utils.index(null, "edict.gz", FileTypeEnum.Edict);
     }
 
     @Test(expected = ParseException.class)
     public void failOnMissingSwitch() throws Exception {
         new Main(new String[0]).run();
     }
-    private IndexReader reader;
-    private Searcher searcher;
-    private QueryParser parser;
-
-    @Before
-    public void initializeLucene() throws IOException {
-        reader = IndexReader.open(Main.LUCENE_INDEX);
-        searcher = new IndexSearcher(reader);
-        parser = new QueryParser("contents", new StandardAnalyzer());
-    }
-
-    @After
-    public void closeLucene() throws IOException {
-        searcher.close();
-        reader.close();
-    }
 
     @Test
     public void findMother() throws IOException, org.apache.lucene.queryParser.ParseException {
-        final List<String> result = search("mother");
+        final List<String> result = search(null, "mother");
         assertEquals("お母 [おふくろ] /(iK) (n) (col) one's mother/", result.get(0));
         assertEquals(129, result.size());
     }
 
     @Test
     public void findHaha() throws IOException, org.apache.lucene.queryParser.ParseException {
-        final List<String> result = search("はは");
+        final List<String> result = search(null, "はは");
         assertEquals("あはは /(int) a-ha-ha (laughing loudly)/", result.get(0));
         assertEquals(33, result.size());
     }
@@ -102,21 +61,14 @@ public class MainTest {
      */
     @Test
     public void findKyou() throws IOException, org.apache.lucene.queryParser.ParseException {
-        final List<String> result = search("きょう");
+        final List<String> result = search(null, "きょう");
         assertTrue(result.contains("今日 [きょう] /(n-t) today/this day/(P)/"));
         assertEquals("いい度胸 [いいどきょう] /(n,vs) some nerve (as in 'you must have some nerve to ...')/", result.get(0));
         assertEquals(2444, result.size());
     }
 
-    private List<String> search(final String query) throws IOException, org.apache.lucene.queryParser.ParseException {
-        final TopDocs docs = searcher.search(parser.parse(query), null, 10000);
-        final List<String> result = new ArrayList<String>();
-        for (final ScoreDoc sd : docs.scoreDocs) {
-            final Document doc = searcher.doc(sd.doc);
-            final String contents = doc.get("contents");
-            result.add(contents);
-        }
-        Collections.sort(result);
-        return result;
+    @Override
+    protected String getDefaultFieldName() {
+        return "contents";
     }
 }
