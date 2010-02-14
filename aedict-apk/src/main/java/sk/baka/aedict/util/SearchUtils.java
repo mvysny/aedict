@@ -344,6 +344,6 @@ public final class SearchUtils {
 	 * @return true if the files are available, false otherwise.
 	 */
 	public boolean checkDic(final DictTypeEnum dict) {
-		return checkDictionaryFile(dict.getDownloadSite(), DownloadDictTask.BASE_DIR + "/" + dict.getDefaultDictionaryLoc(), 1500 * 1024, "KanjiDic");
+		return checkDictionaryFile(dict.getDownloadSite(), dict.getDefaultDictionaryPath(), dict.zipFileSize(), dict.name());
 	}
 }

@@ -18,7 +18,7 @@
 
 package sk.baka.aedict;
 
-import sk.baka.aedict.dict.DownloadDictTask;
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.util.SearchUtils;
 import android.content.Intent;
 import android.net.Uri;
@@ -43,7 +43,7 @@ public class MainActivity extends AbstractActivity {
 		utils.setupAnalysisControls(R.id.btnJpTranslate, R.id.txtJpTranslate, true);
 		setButtonActivityLauncher(R.id.btnAbout, AboutActivity.class);
 		// check for dictionary file and download it if it is missing.
-		utils.checkDictionaryFile(DownloadDictTask.EDICT_LUCENE_ZIP, DownloadDictTask.LUCENE_INDEX, 20L * 1024 * 1024, "EDict");
+		utils.checkDic(DictTypeEnum.Edict);
 		final Button btnDonate = (Button) findViewById(R.id.btnDonate);
 		btnDonate.setOnClickListener(new OnClickListener() {
 

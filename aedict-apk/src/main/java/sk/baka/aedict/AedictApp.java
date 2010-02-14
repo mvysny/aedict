@@ -22,7 +22,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Formatter;
 
-import sk.baka.aedict.dict.DownloadDictTask;
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
@@ -245,10 +245,10 @@ public class AedictApp extends Application {
 	public static String getDictionaryLoc() {
 		final String dictionaryName = loadConfig().dictionaryName;
 		if (dictionaryName == null || dictionaryName.equals(Config.DEFAULT_DICTIONARY_NAME)) {
-			return DownloadDictTask.LUCENE_INDEX;
+			return DictTypeEnum.Edict.getDefaultDictionaryPath();
 		}
-		final String loc = DownloadDictTask.LUCENE_INDEX + "-" + dictionaryName;
+		final String loc = DictTypeEnum.Edict.getDefaultDictionaryPath() + "-" + dictionaryName;
 		final File f = new File(loc);
-		return f.exists() && f.isDirectory() ? loc : DownloadDictTask.LUCENE_INDEX;
+		return f.exists() && f.isDirectory() ? loc : DictTypeEnum.Edict.getDefaultDictionaryPath();
 	}
 }

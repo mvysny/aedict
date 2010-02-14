@@ -63,7 +63,7 @@ public final class LuceneSearch implements Closeable {
 	 */
 	public LuceneSearch(final DictTypeEnum dictType, final String dictionaryPath) throws IOException {
 		this.dictType = dictType;
-		reader = IndexReader.open(dictionaryPath != null ? dictionaryPath : DownloadDictTask.BASE_DIR+"/"+dictType.getDefaultDictionaryLoc());
+		reader = IndexReader.open(dictionaryPath != null ? dictionaryPath : dictType.getDefaultDictionaryPath());
 		searcher = new IndexSearcher(reader);
 		parser = new QueryParser("contents", new StandardAnalyzer());
 	}

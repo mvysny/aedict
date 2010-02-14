@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import sk.baka.aedict.AedictApp.Config;
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
@@ -116,12 +117,12 @@ public class ConfigActivity extends Activity {
 	 */
 	private void cleanup() {
 		final DialogUtils utils = new DialogUtils(this);
-		utils.showYesNoDialog(AedictApp.format(R.string.deleteDictionaryFiles, MiscUtils.getLength(new File(DownloadDictTask.BASE_DIR)) / 1024), new DialogInterface.OnClickListener() {
+		utils.showYesNoDialog(AedictApp.format(R.string.deleteDictionaryFiles, MiscUtils.getLength(new File(DictTypeEnum.BASE_DIR)) / 1024), new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
 				try {
-					MiscUtils.deleteDir(new File(DownloadDictTask.BASE_DIR));
+					MiscUtils.deleteDir(new File(DictTypeEnum.BASE_DIR));
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}

@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
@@ -94,7 +95,7 @@ public class DownloadDictionaryActivity extends ListActivity {
 			final String[] parsed = line.split("\\,");
 			final DownloadableDictionaryInfo result = new DownloadableDictionaryInfo();
 			result.name = parsed[1].trim();
-			result.url = new URL(DownloadDictTask.DICT_BASE_LOCATION_URL + parsed[0].trim());
+			result.url = new URL(DictTypeEnum.DICT_BASE_LOCATION_URL + parsed[0].trim());
 			result.zippedSize = Integer.valueOf(parsed[2].trim());
 			result.copyright = parsed[3].trim();
 			result.homepage = parsed[4].trim();
@@ -111,7 +112,7 @@ public class DownloadDictionaryActivity extends ListActivity {
 		}
 	}
 
-	private static final String DICT_LIST_URL = DownloadDictTask.DICT_BASE_LOCATION_URL + "dictionaries.txt";
+	private static final String DICT_LIST_URL = DictTypeEnum.DICT_BASE_LOCATION_URL + "dictionaries.txt";
 
 	/**
 	 * Downloads the dictionary list and sets the correct model to the activity.
@@ -173,7 +174,7 @@ public class DownloadDictionaryActivity extends ListActivity {
 	}
 
 	private void downloadDictionary(final DownloadableDictionaryInfo e) {
-		new DownloadDictTask(e.url, DownloadDictTask.BASE_DIR + "/index-" + e.name, e.name, e.zippedSize) {
+		new DownloadDictTask(e.url, DictTypeEnum.BASE_DIR + "/index-" + e.name, e.name, e.zippedSize) {
 
 			@Override
 			public void onSucceeded(Void result) {

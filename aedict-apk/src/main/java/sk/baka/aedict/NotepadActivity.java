@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sk.baka.aedict.AedictApp.Config;
-import sk.baka.aedict.dict.DownloadDictTask;
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
@@ -216,7 +216,7 @@ public class NotepadActivity extends ListActivity {
 			final List<EdictEntry> result = new ArrayList<EdictEntry>(items.length);
 			// always use the EDICT dictionary instead of user-selected
 			// dictionary
-			final LuceneSearch lsEdict = new LuceneSearch(false, DownloadDictTask.LUCENE_INDEX);
+			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, null);
 			try {
 				for (int i = 0; i < items.length; i++) {
 					final String item = items[i].trim();

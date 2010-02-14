@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import sk.baka.aedict.AedictApp.Config;
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
@@ -106,7 +107,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			setListAdapter(newAdapter());
 		}
 		// check that the KANJIDIC dictionary file is available
-		new SearchUtils(this).checkKanjiDic();
+		new SearchUtils(this).checkDic(DictTypeEnum.Kanjidic);
 		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -255,7 +256,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 
 		private List<EdictEntry> analyzeByWords(final String sentence) throws IOException {
 			final List<EdictEntry> result = new ArrayList<EdictEntry>();
-			final LuceneSearch lsEdict = new LuceneSearch(false, AedictApp.getDictionaryLoc());
+			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getDictionaryLoc());
 			try {
 				final String[] words = getWords(sentence);
 				for (int i = 0; i < words.length; i++) {
@@ -316,11 +317,11 @@ public class KanjiAnalyzeActivity extends ListActivity {
 
 		private List<EdictEntry> analyzeByCharacters(final String word) throws IOException {
 			final List<EdictEntry> result = new ArrayList<EdictEntry>(word.length());
-			final LuceneSearch lsEdict = new LuceneSearch(false, AedictApp.getDictionaryLoc());
+			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getDictionaryLoc());
 			try {
 				LuceneSearch lsKanjidic = null;
-				if (DownloadDictTask.isComplete(DownloadDictTask.LUCENE_INDEX_KANJIDIC)) {
-					lsKanjidic = new LuceneSearch(true, null);
+				if (DownloadDictTask.isComplete(DictTypeEnum.Kanjidic.getDefaultDictionaryPath())) {
+					lsKanjidic = new LuceneSearch(DictTypeEnum.Kanjidic, null);
 				}
 				try {
 					final String w = MiscUtils.removeWhitespaces(word);

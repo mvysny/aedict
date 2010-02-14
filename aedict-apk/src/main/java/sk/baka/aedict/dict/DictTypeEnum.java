@@ -55,6 +55,11 @@ public enum DictTypeEnum {
 				throw new RuntimeException(e);
 			}
 		}
+
+		@Override
+		public long zipFileSize() {
+			return 20L * 1024 * 1024;
+		}
 	},
 	/**
 	 * The KanjiDic dictionary.
@@ -104,6 +109,11 @@ public enum DictTypeEnum {
 				throw new RuntimeException(e);
 			}
 		}
+
+		@Override
+		public long zipFileSize() {
+			return 1500 * 1024;
+		}
 	},
 	/**
 	 * The Tanaka Corpus containing example sentences.
@@ -130,6 +140,11 @@ public enum DictTypeEnum {
 				throw new RuntimeException(e);
 			}
 		}
+
+		@Override
+		public long zipFileSize() {
+			return 12488022;
+		}
 	};
 	/**
 	 * A base http:// location of the dictionary files.
@@ -154,10 +169,34 @@ public enum DictTypeEnum {
 	public abstract String getDefaultDictionaryLoc();
 
 	/**
+	 * The base temporary directory, located on the sdcard, where EDICT and
+	 * index files are stored.
+	 */
+	public static final String BASE_DIR = "/sdcard/aedict";
+
+	/**
+	 * The default dictionary location. A directory name including the
+	 * '/sdcard/aedict/' prefix.
+	 * 
+	 * @return the default dictionary location.
+	 */
+	public final String getDefaultDictionaryPath() {
+		return BASE_DIR + "/" + getDefaultDictionaryLoc();
+	}
+
+	/**
 	 * Returns the address where the zipped Lucene index of the dictionary can
 	 * be downloaded.
 	 * 
 	 * @return the URL pointing to a zip file.
 	 */
 	public abstract URL getDownloadSite();
+
+	/**
+	 * Returns the expected size of the zipped file located at
+	 * {@link #getDownloadSite()}.
+	 * 
+	 * @return a size of the zip file in bytes
+	 */
+	public abstract long zipFileSize();
 }

@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import sk.baka.aedict.AedictApp.Config;
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
@@ -106,7 +107,7 @@ public class ResultActivity extends ListActivity {
 		String action = it.getAction();
 		if (SIMEJI_ACTION_INTERCEPT.equals(action)) {
 			isSimeji = true;
-			result = new SearchQuery();
+			result = new SearchQuery(DictTypeEnum.Edict);
 			result.matcher = MatcherEnum.ExactMatchEng;
 			String searchFor = it.getStringExtra(SIMEJI_INTENTKEY_REPLACE);
 			if (!MiscUtils.isBlank(searchFor)) {
@@ -139,7 +140,7 @@ public class ResultActivity extends ListActivity {
 				if(isTanaka) {
 					
 				}else{
-				model = EdictEntry.tryParseEdict(LuceneSearch.singleSearch(query, false, AedictApp.getDictionaryLoc()));
+				model = EdictEntry.tryParseEdict(LuceneSearch.singleSearch(query, AedictApp.getDictionaryLoc()));
 				}
 				Collections.sort(model);
 			} catch (Exception ex) {

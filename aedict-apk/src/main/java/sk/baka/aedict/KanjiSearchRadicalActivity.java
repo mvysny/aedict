@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
@@ -90,7 +91,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 			}
 		}));
 		// check that KANJIDIC exists
-		new SearchUtils(this).checkKanjiDic();
+		new SearchUtils(this).checkDic(DictTypeEnum.Kanjidic);
 	}
 
 	private int radicalsPerRow;
@@ -232,7 +233,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 			final Set<Character> matches = Radicals.getKanjisWithRadicals(((String) params[0]).toCharArray());
 			final List<EdictEntry> entries = new ArrayList<EdictEntry>();
 			// filter the matches based on stroke count
-			final LuceneSearch ls = new LuceneSearch(true, null);
+			final LuceneSearch ls = new LuceneSearch(DictTypeEnum.Kanjidic, null);
 			try {
 				for (final Iterator<Character> kanjis = matches.iterator(); kanjis.hasNext();) {
 					final char kanji = kanjis.next();

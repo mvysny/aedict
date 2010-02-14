@@ -71,22 +71,6 @@ public class DownloadDictTask extends AbstractTask<Void, Void> {
 	}
 
 	/**
-	 * The base temporary directory, located on the sdcard, where EDICT and
-	 * index files are stored.
-	 */
-	public static final String BASE_DIR = "/sdcard/aedict";
-	/**
-	 * Directory where the Apache Lucene for the EDICT file index is stored.
-	 */
-	@Deprecated
-	public static final String LUCENE_INDEX = BASE_DIR + "/index";
-	/**
-	 * Directory where the Apache Lucene index for the KANJIDIC file is stored.
-	 */
-	@Deprecated
-	public static final String LUCENE_INDEX_KANJIDIC = BASE_DIR + "/index-kanjidic";
-
-	/**
 	 * Checks if the edict is downloaded and indexed correctly.
 	 * 
 	 * @param indexDir
