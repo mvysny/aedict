@@ -42,8 +42,9 @@ public enum FileTypeEnum {
             return "http://ftp.monash.edu.au/pub/nihongo/edict.gz";
         }
 
-        public void addLine(final String line, final Document doc) {
+        public boolean addLine(final String line, final Document doc) {
             doc.add(new Field("contents", line, Field.Store.YES, Field.Index.ANALYZED));
+            return true;
         }
 
         public String getAndroidSdcardRelativeLoc() {
@@ -64,7 +65,7 @@ public enum FileTypeEnum {
             return "aedict/index-kanjidic/";
         }
 
-        public void addLine(final String line, final Document doc) {
+        public boolean addLine(final String line, final Document doc) {
             doc.add(new Field("contents", line, Field.Store.COMPRESS, Field.Index.NO));
             // the kanji itself
             doc.add(new Field("kanji", getKanji(line), Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -75,6 +76,7 @@ public enum FileTypeEnum {
             doc.add(new Field("radical", getFields(line, 'B', true), Field.Store.YES, Field.Index.NOT_ANALYZED));
             // the skip number in the form of x-x-x
             doc.add(new Field("skip", getFields(line, 'P', true), Field.Store.YES, Field.Index.NOT_ANALYZED));
+            return true;
         }
 
         private String getFields(final String kanjidicLine, final char firstChar, final boolean firstOnly) {
@@ -109,16 +111,33 @@ public enum FileTypeEnum {
     },
     Tanaka {
 
-        public void addLine(final String line, final Document doc) {
-            if (!line.startsWith("A: ")) {
-                // skip
-                return;
+        public boolean addLine(final String line, final Document doc) {
+            if (line.startsWith("A: ")) {
+                final ArrayList<Object> parsed = Collections.list(new StringTokenizer(line.substring(3), "\t#"));
+                final String japanese = (String) parsed.get(0);
+                final String english = (String) parsed.get(1);
+                doc.add(new Field("japanese", japanese, Field.Store.YES, Field.Index.ANALYZED));
+                doc.add(new Field("english", english, Field.Store.YES, Field.Index.ANALYZED));
+                return false;
             }
-            final ArrayList<Object> parsed = Collections.list(new StringTokenizer(line.substring(3), "\t#"));
-            final String japanese = (String) parsed.get(0);
-            final String english = (String) parsed.get(1);
-            doc.add(new Field("japanese", japanese, Field.Store.YES, Field.Index.ANALYZED));
-            doc.add(new Field("english", english, Field.Store.YES, Field.Index.ANALYZED));
+            if (!line.startsWith("B: ")) {
+                throw new IllegalArgumentException("The TanakaCorpus file has unexpected format: line " + line);
+            }
+            // gather all inflected japanese words. Search for tokens in a form of xxx{yyy} and store xxx only.
+            final ArrayList<Object> words = Collections.list(new StringTokenizer(line.substring(3)));
+            final StringBuilder wordList = new StringBuilder();
+            for (final Object w : words) {
+                final String word = (String) w;
+                int curlyBraceIndex = word.indexOf('{');
+                if (curlyBraceIndex < 0) {
+                    continue;
+                }
+                // the word is inflected. Retrieve the xxx part and add it
+                final String base = new StringTokenizer(word, "{}[]()~").nextToken();
+                wordList.append(base).append(' ');
+            }
+            doc.add(new Field("jp-deinflected", wordList.toString(), Field.Store.NO, Field.Index.ANALYZED));
+            return true;
         }
 
         public String getTargetFileName() {
@@ -138,8 +157,9 @@ public enum FileTypeEnum {
      * Adds given line from given file type to the document.
      * @param line the file line
      * @param doc the document
+     * @return true if the document should be added, false if next line will also be stored to the same document.
      */
-    public abstract void addLine(final String line, final Document doc);
+    public abstract boolean addLine(final String line, final Document doc);
 
     /**
      * The file name of the target zip file, which contains the Lucene index.

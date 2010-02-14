@@ -201,14 +201,20 @@ public class Main {
 
     private static void indexWithLucene(BufferedReader edict,
             IndexWriter luceneWriter, final FileTypeEnum ft) throws IOException {
+        Document doc = new Document();
         for (String line = edict.readLine(); line != null; line = edict.readLine()) {
             if (line.startsWith("#")) {
                 // skip comments
                 continue;
             }
-            final Document doc = new Document();
-            ft.addLine(line, doc);
-            luceneWriter.addDocument(doc);
+            if (line.trim().length() == 0) {
+                // skip blank lines
+                continue;
+            }
+            if (ft.addLine(line, doc)) {
+                luceneWriter.addDocument(doc);
+                doc = new Document();
+            }
         }
         luceneWriter.commit();
     }
