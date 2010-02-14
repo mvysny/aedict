@@ -6,6 +6,9 @@
 	<body>
 		<release version="0.9" date="16. February 2010">
 			<action dev="vyzivus" type="add">
+				Added Japanese-French downloadable dictionary.
+			</action>
+			<action dev="vyzivus" type="add">
 				Added Japanese-German downloadable dictionary.
 			</action>
 			<action dev="vyzivus" type="add">
