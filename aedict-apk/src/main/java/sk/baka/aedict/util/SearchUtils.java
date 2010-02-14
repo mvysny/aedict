@@ -74,6 +74,9 @@ public final class SearchUtils {
 	 *            katakana, then the EDict search is performed.
 	 * @param isExact
 	 *            if true then only exact matches are returned.
+	 * @param isDeinflect
+	 *            if true then a verb deinflection is attempted before the
+	 *            search.
 	 */
 	public void searchForJapan(final String romaji, final boolean isExact, final boolean isDeinflect) {
 		final Config cfg = AedictApp.loadConfig();
@@ -111,6 +114,9 @@ public final class SearchUtils {
 	 * @param isExactCheckBox
 	 *            the "IsExact" check box resource id. If null then an exact
 	 *            search will always be performed.
+	 * @param deinflectCheckBox
+	 *            the "deinflect" check box reference. If null then no
+	 *            deinflection attempt will be made.
 	 * @param searchEditText
 	 *            the search query edit box
 	 * @param handleSelections
@@ -133,6 +139,11 @@ public final class SearchUtils {
 		}
 	}
 
+	/**
+	 * Configures specific GUI components for the dictionary search.
+	 * 
+	 * @author Martin Vysny
+	 */
 	private class SearchText implements TextView.OnEditorActionListener, View.OnClickListener, OnCheckedChangeListener {
 		private final Integer isExactCheckBox;
 		private final int searchEditText;
@@ -140,6 +151,24 @@ public final class SearchUtils {
 		private final boolean isJapanSearch;
 		private final Integer deinflectCheckBox;
 
+		/**
+		 * Creates new search instance.
+		 * 
+		 * @param isExactCheckBox
+		 *            the "IsExact" check box resource id. If null then an exact
+		 *            search will always be performed.
+		 * @param deinflectCheckBox
+		 *            the "deinflect" check box reference. If null then no
+		 *            deinflection attempt will be made.
+		 * @param searchEditText
+		 *            the search query edit box
+		 * @param handleSelections
+		 *            if true then only selected portions of text will be used
+		 *            for search (if a selection exists).
+		 * @param isJapanSearch
+		 *            if true then we are searching for japanese text (in
+		 *            romaji).
+		 */
 		public SearchText(final Integer isExactCheckBox, final Integer deinflectCheckBox, final int searchEditText, final boolean handleSelections, final boolean isJapanSearch) {
 			this.isExactCheckBox = isExactCheckBox;
 			this.deinflectCheckBox = deinflectCheckBox;
