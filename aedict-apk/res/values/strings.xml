@@ -114,4 +114,5 @@
     <string name="addToNotepad">Add to notepad</string>
     <string name="searchingInDictionary">Searching in the %s dictionary</string>
     <string name="deinflectVerbs">Deinflect verbs</string>
+    <string name="kanjiDrawWarning">Please note that you must use the proper stroke order</string>
 </resources>

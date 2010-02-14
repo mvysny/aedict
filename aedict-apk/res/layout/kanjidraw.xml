@@ -14,13 +14,13 @@
 	-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="wrap_content" android:gravity="center" android:id="@+id/kanjidrawRoot">
+	android:layout_height="wrap_content" android:gravity="center"
+	android:id="@+id/kanjidrawRoot">
 	<LinearLayout android:orientation="horizontal"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:gravity="center">
 		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:id="@+id/textStrokes"/>
+			android:layout_height="wrap_content" android:id="@+id/textStrokes" />
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/clear"
 			android:id="@+id/btnKanjiClear"></Button>
@@ -28,4 +28,6 @@
 			android:layout_height="wrap_content" android:text="@string/search"
 			android:id="@+id/btnKanjiSearch"></Button>
 	</LinearLayout>
+	<TextView android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="@string/kanjiDrawWarning" />
 </LinearLayout>
