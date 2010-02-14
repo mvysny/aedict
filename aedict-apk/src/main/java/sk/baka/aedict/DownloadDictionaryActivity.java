@@ -30,9 +30,15 @@ import java.util.Map;
 
 import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.autils.AbstractTask;
+import sk.baka.autils.AndroidUtils;
+import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
 import sk.baka.autils.Progress;
 import android.app.ListActivity;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -65,6 +71,14 @@ public class DownloadDictionaryActivity extends ListActivity {
 		 * The size of the zip file.
 		 */
 		public long zippedSize;
+		/**
+		 * A copyright for the dictionary file.
+		 */
+		public String copyright;
+		/**
+		 * A link to the homepage.
+		 */
+		public String homepage;
 
 		/**
 		 * Parses a dictionary definition file line in the form of
@@ -82,6 +96,8 @@ public class DownloadDictionaryActivity extends ListActivity {
 			result.name = parsed[1].trim();
 			result.url = new URL(DownloadDictTask.DICT_BASE_LOCATION_URL + parsed[0].trim());
 			result.zippedSize = Integer.valueOf(parsed[2].trim());
+			result.copyright = parsed[3].trim();
+			result.homepage = parsed[4].trim();
 			return result;
 		}
 
@@ -145,6 +161,18 @@ public class DownloadDictionaryActivity extends ListActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		final DownloadableDictionaryInfo e = (DownloadableDictionaryInfo) getListAdapter().getItem(position);
+		new DialogUtils(this).showYesNoDialog("Please accept the copyright", e.copyright, AndroidUtils.safe(this, new OnClickListener() {
+
+			public void onClick(DialogInterface dialog, int which) {
+				downloadDictionary(e);
+			}
+		}));
+		// show a browser with the homepage.
+		Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(e.homepage));
+		startActivity(i);
+	}
+
+	private void downloadDictionary(final DownloadableDictionaryInfo e) {
 		new DownloadDictTask(e.url, DownloadDictTask.BASE_DIR + "/index-" + e.name, e.name, e.zippedSize) {
 
 			@Override
