@@ -18,6 +18,7 @@
 
 package sk.baka.aedict;
 
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
@@ -39,7 +40,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 	}
 
 	public void testSimpleEnglishSearch() {
-		final SearchQuery q = new SearchQuery();
+		final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
 		q.isJapanese = false;
 		q.matcher = MatcherEnum.ExactMatchEng;
 		q.query = new String[] { "mother" };
@@ -55,7 +56,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 	}
 
 	public void testSimpleJapaneseSearch() {
-		final SearchQuery q = new SearchQuery();
+		final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
 		q.isJapanese = true;
 		q.matcher = MatcherEnum.ExactMatchEng;
 		q.query = new String[] { RomanizationEnum.Hepburn.toHiragana("haha") };
@@ -74,7 +75,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 	 * 100 were retrieved from Lucene and they were further filtered.
 	 */
 	public void testSearchForKyou() {
-		final SearchQuery q = new SearchQuery();
+		final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
 		q.isJapanese = true;
 		q.matcher = MatcherEnum.ExactMatchEng;
 		q.query = new String[] { RomanizationEnum.Hepburn.toHiragana("kyou") };
