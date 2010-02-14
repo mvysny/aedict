@@ -17,6 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sk.baka.aedict.indexer;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.StringTokenizer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 
@@ -107,15 +110,23 @@ public enum FileTypeEnum {
     Tanaka {
 
         public void addLine(final String line, final Document doc) {
-            throw new UnsupportedOperationException();
+            if (!line.startsWith("A: ")) {
+                // skip
+                return;
+            }
+            final ArrayList<Object> parsed = Collections.list(new StringTokenizer(line.substring(3), "\t#"));
+            final String japanese = (String) parsed.get(0);
+            final String english = (String) parsed.get(1);
+            doc.add(new Field("japanese", japanese, Field.Store.YES, Field.Index.ANALYZED));
+            doc.add(new Field("english", english, Field.Store.YES, Field.Index.ANALYZED));
         }
 
         public String getTargetFileName() {
-            throw new UnsupportedOperationException();
+            return "tanaka-lucene.zip";
         }
 
         public String getDefaultDownloadUrl() {
-            throw new UnsupportedOperationException();
+            return "http://www.csse.monash.edu.au/~jwb/examples.gz";
         }
 
         public String getAndroidSdcardRelativeLoc() {
