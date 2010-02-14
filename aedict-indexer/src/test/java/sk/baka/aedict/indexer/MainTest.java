@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package sk.baka.aedict.indexer;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
@@ -56,10 +54,10 @@ public class MainTest {
         }
         new Main(new String[]{"-u", edictGz.toString(), "-g"}).run();
         // check that the target file exists
-        assertTrue(new File(Main.LUCENE_INDEX_ZIP).exists());
-        final File targetFile = new File("target/" + Main.LUCENE_INDEX_ZIP);
+        assertTrue(new File(FileTypeEnum.Edict.getTargetFileName()).exists());
+        final File targetFile = new File("target/" + FileTypeEnum.Edict.getTargetFileName());
         targetFile.delete();
-        FileUtils.moveFile(new File(Main.LUCENE_INDEX_ZIP), targetFile);
+        FileUtils.moveFile(new File(FileTypeEnum.Edict.getTargetFileName()), targetFile);
     }
 
     @Test(expected = ParseException.class)
