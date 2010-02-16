@@ -95,6 +95,31 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	}
 
 	/**
+	 * Asserts that the text of given {@link TextView} is as expected.
+	 * 
+	 * @param textViewId
+	 *            the text view ID
+	 * @param text
+	 *            the text to expect
+	 */
+	protected void assertText(final int textViewId, final String text) {
+		assertEquals(text, ((TextView) getActivity().findViewById(textViewId)).getText());
+	}
+
+	/**
+	 * Asserts that the text of given {@link TextView} is as expected.
+	 * 
+	 * @param textViewId
+	 *            the text view ID
+	 * @param stringId
+	 *            the text to expect. References strings from the application,
+	 *            not from the test module.
+	 */
+	protected void assertText(final int textViewId, final int stringId) {
+		assertText(textViewId, getActivity().getString(stringId));
+	}
+
+	/**
 	 * Clicks on given {@link Button}.
 	 * 
 	 * @param buttonId

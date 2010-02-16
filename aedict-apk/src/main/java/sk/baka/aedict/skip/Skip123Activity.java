@@ -61,6 +61,9 @@ public class Skip123Activity extends Activity {
 		}));
 	}
 
+	/**
+	 * Contains second and third component of the SKIP number.
+	 */
 	private static class SecondThird {
 		@BindToView(R.id.editSkipFirst)
 		@Range(min = 1, max = 30)
