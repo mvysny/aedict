@@ -35,6 +35,7 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View.OnCreateContextMenuListener;
 import android.widget.AbsListView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
@@ -128,6 +129,15 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 */
 	protected void click(final int buttonId) {
 		((Button) getActivity().findViewById(buttonId)).performClick();
+	}
+
+	/**
+	 * Checks whether given {@link CompoundButton} is checked.
+	 * @param expected the expected check state
+	 * @param checkboxId the button ID
+	 */
+	protected void assertChecked(final boolean expected, final int checkboxId) {
+		assertEquals(expected, ((CompoundButton) getActivity().findViewById(checkboxId)).isChecked());
 	}
 
 	/**

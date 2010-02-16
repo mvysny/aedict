@@ -18,6 +18,7 @@
 
 package sk.baka.aedict;
 
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.RomanizationEnum;
@@ -46,6 +47,7 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 		assertEquals(RomanizationEnum.Hepburn.toKatakana("haha"), q.query[0]);
 		assertEquals(2, q.query.length);
 		assertTrue(q.isJapanese);
+		assertEquals(DictTypeEnum.Edict, q.dictType);
 		assertEquals(MatcherEnum.SubstringMatch, q.matcher);
 	}
 
@@ -62,6 +64,42 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 		assertEquals("mother", q.query[0]);
 		assertEquals(1, q.query.length);
 		assertFalse(q.isJapanese);
+		assertEquals(DictTypeEnum.Edict, q.dictType);
+		assertEquals(MatcherEnum.ExactMatchEng, q.matcher);
+	}
+
+	/**
+	 * Tests that a search request is sent when english search is requested.
+	 */
+	public void testSearchInExamples() {
+		startActivity();
+		setText(R.id.engSearchEdit, "mother");
+		click(R.id.engExactMatch);
+		click(R.id.engSearchExamples);
+		assertChecked(false, R.id.engExactMatch);
+		click(R.id.engSearch);
+		assertStartedActivity(ResultActivity.class);
+		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
+		assertEquals("mother", q.query[0]);
+		assertEquals(1, q.query.length);
+		assertFalse(q.isJapanese);
+		assertEquals(DictTypeEnum.Tanaka, q.dictType);
+		assertEquals(MatcherEnum.SubstringMatch, q.matcher);
+	}
+
+	public void testJpSearchDeinflectVerbs() {
+		startActivity();
+		setText(R.id.jpSearchEdit, "aenai");
+		click(R.id.jpDeinflectVerbs);
+		assertChecked(true, R.id.jpExactMatch);
+		click(R.id.jpSearch);
+		assertStartedActivity(ResultActivity.class);
+		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
+		assertEquals("あう", q.query[0]);
+		assertEquals("あえる", q.query[1]);
+		assertEquals(2, q.query.length);
+		assertTrue(q.isJapanese);
+		assertEquals(DictTypeEnum.Edict, q.dictType);
 		assertEquals(MatcherEnum.ExactMatchEng, q.matcher);
 	}
 
