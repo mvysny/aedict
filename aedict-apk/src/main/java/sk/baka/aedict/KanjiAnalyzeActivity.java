@@ -226,7 +226,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	}
 
 	private void recomputeModel() {
-		new RecomputeModel().execute(this, word);
+		new RecomputeModel().execute(AedictApp.isInstrumentation, this, word);
 	}
 
 	private class RecomputeModel extends AbstractTask<String, List<EdictEntry>> {

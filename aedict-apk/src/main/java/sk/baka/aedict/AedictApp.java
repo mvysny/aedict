@@ -251,4 +251,9 @@ public class AedictApp extends Application {
 		final File f = new File(loc);
 		return f.exists() && f.isDirectory() ? loc : DictTypeEnum.Edict.getDefaultDictionaryPath();
 	}
+	
+	/**
+	 * If true then the instrumentation (testing) is in progress.
+	 */
+	public static boolean isInstrumentation = false;
 }

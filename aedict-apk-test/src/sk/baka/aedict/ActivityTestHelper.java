@@ -50,6 +50,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	public ActivityTestHelper(Class<T> activityClass) {
 		super(activityClass);
 		this.activityClass = activityClass;
+		AedictApp.isInstrumentation = true;
 	}
 
 	/**
