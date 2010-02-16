@@ -65,7 +65,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * Starts the activity and asserts that it is really started.
 	 */
 	protected void startActivity() {
-		startActivity(new Intent(Intent.ACTION_MAIN));
+		startActivity(new Intent(getInstrumentation().getContext(), activityClass));
 	}
 
 	/**
