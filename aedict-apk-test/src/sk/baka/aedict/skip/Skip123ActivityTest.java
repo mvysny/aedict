@@ -89,5 +89,4 @@ public class Skip123ActivityTest extends ActivityTestHelper<Skip123Activity> {
 			assertEquals(skipNumber, e.skip);
 		}
 	}
-
 }
