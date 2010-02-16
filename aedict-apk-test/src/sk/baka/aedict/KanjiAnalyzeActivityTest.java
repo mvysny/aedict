@@ -18,6 +18,7 @@
 
 package sk.baka.aedict;
 
+import sk.baka.aedict.dict.EdictEntry;
 import android.content.Intent;
 
 public class KanjiAnalyzeActivityTest extends ActivityTestHelper<KanjiAnalyzeActivity> {
@@ -27,9 +28,33 @@ public class KanjiAnalyzeActivityTest extends ActivityTestHelper<KanjiAnalyzeAct
 	}
 
 	public void testStartActivity() {
+		startActivity("母");
+	}
+
+	private void startActivity(final String word) {
 		final Intent i = new Intent(getInstrumentation().getContext(), KanjiAnalyzeActivity.class);
-		i.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, "母");
+		i.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, word);
 		startActivity(i);
 	}
 
+	public void testAnalyzeAsWords() {
+		startActivity("母上");
+		assertEquals(2, getActivity().getListAdapter().getCount());
+		assertEquals("母", get(0).getJapanese());
+		assertEquals("上", get(1).getJapanese());
+		activateOptionsMenu(1);
+		assertEquals(1, getActivity().getListAdapter().getCount());
+		assertEquals("母上", get(0).getJapanese());
+	}
+
+	public void testAddToNotepad() {
+		startActivity("母上");
+		contextMenu(getActivity().getListView(), 10001, 0);
+		assertStartedActivity(NotepadActivity.class);
+		assertEquals("母", ((EdictEntry) getStartedActivityIntent().getExtras().get(NotepadActivity.INTENTKEY_ADD_ENTRY)).getJapanese());
+	}
+
+	private EdictEntry get(int i) {
+		return (EdictEntry) getActivity().getListAdapter().getItem(i);
+	}
 }
