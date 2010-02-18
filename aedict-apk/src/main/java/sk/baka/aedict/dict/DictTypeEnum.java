@@ -68,7 +68,7 @@ public enum DictTypeEnum {
 			return 20L * 1024 * 1024;
 		}
 
-		public EdictEntry parseEntry(final String edictEntry) {
+		public DictEntry parseEntry(final String edictEntry) {
 			// the entry is in one of the two following formats:
 			// KANJI [hiragana] / english meaning
 			// katakana / english meaning
@@ -95,16 +95,16 @@ public enum DictTypeEnum {
 				reading = jpPart.substring(openSquareBracket + 1, closingSquareBracket).trim();
 			}
 			final boolean isCommon = edictEntry.contains("(P)");
-			return new EdictEntry(kanji, reading, englishPart, null, null, null, null, isCommon);
+			return new DictEntry(kanji, reading, englishPart, null, null, null, null, isCommon);
 		}
 
 		@Override
-		public EdictEntry getEntry(Document doc) {
+		public DictEntry getEntry(Document doc) {
 			return parseEntry(doc.get("contents"));
 		}
 
 		@Override
-		public boolean matches(final EdictEntry entry, boolean isJapanese, String query, MatcherEnum matcher) {
+		public boolean matches(final DictEntry entry, boolean isJapanese, String query, MatcherEnum matcher) {
 			if (matcher == MatcherEnum.Substring) {
 				if (isJapanese) {
 					return MatcherEnum.Substring.matches(entry.reading, query) || ((entry.kanji != null) && MatcherEnum.Substring.matches(entry.kanji, query));
@@ -198,7 +198,7 @@ public enum DictTypeEnum {
 		}
 
 		@Override
-		public EdictEntry getEntry(Document doc) {
+		public DictEntry getEntry(Document doc) {
 			// the entry is described at
 			// http://www.csse.monash.edu.au/~jwb/kanjidic.html
 			final String kanjidicEntry = doc.get("contents");
@@ -250,11 +250,11 @@ public enum DictTypeEnum {
 			if (!namesReading.isEmpty()) {
 				reading.add("[" + namesReading + "]");
 			}
-			return new EdictEntry(String.valueOf(kanji), reading.toString(), english.toString(), radicalNumber, strokeCount, skip, grade, null);
+			return new DictEntry(String.valueOf(kanji), reading.toString(), english.toString(), radicalNumber, strokeCount, skip, grade, null);
 		}
 
 		@Override
-		public boolean matches(EdictEntry entry, boolean isJapanese, String string, MatcherEnum matcher) {
+		public boolean matches(DictEntry entry, boolean isJapanese, String string, MatcherEnum matcher) {
 			// just ignore the substring matching, it should be never used with
 			// this
 			// dictionary type
@@ -296,14 +296,14 @@ public enum DictTypeEnum {
 		}
 
 		@Override
-		public EdictEntry getEntry(Document doc) {
+		public DictEntry getEntry(Document doc) {
 			final String japanese = doc.get("japanese");
 			final String english = doc.get("english");
-			return new EdictEntry(japanese, null, english);
+			return new DictEntry(japanese, null, english);
 		}
 
 		@Override
-		public boolean matches(final EdictEntry entry, final boolean isJapanese, String query, MatcherEnum matcher) {
+		public boolean matches(final DictEntry entry, final boolean isJapanese, String query, MatcherEnum matcher) {
 			final String line = isJapanese ? entry.getJapanese() : entry.english;
 			return matcher.matches(query, line);
 		}
@@ -370,7 +370,7 @@ public enum DictTypeEnum {
 	 *            the lucene document, not null.
 	 * @return never null entry.
 	 */
-	public abstract EdictEntry getEntry(final Document doc);
+	public abstract DictEntry getEntry(final Document doc);
 
 	/**
 	 * Returns a dictionary entry from a Lucene document, from a proper
@@ -380,12 +380,12 @@ public enum DictTypeEnum {
 	 *            the lucene document, not null.
 	 * @return never null entry. May return an error entry on parse error.
 	 */
-	public EdictEntry tryGetEntry(final Document doc) {
+	public DictEntry tryGetEntry(final Document doc) {
 		try {
 			return getEntry(doc);
 		} catch (Exception ex) {
 			Log.e(DictTypeEnum.class.getSimpleName(), "Failed to parse a dictionary line", ex);
-			return EdictEntry.newErrorMsg(ex.getMessage());
+			return DictEntry.newErrorMsg(ex.getMessage());
 		}
 	}
 
@@ -400,8 +400,8 @@ public enum DictTypeEnum {
 	 * @return an entry instance if matched, null if unmatched, error entry in
 	 *         case of a parsing error.
 	 */
-	public EdictEntry tryGetEntry(final Document doc, final SearchQuery query) {
-		final EdictEntry entry = tryGetEntry(doc);
+	public DictEntry tryGetEntry(final Document doc, final SearchQuery query) {
+		final DictEntry entry = tryGetEntry(doc);
 		if (query.query == null || query.matcher == MatcherEnum.Any || !entry.isValid()) {
 			return entry;
 		}
@@ -419,7 +419,7 @@ public enum DictTypeEnum {
 	 * 
 	 * @param entry
 	 *            the entry to match. Never null, always
-	 *            {@link EdictEntry#isValid() valid}.
+	 *            {@link DictEntry#isValid() valid}.
 	 * @param isJapanese
 	 *            if true we are matching japanese word, if false, a
 	 *            non-japanese (presumably english) word is being matched.
@@ -429,5 +429,5 @@ public enum DictTypeEnum {
 	 *            the matcher type, never {@link MatcherEnum#Any}.
 	 * @return true if the query matches, false otherwise.
 	 */
-	public abstract boolean matches(final EdictEntry entry, final boolean isJapanese, final String query, final MatcherEnum matcher);
+	public abstract boolean matches(final DictEntry entry, final boolean isJapanese, final String query, final MatcherEnum matcher);
 }

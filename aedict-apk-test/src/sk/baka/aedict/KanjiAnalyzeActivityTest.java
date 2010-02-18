@@ -18,7 +18,7 @@
 
 package sk.baka.aedict;
 
-import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.aedict.dict.DictEntry;
 import android.content.Intent;
 
 public class KanjiAnalyzeActivityTest extends ActivityTestHelper<KanjiAnalyzeActivity> {
@@ -51,10 +51,10 @@ public class KanjiAnalyzeActivityTest extends ActivityTestHelper<KanjiAnalyzeAct
 		startActivity("母上");
 		contextMenu(getActivity().getListView(), 10001, 0);
 		assertStartedActivity(NotepadActivity.class);
-		assertEquals("母", ((EdictEntry) getStartedActivityIntent().getExtras().get(NotepadActivity.INTENTKEY_ADD_ENTRY)).getJapanese());
+		assertEquals("母", ((DictEntry) getStartedActivityIntent().getExtras().get(NotepadActivity.INTENTKEY_ADD_ENTRY)).getJapanese());
 	}
 
-	private EdictEntry get(int i) {
-		return (EdictEntry) getActivity().getListAdapter().getItem(i);
+	private DictEntry get(int i) {
+		return (DictEntry) getActivity().getListAdapter().getItem(i);
 	}
 }

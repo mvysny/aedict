@@ -24,7 +24,7 @@ import android.content.Intent;
 import sk.baka.aedict.ActivityTestHelper;
 import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
-import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.aedict.dict.DictEntry;
 
 /**
  * Tests the {@link Skip4Activity} class.
@@ -67,9 +67,9 @@ public class Skip4ActivityTest extends ActivityTestHelper<Skip4Activity> {
 
 	private void assertSkipSearch(final String skipNumber) {
 		final Intent i = getStartedActivityIntent();
-		final List<EdictEntry> entries = (List<EdictEntry>) i.getSerializableExtra(KanjiAnalyzeActivity.INTENTKEY_ENTRYLIST);
+		final List<DictEntry> entries = (List<DictEntry>) i.getSerializableExtra(KanjiAnalyzeActivity.INTENTKEY_ENTRYLIST);
 		assertFalse(entries.isEmpty());
-		for (EdictEntry e : entries) {
+		for (DictEntry e : entries) {
 			assertEquals(skipNumber, e.skip);
 		}
 	}

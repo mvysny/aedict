@@ -28,11 +28,11 @@ import android.widget.TextView;
 import android.widget.TwoLineListItem;
 
 /**
- * Represents a parsed EDict entry. Immutable.
+ * Represents a parsed dictionary entry. Immutable.
  * 
  * @author Martin Vysny
  */
-public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
+public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	private static final long serialVersionUID = 1L;
 	/**
 	 * The kanji expression, may be null if the entry does not contain any kanji
@@ -85,7 +85,7 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 * @param english
 	 *            the English translation
 	 */
-	public EdictEntry(final String kanji, final String reading, final String english) {
+	public DictEntry(final String kanji, final String reading, final String english) {
 		this(kanji, reading, english, null, null, null, null, null);
 	}
 
@@ -120,7 +120,7 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 * @param isCommon
 	 *            if true then this word is a common one. null if not known.
 	 */
-	public EdictEntry(final String kanji, final String reading, final String english, final Integer radical, final Integer strokes, final String skip, final Integer grade, final Boolean isCommon) {
+	public DictEntry(final String kanji, final String reading, final String english, final Integer radical, final Integer strokes, final String skip, final Integer grade, final Boolean isCommon) {
 		this.kanji = kanji;
 		this.reading = reading;
 		this.english = english;
@@ -148,8 +148,8 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 *            the error message
 	 * @return invalid edict entry.
 	 */
-	public static EdictEntry newErrorMsg(final String errorMsg) {
-		return new EdictEntry(null, null, errorMsg);
+	public static DictEntry newErrorMsg(final String errorMsg) {
+		return new DictEntry(null, null, errorMsg);
 	}
 
 	/**
@@ -159,8 +159,8 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 *            a list of entries.
 	 * @return edictEntries
 	 */
-	public static Collection<? extends EdictEntry> removeInvalid(final Collection<? extends EdictEntry> edictEntries) {
-		for (final Iterator<? extends EdictEntry> i = edictEntries.iterator(); i.hasNext();) {
+	public static Collection<? extends DictEntry> removeInvalid(final Collection<? extends DictEntry> edictEntries) {
+		for (final Iterator<? extends DictEntry> i = edictEntries.iterator(); i.hasNext();) {
 			if (!i.next().isValid()) {
 				i.remove();
 			}
@@ -225,13 +225,13 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 	 * <ul>
 	 * <li>Invalid entries are placed last,</li>
 	 * <li>
-	 * {@link EdictEntry#isCommon common} words are preferred;</li>
-	 * <li>next, shortest {@link EdictEntry#getJapanese() japanese} words are
+	 * {@link DictEntry#isCommon common} words are preferred;</li>
+	 * <li>next, shortest {@link DictEntry#getJapanese() japanese} words are
 	 * preferred (as they usually are the best matches)</li>
 	 * <li>finally, {@link #getJapanese()} values are compared</li>
 	 * </ul>
 	 */
-	public int compareTo(EdictEntry another) {
+	public int compareTo(DictEntry another) {
 		if (!isValid()) {
 			if (another.isValid()) {
 				return 1;
@@ -259,15 +259,15 @@ public final class EdictEntry implements Comparable<EdictEntry>, Serializable {
 
 	/**
 	 * Returns a japanese word, formed as a concatenation of
-	 * {@link EdictEntry#getJapanese()} from all entries.
+	 * {@link DictEntry#getJapanese()} from all entries.
 	 * 
 	 * @param entries
 	 *            the list of entries
 	 * @return the japanese word.
 	 */
-	public static String getJapaneseWord(Collection<? extends EdictEntry> entries) {
+	public static String getJapaneseWord(Collection<? extends DictEntry> entries) {
 		final StringBuilder sb = new StringBuilder(entries.size());
-		for (final EdictEntry e : entries) {
+		for (final DictEntry e : entries) {
 			sb.append(e.getJapanese());
 		}
 		return sb.toString();

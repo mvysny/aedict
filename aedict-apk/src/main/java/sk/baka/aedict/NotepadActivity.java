@@ -23,7 +23,7 @@ import java.util.List;
 
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.util.SearchUtils;
@@ -57,14 +57,14 @@ public class NotepadActivity extends ListActivity {
 	 * The cached model (a list of edict entries as only the japanese text is
 	 * persisted).
 	 */
-	private static List<EdictEntry> modelCache = null;
+	private static List<DictEntry> modelCache = null;
 	/**
 	 * true if romaji is shown instead of katakana/hiragana.
 	 */
 	private boolean isShowingRomaji;
 
 	/**
-	 * Expects {@link EdictEntry} as a value. Adds given entry to the model
+	 * Expects {@link DictEntry} as a value. Adds given entry to the model
 	 * list.
 	 */
 	public static final String INTENTKEY_ADD_ENTRY = "addEntry";
@@ -119,7 +119,7 @@ public class NotepadActivity extends ListActivity {
 	private void processIntent() {
 		final Intent intent = getIntent();
 		if (intent.hasExtra(INTENTKEY_ADD_ENTRY)) {
-			final EdictEntry e = (EdictEntry) intent.getSerializableExtra(INTENTKEY_ADD_ENTRY);
+			final DictEntry e = (DictEntry) intent.getSerializableExtra(INTENTKEY_ADD_ENTRY);
 			if (modelCache == null) {
 				final Config cfg = AedictApp.loadConfig();
 				if (MiscUtils.isBlank(cfg.notepadItems)) {
@@ -144,7 +144,7 @@ public class NotepadActivity extends ListActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		final EditText edit = (EditText) findViewById(R.id.editNotepadSearch);
-		final EdictEntry entry = modelCache.get(position);
+		final DictEntry entry = modelCache.get(position);
 		final String text = edit.getText().toString();
 		edit.setText(text + entry.getJapanese());
 	}
@@ -155,7 +155,7 @@ public class NotepadActivity extends ListActivity {
 	 */
 	private void onModelChanged() {
 		final ListBuilder b = new ListBuilder(",");
-		for (final EdictEntry entry : modelCache) {
+		for (final DictEntry entry : modelCache) {
 			b.add(entry.getJapanese());
 		}
 		final Config cfg = new Config();
@@ -181,7 +181,7 @@ public class NotepadActivity extends ListActivity {
 	 */
 	private void setModel() {
 		final Config cfg = AedictApp.loadConfig();
-		setListAdapter(new ArrayAdapter<EdictEntry>(this, android.R.layout.simple_list_item_2, modelCache) {
+		setListAdapter(new ArrayAdapter<DictEntry>(this, android.R.layout.simple_list_item_2, modelCache) {
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
@@ -196,7 +196,7 @@ public class NotepadActivity extends ListActivity {
 		});
 	}
 
-	private class ComputeCacheTask extends AbstractTask<Void, List<EdictEntry>> {
+	private class ComputeCacheTask extends AbstractTask<Void, List<DictEntry>> {
 
 		@Override
 		protected void cleanupAfterError() {
@@ -204,16 +204,16 @@ public class NotepadActivity extends ListActivity {
 		}
 
 		@Override
-		protected void onSucceeded(List<EdictEntry> result) {
+		protected void onSucceeded(List<DictEntry> result) {
 			modelCache = result;
 			setModel();
 		}
 
 		@Override
-		public List<EdictEntry> impl(Void... params) throws Exception {
+		public List<DictEntry> impl(Void... params) throws Exception {
 			final Config cfg = AedictApp.loadConfig();
 			final String[] items = MiscUtils.isBlank(cfg.notepadItems) ? new String[0] : cfg.notepadItems.split("\\,");
-			final List<EdictEntry> result = new ArrayList<EdictEntry>(items.length);
+			final List<DictEntry> result = new ArrayList<DictEntry>(items.length);
 			// always use the EDICT dictionary instead of user-selected
 			// dictionary
 			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, null);
@@ -225,15 +225,15 @@ public class NotepadActivity extends ListActivity {
 						return null;
 					}
 					final SearchQuery q = SearchQuery.searchForJapanese(item, true);
-					EdictEntry ee = null;
-					final List<EdictEntry> matches = lsEdict.search(q, 1);
-					EdictEntry.removeInvalid(matches);
+					DictEntry ee = null;
+					final List<DictEntry> matches = lsEdict.search(q, 1);
+					DictEntry.removeInvalid(matches);
 					if (!matches.isEmpty()) {
 						ee = matches.get(0);
 					}
 					if (ee == null) {
 						// no luck. Just add the item
-						ee = new EdictEntry(item, "", "");
+						ee = new DictEntry(item, "", "");
 					}
 					result.add(ee);
 				}

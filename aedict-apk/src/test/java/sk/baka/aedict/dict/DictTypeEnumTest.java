@@ -49,8 +49,8 @@ public class DictTypeEnumTest {
 		assertTrue(matches("mother", "(n) (hum) mother/(P)"));
 	}
 
-	private EdictEntry entry(final String eng) {
-		return new EdictEntry(null, null, eng);
+	private DictEntry entry(final String eng) {
+		return new DictEntry(null, null, eng);
 	}
 
 	private boolean matches(final String query, final String eng) {
@@ -59,14 +59,14 @@ public class DictTypeEnumTest {
 
 	@Test
 	public void simpleKatakanaParse() throws ParseException {
-		final EdictEntry e = DictTypeEnum.Edict.getEntry(doc("aaa / bbb"));
+		final DictEntry e = DictTypeEnum.Edict.getEntry(doc("aaa / bbb"));
 		assertEquals("aaa", e.reading);
 		assertEquals("bbb", e.english);
 	}
 
 	@Test
 	public void simpleHiraganaParse() throws ParseException {
-		final EdictEntry e = DictTypeEnum.Edict.getEntry(doc("aaa [ccc] / bbb"));
+		final DictEntry e = DictTypeEnum.Edict.getEntry(doc("aaa [ccc] / bbb"));
 		assertEquals("aaa", e.kanji);
 		assertEquals("ccc", e.reading);
 		assertEquals("bbb", e.english);
@@ -74,7 +74,7 @@ public class DictTypeEnumTest {
 
 	@Test
 	public void parserDropsTrailingSlashes() throws ParseException {
-		final EdictEntry e = DictTypeEnum.Edict.getEntry(doc("aaa [ccc] / bbb//"));
+		final DictEntry e = DictTypeEnum.Edict.getEntry(doc("aaa [ccc] / bbb//"));
 		assertEquals("aaa", e.kanji);
 		assertEquals("ccc", e.reading);
 		assertEquals("bbb", e.english);

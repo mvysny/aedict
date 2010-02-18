@@ -77,7 +77,7 @@ public final class LuceneSearch implements Closeable {
 	 * @throws IOException
 	 *             on I/O error.
 	 */
-	public List<EdictEntry> search(final SearchQuery query) throws IOException {
+	public List<DictEntry> search(final SearchQuery query) throws IOException {
 		return search(query, 100);
 	}
 
@@ -92,8 +92,8 @@ public final class LuceneSearch implements Closeable {
 	 * @throws IOException
 	 *             on I/O error.
 	 */
-	public List<EdictEntry> search(final SearchQuery query, final int maxResults) throws IOException {
-		final List<EdictEntry> r = new ArrayList<EdictEntry>();
+	public List<DictEntry> search(final SearchQuery query, final int maxResults) throws IOException {
+		final List<DictEntry> r = new ArrayList<DictEntry>();
 		final Query parsedQuery;
 		try {
 			parsedQuery = parser.parse(dictType.getLuceneQuery(query));
@@ -106,7 +106,7 @@ public final class LuceneSearch implements Closeable {
 		final TopDocs result = searcher.search(parsedQuery, null, maxLuceneResults);
 		for (final ScoreDoc sd : result.scoreDocs) {
 			final Document doc = searcher.doc(sd.doc);
-			final EdictEntry entry=query.dictType.tryGetEntry(doc, query);
+			final DictEntry entry=query.dictType.tryGetEntry(doc, query);
 			if(entry!=null){
 				r.add(entry);
 				if (r.size() >= maxResults) {
@@ -135,7 +135,7 @@ public final class LuceneSearch implements Closeable {
 	 * @throws IOException
 	 *             on I/O error.
 	 */
-	public static List<EdictEntry> singleSearch(final SearchQuery query, final String dictionaryPath) throws IOException {
+	public static List<DictEntry> singleSearch(final SearchQuery query, final String dictionaryPath) throws IOException {
 		final LuceneSearch s = new LuceneSearch(query.dictType, dictionaryPath);
 		try {
 			return s.search(query);

@@ -24,7 +24,7 @@ import sk.baka.aedict.ActivityTestHelper;
 import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.ResultActivity;
-import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.aedict.dict.DictEntry;
 import android.content.Intent;
 
 /**
@@ -83,9 +83,9 @@ public class Skip123ActivityTest extends ActivityTestHelper<Skip123Activity> {
 
 	private void assertSkipSearch(final String skipNumber) {
 		final Intent i = getStartedActivityIntent();
-		final List<EdictEntry> entries = (List<EdictEntry>) i.getSerializableExtra(KanjiAnalyzeActivity.INTENTKEY_ENTRYLIST);
+		final List<DictEntry> entries = (List<DictEntry>) i.getSerializableExtra(KanjiAnalyzeActivity.INTENTKEY_ENTRYLIST);
 		assertFalse(entries.isEmpty());
-		for (EdictEntry e : entries) {
+		for (DictEntry e : entries) {
 			if (!e.isValid()) {
 				throw new AssertionError("Invalid entry encountered: " + e.english);
 			}

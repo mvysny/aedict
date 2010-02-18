@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.Radicals;
@@ -222,27 +222,27 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 		new KanjiMatchTask().execute(this, radicals, strokes, plusMinus);
 	}
 
-	private class KanjiMatchTask extends AbstractTask<Object, List<EdictEntry>> {
+	private class KanjiMatchTask extends AbstractTask<Object, List<DictEntry>> {
 		private final int REPORT_EACH_XTH_CHAR = 5;
 
 		@Override
-		public List<EdictEntry> impl(Object... params) throws Exception {
+		public List<DictEntry> impl(Object... params) throws Exception {
 			publish(new Progress(AedictApp.getStr(R.string.searching), 0, 100));
 			int charsReportCountdown = 0;
 			int totalCharsProcessed = 0;
 			final Set<Character> matches = Radicals.getKanjisWithRadicals(((String) params[0]).toCharArray());
-			final List<EdictEntry> entries = new ArrayList<EdictEntry>();
+			final List<DictEntry> entries = new ArrayList<DictEntry>();
 			// filter the matches based on stroke count
 			final LuceneSearch ls = new LuceneSearch(DictTypeEnum.Kanjidic, null);
 			try {
 				for (final Iterator<Character> kanjis = matches.iterator(); kanjis.hasNext();) {
 					final char kanji = kanjis.next();
 					final SearchQuery sq = SearchQuery.kanjiSearch(kanji, (Integer) params[1], (Integer) params[2]);
-					final List<EdictEntry> result = ls.search(sq, 1);
-					EdictEntry.removeInvalid(result);
+					final List<DictEntry> result = ls.search(sq, 1);
+					DictEntry.removeInvalid(result);
 					if (!result.isEmpty()) {
 						// the kanji matched
-						final EdictEntry entry = result.get(0);
+						final DictEntry entry = result.get(0);
 						entries.add(entry);
 					}
 					totalCharsProcessed++;
@@ -266,7 +266,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 		}
 
 		@Override
-		protected void onSucceeded(List<EdictEntry> result) {
+		protected void onSucceeded(List<DictEntry> result) {
 			// we have the kanji list. first, sort the result list
 			Collections.sort(result, new KanjipadComparator());
 			// launch the analyze activity
@@ -283,9 +283,9 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 	 * 
 	 * @author Martin Vysny
 	 */
-	public static class KanjipadComparator implements Comparator<EdictEntry> {
+	public static class KanjipadComparator implements Comparator<DictEntry> {
 
-		public int compare(EdictEntry object1, EdictEntry object2) {
+		public int compare(DictEntry object1, DictEntry object2) {
 			final int result = getStrokes(object1).compareTo(getStrokes(object2));
 			if (result != 0) {
 				return result;
@@ -293,7 +293,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 			return object1.compareTo(object2);
 		}
 
-		private Integer getStrokes(final EdictEntry e) {
+		private Integer getStrokes(final DictEntry e) {
 			return e.strokes == null ? Integer.MAX_VALUE : e.strokes;
 		}
 	}

@@ -19,7 +19,7 @@
 package sk.baka.aedict;
 
 import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.RomanizationEnum;
@@ -49,7 +49,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		startActivity(i);
 		final ListView lv = getActivity().getListView();
 		assertEquals(25, lv.getCount());
-		final EdictEntry entry = (EdictEntry) lv.getItemAtPosition(0);
+		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
 		assertEquals("はは", entry.reading);
@@ -65,7 +65,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		startActivity(i);
 		final ListView lv = getActivity().getListView();
 		assertEquals(1, lv.getCount());
-		final EdictEntry entry = (EdictEntry) lv.getItemAtPosition(0);
+		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
 	}
@@ -84,10 +84,10 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		startActivity(i);
 		final ListView lv = getActivity().getListView();
 		assertEquals(18, lv.getCount());
-		EdictEntry entry = (EdictEntry) lv.getItemAtPosition(0);
+		DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
 		assertEquals("(n) (1) imperial capital (esp. Kyoto)/(2) final word of an iroha-uta/(3) 10^16/10,000,000,000,000,000/ten quadrillion (American)/(obs) ten thousand billion (British)/(P)", entry.english);
 		assertEquals("京", entry.getJapanese());
-		entry = (EdictEntry) lv.getItemAtPosition(6);
+		entry = (DictEntry) lv.getItemAtPosition(6);
 		assertEquals("(n-t) today/this day/(P)", entry.english);
 		assertEquals("今日", entry.getJapanese());
 	}
@@ -104,7 +104,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		final ListView lv = getActivity().getListView();
 		lv.performItemClick(null, 0, 0);
 		assertStartedActivity(EntryDetailActivity.class);
-		final EdictEntry entry = (EdictEntry) getStartedActivityIntent().getSerializableExtra(EntryDetailActivity.INTENTKEY_ENTRY);
+		final DictEntry entry = (DictEntry) getStartedActivityIntent().getSerializableExtra(EntryDetailActivity.INTENTKEY_ENTRY);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
 		assertEquals("はは", entry.reading);
@@ -115,7 +115,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		final ListView lv = getActivity().getListView();
 		contextMenu(lv, 1, 0);
 		assertStartedActivity(NotepadActivity.class);
-		final EdictEntry entry = (EdictEntry) getStartedActivityIntent().getSerializableExtra(NotepadActivity.INTENTKEY_ADD_ENTRY);
+		final DictEntry entry = (DictEntry) getStartedActivityIntent().getSerializableExtra(NotepadActivity.INTENTKEY_ADD_ENTRY);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
 		assertEquals("はは", entry.reading);
@@ -127,7 +127,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		i.putExtra(ResultActivity.SIMEJI_INTENTKEY_REPLACE, "mother");
 		startActivity(i);
 		final ListView lv = getActivity().getListView();
-		final EdictEntry entry = (EdictEntry) lv.getItemAtPosition(0);
+		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
 		assertEquals("はは", entry.reading);
@@ -169,7 +169,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		q.putTo(i);
 		startActivity(i);
 		final ListView lv = getActivity().getListView();
-		final EdictEntry entry = (EdictEntry) lv.getItemAtPosition(0);
+		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
 		assertEquals("はは", entry.reading);

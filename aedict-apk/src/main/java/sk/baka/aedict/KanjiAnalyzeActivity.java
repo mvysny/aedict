@@ -26,7 +26,7 @@ import java.util.List;
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DownloadDictTask;
-import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
@@ -61,7 +61,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	 */
 	public static final String INTENTKEY_WORD = "word";
 	/**
-	 * A list of {@link EdictEntry} with all information filled (radical, stroke
+	 * A list of {@link DictEntry} with all information filled (radical, stroke
 	 * count, etc).
 	 */
 	public static final String INTENTKEY_ENTRYLIST = "entrylist";
@@ -70,7 +70,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	 * true on a per-word basis.
 	 */
 	public static final String INTENTKEY_WORD_ANALYSIS = "wordAnalysis";
-	private List<EdictEntry> model = null;
+	private List<DictEntry> model = null;
 	/**
 	 * The word to analyze. If null then we were simply given a list of
 	 * EdictEntry directly.
@@ -91,12 +91,12 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		isShowingRomaji = AedictApp.loadConfig().useRomaji;
 		word = getIntent().getStringExtra(INTENTKEY_WORD);
-		model = (List<EdictEntry>) getIntent().getSerializableExtra(INTENTKEY_ENTRYLIST);
+		model = (List<DictEntry>) getIntent().getSerializableExtra(INTENTKEY_ENTRYLIST);
 		isAnalysisPerCharacter = !getIntent().getBooleanExtra(INTENTKEY_WORD_ANALYSIS, false);
 		if (word == null && model == null) {
 			throw new IllegalArgumentException("Both word and entrylist are null");
 		}
-		setTitle(AedictApp.format(R.string.kanjiAnalysisOf, word != null ? word : EdictEntry.getJapaneseWord(model)));
+		setTitle(AedictApp.format(R.string.kanjiAnalysisOf, word != null ? word : DictEntry.getJapaneseWord(model)));
 		if (model == null) {
 			recomputeModel();
 		} else {
@@ -111,7 +111,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-				final EdictEntry ee = model.get(((AdapterContextMenuInfo) menuInfo).position);
+				final DictEntry ee = model.get(((AdapterContextMenuInfo) menuInfo).position);
 				menu.add(isShowingRomaji ? R.string.show_kana : R.string.show_romaji).setOnMenuItemClickListener(AndroidUtils.safe(KanjiAnalyzeActivity.this, new MenuItem.OnMenuItemClickListener() {
 
 					public boolean onMenuItemClick(MenuItem item) {
@@ -133,9 +133,9 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		}));
 	}
 
-	private ArrayAdapter<EdictEntry> newAdapter() {
+	private ArrayAdapter<DictEntry> newAdapter() {
 		final Config cfg = AedictApp.loadConfig();
-		return new ArrayAdapter<EdictEntry>(this, R.layout.kanjidetail, model) {
+		return new ArrayAdapter<DictEntry>(this, R.layout.kanjidetail, model) {
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
@@ -143,7 +143,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 				if (v == null) {
 					v = getLayoutInflater().inflate(R.layout.kanjidetail, getListView(), false);
 				}
-				final EdictEntry e = model.get(position);
+				final DictEntry e = model.get(position);
 				((TextView) v.findViewById(android.R.id.text1)).setText(isShowingRomaji ? cfg.romanization.toRomaji(e.reading) : e.reading);
 				final StringBuilder sb = new StringBuilder();
 				if (e.radical != null) {
@@ -190,7 +190,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		final EdictEntry e = model.get(position);
+		final DictEntry e = model.get(position);
 		if (!e.isValid()) {
 			return;
 		}
@@ -229,7 +229,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		new RecomputeModel().execute(AedictApp.isInstrumentation, this, word);
 	}
 
-	private class RecomputeModel extends AbstractTask<String, List<EdictEntry>> {
+	private class RecomputeModel extends AbstractTask<String, List<DictEntry>> {
 
 		@Override
 		protected void cleanupAfterError() {
@@ -237,13 +237,13 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		}
 
 		@Override
-		protected void onSucceeded(List<EdictEntry> result) {
+		protected void onSucceeded(List<DictEntry> result) {
 			model = result;
 			setListAdapter(newAdapter());
 		}
 
 		@Override
-		public List<EdictEntry> impl(String... params) throws Exception {
+		public List<DictEntry> impl(String... params) throws Exception {
 			publish(new Progress(AedictApp.getStr(R.string.analyzing), 0, 100));
 			if (isAnalysisPerCharacter) {
 				// remove all non-letter characters
@@ -254,8 +254,8 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			}
 		}
 
-		private List<EdictEntry> analyzeByWords(final String sentence) throws IOException {
-			final List<EdictEntry> result = new ArrayList<EdictEntry>();
+		private List<DictEntry> analyzeByWords(final String sentence) throws IOException {
+			final List<DictEntry> result = new ArrayList<DictEntry>();
 			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getDictionaryLoc());
 			try {
 				final String[] words = getWords(sentence);
@@ -266,7 +266,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 					}
 					String w = words[i].trim();
 					while (w.length() > 0) {
-						final EdictEntry entry = findLongestWord(w, lsEdict);
+						final DictEntry entry = findLongestWord(w, lsEdict);
 						result.add(entry);
 						w = w.substring(entry.getJapanese().length());
 					}
@@ -292,18 +292,18 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		 *         character if we were unable to find nothing
 		 * @throws IOException
 		 */
-		private EdictEntry findLongestWord(final String word, final LuceneSearch edict) throws IOException {
+		private DictEntry findLongestWord(final String word, final LuceneSearch edict) throws IOException {
 			String w = word;
 			if (w.length() > 10) {
 				// optimization to avoid quadratic search complexity
 				w = w.substring(0, 10);
 			}
 			while (w.length() > 0) {
-				final List<EdictEntry> result = edict.search(SearchQuery.searchForJapanese(w, true));
-				EdictEntry.removeInvalid(result);
+				final List<DictEntry> result = edict.search(SearchQuery.searchForJapanese(w, true));
+				DictEntry.removeInvalid(result);
 				Collections.sort(result);
 				if (!result.isEmpty()) {
-					for (final EdictEntry e : result) {
+					for (final DictEntry e : result) {
 						if (e.getJapanese().equals(w)) {
 							return e;
 						}
@@ -312,11 +312,11 @@ public class KanjiAnalyzeActivity extends ListActivity {
 				}
 				w = w.substring(0, w.length() - 1);
 			}
-			return new EdictEntry(word.substring(0, 1), "", "");
+			return new DictEntry(word.substring(0, 1), "", "");
 		}
 
-		private List<EdictEntry> analyzeByCharacters(final String word) throws IOException {
-			final List<EdictEntry> result = new ArrayList<EdictEntry>(word.length());
+		private List<DictEntry> analyzeByCharacters(final String word) throws IOException {
+			final List<DictEntry> result = new ArrayList<DictEntry>(word.length());
 			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getDictionaryLoc());
 			try {
 				LuceneSearch lsKanjidic = null;
@@ -333,29 +333,29 @@ public class KanjiAnalyzeActivity extends ListActivity {
 						final char c = w.charAt(i);
 						final boolean isKanji = KanjiUtils.isKanji(c);
 						if (!isKanji) {
-							result.add(new EdictEntry(String.valueOf(c), String.valueOf(c), ""));
+							result.add(new DictEntry(String.valueOf(c), String.valueOf(c), ""));
 						} else {
 							// it is a kanji. search for it in the dictionary.
 							final SearchQuery q = SearchQuery.searchForJapanese(String.valueOf(c), true);
-							List<EdictEntry> matches = null;
-							EdictEntry ee = null;
+							List<DictEntry> matches = null;
+							DictEntry ee = null;
 							if (lsKanjidic != null) {
 								matches = lsKanjidic.search(q, 1);
-								EdictEntry.removeInvalid(matches);
+								DictEntry.removeInvalid(matches);
 							}
 							if (matches != null && !matches.isEmpty()) {
 								ee = matches.get(0);
 							}
 							if (ee == null) {
 								matches = lsEdict.search(q, 1);
-								EdictEntry.removeInvalid(matches);
+								DictEntry.removeInvalid(matches);
 								if (!matches.isEmpty()) {
 									ee = matches.get(0);
 								}
 							}
 							if (ee == null) {
 								// no luck. Just add the kanji
-								ee = new EdictEntry(String.valueOf(c), "", "");
+								ee = new DictEntry(String.valueOf(c), "", "");
 							}
 							result.add(ee);
 						}

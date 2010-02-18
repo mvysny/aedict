@@ -23,7 +23,7 @@ import java.util.List;
 
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
@@ -56,7 +56,7 @@ public class ResultActivity extends ListActivity {
 	 * Shows a list of matched entries. May contain an error message if the
 	 * search failed.
 	 */
-	private List<EdictEntry> model;
+	private List<DictEntry> model;
 	/**
 	 * true if the activity was invoked from the Simeji keyboard application.
 	 */
@@ -126,23 +126,23 @@ public class ResultActivity extends ListActivity {
 		setTitle(AedictApp.format(R.string.searchResultsFor, query.prettyPrintQuery()));
 		if (MiscUtils.isBlank(query.query)) {
 			// nothing to search for
-			model = Collections.singletonList(EdictEntry.newErrorMsg(getString(R.string.nothing_to_search_for)));
+			model = Collections.singletonList(DictEntry.newErrorMsg(getString(R.string.nothing_to_search_for)));
 		} else {
 			try {
 				model = LuceneSearch.singleSearch(query, query.dictType == DictTypeEnum.Edict ? AedictApp.getDictionaryLoc() : null);
 				Collections.sort(model);
 			} catch (Exception ex) {
 				Log.e(ResultActivity.class.getSimpleName(), "Failed to perform search", ex);
-				model = Collections.singletonList(EdictEntry.newErrorMsg(AedictApp.format(R.string.searchFailed, ex.toString())));
+				model = Collections.singletonList(DictEntry.newErrorMsg(AedictApp.format(R.string.searchFailed, ex.toString())));
 			}
 			if (model.isEmpty()) {
-				model = Collections.singletonList(EdictEntry.newErrorMsg(getString(R.string.no_results)));
+				model = Collections.singletonList(DictEntry.newErrorMsg(getString(R.string.no_results)));
 			}
 		}
 		final Config cfg = AedictApp.loadConfig();
 		((TextView) findViewById(R.id.textSelectedDictionary)).setText(AedictApp.format(R.string.searchingInDictionary, cfg.dictionaryName));
 		isShowingRomaji = cfg.useRomaji;
-		setListAdapter(new ArrayAdapter<EdictEntry>(this, android.R.layout.simple_list_item_2, model) {
+		setListAdapter(new ArrayAdapter<DictEntry>(this, android.R.layout.simple_list_item_2, model) {
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
@@ -159,7 +159,7 @@ public class ResultActivity extends ListActivity {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 				final int position = ((AdapterContextMenuInfo) menuInfo).position;
-				final EdictEntry ee = model.get(position);
+				final DictEntry ee = model.get(position);
 				final MenuItem miShowRomaji = menu.add(Menu.NONE, 0, 0, isShowingRomaji ? R.string.show_kana : R.string.show_romaji);
 				miShowRomaji.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
 
@@ -225,7 +225,7 @@ public class ResultActivity extends ListActivity {
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		final EdictEntry e = model.get(position);
+		final DictEntry e = model.get(position);
 		if (!e.isValid()) {
 			return;
 		}

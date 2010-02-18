@@ -19,7 +19,7 @@
 package sk.baka.aedict;
 
 import sk.baka.aedict.AedictApp.Config;
-import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.util.SearchUtils;
 import android.os.Bundle;
 import android.widget.EditText;
@@ -35,7 +35,7 @@ public class EntryDetailActivity extends AbstractActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.entrydetail);
-		final EdictEntry entry = (EdictEntry) getIntent().getSerializableExtra(INTENTKEY_ENTRY);
+		final DictEntry entry = (DictEntry) getIntent().getSerializableExtra(INTENTKEY_ENTRY);
 		final EditText kanjiSearchEdit = (EditText) findViewById(R.id.kanjiSearchEdit);
 		kanjiSearchEdit.setText(entry.getJapanese());
 		final EditText readingSearchEdit = (EditText) findViewById(R.id.readingSearchEdit);
@@ -54,7 +54,7 @@ public class EntryDetailActivity extends AbstractActivity {
 	}
 
 	/**
-	 * The activity expects {@link EdictEntry} in the intent keys.
+	 * The activity expects {@link DictEntry} in the intent keys.
 	 */
 	public static final String INTENTKEY_ENTRY = "entry";
 }
