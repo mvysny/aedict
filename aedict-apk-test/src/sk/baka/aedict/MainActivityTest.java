@@ -48,7 +48,7 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 		assertEquals(2, q.query.length);
 		assertTrue(q.isJapanese);
 		assertEquals(DictTypeEnum.Edict, q.dictType);
-		assertEquals(MatcherEnum.SubstringMatch, q.matcher);
+		assertEquals(MatcherEnum.Substring, q.matcher);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 		assertEquals(1, q.query.length);
 		assertFalse(q.isJapanese);
 		assertEquals(DictTypeEnum.Edict, q.dictType);
-		assertEquals(MatcherEnum.ExactMatchEng, q.matcher);
+		assertEquals(MatcherEnum.Exact, q.matcher);
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 		assertEquals(1, q.query.length);
 		assertFalse(q.isJapanese);
 		assertEquals(DictTypeEnum.Tanaka, q.dictType);
-		assertEquals(MatcherEnum.SubstringMatch, q.matcher);
+		assertEquals(MatcherEnum.Substring, q.matcher);
 	}
 
 	public void testJpSearchDeinflectVerbs() {
@@ -100,7 +100,7 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 		assertEquals(2, q.query.length);
 		assertTrue(q.isJapanese);
 		assertEquals(DictTypeEnum.Edict, q.dictType);
-		assertEquals(MatcherEnum.ExactMatchEng, q.matcher);
+		assertEquals(MatcherEnum.Exact, q.matcher);
 	}
 
 	public void testLaunchAboutActivity() {

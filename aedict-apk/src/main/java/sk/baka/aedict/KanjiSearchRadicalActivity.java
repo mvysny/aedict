@@ -238,10 +238,11 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 				for (final Iterator<Character> kanjis = matches.iterator(); kanjis.hasNext();) {
 					final char kanji = kanjis.next();
 					final SearchQuery sq = SearchQuery.kanjiSearch(kanji, (Integer) params[1], (Integer) params[2]);
-					final List<String> result = ls.search(sq, 1);
+					final List<EdictEntry> result = ls.search(sq, 1);
+					EdictEntry.removeInvalid(result);
 					if (!result.isEmpty()) {
 						// the kanji matched
-						final EdictEntry entry = EdictEntry.tryParseKanjidic(result.get(0));
+						final EdictEntry entry = result.get(0);
 						entries.add(entry);
 					}
 					totalCharsProcessed++;

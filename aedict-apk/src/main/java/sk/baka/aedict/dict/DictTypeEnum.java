@@ -20,8 +20,15 @@ package sk.baka.aedict.dict;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.StringTokenizer;
 
+import org.apache.lucene.document.Document;
+
+import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.autils.ListBuilder;
+import android.util.Log;
 
 /**
  * Enumerates possible types of dictionaries.
@@ -59,6 +66,81 @@ public enum DictTypeEnum {
 		@Override
 		public long zipFileSize() {
 			return 20L * 1024 * 1024;
+		}
+
+		public EdictEntry parseEntry(final String edictEntry) {
+			// the entry is in one of the two following formats:
+			// KANJI [hiragana] / english meaning
+			// katakana / english meaning
+			final int firstSlash = edictEntry.indexOf('/');
+			if (firstSlash < 0) {
+				throw new IllegalArgumentException("Failed to parse " + edictEntry + ": missing slash");
+			}
+			String englishPart = edictEntry.substring(firstSlash + 1).trim();
+			while (englishPart.endsWith("/")) {
+				// drop trailing slashes
+				englishPart = englishPart.substring(0, englishPart.length() - 1);
+			}
+			final String jpPart = edictEntry.substring(0, firstSlash).trim();
+			final int openSquareBracket = jpPart.indexOf('[');
+			final String kanji;
+			final String reading;
+			if (openSquareBracket < 0) {
+				// just a katakana reading, no kanji
+				kanji = null;
+				reading = jpPart;
+			} else {
+				kanji = jpPart.substring(0, openSquareBracket).trim();
+				final int closingSquareBracket = jpPart.indexOf(']');
+				reading = jpPart.substring(openSquareBracket + 1, closingSquareBracket).trim();
+			}
+			final boolean isCommon = edictEntry.contains("(P)");
+			return new EdictEntry(kanji, reading, englishPart, null, null, null, null, isCommon);
+		}
+		
+		@Override
+		public EdictEntry getEntry(Document doc) {
+			return parseEntry(doc.get("contents"));
+		}
+
+		@Override
+		public boolean matches(final EdictEntry entry, boolean isJapanese, String query, MatcherEnum matcher) {
+			if (matcher == MatcherEnum.Substring) {
+				if (isJapanese) {
+					return MatcherEnum.Substring.matches(entry.reading, query) || ((entry.kanji != null) && MatcherEnum.Substring.matches(entry.kanji, query));
+				}
+				return matcher.matches(query, entry.english);
+			}
+			if (isJapanese) {
+				return MatcherEnum.Exact.matches(entry.reading, query) || ((entry.kanji != null) && MatcherEnum.Exact.matches(entry.kanji, query));
+			}
+			// check the special English Edict processing, see MatcherEnum.Exact
+			// for details.
+			int lastIndex = 0;
+			final String _line = entry.english.toLowerCase();
+			int indexOfQuery = _line.indexOf(query, lastIndex);
+			while (indexOfQuery >= 0) {
+				if (!isWordPart(skipWhitespaces(_line, indexOfQuery - 1, -1)) && !isWordPart(skipWhitespaces(_line, indexOfQuery + query.length(), 1))) {
+					return true;
+				}
+				lastIndex = indexOfQuery + 1;
+				indexOfQuery = _line.indexOf(query, lastIndex);
+			}
+			return false;
+		}
+
+		private boolean isWordPart(final char c) {
+			return c == '-' || c == '\'' || c == '.' || c == ',' || Character.isLetter(c);
+		}
+
+		private char skipWhitespaces(final String line, final int charIndex, final int direction) {
+			for (int i = charIndex; i >= 0 && i < line.length(); i += direction) {
+				final char c = line.charAt(i);
+				if (!Character.isWhitespace(c)) {
+					return c;
+				}
+			}
+			return 0;
 		}
 	},
 	/**
@@ -114,6 +196,70 @@ public enum DictTypeEnum {
 		public long zipFileSize() {
 			return 1500 * 1024;
 		}
+
+		@Override
+		public EdictEntry getEntry(Document doc) {
+			// the entry is described at
+			// http://www.csse.monash.edu.au/~jwb/kanjidic.html
+			final String kanjidicEntry = doc.get("contents");
+			final char kanji = kanjidicEntry.charAt(0);
+			if (kanjidicEntry.charAt(1) != ' ') {
+				throw new IllegalArgumentException("Invalid kanjidic entry: " + kanjidicEntry);
+			}
+			final ListBuilder reading = new ListBuilder(", ");
+			final ListBuilder namesReading = new ListBuilder(", ");
+			boolean readingInNames = false;
+			final int radicalNumber = Integer.parseInt(doc.get("radical"));
+			final int strokeCount = Integer.parseInt(doc.get("strokes"));
+			Integer grade = null;
+			final String skip = doc.get("skip");
+			// first pass: ignore English readings as they may contain spaces
+			// and
+			// this simple algorithm would match them as readings (as the token
+			// does
+			// not start with '{' )
+			for (final String field : kanjidicEntry.substring(2).split("\\ ")) {
+				final char firstChar = field.charAt(0);
+				if (firstChar == '{') {
+					break;
+				} else if (firstChar == 'G') {
+					grade = Integer.parseInt(field.substring(1));
+				} else if (KanjiUtils.isHiragana(firstChar) || KanjiUtils.isKatakana(firstChar)) {
+					// a reading
+					(readingInNames ? namesReading : reading).add(field);
+				} else if (field.equals("T1")) {
+					readingInNames = true;
+				}
+			}
+			// second pass: English translations
+			final ListBuilder english = new ListBuilder(", ");
+			List<Object> tokens = Collections.list(new StringTokenizer(kanjidicEntry, "{}"));
+			// skip the kanji definition tokens
+			tokens = tokens.subList(1, tokens.size());
+			for (final Object eng : tokens) {
+				final String engStr = eng.toString().trim();
+				if (engStr.length() == 0) {
+					// skip spaces between } {
+					continue;
+				}
+				english.add(engStr);
+			}
+			if (!namesReading.isEmpty()) {
+				reading.add("[" + namesReading + "]");
+			}
+			return new EdictEntry(String.valueOf(kanji), reading.toString(), english.toString(), radicalNumber, strokeCount, skip, grade, null);
+		}
+
+		@Override
+		public boolean matches(EdictEntry entry, boolean isJapanese, String string, MatcherEnum matcher) {
+			// just ignore the substring matching, it should be never used with
+			// this
+			// dictionary type
+			if (isJapanese) {
+				return entry.kanji.equals(string);
+			}
+			return entry.english.toLowerCase().contains(string);
+		}
 	},
 	/**
 	 * The Tanaka Corpus containing example sentences.
@@ -144,6 +290,19 @@ public enum DictTypeEnum {
 		@Override
 		public long zipFileSize() {
 			return 12488022;
+		}
+
+		@Override
+		public EdictEntry getEntry(Document doc) {
+			final String japanese = doc.get("japanese");
+			final String english = doc.get("english");
+			return new EdictEntry(japanese, null, english);
+		}
+
+		@Override
+		public boolean matches(final EdictEntry entry, final boolean isJapanese, String query, MatcherEnum matcher) {
+			final String line = isJapanese ? entry.getJapanese() : entry.english;
+			return matcher.matches(query, line);
 		}
 	};
 	/**
@@ -199,4 +358,73 @@ public enum DictTypeEnum {
 	 * @return a size of the zip file in bytes
 	 */
 	public abstract long zipFileSize();
+
+	/**
+	 * Returns a dictionary entry from a Lucene document, from a proper
+	 * dictionary file. May throw a RuntimeException on parse error.
+	 * 
+	 * @param doc
+	 *            the lucene document, not null.
+	 * @return never null entry.
+	 */
+	public abstract EdictEntry getEntry(final Document doc);
+
+	/**
+	 * Returns a dictionary entry from a Lucene document, from a proper
+	 * dictionary file.
+	 * 
+	 * @param doc
+	 *            the lucene document, not null.
+	 * @return never null entry. May return an error entry on parse error.
+	 */
+	public EdictEntry tryGetEntry(final Document doc) {
+		try {
+			return getEntry(doc);
+		} catch (Exception ex) {
+			Log.e(DictTypeEnum.class.getSimpleName(), "Failed to parse a dictionary line", ex);
+			return EdictEntry.newErrorMsg(ex.getMessage());
+		}
+	}
+
+	/**
+	 * Returns a entry parsed entry from given document. The entry must match
+	 * the query.
+	 * 
+	 * @param doc
+	 *            the Lucene document.
+	 * @param query
+	 *            the query
+	 * @return an entry instance if matched, null if unmatched, error entry in
+	 *         case of a parsing error.
+	 */
+	public EdictEntry tryGetEntry(final Document doc, final SearchQuery query) {
+		final EdictEntry entry = tryGetEntry(doc);
+		if (query.query == null || query.matcher == MatcherEnum.Any || !entry.isValid()) {
+			return entry;
+		}
+		for (final String q : query.query) {
+			if (matches(entry, query.isJapanese, q.toLowerCase(), query.matcher)) {
+				return entry;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Checks if given dictionary entry (in a form of a Lucene document) matches
+	 * given query.
+	 * 
+	 * @param entry
+	 *            the entry to match. Never null, always
+	 *            {@link EdictEntry#isValid() valid}.
+	 * @param isJapanese
+	 *            if true we are matching japanese word, if false, a
+	 *            non-japanese (presumably english) word is being matched.
+	 * @param query
+	 *            the string to match, always lower-case
+	 * @param matcher
+	 *            the matcher type, never {@link MatcherEnum#Any}.
+	 * @return true if the query matches, false otherwise.
+	 */
+	public abstract boolean matches(final EdictEntry entry, final boolean isJapanese, final String query, final MatcherEnum matcher);
 }

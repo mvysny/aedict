@@ -79,25 +79,27 @@ public final class SearchUtils {
 	 *            if true then a verb deinflection is attempted before the
 	 *            search.
 	 */
-	public void searchForJapan(final String romaji, final boolean isExact, final boolean isDeinflect) {
+	private void searchForJapan(final String romaji, final boolean isExact, final boolean isDeinflect) {
 		final Config cfg = AedictApp.loadConfig();
 		final SearchQuery q = SearchQuery.searchForRomaji(romaji, cfg.romanization, isExact, isDeinflect);
 		performSearch(q);
 	}
 
 	/**
-	 * Performs EDICT search for an english word or expression.
+	 * Performs EDICT/TANAKA search for an english word or expression.
 	 * 
 	 * @param text
 	 *            the text to search for.
 	 * @param isExact
 	 *            if true then only exact matches are returned.
+	 * @param inExamples
+	 *            if true then the Tanaka dictionary is polled.
 	 */
-	public void searchForEnglish(final String text, final boolean isExact) {
-		final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
+	private void searchForEnglish(final String text, final boolean isExact, final boolean inExamples) {
+		final SearchQuery q = new SearchQuery(inExamples ? DictTypeEnum.Tanaka : DictTypeEnum.Edict);
 		q.isJapanese = false;
 		q.query = new String[] { text };
-		q.matcher = isExact ? MatcherEnum.ExactMatchEng : MatcherEnum.SubstringMatch;
+		q.matcher = isExact ? MatcherEnum.Exact : MatcherEnum.Substring;
 		performSearch(q);
 	}
 
@@ -220,7 +222,7 @@ public final class SearchUtils {
 			if (isJapanSearch) {
 				searchForJapan(query, isExact, isDeinflect);
 			} else {
-				searchForEnglish(query, isExact);
+				searchForEnglish(query, isExact, isSearchInExamples);
 			}
 		}
 

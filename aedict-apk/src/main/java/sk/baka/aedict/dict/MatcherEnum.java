@@ -27,7 +27,7 @@ public enum MatcherEnum {
 	/**
 	 * Matches anything. Useful when searching for Lucene-specific terms.
 	 */
-	AnyMatch {
+	Any {
 		@Override
 		public boolean matches(String query, String line) {
 			return true;
@@ -36,7 +36,7 @@ public enum MatcherEnum {
 	/**
 	 * Matches when the query is a substring of given line.
 	 */
-	SubstringMatch {
+	Substring {
 		@Override
 		public boolean matches(String query, String line) {
 			return line.toLowerCase().contains(query.toLowerCase());
@@ -44,41 +44,15 @@ public enum MatcherEnum {
 	},
 	/**
 	 * Matches when the query matches an entire expression text for given line.
-	 * E.g. foo matches "foo", "foo;bar" but not "foo bar"
+	 * This has different meanings for different dictionaries: it is ignored for
+	 * Kanjidic and it is an equality match for the Tanaka dictionary. A special
+	 * processing is used in case of an english Edict matching: for example, foo
+	 * matches "foo", "foo;bar" but not "foo bar"
 	 */
-	ExactMatchEng {
+	Exact {
 		@Override
 		public boolean matches(String query, String line) {
-			int lastIndex = 0;
-			final String _line = line.toLowerCase();
-			final String _query = query.toLowerCase();
-			int indexOfQuery = _line.indexOf(_query, lastIndex);
-			while (indexOfQuery >= 0) {
-				if (!isWordPart(skipWhitespaces(_line, indexOfQuery - 1, -1))
-						&& !isWordPart(skipWhitespaces(_line, indexOfQuery
-								+ _query.length(), 1))) {
-					return true;
-				}
-				lastIndex = indexOfQuery + 1;
-				indexOfQuery = _line.indexOf(_query, lastIndex);
-			}
-			return false;
-		}
-
-		private boolean isWordPart(final char c) {
-			return c == '-' || c == '\'' || c == '.' || c == ','
-					|| Character.isLetter(c);
-		}
-
-		private char skipWhitespaces(final String line, final int charIndex,
-				final int direction) {
-			for (int i = charIndex; i >= 0 && i < line.length(); i += direction) {
-				final char c = line.charAt(i);
-				if (!Character.isWhitespace(c)) {
-					return c;
-				}
-			}
-			return 0;
+			return query.equalsIgnoreCase(line);
 		}
 	};
 	/**

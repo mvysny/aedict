@@ -42,7 +42,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 	public void testSimpleEnglishSearch() {
 		final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
 		q.isJapanese = false;
-		q.matcher = MatcherEnum.ExactMatchEng;
+		q.matcher = MatcherEnum.Exact;
 		q.query = new String[] { "mother" };
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
 		q.putTo(i);
@@ -58,7 +58,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 	public void testSimpleJapaneseSearch() {
 		final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
 		q.isJapanese = true;
-		q.matcher = MatcherEnum.ExactMatchEng;
+		q.matcher = MatcherEnum.Exact;
 		q.query = new String[] { RomanizationEnum.Hepburn.toHiragana("haha") };
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
 		q.putTo(i);
@@ -77,7 +77,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 	public void testSearchForKyou() {
 		final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
 		q.isJapanese = true;
-		q.matcher = MatcherEnum.ExactMatchEng;
+		q.matcher = MatcherEnum.Exact;
 		q.query = new String[] { RomanizationEnum.Hepburn.toHiragana("kyou") };
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
 		q.putTo(i);
@@ -131,6 +131,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
 		assertEquals("はは", entry.reading);
+		assertEquals(25, lv.getCount());
 	}
 
 	public void testSimejiSearchKanji() {
@@ -158,4 +159,21 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		assertEquals(Activity.RESULT_OK,getFinishedActivityRequest());
 		assertEquals(expected, getResultIntent().getStringExtra(ResultActivity.SIMEJI_INTENTKEY_REPLACE));
 	}
+
+	public void testSimpleEnglishSearchInTanaka() {
+		final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
+		q.isJapanese = false;
+		q.matcher = MatcherEnum.Substring;
+		q.query = new String[] { "mother" };
+		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
+		q.putTo(i);
+		startActivity(i);
+		final ListView lv = getActivity().getListView();
+		final EdictEntry entry = (EdictEntry) lv.getItemAtPosition(0);
+		assertEquals("(n) (hum) mother/(P)", entry.english);
+		assertEquals("母", entry.getJapanese());
+		assertEquals("はは", entry.reading);
+		assertEquals(25, lv.getCount());
+	}
+
 }

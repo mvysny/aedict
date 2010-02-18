@@ -98,13 +98,12 @@ public class SkipActivity extends Activity {
 		final SearchQuery query = new SearchQuery(DictTypeEnum.Kanjidic);
 		query.skip = skip;
 		try {
-			final List<String> result = LuceneSearch.singleSearch(query, null);
-			final List<EdictEntry> parsedResult = EdictEntry.parseKanjidic(result);
+			final List<EdictEntry> result = LuceneSearch.singleSearch(query, null);
 			// no need to sort on the number of strokes as all results will have
 			// the same amount of strokes
-			Collections.sort(parsedResult);
+			Collections.sort(result);
 			final Intent intent = new Intent(activity, KanjiAnalyzeActivity.class);
-			intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_ENTRYLIST, (Serializable) parsedResult);
+			intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_ENTRYLIST, (Serializable) result);
 			activity.startActivity(intent);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

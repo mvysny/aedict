@@ -86,6 +86,9 @@ public class Skip123ActivityTest extends ActivityTestHelper<Skip123Activity> {
 		final List<EdictEntry> entries = (List<EdictEntry>) i.getSerializableExtra(KanjiAnalyzeActivity.INTENTKEY_ENTRYLIST);
 		assertFalse(entries.isEmpty());
 		for (EdictEntry e : entries) {
+			if (!e.isValid()) {
+				throw new AssertionError("Invalid entry encountered: " + e.english);
+			}
 			assertEquals(skipNumber, e.skip);
 		}
 	}

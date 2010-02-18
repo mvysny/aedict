@@ -299,7 +299,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 				w = w.substring(0, 10);
 			}
 			while (w.length() > 0) {
-				final List<EdictEntry> result = EdictEntry.tryParseEdict(edict.search(SearchQuery.searchForJapanese(w, true)));
+				final List<EdictEntry> result = edict.search(SearchQuery.searchForJapanese(w, true));
 				EdictEntry.removeInvalid(result);
 				Collections.sort(result);
 				if (!result.isEmpty()) {
@@ -337,18 +337,20 @@ public class KanjiAnalyzeActivity extends ListActivity {
 						} else {
 							// it is a kanji. search for it in the dictionary.
 							final SearchQuery q = SearchQuery.searchForJapanese(String.valueOf(c), true);
-							List<String> matches = null;
+							List<EdictEntry> matches = null;
 							EdictEntry ee = null;
 							if (lsKanjidic != null) {
 								matches = lsKanjidic.search(q, 1);
+								EdictEntry.removeInvalid(matches);
 							}
 							if (matches != null && !matches.isEmpty()) {
-								ee = EdictEntry.tryParseKanjidic(matches.get(0));
+								ee = matches.get(0);
 							}
 							if (ee == null) {
 								matches = lsEdict.search(q, 1);
+								EdictEntry.removeInvalid(matches);
 								if (!matches.isEmpty()) {
-									ee = EdictEntry.tryParseEdict(matches.get(0));
+									ee = matches.get(0);
 								}
 							}
 							if (ee == null) {

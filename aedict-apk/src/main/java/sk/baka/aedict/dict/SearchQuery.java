@@ -84,25 +84,6 @@ public final class SearchQuery implements Serializable {
 	}
 
 	/**
-	 * Checks if given line matches the query.
-	 * 
-	 * @param line
-	 *            the line from the EDict file
-	 * @return true if the line matched, false otherwise.
-	 */
-	public boolean matches(final String line) {
-		if (query == null) {
-			return true;
-		}
-		for (final String q : query) {
-			if (matcher.matches(q, line)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Clones given search query.
 	 * 
 	 * @param other
@@ -217,7 +198,7 @@ public final class SearchQuery implements Serializable {
 	public static SearchQuery kanjiSearch(final char kanji, final Integer strokes, final Integer strokesPlusMinus) {
 		final SearchQuery result = new SearchQuery(DictTypeEnum.Kanjidic);
 		result.isJapanese = true;
-		result.matcher = MatcherEnum.ExactMatchEng;
+		result.matcher = MatcherEnum.Exact;
 		result.query = new String[] { String.valueOf(kanji) };
 		result.strokeCount = strokes;
 		result.strokesPlusMinus = strokesPlusMinus;
@@ -239,7 +220,7 @@ public final class SearchQuery implements Serializable {
 		final SearchQuery result = new SearchQuery(DictTypeEnum.Edict);
 		result.query = new String[] { word };
 		result.isJapanese = true;
-		result.matcher = exact ? MatcherEnum.ExactMatchEng : MatcherEnum.SubstringMatch;
+		result.matcher = exact ? MatcherEnum.Exact : MatcherEnum.Substring;
 		return result;
 	}
 
@@ -275,7 +256,7 @@ public final class SearchQuery implements Serializable {
 			result.query = new String[] { romanization.toKatakana(conv), romanization.toHiragana(conv) };
 		}
 		result.isJapanese = true;
-		result.matcher = exact || isDeinflect ? MatcherEnum.ExactMatchEng : MatcherEnum.SubstringMatch;
+		result.matcher = exact || isDeinflect ? MatcherEnum.Exact : MatcherEnum.Substring;
 		return result;
 	}
 }

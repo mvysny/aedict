@@ -30,29 +30,22 @@ import static org.junit.Assert.*;
 public class MatcherEnumTest {
 	@Test
 	public void simpleSubstringMatches(){
-		assertFalse(MatcherEnum.SubstringMatch.matches("query", "foo"));
-		assertTrue(MatcherEnum.SubstringMatch.matches("query", "query"));
-		assertTrue(MatcherEnum.SubstringMatch.matches("query", "QUERY"));
-		assertTrue(MatcherEnum.SubstringMatch.matches("query", "asd QUERYda dar4"));
+		assertFalse(MatcherEnum.Substring.matches("query", "foo"));
+		assertTrue(MatcherEnum.Substring.matches("query", "query"));
+		assertTrue(MatcherEnum.Substring.matches("query", "QUERY"));
+		assertTrue(MatcherEnum.Substring.matches("query", "asd QUERYda dar4"));
 	}
 	
 	@Test
 	public void simpleExactMatches() {
-		assertFalse(MatcherEnum.ExactMatchEng.matches("query", "foo"));
-		assertTrue(MatcherEnum.ExactMatchEng.matches("query", "query"));
-		assertTrue(MatcherEnum.ExactMatchEng.matches("query", "QUERY"));
+		assertFalse(MatcherEnum.Exact.matches("query", "foo"));
+		assertTrue(MatcherEnum.Exact.matches("query", "query"));
+		assertTrue(MatcherEnum.Exact.matches("query", "QUERY"));
 	}
 	@Test
-	public void complexExactMatches() {
-		assertFalse(MatcherEnum.ExactMatchEng.matches("query", "QUERYQUERY"));
-		assertFalse(MatcherEnum.ExactMatchEng.matches("query", "QUERY QUERY"));
-		assertFalse(MatcherEnum.ExactMatchEng.matches("query", "queryquery"));
-		assertFalse(MatcherEnum.ExactMatchEng.matches("query", "query query"));
-		assertFalse(MatcherEnum.ExactMatchEng.matches("query", "query-query"));
-		assertFalse(MatcherEnum.ExactMatchEng.matches("query", "query'query"));
-		assertFalse(MatcherEnum.ExactMatchEng.matches("query", "query.query"));
-		assertFalse(MatcherEnum.ExactMatchEng.matches("query", "query,query"));
-		assertTrue(MatcherEnum.ExactMatchEng.matches("query", "query; query"));
-		assertTrue(MatcherEnum.ExactMatchEng.matches("query", "foo-bar-baz [f] (p) query; query"));
+	public void simpleAnyMatches() {
+		assertTrue(MatcherEnum.Any.matches("query", "foo"));
+		assertTrue(MatcherEnum.Any.matches("query", "query"));
+		assertTrue(MatcherEnum.Any.matches("query", "QUERY"));
 	}
 }

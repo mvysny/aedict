@@ -226,9 +226,10 @@ public class NotepadActivity extends ListActivity {
 					}
 					final SearchQuery q = SearchQuery.searchForJapanese(item, true);
 					EdictEntry ee = null;
-					final List<String> matches = lsEdict.search(q, 1);
+					final List<EdictEntry> matches = lsEdict.search(q, 1);
+					EdictEntry.removeInvalid(matches);
 					if (!matches.isEmpty()) {
-						ee = EdictEntry.tryParseEdict(matches.get(0));
+						ee = matches.get(0);
 					}
 					if (ee == null) {
 						// no luck. Just add the item
