@@ -104,6 +104,12 @@ public final class SearchUtils {
 	}
 
 	private void performSearch(final SearchQuery query) {
+		if (!checkDic(query.dictType)) {
+			// the dictionary is not yet available. An activity was popped up,
+			// which offers dictionary download. Nothing to do here, just do
+			// nothing.
+			return;
+		}
 		final Intent intent = new Intent(activity, ResultActivity.class);
 		query.putTo(intent);
 		activity.startActivity(intent);
@@ -301,7 +307,7 @@ public final class SearchUtils {
 	 * @param targetDir
 	 *            unpack the files here.
 	 * @param expectedSize
-	 *            the expected size of the dictionary file.
+	 *            the expected size of the Lucene dictionary files.
 	 * @param dictName
 	 *            the name of the dictionary, EDict or KanjiDic
 	 * @return true if the files are available, false otherwise.
@@ -335,6 +341,6 @@ public final class SearchUtils {
 	 * @return true if the files are available, false otherwise.
 	 */
 	public boolean checkDic(final DictTypeEnum dict) {
-		return checkDictionaryFile(dict.getDownloadSite(), dict.getDefaultDictionaryPath(), dict.zipFileSize(), dict.name());
+		return checkDictionaryFile(dict.getDownloadSite(), dict.getDefaultDictionaryPath(), dict.luceneFileSize(), dict.name());
 	}
 }

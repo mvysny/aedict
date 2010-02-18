@@ -64,7 +64,7 @@ public enum DictTypeEnum {
 		}
 
 		@Override
-		public long zipFileSize() {
+		public long luceneFileSize() {
 			return 20L * 1024 * 1024;
 		}
 
@@ -193,7 +193,7 @@ public enum DictTypeEnum {
 		}
 
 		@Override
-		public long zipFileSize() {
+		public long luceneFileSize() {
 			return 1500 * 1024;
 		}
 
@@ -291,8 +291,8 @@ public enum DictTypeEnum {
 		}
 
 		@Override
-		public long zipFileSize() {
-			return 12488022;
+		public long luceneFileSize() {
+			return 20742500;
 		}
 
 		@Override
@@ -355,12 +355,12 @@ public enum DictTypeEnum {
 	public abstract URL getDownloadSite();
 
 	/**
-	 * Returns the expected size of the zipped file located at
+	 * Returns the expected size of the Lucene (not zip!) files, zipped in 
 	 * {@link #getDownloadSite()}.
 	 * 
 	 * @return a size of the zip file in bytes
 	 */
-	public abstract long zipFileSize();
+	public abstract long luceneFileSize();
 
 	/**
 	 * Returns a dictionary entry from a Lucene document, from a proper
