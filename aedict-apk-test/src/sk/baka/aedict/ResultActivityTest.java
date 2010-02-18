@@ -181,5 +181,4 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		assertNull(entry.reading);
 		assertEquals(100, lv.getCount());
 	}
-
 }

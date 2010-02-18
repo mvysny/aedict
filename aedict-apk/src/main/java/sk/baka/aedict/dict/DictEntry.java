@@ -193,7 +193,7 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	 */
 	public void print(final TextView text1, final TextView text2, final RomanizationEnum romanize) {
 		String reading = this.reading;
-		if (romanize != null) {
+		if (romanize != null && reading != null) {
 			reading = romanize.toRomaji(reading);
 		}
 		final ListBuilder t1 = new ListBuilder("-");
