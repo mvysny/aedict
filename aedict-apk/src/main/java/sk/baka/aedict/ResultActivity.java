@@ -139,7 +139,8 @@ public class ResultActivity extends ListActivity {
 			}
 		}
 		final Config cfg = AedictApp.loadConfig();
-		((TextView) findViewById(R.id.textSelectedDictionary)).setText(AedictApp.format(R.string.searchingInDictionary, cfg.dictionaryName));
+		final String dictName = query.dictType == DictTypeEnum.Tanaka ? DictTypeEnum.Tanaka.name() : cfg.dictionaryName;
+		((TextView) findViewById(R.id.textSelectedDictionary)).setText(AedictApp.format(R.string.searchingInDictionary, dictName));
 		isShowingRomaji = cfg.useRomaji;
 		setListAdapter(new ArrayAdapter<DictEntry>(this, android.R.layout.simple_list_item_2, model) {
 

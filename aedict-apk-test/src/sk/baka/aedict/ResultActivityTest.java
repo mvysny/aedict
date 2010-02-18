@@ -47,6 +47,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
 		q.putTo(i);
 		startActivity(i);
+		assertTrue(getText(R.id.textSelectedDictionary).contains("Default"));
 		final ListView lv = getActivity().getListView();
 		assertEquals(25, lv.getCount());
 		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
@@ -63,6 +64,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
 		q.putTo(i);
 		startActivity(i);
+		assertTrue(getText(R.id.textSelectedDictionary).contains("Default"));
 		final ListView lv = getActivity().getListView();
 		assertEquals(1, lv.getCount());
 		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
@@ -71,7 +73,8 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 	}
 
 	/**
-	 * Test for the http://code.google.com/p/aedict/issues/detail?id=30 bug. The problem was that there are ~2500 matches for kyou however only the first
+	 * Test for the http://code.google.com/p/aedict/issues/detail?id=30 bug. The
+	 * problem was that there are ~2500 matches for kyou however only the first
 	 * 100 were retrieved from Lucene and they were further filtered.
 	 */
 	public void testSearchForKyou() {
@@ -82,6 +85,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
 		q.putTo(i);
 		startActivity(i);
+		assertTrue(getText(R.id.textSelectedDictionary).contains("Default"));
 		final ListView lv = getActivity().getListView();
 		assertEquals(18, lv.getCount());
 		DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
@@ -126,6 +130,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		i.setAction(ResultActivity.SIMEJI_ACTION_INTERCEPT);
 		i.putExtra(ResultActivity.SIMEJI_INTENTKEY_REPLACE, "mother");
 		startActivity(i);
+		assertTrue(getText(R.id.textSelectedDictionary).contains("Default"));
 		final ListView lv = getActivity().getListView();
 		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
@@ -156,7 +161,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 	}
 
 	private void assertSimejiReturn(final String expected) {
-		assertEquals(Activity.RESULT_OK,getFinishedActivityRequest());
+		assertEquals(Activity.RESULT_OK, getFinishedActivityRequest());
 		assertEquals(expected, getResultIntent().getStringExtra(ResultActivity.SIMEJI_INTENTKEY_REPLACE));
 	}
 
@@ -168,12 +173,13 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
 		q.putTo(i);
 		startActivity(i);
+		assertTrue(getText(R.id.textSelectedDictionary).contains("Tanaka"));
 		final ListView lv = getActivity().getListView();
 		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
-		assertEquals("(n) (hum) mother/(P)", entry.english);
-		assertEquals("母", entry.getJapanese());
-		assertEquals("はは", entry.reading);
-		assertEquals(25, lv.getCount());
+		assertEquals("Mother is away from home.", entry.english);
+		assertEquals("母は留守です。", entry.getJapanese());
+		assertNull(entry.reading);
+		assertEquals(100, lv.getCount());
 	}
 
 }

@@ -54,6 +54,15 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 		AedictApp.isInstrumentation = true;
 	}
 
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+		// reset the config
+		final AedictApp.Config cfg = new AedictApp.Config();
+		cfg.setDefaults();
+		AedictApp.saveConfig(cfg);
+	}
+
 	/**
 	 * Starts the activity and asserts that it is really started.
 	 */
@@ -105,7 +114,18 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 *            the text to expect
 	 */
 	protected void assertText(final int textViewId, final String text) {
-		assertEquals(text, ((TextView) getActivity().findViewById(textViewId)).getText());
+		assertEquals(text, getText(textViewId));
+	}
+
+	/**
+	 * Returns text value of given {@link TextView}.
+	 * 
+	 * @param textViewId
+	 *            the text view ID
+	 * @return the text.
+	 */
+	protected String getText(final int textViewId) {
+		return ((TextView) getActivity().findViewById(textViewId)).getText().toString();
 	}
 
 	/**
@@ -133,8 +153,11 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 
 	/**
 	 * Checks whether given {@link CompoundButton} is checked.
-	 * @param expected the expected check state
-	 * @param checkboxId the button ID
+	 * 
+	 * @param expected
+	 *            the expected check state
+	 * @param checkboxId
+	 *            the button ID
 	 */
 	protected void assertChecked(final boolean expected, final int checkboxId) {
 		assertEquals(expected, ((CompoundButton) getActivity().findViewById(checkboxId)).isChecked());
