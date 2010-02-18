@@ -97,7 +97,7 @@ public enum DictTypeEnum {
 			final boolean isCommon = edictEntry.contains("(P)");
 			return new EdictEntry(kanji, reading, englishPart, null, null, null, null, isCommon);
 		}
-		
+
 		@Override
 		public EdictEntry getEntry(Document doc) {
 			return parseEntry(doc.get("contents"));
@@ -210,7 +210,10 @@ public enum DictTypeEnum {
 			final ListBuilder namesReading = new ListBuilder(", ");
 			boolean readingInNames = false;
 			final int radicalNumber = Integer.parseInt(doc.get("radical"));
-			final int strokeCount = Integer.parseInt(doc.get("strokes"));
+			// the strokes count is a space-separated list of strokes. First
+			// number denotes a correct number of strokes, following numbers
+			// denote a commonly mismatched number of strokes.
+			final int strokeCount = Integer.parseInt(new StringTokenizer(doc.get("strokes")).nextToken());
 			Integer grade = null;
 			final String skip = doc.get("skip");
 			// first pass: ignore English readings as they may contain spaces
