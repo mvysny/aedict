@@ -22,12 +22,11 @@ import java.util.Collections;
 import java.util.List;
 
 import sk.baka.aedict.AedictApp.Config;
-import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DictEntry;
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
-import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.ListActivity;
