@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import sk.baka.aedict.kanji.RomanizationEnum;
+import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
@@ -195,17 +196,14 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 		if (romanize != null) {
 			reading = romanize.toRomaji(reading);
 		}
-		final String t1;
-		if (kanji == null) {
-			if (reading == null) {
-				t1 = "";
-			} else {
-				t1 = reading;
-			}
-		} else {
-			t1 = kanji + "  -  " + reading;
+		final ListBuilder t1 = new ListBuilder("-");
+		if (kanji != null) {
+			t1.add(kanji);
 		}
-		text1.setText(t1);
+		if (reading != null) {
+			t1.add(reading);
+		}
+		text1.setText(t1.toString());
 		text2.setText(english);
 	}
 
