@@ -330,17 +330,6 @@ public final class SearchUtils {
 	 * Checks if KANJIDIC exists. If not, user is prompted for a download and
 	 * the files are downloaded if requested.
 	 * 
-	 * @return true if the files are available, false otherwise.
-	 */
-	@Deprecated
-	public boolean checkKanjiDic() {
-		return checkDic(DictTypeEnum.Kanjidic);
-	}
-
-	/**
-	 * Checks if KANJIDIC exists. If not, user is prompted for a download and
-	 * the files are downloaded if requested.
-	 * 
 	 * @param dict
 	 *            the dictionary type.
 	 * @return true if the files are available, false otherwise.
