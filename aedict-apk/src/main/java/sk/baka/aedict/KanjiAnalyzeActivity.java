@@ -259,8 +259,9 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getDictionaryLoc());
 			try {
 				final String[] words = getWords(sentence);
+				final int progressMax = getNumberOfCharacters(words);
+				int currentProgress = 0;
 				for (int i = 0; i < words.length; i++) {
-					publish(new Progress(null, i, words.length));
 					if (isCancelled()) {
 						return null;
 					}
@@ -269,6 +270,8 @@ public class KanjiAnalyzeActivity extends ListActivity {
 						final DictEntry entry = findLongestWord(w, lsEdict);
 						result.add(entry);
 						w = w.substring(entry.getJapanese().length());
+						currentProgress += entry.getJapanese().length();
+						publish(new Progress(null, currentProgress, progressMax));
 					}
 				}
 				return result;
@@ -278,7 +281,17 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		}
 
 		private final String[] getWords(final String sentence) {
+			// split the sentence by a non-word characters, like space, hyphen,
+			// -, etc.
 			return sentence.split("[^\\p{javaLetter}]+");
+		}
+
+		private int getNumberOfCharacters(final String[] words) {
+			int result = 0;
+			for (String word : words) {
+				result += word.length();
+			}
+			return result;
 		}
 
 		/**
