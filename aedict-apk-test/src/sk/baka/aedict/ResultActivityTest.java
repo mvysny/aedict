@@ -197,4 +197,34 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		assertNull(entry.reading);
 		assertEquals(100, lv.getCount());
 	}
+
+	public void testComplexJapaneseSearchInTanaka() {
+		final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
+		q.isJapanese = true;
+		q.matcher = MatcherEnum.Substring;
+		q.query = new String[] { "母", "はは" };
+		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
+		q.putTo(i);
+		startActivity(i);
+		assertTrue(getText(R.id.textSelectedDictionary).contains("Tanaka"));
+		final ListView lv = getActivity().getListView();
+		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
+		assertEquals("My mother tongue.", entry.english);
+		assertEquals("私の母国語。", entry.getJapanese());
+		assertNull(entry.reading);
+		assertEquals(100, lv.getCount());
+	}
+
+	public void testJapaneseSearchInTanaka() {
+		testSimpleJapaneseSearch();
+		contextMenu(getActivity().getListView(), 5, 0);
+		assertStartedActivity(ResultActivity.class);
+		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
+		assertEquals("母", q.query[0]);
+		assertEquals("はは", q.query[1]);
+		assertEquals(2, q.query.length);
+		assertTrue(q.isJapanese);
+		assertEquals(DictTypeEnum.Tanaka, q.dictType);
+		assertEquals(MatcherEnum.Substring, q.matcher);
+	}
 }

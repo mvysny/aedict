@@ -267,10 +267,16 @@ public enum DictTypeEnum {
 	Tanaka {
 		@Override
 		public String getLuceneQuery(SearchQuery query) {
-			if (query.query.length != 1) {
-				throw new IllegalStateException("Tanaka search requires a single kanji character search");
+			final ListBuilder result = new ListBuilder(" OR ");
+			for (final String q : query.query) {
+				if (query.isJapanese) {
+					result.add("japanese:" + q);
+					result.add("jp-deinflected:" + q);
+				} else {
+					result.add("english:" + q);
+				}
 			}
-			return (query.isJapanese ? "japanese:" + query.query[0] + " OR jp-deinflected:" + query.query[0] : "english:" + query.query[0]);
+			return result.toString();
 		}
 
 		@Override

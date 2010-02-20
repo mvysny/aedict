@@ -122,4 +122,14 @@ public class DictTypeEnumTest {
 		doc.add(new Field("contents", edictLine, Field.Store.COMPRESS, Field.Index.NO));
 		return doc;
 	}
+
+	@Test
+	public void testTanakaQueryCreator() {
+		final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
+		q.query = new String[] { "foo", "bar" };
+		q.isJapanese = true;
+		assertEquals("japanese:foo OR jp-deinflected:foo OR japanese:bar OR jp-deinflected:bar", DictTypeEnum.Tanaka.getLuceneQuery(q));
+		q.isJapanese = false;
+		assertEquals("english:foo OR english:bar", DictTypeEnum.Tanaka.getLuceneQuery(q));
+	}
 }

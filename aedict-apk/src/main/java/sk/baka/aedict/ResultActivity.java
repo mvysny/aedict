@@ -18,6 +18,7 @@
 
 package sk.baka.aedict;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.util.SearchUtils;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.ListActivity;
@@ -190,6 +192,35 @@ public class ResultActivity extends ListActivity {
 					menu.add(Menu.NONE, 3, 3, AedictApp.format(R.string.return_, ee.reading)).setOnMenuItemClickListener(new SimejiReturn(ee.reading));
 					menu.add(Menu.NONE, 4, 4, AedictApp.format(R.string.return_, ee.english)).setOnMenuItemClickListener(new SimejiReturn(ee.english));
 				}
+				final MenuItem miSearchInExamples = menu.add(Menu.NONE, 5, 5, R.string.searchInExamples);
+				miSearchInExamples.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+					public boolean onMenuItemClick(MenuItem item) {
+						if (!new SearchUtils(ResultActivity.this).checkDic(query.dictType)) {
+							// the dictionary is not yet available. An activity
+							// was popped up,
+							// which offers dictionary download. Nothing to do
+							// here, just do
+							// nothing.
+							return true;
+						}
+						final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
+						q.isJapanese = true;
+						final List<String> query = new ArrayList<String>();
+						if (ee.kanji != null) {
+							query.add(ee.kanji);
+						}
+						if (ee.reading != null) {
+							query.add(ee.reading);
+						}
+						q.query = query.toArray(new String[0]);
+						q.matcher = MatcherEnum.Substring;
+						final Intent intent = new Intent(ResultActivity.this, ResultActivity.class);
+						q.putTo(intent);
+						startActivity(intent);
+						return true;
+					}
+				}));
 			}
 		}));
 	}

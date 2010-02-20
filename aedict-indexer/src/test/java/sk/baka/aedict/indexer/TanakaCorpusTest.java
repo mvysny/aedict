@@ -71,4 +71,18 @@ public class TanakaCorpusTest extends AbstractLuceneSearchTest {
         List<String> s = search("japanese", "japanese:きれい");
         assertEquals("「きれいな宝石ですね」、適当な話題かどうかわからないが、とりあえずそう水を向けてみた。", s.get(0));
     }
+
+    @Test
+    public void testSimpleJapaneseSearch5() throws Exception {
+        List<String> s = search("japanese", "jp-deinflected:可也");
+        assertEquals("「今朝は調子かいかがですか」「かなりいいですよ、ありがとう」", s.get(0));
+        assertEquals(255, s.size());
+    }
+
+    @Test
+    public void testJapaneseSearchForHaha() throws Exception {
+        List<String> s = search("japanese", "japanese:母 OR jp-deinflected:母 OR japanese:はは OR jp-deinflected:はは");
+        assertEquals("※基本的な禁止事項（誹謗・中傷の禁止等）は「はじめにお読み下さい」に記載してあります。必ずお読みください。", s.get(0));
+        assertEquals(1653, s.size());
+    }
 }
