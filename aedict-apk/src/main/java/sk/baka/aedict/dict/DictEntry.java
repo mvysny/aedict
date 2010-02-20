@@ -196,7 +196,7 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 		if (romanize != null && reading != null) {
 			reading = romanize.toRomaji(reading);
 		}
-		final ListBuilder t1 = new ListBuilder("-");
+		final ListBuilder t1 = new ListBuilder(" - ");
 		if (kanji != null) {
 			t1.add(kanji);
 		}
