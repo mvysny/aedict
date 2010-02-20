@@ -73,6 +73,17 @@ public class DownloadDictTask extends AbstractTask<Void, Void> {
 	/**
 	 * Checks if the edict is downloaded and indexed correctly.
 	 * 
+	 * @param dict
+	 *            the dictionary type. The default path will be checked.
+	 * @return true if everything is okay, false if not
+	 */
+	public static boolean isComplete(final DictTypeEnum dict){
+		return isComplete(dict.getDefaultDictionaryPath());
+	}
+	
+	/**
+	 * Checks if the edict is downloaded and indexed correctly.
+	 * 
 	 * @param indexDir
 	 *            the directory where the index files are expected to be
 	 *            located.

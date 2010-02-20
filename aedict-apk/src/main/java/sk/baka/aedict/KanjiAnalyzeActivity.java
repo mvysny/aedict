@@ -333,7 +333,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getDictionaryLoc());
 			try {
 				LuceneSearch lsKanjidic = null;
-				if (DownloadDictTask.isComplete(DictTypeEnum.Kanjidic.getDefaultDictionaryPath())) {
+				if (DownloadDictTask.isComplete(DictTypeEnum.Kanjidic)) {
 					lsKanjidic = new LuceneSearch(DictTypeEnum.Kanjidic, null);
 				}
 				try {

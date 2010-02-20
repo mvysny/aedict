@@ -106,7 +106,7 @@ public final class LuceneSearch implements Closeable {
 		final TopDocs result = searcher.search(parsedQuery, null, maxLuceneResults);
 		for (final ScoreDoc sd : result.scoreDocs) {
 			final Document doc = searcher.doc(sd.doc);
-			final DictEntry entry=query.dictType.tryGetEntry(doc, query);
+			final DictEntry entry=dictType.tryGetEntry(doc, query);
 			if(entry!=null){
 				r.add(entry);
 				if (r.size() >= maxResults) {

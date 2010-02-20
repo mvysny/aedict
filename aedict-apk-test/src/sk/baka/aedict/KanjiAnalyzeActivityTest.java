@@ -41,10 +41,19 @@ public class KanjiAnalyzeActivityTest extends ActivityTestHelper<KanjiAnalyzeAct
 		startActivity("母上");
 		assertEquals(2, getActivity().getListAdapter().getCount());
 		assertEquals("母", get(0).getJapanese());
+		assertEquals("mama, mother", get(0).english);
 		assertEquals("上", get(1).getJapanese());
+		assertEquals("above, up", get(1).english);
 		activateOptionsMenu(1);
 		assertEquals(1, getActivity().getListAdapter().getCount());
 		assertEquals("母上", get(0).getJapanese());
+	}
+
+	public void testAnalyzeYomu() {
+		startActivity("読");
+		assertEquals(1, getActivity().getListAdapter().getCount());
+		assertEquals("読", get(0).getJapanese());
+		assertEquals("read", get(0).english);
 	}
 
 	public void testAddToNotepad() {
