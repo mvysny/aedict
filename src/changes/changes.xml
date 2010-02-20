@@ -4,7 +4,22 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
-		<release version="0.9" date="16. February 2010">
+		<release version="0.9" date="27. February 2010">
+			<action dev="vyzivus" type="fix">
+				Fixed possible IndexOutOfBoundsException in the KanjiAnalyzeActivity
+			</action>
+			<action dev="vyzivus" type="fix">
+				Fixed the isHiragana/isKatakana methods: the methods failed to work correctly for small ya, yu, yo characters
+			</action>
+			<action dev="vyzivus" type="update">
+				The word analysis progress is displayed more accurately
+			</action>
+			<action dev="vyzivus" type="add">
+				Added the Donate button
+			</action>
+			<action dev="vyzivus" type="add">
+				Added warning for KanjiDraw about the proper stroke order
+			</action>
 			<action dev="vyzivus" type="add">
 				Added Japanese-French downloadable dictionary.
 			</action>
