@@ -40,8 +40,8 @@ public class Utils {
     }
 
     public static void index(final String sw, final String res, final FileTypeEnum fileType) throws Exception {
-        final URL edictGz = Utils.getResource(res);
-        final List<String> params = new ArrayList<String>(Arrays.asList("-u", edictGz.toString(), "-g"));
+        final URL dictGz = Utils.getResource(res);
+        final List<String> params = new ArrayList<String>(Arrays.asList("-u", dictGz.toString(), "-g"));
         if (sw != null) {
             params.add(sw);
         }
