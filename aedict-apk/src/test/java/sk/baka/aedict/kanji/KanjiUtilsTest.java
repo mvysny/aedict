@@ -28,21 +28,6 @@ import static org.junit.Assert.*;
  */
 public class KanjiUtilsTest {
 	@Test
-	public void testKanji() {
-		assertTrue(KanjiUtils.isKanji('艦'));
-		assertFalse(KanjiUtils.isKanji('か'));
-		assertFalse(KanjiUtils.isKanji('キ'));
-		assertFalse(KanjiUtils.isKanji('ー'));
-		assertFalse(KanjiUtils.isKanji('っ'));
-		assertFalse(KanjiUtils.isKanji('ゃ'));
-		assertFalse(KanjiUtils.isKanji('ゅ'));
-		assertFalse(KanjiUtils.isKanji('ょ'));
-		assertFalse(KanjiUtils.isKanji('ャ'));
-		assertFalse(KanjiUtils.isKanji('ュ'));
-		assertFalse(KanjiUtils.isKanji('ョ'));
-	}
-
-	@Test
 	public void testKatakana() {
 		assertFalse(KanjiUtils.isKatakana('艦'));
 		assertFalse(KanjiUtils.isKatakana('か'));

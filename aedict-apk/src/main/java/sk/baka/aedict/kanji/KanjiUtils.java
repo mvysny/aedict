@@ -36,18 +36,6 @@ public final class KanjiUtils {
 		throw new AssertionError();
 	}
 
-	/**
-	 * A very simple check for kanji. Works only on a mixture of kanji, katakana
-	 * and hiragana.
-	 * 
-	 * @param c
-	 *            the character to analyze.
-	 * @return true if it is a kanji, false otherwise.
-	 */
-	public static boolean isKanji(char c) {
-		return RomanizationEnum.Hepburn.toRomaji(c).charAt(0) == c;
-	}
-
 	private static final Set<Character> HIRAGANA_SPECIALS = new HashSet<Character>(Arrays.asList('っ', 'ゃ', 'ゅ', 'ょ'));
 
 	/**

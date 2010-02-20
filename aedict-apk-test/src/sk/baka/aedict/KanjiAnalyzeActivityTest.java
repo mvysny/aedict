@@ -49,11 +49,21 @@ public class KanjiAnalyzeActivityTest extends ActivityTestHelper<KanjiAnalyzeAct
 		assertEquals("母上", get(0).getJapanese());
 	}
 
+	/**
+	 * If this test fails then probably the kanjidic dictionary is not downloaded.
+	 */
 	public void testAnalyzeYomu() {
 		startActivity("読");
 		assertEquals(1, getActivity().getListAdapter().getCount());
 		assertEquals("読", get(0).getJapanese());
 		assertEquals("read", get(0).english);
+	}
+
+	public void testIndexOutOfBoundsThrownWhenASmallTsuIsAnalyzed() {
+		startActivity("っ");
+		assertEquals(1, getActivity().getListAdapter().getCount());
+		assertEquals("っ", get(0).getJapanese());
+		assertEquals("", get(0).english);
 	}
 
 	public void testAddToNotepad() {

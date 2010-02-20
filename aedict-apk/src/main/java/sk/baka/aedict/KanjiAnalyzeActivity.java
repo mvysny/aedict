@@ -344,11 +344,11 @@ public class KanjiAnalyzeActivity extends ListActivity {
 							return null;
 						}
 						final char c = w.charAt(i);
-						final boolean isKanji = KanjiUtils.isKanji(c);
-						if (!isKanji) {
+						final boolean isKana = KanjiUtils.isKana(c);
+						if (isKana) {
 							result.add(new DictEntry(String.valueOf(c), String.valueOf(c), ""));
 						} else {
-							// it is a kanji. search for it in the dictionary.
+							// it is probably a kanji. search for it in the dictionary.
 							final SearchQuery q = SearchQuery.searchForJapanese(String.valueOf(c), true);
 							List<DictEntry> matches = null;
 							DictEntry ee = null;
