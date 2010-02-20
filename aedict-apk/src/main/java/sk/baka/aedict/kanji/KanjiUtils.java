@@ -18,9 +18,12 @@
 
 package sk.baka.aedict.kanji;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
@@ -45,6 +48,8 @@ public final class KanjiUtils {
 		return RomanizationEnum.Hepburn.toRomaji(c).charAt(0) == c;
 	}
 
+	private static final Set<Character> HIRAGANA_SPECIALS = new HashSet<Character>(Arrays.asList('っ', 'ゃ', 'ゅ', 'ょ'));
+
 	/**
 	 * A very simple check for hiragana characters.
 	 * 
@@ -53,14 +58,22 @@ public final class KanjiUtils {
 	 * @return true if it is a hiragana character, false otherwise.
 	 */
 	public static boolean isHiragana(char c) {
+		// first check for special characters, like small ya, yu, yo. These
+		// characters are generally untranslateable with the toRomaji founction
+		// and it will fail.
+		if (HIRAGANA_SPECIALS.contains(c)) {
+			return true;
+		}
 		final String romaji = RomanizationEnum.Hepburn.toRomaji(c);
-		if (romaji.charAt(0) == c) {
+		if (romaji.length() == 0 || romaji.charAt(0) == c) {
 			// kanji
 			return false;
 		}
 		final char c1 = RomanizationEnum.Hepburn.toHiragana(romaji).charAt(0);
 		return c1 == c;
 	}
+
+	private static final Set<Character> KATAKANA_SPECIALS = new HashSet<Character>(Arrays.asList('ー', 'ャ', 'ュ', 'ョ'));
 
 	/**
 	 * A very simple check for hiragana characters.
@@ -70,8 +83,14 @@ public final class KanjiUtils {
 	 * @return true if it is a hiragana character, false otherwise.
 	 */
 	public static boolean isKatakana(char c) {
+		// first check for special characters, like small ya, yu, yo. These
+		// characters are generally untranslateable with the toRomaji founction
+		// and it will fail.
+		if (KATAKANA_SPECIALS.contains(c)) {
+			return true;
+		}
 		final String romaji = RomanizationEnum.Hepburn.toRomaji(c);
-		if (romaji.charAt(0) == c) {
+		if (romaji.length() == 0 || romaji.charAt(0) == c) {
 			// kanji
 			return false;
 		}
@@ -153,9 +172,8 @@ public final class KanjiUtils {
 
 	/**
 	 * Checks whether given character is a kana character:
-	 * {@link #isHiragana(char) hiragana},
-	 * {@link #isKatakana(char) katakana} or {@link #isHalfwidth(char)
-	 * half-width katakana} character.
+	 * {@link #isHiragana(char) hiragana}, {@link #isKatakana(char) katakana} or
+	 * {@link #isHalfwidth(char) half-width katakana} character.
 	 * 
 	 * @param ch
 	 *            the character to check

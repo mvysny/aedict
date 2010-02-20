@@ -32,6 +32,14 @@ public class KanjiUtilsTest {
 		assertTrue(KanjiUtils.isKanji('艦'));
 		assertFalse(KanjiUtils.isKanji('か'));
 		assertFalse(KanjiUtils.isKanji('キ'));
+		assertFalse(KanjiUtils.isKanji('ー'));
+		assertFalse(KanjiUtils.isKanji('っ'));
+		assertFalse(KanjiUtils.isKanji('ゃ'));
+		assertFalse(KanjiUtils.isKanji('ゅ'));
+		assertFalse(KanjiUtils.isKanji('ょ'));
+		assertFalse(KanjiUtils.isKanji('ャ'));
+		assertFalse(KanjiUtils.isKanji('ュ'));
+		assertFalse(KanjiUtils.isKanji('ョ'));
 	}
 
 	@Test
@@ -39,6 +47,14 @@ public class KanjiUtilsTest {
 		assertFalse(KanjiUtils.isKatakana('艦'));
 		assertFalse(KanjiUtils.isKatakana('か'));
 		assertTrue(KanjiUtils.isKatakana('キ'));
+		assertTrue(KanjiUtils.isKatakana('ー'));
+		assertFalse(KanjiUtils.isKatakana('っ'));
+		assertFalse(KanjiUtils.isKatakana('ゃ'));
+		assertFalse(KanjiUtils.isKatakana('ゅ'));
+		assertFalse(KanjiUtils.isKatakana('ょ'));
+		assertTrue(KanjiUtils.isKatakana('ャ'));
+		assertTrue(KanjiUtils.isKatakana('ュ'));
+		assertTrue(KanjiUtils.isKatakana('ョ'));
 	}
 
 	@Test
@@ -46,6 +62,14 @@ public class KanjiUtilsTest {
 		assertFalse(KanjiUtils.isHiragana('艦'));
 		assertTrue(KanjiUtils.isHiragana('か'));
 		assertFalse(KanjiUtils.isHiragana('キ'));
+		assertFalse(KanjiUtils.isHiragana('ー'));
+		assertTrue(KanjiUtils.isHiragana('っ'));
+		assertTrue(KanjiUtils.isHiragana('ゃ'));
+		assertTrue(KanjiUtils.isHiragana('ゅ'));
+		assertTrue(KanjiUtils.isHiragana('ょ'));
+		assertFalse(KanjiUtils.isHiragana('ャ'));
+		assertFalse(KanjiUtils.isHiragana('ュ'));
+		assertFalse(KanjiUtils.isHiragana('ョ'));
 	}
 
 	@Test
