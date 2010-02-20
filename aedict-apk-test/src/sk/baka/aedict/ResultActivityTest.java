@@ -72,6 +72,22 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		assertEquals("母", entry.getJapanese());
 	}
 
+	public void testSubstringJapaneseSearch() {
+		final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
+		q.isJapanese = true;
+		q.matcher = MatcherEnum.Substring;
+		q.query = new String[] { RomanizationEnum.Hepburn.toHiragana("haha"), RomanizationEnum.Hepburn.toKatakana("haha") };
+		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
+		q.putTo(i);
+		startActivity(i);
+		assertTrue(getText(R.id.textSelectedDictionary).contains("Default"));
+		final ListView lv = getActivity().getListView();
+		assertEquals(30, lv.getCount());
+		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
+		assertEquals("(n) (hum) mother/(P)", entry.english);
+		assertEquals("母", entry.getJapanese());
+	}
+
 	/**
 	 * Test for the http://code.google.com/p/aedict/issues/detail?id=30 bug. The
 	 * problem was that there are ~2500 matches for kyou however only the first

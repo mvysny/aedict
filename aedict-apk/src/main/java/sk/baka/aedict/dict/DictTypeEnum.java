@@ -105,14 +105,11 @@ public enum DictTypeEnum {
 
 		@Override
 		public boolean matches(final DictEntry entry, boolean isJapanese, String query, MatcherEnum matcher) {
-			if (matcher == MatcherEnum.Substring) {
-				if (isJapanese) {
-					return MatcherEnum.Substring.matches(entry.reading, query) || ((entry.kanji != null) && MatcherEnum.Substring.matches(entry.kanji, query));
-				}
-				return matcher.matches(query, entry.english);
-			}
 			if (isJapanese) {
-				return MatcherEnum.Exact.matches(entry.reading, query) || ((entry.kanji != null) && MatcherEnum.Exact.matches(entry.kanji, query));
+				return matcher.matches(query, entry.reading) || ((entry.kanji != null) && matcher.matches(query, entry.kanji));
+			}
+			if (matcher == MatcherEnum.Substring) {
+				return matcher.matches(query, entry.english);
 			}
 			// check the special English Edict processing, see MatcherEnum.Exact
 			// for details.
@@ -355,7 +352,7 @@ public enum DictTypeEnum {
 	public abstract URL getDownloadSite();
 
 	/**
-	 * Returns the expected size of the Lucene (not zip!) files, zipped in 
+	 * Returns the expected size of the Lucene (not zip!) files, zipped in
 	 * {@link #getDownloadSite()}.
 	 * 
 	 * @return a size of the zip file in bytes

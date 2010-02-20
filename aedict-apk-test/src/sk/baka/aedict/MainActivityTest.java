@@ -71,6 +71,22 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 	/**
 	 * Tests that a search request is sent when english search is requested.
 	 */
+	public void testNonExactEnglishSearch() {
+		startActivity();
+		setText(R.id.engSearchEdit, "mother");
+		click(R.id.engSearch);
+		assertStartedActivity(ResultActivity.class);
+		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
+		assertEquals(MatcherEnum.Substring, q.matcher);
+		assertEquals("mother", q.query[0]);
+		assertEquals(1, q.query.length);
+		assertFalse(q.isJapanese);
+		assertEquals(DictTypeEnum.Edict, q.dictType);
+	}
+
+	/**
+	 * Tests that a search request is sent when english search is requested.
+	 */
 	public void testSearchInExamples() {
 		startActivity();
 		setText(R.id.engSearchEdit, "mother");

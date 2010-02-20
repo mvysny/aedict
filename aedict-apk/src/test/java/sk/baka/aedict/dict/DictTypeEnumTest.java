@@ -35,7 +35,7 @@ import org.junit.Test;
  */
 public class DictTypeEnumTest {
 	@Test
-	public void complexExactEdictMatches() {
+	public void complexExactEdictMatchesEng() {
 		assertFalse(matches("query", "QUERYQUERY"));
 		assertFalse(matches("query", "QUERY QUERY"));
 		assertFalse(matches("query", "queryquery"));
@@ -49,8 +49,40 @@ public class DictTypeEnumTest {
 		assertTrue(matches("mother", "(n) (hum) mother/(P)"));
 	}
 
+	@Test
+	public void complexSubstringEdictMatchesEng() {
+		assertFalse(matches2("query", "foobarbaz"));
+		assertTrue(matches2("query", "QUERYQUERY"));
+		assertTrue(matches2("query", "QUERY QUERY"));
+		assertTrue(matches2("query", "queryquery"));
+		assertTrue(matches2("query", "query query"));
+		assertTrue(matches2("query", "query-query"));
+		assertTrue(matches2("query", "query'query"));
+		assertTrue(matches2("query", "query.query"));
+		assertTrue(matches2("query", "query,query"));
+		assertTrue(matches2("query", "query; query"));
+		assertTrue(matches2("query", "foo-bar-baz [f] (p) query; query"));
+		assertTrue(matches2("mother", "(n) (hum) mother/(P)"));
+	}
+
+	@Test
+	public void complexSubstringEdictMatchesJp() {
+		assertTrue(DictTypeEnum.Edict.matches(entryjp("あはは"), true, "はは", MatcherEnum.Substring));
+		assertFalse(DictTypeEnum.Edict.matches(entryjp("あはは"), true, "はは", MatcherEnum.Exact));
+		assertTrue(DictTypeEnum.Edict.matches(entryjp("はは"), true, "はは", MatcherEnum.Substring));
+		assertTrue(DictTypeEnum.Edict.matches(entryjp("はは"), true, "はは", MatcherEnum.Exact));
+	}
+
+	private DictEntry entryjp(final String jp) {
+		return new DictEntry(null, jp, null);
+	}
+
 	private DictEntry entry(final String eng) {
 		return new DictEntry(null, null, eng);
+	}
+
+	private boolean matches2(final String query, final String eng) {
+		return DictTypeEnum.Edict.matches(entry(eng), false, query, MatcherEnum.Substring);
 	}
 
 	private boolean matches(final String query, final String eng) {
