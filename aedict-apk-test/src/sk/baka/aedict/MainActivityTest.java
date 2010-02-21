@@ -18,6 +18,8 @@
 
 package sk.baka.aedict;
 
+import java.util.Arrays;
+
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
@@ -111,6 +113,7 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 		click(R.id.jpSearch);
 		assertStartedActivity(ResultActivity.class);
 		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
+		Arrays.sort(q.query);
 		assertEquals("あう", q.query[0]);
 		assertEquals("あえる", q.query[1]);
 		assertEquals(2, q.query.length);

@@ -18,12 +18,13 @@
 
 package sk.baka.aedict.kanji;
 
-import java.lang.reflect.Array;
+import static sk.baka.tools.test.Assert.assertArrayEqualsNoOrder;
+import static sk.baka.tools.test.Assert.assertUtilityClass;
+
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-import static sk.baka.tools.test.Assert.*;
 
 /**
  * Tests the {@link VerbDeinflection} class.
@@ -135,8 +136,8 @@ public class VerbDeinflectionTest {
 	public void testDeinflectAu() {
 		assertDeinflected("au", "au", "awanai");
 		assertDeinflected(Arrays.asList("au", "aru"), "atta");
-		// a bit weird, however we have to be able to also deinflect taberu to
-		// taberu
+		// a bit weird, however we have to be able to also "deinflect" taberu to
+		// taberu, along with tabu
 		assertDeinflected(Arrays.asList("au", "aeru"), "aenai");
 	}
 

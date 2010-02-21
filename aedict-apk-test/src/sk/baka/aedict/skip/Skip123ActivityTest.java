@@ -23,7 +23,6 @@ import java.util.List;
 import sk.baka.aedict.ActivityTestHelper;
 import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
-import sk.baka.aedict.ResultActivity;
 import sk.baka.aedict.dict.DictEntry;
 import android.content.Intent;
 
