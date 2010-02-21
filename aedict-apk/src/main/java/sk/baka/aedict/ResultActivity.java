@@ -214,7 +214,10 @@ public class ResultActivity extends ListActivity {
 							query.add(ee.reading);
 						}
 						q.query = query.toArray(new String[0]);
-						q.matcher = MatcherEnum.Substring;
+						// we must not use the Substring search - the Japanese
+						// word may be inflected and the entry would get
+						// filtered out.
+						q.matcher = MatcherEnum.Any;
 						final Intent intent = new Intent(ResultActivity.this, ResultActivity.class);
 						q.putTo(intent);
 						startActivity(intent);
