@@ -29,12 +29,12 @@ import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.util.SearchUtils;
+import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -129,16 +129,7 @@ public class ResultActivity extends ListActivity {
 			// nothing to search for
 			model = Collections.singletonList(DictEntry.newErrorMsg(getString(R.string.nothing_to_search_for)));
 		} else {
-			try {
-				model = LuceneSearch.singleSearch(query, query.dictType == DictTypeEnum.Edict ? AedictApp.getDictionaryLoc() : null);
-				Collections.sort(model);
-			} catch (Exception ex) {
-				Log.e(ResultActivity.class.getSimpleName(), "Failed to perform search", ex);
-				model = Collections.singletonList(DictEntry.newErrorMsg(AedictApp.format(R.string.searchFailed, ex.toString())));
-			}
-			if (model.isEmpty()) {
-				model = Collections.singletonList(DictEntry.newErrorMsg(getString(R.string.no_results)));
-			}
+			new SearchTask().execute(AedictApp.isInstrumentation, this, query);
 		}
 		final Config cfg = AedictApp.loadConfig();
 		final String dictName = query.dictType == DictTypeEnum.Tanaka ? DictTypeEnum.Tanaka.name() : cfg.dictionaryName;
@@ -228,6 +219,26 @@ public class ResultActivity extends ListActivity {
 		}));
 	}
 
+	private void updateModel() {
+		final Config cfg = AedictApp.loadConfig();
+		if (model.isEmpty()) {
+			model = Collections.singletonList(DictEntry.newErrorMsg(getString(R.string.no_results)));
+		}
+		setListAdapter(new ArrayAdapter<DictEntry>(this, android.R.layout.simple_list_item_2, model) {
+
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				TwoLineListItem view = (TwoLineListItem) convertView;
+				if (view == null) {
+					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
+				}
+				model.get(position).print(view, isShowingRomaji ? cfg.romanization : null);
+				return view;
+			}
+
+		});
+	}
+
 	/**
 	 * Forces the activity to close and return given string as a result to
 	 * Simeji.
@@ -280,5 +291,32 @@ public class ResultActivity extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		AbstractActivity.addMenuItems(this, menu);
 		return true;
+	}
+
+	private class SearchTask extends AbstractTask<SearchQuery, List<DictEntry>> {
+
+		@Override
+		protected void cleanupAfterError(final Exception ex) {
+			if (ex == null) {
+				// cancelled. set an empty model
+				model = Collections.emptyList();
+			} else {
+				model = Collections.singletonList(DictEntry.newErrorMsg(AedictApp.format(R.string.searchFailed, ex.toString())));
+			}
+			updateModel();
+		}
+
+		@Override
+		public List<DictEntry> impl(SearchQuery... params) throws Exception {
+			final List<DictEntry> result = LuceneSearch.singleSearch(query, query.dictType == DictTypeEnum.Edict ? AedictApp.getDictionaryLoc() : null);
+			Collections.sort(result);
+			return result;
+		}
+
+		@Override
+		protected void onSucceeded(List<DictEntry> result) {
+			model = result;
+			updateModel();
+		}
 	}
 }
