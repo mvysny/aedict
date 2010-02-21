@@ -105,7 +105,7 @@ public class DownloadDictTask extends AbstractTask<Void, Void> {
 	}
 
 	@Override
-	protected void cleanupAfterError() {
+	protected void cleanupAfterError(Exception ex) {
 		deleteDirQuietly(new File(targetDir));
 	}
 
@@ -145,10 +145,6 @@ public class DownloadDictTask extends AbstractTask<Void, Void> {
 		try {
 			final ZipInputStream zip = new ZipInputStream(in);
 			copy(in, zip);
-		} catch (InterruptedIOException ex) {
-			MiscUtils.closeQuietly(in);
-			deleteDirQuietly(new File(targetDir));
-			throw ex;
 		} finally {
 			MiscUtils.closeQuietly(in);
 		}

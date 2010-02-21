@@ -261,7 +261,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 		}
 
 		@Override
-		protected void cleanupAfterError() {
+		protected void cleanupAfterError(Exception ex) {
 			// do nothing
 		}
 

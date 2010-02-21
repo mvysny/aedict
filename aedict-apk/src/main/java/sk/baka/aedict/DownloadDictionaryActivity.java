@@ -121,7 +121,7 @@ public class DownloadDictionaryActivity extends ListActivity {
 	 */
 	private class DownloadDictionaryListTask extends AbstractTask<Void, List<DownloadableDictionaryInfo>> {
 		@Override
-		protected void cleanupAfterError() {
+		protected void cleanupAfterError(Exception ex) {
 			// nothing to do
 		}
 

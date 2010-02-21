@@ -232,7 +232,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	private class RecomputeModel extends AbstractTask<String, List<DictEntry>> {
 
 		@Override
-		protected void cleanupAfterError() {
+		protected void cleanupAfterError(Exception ex) {
 			// nothing to do
 		}
 

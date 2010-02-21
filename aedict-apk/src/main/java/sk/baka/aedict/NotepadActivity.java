@@ -199,7 +199,7 @@ public class NotepadActivity extends ListActivity {
 	private class ComputeCacheTask extends AbstractTask<Void, List<DictEntry>> {
 
 		@Override
-		protected void cleanupAfterError() {
+		protected void cleanupAfterError(Exception ex) {
 			// nothing to do
 		}
 
