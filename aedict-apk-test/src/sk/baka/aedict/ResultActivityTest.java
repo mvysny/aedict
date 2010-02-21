@@ -201,7 +201,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 	public void testComplexJapaneseSearchInTanaka() {
 		final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
 		q.isJapanese = true;
-		q.matcher = MatcherEnum.Substring;
+		q.matcher = MatcherEnum.Any;
 		q.query = new String[] { "母", "はは" };
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
 		q.putTo(i);
@@ -225,6 +225,6 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		assertEquals(2, q.query.length);
 		assertTrue(q.isJapanese);
 		assertEquals(DictTypeEnum.Tanaka, q.dictType);
-		assertEquals(MatcherEnum.Substring, q.matcher);
+		assertEquals(MatcherEnum.Any, q.matcher);
 	}
 }
