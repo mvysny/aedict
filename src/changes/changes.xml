@@ -5,6 +5,9 @@
 	</properties>
 	<body>
 		<release version="0.9" date="27. February 2010">
+			<action dev="vyzivus" type="add" issue="31">
+				Implemented the Examples search
+			</action>
 			<action dev="vyzivus" type="fix">
 				Fixed possible IndexOutOfBoundsException in the KanjiAnalyzeActivity
 			</action>
