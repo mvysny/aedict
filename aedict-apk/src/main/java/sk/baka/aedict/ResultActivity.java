@@ -129,25 +129,14 @@ public class ResultActivity extends ListActivity {
 			// nothing to search for
 			model = Collections.singletonList(DictEntry.newErrorMsg(getString(R.string.nothing_to_search_for)));
 		} else {
+			model = Collections.emptyList();
+			updateModel(true);
 			new SearchTask().execute(AedictApp.isInstrumentation, this, query);
 		}
 		final Config cfg = AedictApp.loadConfig();
 		final String dictName = query.dictType == DictTypeEnum.Tanaka ? DictTypeEnum.Tanaka.name() : cfg.dictionaryName;
 		((TextView) findViewById(R.id.textSelectedDictionary)).setText(AedictApp.format(R.string.searchingInDictionary, dictName));
 		isShowingRomaji = cfg.useRomaji;
-		setListAdapter(new ArrayAdapter<DictEntry>(this, android.R.layout.simple_list_item_2, model) {
-
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
-				TwoLineListItem view = (TwoLineListItem) convertView;
-				if (view == null) {
-					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
-				}
-				model.get(position).print(view, isShowingRomaji ? cfg.romanization : null);
-				return view;
-			}
-
-		});
 		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -219,10 +208,10 @@ public class ResultActivity extends ListActivity {
 		}));
 	}
 
-	private void updateModel() {
+	private void updateModel(final boolean searching) {
 		final Config cfg = AedictApp.loadConfig();
 		if (model.isEmpty()) {
-			model = Collections.singletonList(DictEntry.newErrorMsg(getString(R.string.no_results)));
+			model = Collections.singletonList(DictEntry.newErrorMsg(getString(searching ? R.string.searching : R.string.no_results)));
 		}
 		setListAdapter(new ArrayAdapter<DictEntry>(this, android.R.layout.simple_list_item_2, model) {
 
@@ -303,7 +292,7 @@ public class ResultActivity extends ListActivity {
 			} else {
 				model = Collections.singletonList(DictEntry.newErrorMsg(AedictApp.format(R.string.searchFailed, ex.toString())));
 			}
-			updateModel();
+			updateModel(false);
 		}
 
 		@Override
@@ -316,7 +305,7 @@ public class ResultActivity extends ListActivity {
 		@Override
 		protected void onSucceeded(List<DictEntry> result) {
 			model = result;
-			updateModel();
+			updateModel(false);
 		}
 	}
 }
