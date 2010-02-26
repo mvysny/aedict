@@ -85,7 +85,7 @@ public class KanjiAnalyzeActivityTest extends ActivityTestHelper<KanjiAnalyzeAct
 	public void testWordAnalysis() {
 		startActivity("今週のおすすめﾊﾞｰｹﾞﾝTVｹﾞｰﾑ", true);
 		assertEquals("今週", get(0).getJapanese());
-		assertEquals("の", get(1).getJapanese());
+		assertEquals("の", get(1).reading);
 		assertEquals("おすすめ", get(2).reading);
 		assertEquals("バーゲン", get(3).getJapanese());
 		assertEquals("T", get(4).getJapanese());

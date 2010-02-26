@@ -267,10 +267,10 @@ public class KanjiAnalyzeActivity extends ListActivity {
 					}
 					String w = words[i].trim();
 					while (w.length() > 0) {
-						final DictEntry entry = findLongestWord(w, lsEdict);
-						result.add(entry);
-						w = w.substring(entry.getJapanese().length());
-						currentProgress += entry.getJapanese().length();
+						final MatchedWord match = findLongestWord(w, lsEdict);
+						result.add(match.entry);
+						w = w.substring(match.wordLength);
+						currentProgress += match.wordLength;
 						publish(new Progress(null, currentProgress, progressMax));
 					}
 				}
@@ -305,27 +305,25 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		 *         character if we were unable to find nothing
 		 * @throws IOException
 		 */
-		private DictEntry findLongestWord(final String word, final LuceneSearch edict) throws IOException {
+		private MatchedWord findLongestWord(final String word, final LuceneSearch edict) throws IOException {
 			String w = word;
 			if (w.length() > 10) {
 				// optimization to avoid quadratic search complexity
 				w = w.substring(0, 10);
 			}
 			while (w.length() > 0) {
-				final List<DictEntry> result = edict.search(SearchQuery.searchForJapanese(w, true));
+				final List<DictEntry> result = edict.search(SearchQuery.searchForJapanese(w, true), 1);
 				DictEntry.removeInvalid(result);
 				Collections.sort(result);
 				if (!result.isEmpty()) {
 					for (final DictEntry e : result) {
-						if (e.getJapanese().equals(w)) {
-							return e;
-						}
+						return new MatchedWord(e, w.length());
 					}
 					// no luck, continue with the search
 				}
 				w = w.substring(0, w.length() - 1);
 			}
-			return new DictEntry(word.substring(0, 1), "", "");
+			return new MatchedWord(new DictEntry(word.substring(0, 1), "", ""), 1);
 		}
 
 		private List<DictEntry> analyzeByCharacters(final String word) throws IOException {
@@ -348,7 +346,8 @@ public class KanjiAnalyzeActivity extends ListActivity {
 						if (isKana) {
 							result.add(new DictEntry(String.valueOf(c), String.valueOf(c), ""));
 						} else {
-							// it is probably a kanji. search for it in the dictionary.
+							// it is probably a kanji. search for it in the
+							// dictionary.
 							final SearchQuery q = SearchQuery.searchForJapanese(String.valueOf(c), true);
 							List<DictEntry> matches = null;
 							DictEntry ee = null;
@@ -380,6 +379,16 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			} finally {
 				MiscUtils.closeQuietly(lsEdict);
 			}
+		}
+	}
+
+	private static class MatchedWord {
+		public final DictEntry entry;
+		public final int wordLength;
+
+		public MatchedWord(DictEntry entry, int wordLength) {
+			this.entry = entry;
+			this.wordLength = wordLength;
 		}
 	}
 }
