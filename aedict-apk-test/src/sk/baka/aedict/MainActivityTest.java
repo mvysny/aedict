@@ -24,6 +24,7 @@ import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.RomanizationEnum;
+import android.content.Intent;
 
 /**
  * Tests the main activity.
@@ -120,6 +121,16 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 		assertTrue(q.isJapanese);
 		assertEquals(DictTypeEnum.Edict, q.dictType);
 		assertEquals(MatcherEnum.Exact, q.matcher);
+	}
+
+	public void testTranslateSentence() {
+		startActivity();
+		setText(R.id.txtJpTranslate, "今週のおすすめﾊﾞｰｹﾞﾝTVｹﾞｰﾑ");
+		click(R.id.btnJpTranslate);
+		assertStartedActivity(KanjiAnalyzeActivity.class);
+		final Intent i = getStartedActivityIntent();
+		assertEquals("今週のおすすめﾊﾞｰｹﾞﾝTVｹﾞｰﾑ", i.getStringExtra(KanjiAnalyzeActivity.INTENTKEY_WORD));
+		assertTrue(i.getBooleanExtra(KanjiAnalyzeActivity.INTENTKEY_WORD_ANALYSIS, false));
 	}
 
 	public void testLaunchAboutActivity() {

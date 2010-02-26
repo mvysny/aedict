@@ -32,8 +32,13 @@ public class KanjiAnalyzeActivityTest extends ActivityTestHelper<KanjiAnalyzeAct
 	}
 
 	private void startActivity(final String word) {
+		startActivity(word, false);
+	}
+
+	private void startActivity(final String word, final boolean isAnalysisPerWord) {
 		final Intent i = new Intent(getInstrumentation().getContext(), KanjiAnalyzeActivity.class);
 		i.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, word);
+		i.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD_ANALYSIS, isAnalysisPerWord);
 		startActivity(i);
 	}
 
@@ -50,7 +55,8 @@ public class KanjiAnalyzeActivityTest extends ActivityTestHelper<KanjiAnalyzeAct
 	}
 
 	/**
-	 * If this test fails then probably the kanjidic dictionary is not downloaded.
+	 * If this test fails then probably the kanjidic dictionary is not
+	 * downloaded.
 	 */
 	public void testAnalyzeYomu() {
 		startActivity("読");
@@ -71,6 +77,21 @@ public class KanjiAnalyzeActivityTest extends ActivityTestHelper<KanjiAnalyzeAct
 		contextMenu(getActivity().getListView(), 10001, 0);
 		assertStartedActivity(NotepadActivity.class);
 		assertEquals("母", ((DictEntry) getStartedActivityIntent().getExtras().get(NotepadActivity.INTENTKEY_ADD_ENTRY)).getJapanese());
+	}
+
+	/**
+	 * Tests for http://code.google.com/p/aedict/issues/detail?id=35
+	 */
+	public void testWordAnalysis() {
+		startActivity("今週のおすすめﾊﾞｰｹﾞﾝTVｹﾞｰﾑ", true);
+		assertEquals("今週", get(0).getJapanese());
+		assertEquals("の", get(1).getJapanese());
+		assertEquals("おすすめ", get(2).reading);
+		assertEquals("バーゲン", get(3).getJapanese());
+		assertEquals("T", get(4).getJapanese());
+		assertEquals("V", get(5).getJapanese());
+		assertEquals("ゲーム", get(6).getJapanese());
+		assertEquals(7, getActivity().getListAdapter().getCount());
 	}
 
 	private DictEntry get(int i) {
