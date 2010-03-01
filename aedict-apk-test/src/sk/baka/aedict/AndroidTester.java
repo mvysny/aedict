@@ -141,7 +141,9 @@ public class AndroidTester<T extends Activity> {
 	}
 
 	/**
-	 * Asserts that the current activity requested start of given activity.
+	 * Asserts that the current activity requested start of given activity,
+	 * using one of the {@link Activity#startActivity(Intent)} or
+	 * {@link Activity#startActivityForResult(Intent, int)} methods.
 	 * 
 	 * @param activity
 	 *            the new activity
