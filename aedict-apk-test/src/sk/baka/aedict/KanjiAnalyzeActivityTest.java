@@ -20,7 +20,10 @@ package sk.baka.aedict;
 
 import sk.baka.aedict.dict.DictEntry;
 import android.content.Intent;
-
+/**
+ * Tests the {@link KanjiAnalyzeActivity} class.
+ * @author Martin Vysny
+ */
 public class KanjiAnalyzeActivityTest extends ActivityTestHelper<KanjiAnalyzeActivity> {
 
 	public KanjiAnalyzeActivityTest() {

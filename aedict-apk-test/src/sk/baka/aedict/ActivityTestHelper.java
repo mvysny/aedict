@@ -34,6 +34,8 @@ import android.view.View;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View.OnCreateContextMenuListener;
 import android.widget.AbsListView;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -66,7 +68,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	/**
 	 * Starts the activity and asserts that it is really started.
 	 */
-	protected void startActivity(final Intent intent) {
+	protected final void startActivity(final Intent intent) {
 		final T activity = startActivity(intent, null, null);
 		assertSame(activity, getActivity());
 		assertTrue(activityClass.isInstance(activity));
@@ -75,7 +77,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	/**
 	 * Starts the activity and asserts that it is really started.
 	 */
-	protected void startActivity() {
+	protected final void startActivity() {
 		startActivity(new Intent(getInstrumentation().getContext(), activityClass));
 	}
 
@@ -85,7 +87,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param activity
 	 *            the new activity
 	 */
-	protected void assertStartedActivity(final Class<? extends Activity> activity) {
+	protected final void assertStartedActivity(final Class<? extends Activity> activity) {
 		final Intent i = getStartedActivityIntent();
 		if (i == null) {
 			throw new AssertionError("The activity did not requested a start of another activity yet");
@@ -101,7 +103,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param text
 	 *            the text to set
 	 */
-	protected void setText(final int textViewId, final String text) {
+	protected final void setText(final int textViewId, final String text) {
 		((TextView) getActivity().findViewById(textViewId)).setText(text);
 	}
 
@@ -113,7 +115,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param text
 	 *            the text to expect
 	 */
-	protected void assertText(final int textViewId, final String text) {
+	protected final void assertText(final int textViewId, final String text) {
 		assertEquals(text, getText(textViewId));
 	}
 
@@ -124,7 +126,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 *            the text view ID
 	 * @return the text.
 	 */
-	protected String getText(final int textViewId) {
+	protected final String getText(final int textViewId) {
 		return ((TextView) getActivity().findViewById(textViewId)).getText().toString();
 	}
 
@@ -137,7 +139,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 *            the text to expect. References strings from the application,
 	 *            not from the test module.
 	 */
-	protected void assertText(final int textViewId, final int stringId) {
+	protected final void assertText(final int textViewId, final int stringId) {
 		assertText(textViewId, getActivity().getString(stringId));
 	}
 
@@ -147,7 +149,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param buttonId
 	 *            the button id
 	 */
-	protected void click(final int buttonId) {
+	protected final void click(final int buttonId) {
 		((Button) getActivity().findViewById(buttonId)).performClick();
 	}
 
@@ -159,7 +161,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param checkboxId
 	 *            the button ID
 	 */
-	protected void assertChecked(final boolean expected, final int checkboxId) {
+	protected final void assertChecked(final boolean expected, final int checkboxId) {
 		assertEquals(expected, ((CompoundButton) getActivity().findViewById(checkboxId)).isChecked());
 	}
 
@@ -169,7 +171,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param itemId
 	 *            the menu item ID.
 	 */
-	protected void activateOptionsMenu(final int itemId) {
+	protected final void activateOptionsMenu(final int itemId) {
 		final MenuItem item = (MenuItem) Proxy.newProxyInstance(getActivity().getClassLoader(), new Class<?>[] { MenuItem.class }, new InvocationHandler() {
 
 			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -189,7 +191,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param view
 	 *            the view to focus.
 	 */
-	protected void focus(final View view) {
+	protected final void focus(final View view) {
 		if (view.isFocused()) {
 			return;
 		}
@@ -203,14 +205,15 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 
 	/**
 	 * Opens and activates context menu item for given view. Fails if the view
-	 * does not provide a context menu.
+	 * does not provide a context menu. For ListView please use the
+	 * {@link #contextMenu(AbsListView, int, int)} method.
 	 * 
 	 * @param view
 	 *            the view
 	 * @param menuId
 	 *            the menu item ID to activate.
 	 */
-	protected void contextMenu(final View view, final int menuId) {
+	protected final void contextMenu(final View view, final int menuId) {
 		// view.performLongClick() does not work for ListView as the
 		// ContextMenuInfo parameter is null
 		if (view instanceof AbsListView) {
@@ -235,7 +238,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param item
 	 *            the ListView item ordinal to click.
 	 */
-	protected void contextMenu(final AbsListView view, final int menuId, final int item) {
+	protected final void contextMenu(final AbsListView view, final int menuId, final int item) {
 		try {
 			final Field m = View.class.getDeclaredField("mOnCreateContextMenuListener");
 			m.setAccessible(true);
@@ -292,7 +295,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * 
 	 * @return intent, never null.
 	 */
-	protected Intent getResultIntent() {
+	protected final Intent getResultIntent() {
 		try {
 			final Field f = Activity.class.getDeclaredField("mResultData");
 			f.setAccessible(true);
@@ -304,5 +307,40 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
+	}
+
+	/**
+	 * Verifies whether given AdapterView contains given object.
+	 * {@link Object#equals(Object)} is used to compare objects.
+	 * 
+	 * @param viewId
+	 *            the view id.
+	 * @param obj
+	 *            the object, must not be null.
+	 * @return true if the view contains given object, false otherwise.
+	 */
+	@SuppressWarnings("unchecked")
+	protected final boolean isAdapterViewContains(final int viewId, final Object obj) {
+		final AdapterView<? extends Adapter> view = (AdapterView<? extends Adapter>) getActivity().findViewById(viewId);
+		return isAdapterContains(view.getAdapter(), obj);
+	}
+
+	/**
+	 * Asserts that given adapter contains given object.
+	 * {@link Object#equals(Object)} is used to compare objects.
+	 * 
+	 * @param adapter
+	 *            the adapter, must not be null.
+	 * @param obj
+	 *            the object, must not be null.
+	 * @return true if the view contains given object, false otherwise.
+	 */
+	protected final boolean isAdapterContains(final Adapter adapter, final Object obj) {
+		for (int i = 0; i < adapter.getCount(); i++) {
+			if (obj.equals(adapter.getItem(i))) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
