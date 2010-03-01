@@ -20,7 +20,7 @@ package sk.baka.aedict.skip;
 
 import java.util.List;
 
-import sk.baka.aedict.ActivityTestHelper;
+import sk.baka.aedict.AbstractAedictTest;
 import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.dict.DictEntry;
@@ -31,7 +31,7 @@ import android.content.Intent;
  * 
  * @author Martin Vysny
  */
-public class Skip123ActivityTest extends ActivityTestHelper<Skip123Activity> {
+public class Skip123ActivityTest extends AbstractAedictTest<Skip123Activity> {
 
 	public Skip123ActivityTest() {
 		super(Skip123Activity.class);
@@ -44,39 +44,39 @@ public class Skip123ActivityTest extends ActivityTestHelper<Skip123Activity> {
 	private void startActivity(int skipType) {
 		final Intent i = new Intent(getInstrumentation().getContext(), Skip123Activity.class);
 		i.putExtra(Skip123Activity.INTENTKEY_TYPE, skipType);
-		startActivity(i);
+		tester.startActivity(i);
 	}
 
 	public void testPerformSkip1Search() {
 		startActivity(1);
-		assertText(R.id.skip123, R.string.skip1tutorial);
-		assertText(R.id.textSkipFirst, R.string.skip1first);
-		assertText(R.id.textSkipSecond, R.string.skip1second);
-		setText(R.id.editSkipFirst, "2");
-		setText(R.id.editSkipSecond, "3");
-		click(R.id.btnSkip123Search);
+		tester.assertText(R.id.skip123, R.string.skip1tutorial);
+		tester.assertText(R.id.textSkipFirst, R.string.skip1first);
+		tester.assertText(R.id.textSkipSecond, R.string.skip1second);
+		tester.setText(R.id.editSkipFirst, "2");
+		tester.setText(R.id.editSkipSecond, "3");
+		tester.click(R.id.btnSkip123Search);
 		assertSkipSearch("1-2-3");
 	}
 
 	public void testPerformSkip2Search() {
 		startActivity(2);
-		assertText(R.id.skip123, R.string.skip2tutorial);
-		assertText(R.id.textSkipFirst, R.string.skip2first);
-		assertText(R.id.textSkipSecond, R.string.skip2second);
-		setText(R.id.editSkipFirst, "3");
-		setText(R.id.editSkipSecond, "4");
-		click(R.id.btnSkip123Search);
+		tester.assertText(R.id.skip123, R.string.skip2tutorial);
+		tester.assertText(R.id.textSkipFirst, R.string.skip2first);
+		tester.assertText(R.id.textSkipSecond, R.string.skip2second);
+		tester.setText(R.id.editSkipFirst, "3");
+		tester.setText(R.id.editSkipSecond, "4");
+		tester.click(R.id.btnSkip123Search);
 		assertSkipSearch("2-3-4");
 	}
 
 	public void testPerformSkip3Search() {
 		startActivity(3);
-		assertText(R.id.skip123, R.string.skip3tutorial);
-		assertText(R.id.textSkipFirst, R.string.skip3first);
-		assertText(R.id.textSkipSecond, R.string.skip3second);
-		setText(R.id.editSkipFirst, "4");
-		setText(R.id.editSkipSecond, "5");
-		click(R.id.btnSkip123Search);
+		tester.assertText(R.id.skip123, R.string.skip3tutorial);
+		tester.assertText(R.id.textSkipFirst, R.string.skip3first);
+		tester.assertText(R.id.textSkipSecond, R.string.skip3second);
+		tester.setText(R.id.editSkipFirst, "4");
+		tester.setText(R.id.editSkipSecond, "5");
+		tester.click(R.id.btnSkip123Search);
 		assertSkipSearch("3-4-5");
 	}
 

@@ -33,7 +33,7 @@ import android.widget.ListView;
  * @author Martin Vysny
  * 
  */
-public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
+public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 
 	public ResultActivityTest() {
 		super(ResultActivity.class);
@@ -46,8 +46,8 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		q.query = new String[] { "mother" };
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
 		q.putTo(i);
-		startActivity(i);
-		assertTrue(getText(R.id.textSelectedDictionary).contains("Default"));
+		tester.startActivity(i);
+		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Default"));
 		final ListView lv = getActivity().getListView();
 		assertEquals(25, lv.getCount());
 		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
@@ -63,8 +63,8 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		q.query = new String[] { RomanizationEnum.Hepburn.toHiragana("haha") };
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
 		q.putTo(i);
-		startActivity(i);
-		assertTrue(getText(R.id.textSelectedDictionary).contains("Default"));
+		tester.startActivity(i);
+		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Default"));
 		final ListView lv = getActivity().getListView();
 		assertEquals(1, lv.getCount());
 		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
@@ -79,8 +79,8 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		q.query = new String[] { RomanizationEnum.Hepburn.toHiragana("haha"), RomanizationEnum.Hepburn.toKatakana("haha") };
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
 		q.putTo(i);
-		startActivity(i);
-		assertTrue(getText(R.id.textSelectedDictionary).contains("Default"));
+		tester.startActivity(i);
+		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Default"));
 		final ListView lv = getActivity().getListView();
 		assertEquals(30, lv.getCount());
 		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
@@ -100,8 +100,8 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		q.query = new String[] { RomanizationEnum.Hepburn.toHiragana("kyou") };
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
 		q.putTo(i);
-		startActivity(i);
-		assertTrue(getText(R.id.textSelectedDictionary).contains("Default"));
+		tester.startActivity(i);
+		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Default"));
 		final ListView lv = getActivity().getListView();
 		assertEquals(18, lv.getCount());
 		DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
@@ -115,7 +115,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 	public void testSwitchToRomaji() {
 		testSimpleEnglishSearch();
 		final ListView lv = getActivity().getListView();
-		contextMenu(lv, 0, 0);
+		tester.contextMenu(lv, 0, 0);
 		assertTrue(getActivity().isShowingRomaji());
 	}
 
@@ -123,7 +123,7 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		testSimpleEnglishSearch();
 		final ListView lv = getActivity().getListView();
 		lv.performItemClick(null, 0, 0);
-		assertStartedActivity(EntryDetailActivity.class);
+		tester.assertRequestedActivity(EntryDetailActivity.class);
 		final DictEntry entry = (DictEntry) getStartedActivityIntent().getSerializableExtra(EntryDetailActivity.INTENTKEY_ENTRY);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
@@ -133,8 +133,8 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 	public void testAddToNotepad() {
 		testSimpleEnglishSearch();
 		final ListView lv = getActivity().getListView();
-		contextMenu(lv, 1, 0);
-		assertStartedActivity(NotepadActivity.class);
+		tester.contextMenu(lv, 1, 0);
+		tester.assertRequestedActivity(NotepadActivity.class);
 		final DictEntry entry = (DictEntry) getStartedActivityIntent().getSerializableExtra(NotepadActivity.INTENTKEY_ADD_ENTRY);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
@@ -145,8 +145,8 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
 		i.setAction(ResultActivity.SIMEJI_ACTION_INTERCEPT);
 		i.putExtra(ResultActivity.SIMEJI_INTENTKEY_REPLACE, "mother");
-		startActivity(i);
-		assertTrue(getText(R.id.textSelectedDictionary).contains("Default"));
+		tester.startActivity(i);
+		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Default"));
 		final ListView lv = getActivity().getListView();
 		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
@@ -158,27 +158,27 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 	public void testSimejiSearchKanji() {
 		initSimejiSearchEnv();
 		final ListView lv = getActivity().getListView();
-		contextMenu(lv, 2, 0);
+		tester.contextMenu(lv, 2, 0);
 		assertSimejiReturn("母");
 	}
 
 	public void testSimejiSearchReading() {
 		initSimejiSearchEnv();
 		final ListView lv = getActivity().getListView();
-		contextMenu(lv, 3, 0);
+		tester.contextMenu(lv, 3, 0);
 		assertSimejiReturn("はは");
 	}
 
 	public void testSimejiSearchEnglish() {
 		initSimejiSearchEnv();
 		final ListView lv = getActivity().getListView();
-		contextMenu(lv, 4, 0);
+		tester.contextMenu(lv, 4, 0);
 		assertSimejiReturn("(n) (hum) mother/(P)");
 	}
 
 	private void assertSimejiReturn(final String expected) {
 		assertEquals(Activity.RESULT_OK, getFinishedActivityRequest());
-		assertEquals(expected, getResultIntent().getStringExtra(ResultActivity.SIMEJI_INTENTKEY_REPLACE));
+		assertEquals(expected, tester.getResultIntent().getStringExtra(ResultActivity.SIMEJI_INTENTKEY_REPLACE));
 	}
 
 	public void testSimpleEnglishSearchInTanaka() {
@@ -188,8 +188,8 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		q.query = new String[] { "mother" };
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
 		q.putTo(i);
-		startActivity(i);
-		assertTrue(getText(R.id.textSelectedDictionary).contains("Tanaka"));
+		tester.startActivity(i);
+		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Tanaka"));
 		final ListView lv = getActivity().getListView();
 		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
 		assertEquals("Mother is away from home.", entry.english);
@@ -205,8 +205,8 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 		q.query = new String[] { "母", "はは" };
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
 		q.putTo(i);
-		startActivity(i);
-		assertTrue(getText(R.id.textSelectedDictionary).contains("Tanaka"));
+		tester.startActivity(i);
+		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Tanaka"));
 		final ListView lv = getActivity().getListView();
 		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
 		assertEquals("My mother tongue.", entry.english);
@@ -217,8 +217,8 @@ public class ResultActivityTest extends ActivityTestHelper<ResultActivity> {
 
 	public void testJapaneseSearchInTanaka() {
 		testSimpleJapaneseSearch();
-		contextMenu(getActivity().getListView(), 5, 0);
-		assertStartedActivity(ResultActivity.class);
+		tester.contextMenu(getActivity().getListView(), 5, 0);
+		tester.assertRequestedActivity(ResultActivity.class);
 		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
 		assertEquals("母", q.query[0]);
 		assertEquals("はは", q.query[1]);

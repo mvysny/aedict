@@ -21,7 +21,7 @@ package sk.baka.aedict.skip;
 import java.util.List;
 
 import android.content.Intent;
-import sk.baka.aedict.ActivityTestHelper;
+import sk.baka.aedict.AbstractAedictTest;
 import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.dict.DictEntry;
@@ -31,37 +31,37 @@ import sk.baka.aedict.dict.DictEntry;
  * 
  * @author Martin Vysny
  */
-public class Skip4ActivityTest extends ActivityTestHelper<Skip4Activity> {
+public class Skip4ActivityTest extends AbstractAedictTest<Skip4Activity> {
 
 	public Skip4ActivityTest() {
 		super(Skip4Activity.class);
 	}
 
 	public void testSearch1() {
-		startActivity();
-		setText(R.id.editSkipNumberOfStrokes, "2");
-		click(R.id.skip41);
+		tester.startActivity();
+		tester.setText(R.id.editSkipNumberOfStrokes, "2");
+		tester.click(R.id.skip41);
 		assertSkipSearch("4-2-1");
 	}
 
 	public void testSearch2() {
-		startActivity();
-		setText(R.id.editSkipNumberOfStrokes, "3");
-		click(R.id.skip42);
+		tester.startActivity();
+		tester.setText(R.id.editSkipNumberOfStrokes, "3");
+		tester.click(R.id.skip42);
 		assertSkipSearch("4-3-2");
 	}
 
 	public void testSearch3() {
-		startActivity();
-		setText(R.id.editSkipNumberOfStrokes, "4");
-		click(R.id.skip43);
+		tester.startActivity();
+		tester.setText(R.id.editSkipNumberOfStrokes, "4");
+		tester.click(R.id.skip43);
 		assertSkipSearch("4-4-3");
 	}
 
 	public void testSearch4() {
-		startActivity();
-		setText(R.id.editSkipNumberOfStrokes, "5");
-		click(R.id.skip44);
+		tester.startActivity();
+		tester.setText(R.id.editSkipNumberOfStrokes, "5");
+		tester.click(R.id.skip44);
 		assertSkipSearch("4-5-4");
 	}
 

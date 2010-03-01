@@ -24,7 +24,7 @@ import android.content.Intent;
  * Tests the {@link KanjiAnalyzeActivity} class.
  * @author Martin Vysny
  */
-public class KanjiAnalyzeActivityTest extends ActivityTestHelper<KanjiAnalyzeActivity> {
+public class KanjiAnalyzeActivityTest extends AbstractAedictTest<KanjiAnalyzeActivity> {
 
 	public KanjiAnalyzeActivityTest() {
 		super(KanjiAnalyzeActivity.class);
@@ -42,7 +42,7 @@ public class KanjiAnalyzeActivityTest extends ActivityTestHelper<KanjiAnalyzeAct
 		final Intent i = new Intent(getInstrumentation().getContext(), KanjiAnalyzeActivity.class);
 		i.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, word);
 		i.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD_ANALYSIS, isAnalysisPerWord);
-		startActivity(i);
+		tester.startActivity(i);
 	}
 
 	public void testAnalyzeAsWords() {
@@ -52,7 +52,7 @@ public class KanjiAnalyzeActivityTest extends ActivityTestHelper<KanjiAnalyzeAct
 		assertEquals("mama, mother", get(0).english);
 		assertEquals("上", get(1).getJapanese());
 		assertEquals("above, up", get(1).english);
-		activateOptionsMenu(1);
+		tester.activateOptionsMenu(1);
 		assertEquals(1, getActivity().getListAdapter().getCount());
 		assertEquals("母上", get(0).getJapanese());
 	}
@@ -77,8 +77,8 @@ public class KanjiAnalyzeActivityTest extends ActivityTestHelper<KanjiAnalyzeAct
 
 	public void testAddToNotepad() {
 		startActivity("母上");
-		contextMenu(getActivity().getListView(), 10001, 0);
-		assertStartedActivity(NotepadActivity.class);
+		tester.contextMenu(getActivity().getListView(), 10001, 0);
+		tester.assertRequestedActivity(NotepadActivity.class);
 		assertEquals("母", ((DictEntry) getStartedActivityIntent().getExtras().get(NotepadActivity.INTENTKEY_ADD_ENTRY)).getJapanese());
 	}
 

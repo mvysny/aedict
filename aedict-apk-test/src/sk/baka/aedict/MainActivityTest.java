@@ -31,7 +31,7 @@ import android.content.Intent;
  * 
  * @author Martin Vysny
  */
-public class MainActivityTest extends ActivityTestHelper<MainActivity> {
+public class MainActivityTest extends AbstractAedictTest<MainActivity> {
 
 	public MainActivityTest() {
 		super(MainActivity.class);
@@ -41,10 +41,10 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 	 * Tests that a search request is sent when japanese search is requested.
 	 */
 	public void testSimpleJapanSearch() {
-		startActivity();
-		setText(R.id.jpSearchEdit, "haha");
-		click(R.id.jpSearch);
-		assertStartedActivity(ResultActivity.class);
+		tester.startActivity();
+		tester.setText(R.id.jpSearchEdit, "haha");
+		tester.click(R.id.jpSearch);
+		tester.assertRequestedActivity(ResultActivity.class);
 		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
 		assertEquals(RomanizationEnum.Hepburn.toHiragana("haha"), q.query[1]);
 		assertEquals(RomanizationEnum.Hepburn.toKatakana("haha"), q.query[0]);
@@ -58,11 +58,11 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 	 * Tests that a search request is sent when english search is requested.
 	 */
 	public void testSimpleEnglishSearch() {
-		startActivity();
-		setText(R.id.engSearchEdit, "mother");
-		click(R.id.engExactMatch);
-		click(R.id.engSearch);
-		assertStartedActivity(ResultActivity.class);
+		tester.startActivity();
+		tester.setText(R.id.engSearchEdit, "mother");
+		tester.click(R.id.engExactMatch);
+		tester.click(R.id.engSearch);
+		tester.assertRequestedActivity(ResultActivity.class);
 		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
 		assertEquals("mother", q.query[0]);
 		assertEquals(1, q.query.length);
@@ -75,10 +75,10 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 	 * Tests that a search request is sent when english search is requested.
 	 */
 	public void testNonExactEnglishSearch() {
-		startActivity();
-		setText(R.id.engSearchEdit, "mother");
-		click(R.id.engSearch);
-		assertStartedActivity(ResultActivity.class);
+		tester.startActivity();
+		tester.setText(R.id.engSearchEdit, "mother");
+		tester.click(R.id.engSearch);
+		tester.assertRequestedActivity(ResultActivity.class);
 		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
 		assertEquals(MatcherEnum.Substring, q.matcher);
 		assertEquals("mother", q.query[0]);
@@ -91,13 +91,13 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 	 * Tests that a search request is sent when english search is requested.
 	 */
 	public void testSearchInExamples() {
-		startActivity();
-		setText(R.id.engSearchEdit, "mother");
-		click(R.id.engExactMatch);
-		click(R.id.engSearchExamples);
-		assertChecked(false, R.id.engExactMatch);
-		click(R.id.engSearch);
-		assertStartedActivity(ResultActivity.class);
+		tester.startActivity();
+		tester.setText(R.id.engSearchEdit, "mother");
+		tester.click(R.id.engExactMatch);
+		tester.click(R.id.engSearchExamples);
+		tester.assertChecked(false, R.id.engExactMatch);
+		tester.click(R.id.engSearch);
+		tester.assertRequestedActivity(ResultActivity.class);
 		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
 		assertEquals("mother", q.query[0]);
 		assertEquals(1, q.query.length);
@@ -107,12 +107,12 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 	}
 
 	public void testJpSearchDeinflectVerbs() {
-		startActivity();
-		setText(R.id.jpSearchEdit, "aenai");
-		click(R.id.jpDeinflectVerbs);
-		assertChecked(true, R.id.jpExactMatch);
-		click(R.id.jpSearch);
-		assertStartedActivity(ResultActivity.class);
+		tester.startActivity();
+		tester.setText(R.id.jpSearchEdit, "aenai");
+		tester.click(R.id.jpDeinflectVerbs);
+		tester.assertChecked(true, R.id.jpExactMatch);
+		tester.click(R.id.jpSearch);
+		tester.assertRequestedActivity(ResultActivity.class);
 		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
 		Arrays.sort(q.query);
 		assertEquals("あう", q.query[0]);
@@ -124,18 +124,18 @@ public class MainActivityTest extends ActivityTestHelper<MainActivity> {
 	}
 
 	public void testTranslateSentence() {
-		startActivity();
-		setText(R.id.txtJpTranslate, "今週のおすすめﾊﾞｰｹﾞﾝTVｹﾞｰﾑ");
-		click(R.id.btnJpTranslate);
-		assertStartedActivity(KanjiAnalyzeActivity.class);
+		tester.startActivity();
+		tester.setText(R.id.txtJpTranslate, "今週のおすすめﾊﾞｰｹﾞﾝTVｹﾞｰﾑ");
+		tester.click(R.id.btnJpTranslate);
+		tester.assertRequestedActivity(KanjiAnalyzeActivity.class);
 		final Intent i = getStartedActivityIntent();
 		assertEquals("今週のおすすめﾊﾞｰｹﾞﾝTVｹﾞｰﾑ", i.getStringExtra(KanjiAnalyzeActivity.INTENTKEY_WORD));
 		assertTrue(i.getBooleanExtra(KanjiAnalyzeActivity.INTENTKEY_WORD_ANALYSIS, false));
 	}
 
 	public void testLaunchAboutActivity() {
-		startActivity();
-		click(R.id.btnAbout);
-		assertStartedActivity(AboutActivity.class);
+		tester.startActivity();
+		tester.click(R.id.btnAbout);
+		tester.assertRequestedActivity(AboutActivity.class);
 	}
 }

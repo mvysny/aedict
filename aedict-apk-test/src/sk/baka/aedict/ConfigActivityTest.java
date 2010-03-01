@@ -20,8 +20,6 @@ package sk.baka.aedict;
 
 import java.io.File;
 
-import android.widget.Spinner;
-
 import sk.baka.aedict.dict.DictTypeEnum;
 
 /**
@@ -29,14 +27,14 @@ import sk.baka.aedict.dict.DictTypeEnum;
  * 
  * @author Martin Vysny
  */
-public class ConfigActivityTest extends ActivityTestHelper<ConfigActivity> {
+public class ConfigActivityTest extends AbstractAedictTest<ConfigActivity> {
 
 	public ConfigActivityTest() {
 		super(ConfigActivity.class);
 	}
 
 	public void testStartActivity() {
-		startActivity();
+		tester.startActivity();
 	}
 
 	/**
@@ -46,8 +44,8 @@ public class ConfigActivityTest extends ActivityTestHelper<ConfigActivity> {
 	public void testTanakaDictionaryIsNotListed() {
 		final File tanaka = new File(DictTypeEnum.Tanaka.getDefaultDictionaryPath());
 		assertTrue("The tanaka dictionary does not exist, please download it", tanaka.exists());
-		startActivity();
+		tester.startActivity();
 		getInstrumentation().callActivityOnResume(getActivity());
-		assertFalse("The tanaka directory is listed in the combobox", isAdapterViewContains(R.id.spinDictionaryPicker, "tanaka"));
+		assertFalse("The tanaka directory is listed in the combobox", tester.isAdapterViewContains(R.id.spinDictionaryPicker, "tanaka"));
 	}
 }

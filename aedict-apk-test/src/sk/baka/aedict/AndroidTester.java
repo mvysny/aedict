@@ -24,9 +24,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
-
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.test.ActivityUnitTestCase;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -40,45 +40,104 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import static junit.framework.Assert.*;
 
 /**
- * Contains several useful methods which helps activity testing.
+ * Provides additional methods to aid testing of the android activity.
  * 
  * @author Martin Vysny
+ * @param <T>
+ *            the activity type
  */
-public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase<T> {
-
+public class AndroidTester<T extends Activity> {
+	private final ActivityUnitTestCase<T> test;
 	private final Class<T> activityClass;
 
-	public ActivityTestHelper(Class<T> activityClass) {
-		super(activityClass);
+	/**
+	 * Creates new tester instance.
+	 * 
+	 * @param test
+	 *            the JUnit test class instance.
+	 * @param activityClass
+	 *            the activity under test.
+	 */
+	public AndroidTester(final ActivityUnitTestCase<T> test, final Class<T> activityClass) {
+		this.test = test;
 		this.activityClass = activityClass;
-		AedictApp.isInstrumentation = true;
 	}
 
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
-		// reset the config
-		final AedictApp.Config cfg = new AedictApp.Config();
-		cfg.setDefaults();
-		AedictApp.saveConfig(cfg);
+	/**
+	 * Start the activity under test, in the same way as if it was started by
+	 * ActivityUnitTestCase.startActivity, providing the arguments it supplied.
+	 * When you use this method to start the activity, it will automatically be
+	 * stopped by tearDown().
+	 * <p/>
+	 * This method will call onCreate(), if you wish to further exercise
+	 * Activity life cycle methods, set the fullStart parameter to true.
+	 * <p/>
+	 * Do not call from your setUp() method. You must call this method from each
+	 * of your test methods.
+	 * 
+	 * @param intent
+	 *            The Intent as if supplied to startActivity(Intent).
+	 * @param savedInstanceState
+	 *            The instance state, if you are simulating this part of the
+	 *            life cycle. Typically null.
+	 * @param lastNonConfigurationInstance
+	 *            This Object will be available to the Activity if it calls
+	 *            getLastNonConfigurationInstance(). Typically null.
+	 * @param fullStart
+	 *            if true then the full activity start-up is performed:
+	 *            onCreate(), onStart(), onResume(). If false then only the
+	 *            onCreate() method is invoked.
+	 * @return the activity instance.
+	 */
+	public T startActivity(final Intent intent, Bundle savedInstanceState, final Object lastNonConfigurationInstance, final boolean fullStart) {
+		try {
+			final Method m = ActivityUnitTestCase.class.getDeclaredMethod("startActivity", Intent.class, Bundle.class, Object.class);
+			m.setAccessible(true);
+			final T result = activityClass.cast(m.invoke(test, intent, savedInstanceState, lastNonConfigurationInstance));
+			if (fullStart) {
+				test.getInstrumentation().callActivityOnStart(test.getActivity());
+				test.getInstrumentation().callActivityOnResume(test.getActivity());
+			}
+			return result;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
 	 * Starts the activity and asserts that it is really started.
+	 * 
+	 * @param intent
+	 *            the intent to use.
+	 * @param fullStart
+	 *            if true then the full activity start-up is performed:
+	 *            onCreate(), onStart(), onResume(). If false then only the
+	 *            onCreate() method is invoked.
 	 */
-	protected final void startActivity(final Intent intent) {
-		final T activity = startActivity(intent, null, null);
-		assertSame(activity, getActivity());
+	public void startActivity(final Intent intent, final boolean fullStart) {
+		final T activity = startActivity(intent, null, null, fullStart);
+		assertSame(activity, test.getActivity());
 		assertTrue(activityClass.isInstance(activity));
 	}
 
 	/**
+	 * Fully starts the activity and asserts that it is really started.
+	 * 
+	 * @param intent
+	 *            the intent to use.
+	 */
+	public void startActivity(final Intent intent) {
+		startActivity(intent, true);
+	}
+
+	/**
 	 * Starts the activity and asserts that it is really started.
 	 */
-	protected final void startActivity() {
-		startActivity(new Intent(getInstrumentation().getContext(), activityClass));
+	public void startActivity() {
+		startActivity(new Intent(test.getInstrumentation().getContext(), activityClass));
 	}
 
 	/**
@@ -87,8 +146,8 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param activity
 	 *            the new activity
 	 */
-	protected final void assertStartedActivity(final Class<? extends Activity> activity) {
-		final Intent i = getStartedActivityIntent();
+	public void assertRequestedActivity(final Class<? extends Activity> activity) {
+		final Intent i = test.getStartedActivityIntent();
 		if (i == null) {
 			throw new AssertionError("The activity did not requested a start of another activity yet");
 		}
@@ -103,8 +162,8 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param text
 	 *            the text to set
 	 */
-	protected final void setText(final int textViewId, final String text) {
-		((TextView) getActivity().findViewById(textViewId)).setText(text);
+	public void setText(final int textViewId, final String text) {
+		((TextView) test.getActivity().findViewById(textViewId)).setText(text);
 	}
 
 	/**
@@ -115,7 +174,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param text
 	 *            the text to expect
 	 */
-	protected final void assertText(final int textViewId, final String text) {
+	public void assertText(final int textViewId, final String text) {
 		assertEquals(text, getText(textViewId));
 	}
 
@@ -126,8 +185,8 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 *            the text view ID
 	 * @return the text.
 	 */
-	protected final String getText(final int textViewId) {
-		return ((TextView) getActivity().findViewById(textViewId)).getText().toString();
+	public String getText(final int textViewId) {
+		return ((TextView) test.getActivity().findViewById(textViewId)).getText().toString();
 	}
 
 	/**
@@ -139,8 +198,8 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 *            the text to expect. References strings from the application,
 	 *            not from the test module.
 	 */
-	protected final void assertText(final int textViewId, final int stringId) {
-		assertText(textViewId, getActivity().getString(stringId));
+	public void assertText(final int textViewId, final int stringId) {
+		assertText(textViewId, test.getActivity().getString(stringId));
 	}
 
 	/**
@@ -149,8 +208,8 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param buttonId
 	 *            the button id
 	 */
-	protected final void click(final int buttonId) {
-		((Button) getActivity().findViewById(buttonId)).performClick();
+	public void click(final int buttonId) {
+		((Button) test.getActivity().findViewById(buttonId)).performClick();
 	}
 
 	/**
@@ -161,8 +220,8 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param checkboxId
 	 *            the button ID
 	 */
-	protected final void assertChecked(final boolean expected, final int checkboxId) {
-		assertEquals(expected, ((CompoundButton) getActivity().findViewById(checkboxId)).isChecked());
+	public void assertChecked(final boolean expected, final int checkboxId) {
+		assertEquals(expected, ((CompoundButton) test.getActivity().findViewById(checkboxId)).isChecked());
 	}
 
 	/**
@@ -171,8 +230,8 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param itemId
 	 *            the menu item ID.
 	 */
-	protected final void activateOptionsMenu(final int itemId) {
-		final MenuItem item = (MenuItem) Proxy.newProxyInstance(getActivity().getClassLoader(), new Class<?>[] { MenuItem.class }, new InvocationHandler() {
+	public void activateOptionsMenu(final int itemId) {
+		final MenuItem item = (MenuItem) Proxy.newProxyInstance(test.getActivity().getClassLoader(), new Class<?>[] { MenuItem.class }, new InvocationHandler() {
 
 			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 				if (!method.getName().equals("getItemId")) {
@@ -182,7 +241,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 			}
 
 		});
-		assertTrue("The handler did not handled the item. Nothing happened.", getActivity().onOptionsItemSelected(item));
+		assertTrue("The handler did not handled the item. Nothing happened.", test.getActivity().onOptionsItemSelected(item));
 	}
 
 	/**
@@ -191,7 +250,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param view
 	 *            the view to focus.
 	 */
-	protected final void focus(final View view) {
+	public void focus(final View view) {
 		if (view.isFocused()) {
 			return;
 		}
@@ -213,14 +272,14 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param menuId
 	 *            the menu item ID to activate.
 	 */
-	protected final void contextMenu(final View view, final int menuId) {
+	public void contextMenu(final View view, final int menuId) {
 		// view.performLongClick() does not work for ListView as the
 		// ContextMenuInfo parameter is null
 		if (view instanceof AbsListView) {
 			throw new RuntimeException("Use the other contextMenu function for listview");
 		}
 		focus(view);
-		if (!getInstrumentation().invokeContextMenuAction(getActivity(), menuId, 0)) {
+		if (!test.getInstrumentation().invokeContextMenuAction(test.getActivity(), menuId, 0)) {
 			throw new AssertionError("Activation of menu item " + menuId + " failed for view " + view.getId() + " for unknown reasons. Check that there is menu item with such ID in the menu and it is enabled");
 		}
 	}
@@ -238,13 +297,13 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @param item
 	 *            the ListView item ordinal to click.
 	 */
-	protected final void contextMenu(final AbsListView view, final int menuId, final int item) {
+	public void contextMenu(final AbsListView view, final int menuId, final int item) {
 		try {
 			final Field m = View.class.getDeclaredField("mOnCreateContextMenuListener");
 			m.setAccessible(true);
 			final OnCreateContextMenuListener listener = (OnCreateContextMenuListener) m.get(view);
 			final ContextMenuHandler handler = new ContextMenuHandler();
-			final ContextMenu menu = (ContextMenu) Proxy.newProxyInstance(getActivity().getClassLoader(), new Class<?>[] { ContextMenu.class }, handler);
+			final ContextMenu menu = (ContextMenu) Proxy.newProxyInstance(test.getActivity().getClassLoader(), new Class<?>[] { ContextMenu.class }, handler);
 			// the trick here is to force the ListView to create context menu on
 			// our hacky ContextMenu, which then traces the listeners.
 			listener.onCreateContextMenu(menu, null, new AdapterContextMenuInfo(null, item, 0));
@@ -270,7 +329,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 				} else {
 					id = autogeneratedId++;
 				}
-				return Proxy.newProxyInstance(getActivity().getClassLoader(), new Class<?>[] { MenuItem.class }, new InvocationHandler() {
+				return Proxy.newProxyInstance(test.getActivity().getClassLoader(), new Class<?>[] { MenuItem.class }, new InvocationHandler() {
 
 					public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 						if (method.getName().equals("setOnMenuItemClickListener")) {
@@ -295,11 +354,11 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * 
 	 * @return intent, never null.
 	 */
-	protected final Intent getResultIntent() {
+	public Intent getResultIntent() {
 		try {
 			final Field f = Activity.class.getDeclaredField("mResultData");
 			f.setAccessible(true);
-			final Intent result = (Intent) f.get(getActivity());
+			final Intent result = (Intent) f.get(test.getActivity());
 			if (result == null) {
 				throw new AssertionError("result intent was not set via the setResult() call");
 			}
@@ -320,8 +379,8 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 * @return true if the view contains given object, false otherwise.
 	 */
 	@SuppressWarnings("unchecked")
-	protected final boolean isAdapterViewContains(final int viewId, final Object obj) {
-		final AdapterView<? extends Adapter> view = (AdapterView<? extends Adapter>) getActivity().findViewById(viewId);
+	public boolean isAdapterViewContains(final int viewId, final Object obj) {
+		final AdapterView<? extends Adapter> view = (AdapterView<? extends Adapter>) test.getActivity().findViewById(viewId);
 		return isAdapterContains(view.getAdapter(), obj);
 	}
 
@@ -335,7 +394,7 @@ public class ActivityTestHelper<T extends Activity> extends ActivityUnitTestCase
 	 *            the object, must not be null.
 	 * @return true if the view contains given object, false otherwise.
 	 */
-	protected final boolean isAdapterContains(final Adapter adapter, final Object obj) {
+	public boolean isAdapterContains(final Adapter adapter, final Object obj) {
 		for (int i = 0; i < adapter.getCount(); i++) {
 			if (obj.equals(adapter.getItem(i))) {
 				return true;
