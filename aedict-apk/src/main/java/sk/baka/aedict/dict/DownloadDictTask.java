@@ -53,6 +53,7 @@ public class DownloadDictTask extends AbstractTask<Void, Void> {
 
 	/**
 	 * Creates new dictionary downloader.
+	 * 
 	 * @param source
 	 *            download the dictionary files from here. A zipped Lucene index
 	 *            file is expected.
@@ -77,10 +78,10 @@ public class DownloadDictTask extends AbstractTask<Void, Void> {
 	 *            the dictionary type. The default path will be checked.
 	 * @return true if everything is okay, false if not
 	 */
-	public static boolean isComplete(final DictTypeEnum dict){
+	public static boolean isComplete(final DictTypeEnum dict) {
 		return isComplete(dict.getDefaultDictionaryPath());
 	}
-	
+
 	/**
 	 * Checks if the edict is downloaded and indexed correctly.
 	 * 
@@ -229,13 +230,25 @@ public class DownloadDictTask extends AbstractTask<Void, Void> {
 				}
 			});
 			for (final String dict : dictionaries) {
-				final String dictName = dict.substring("index-".length());
-				if (dictName.equalsIgnoreCase("kanjidic")) {
+				if (isNonEdictDirectory(dict)) {
 					continue;
 				}
+				final String dictName = dict.substring("index-".length());
 				result.put(dictName, "/sdcard/aedict/" + dict);
 			}
 		}
 		return result;
+	}
+
+	private static boolean isNonEdictDirectory(final String name) {
+		for (DictTypeEnum e : DictTypeEnum.values()) {
+			if (e == DictTypeEnum.Edict) {
+				continue;
+			}
+			if (e.getDefaultDictionaryLoc().equals(name)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
