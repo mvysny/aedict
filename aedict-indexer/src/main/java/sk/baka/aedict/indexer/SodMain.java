@@ -28,10 +28,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPOutputStream;
 import org.apache.commons.io.IOUtils;
 
 /**
- * Indexes the SOD images.
+ * Indexes the SOD images. Expects a directory with unpacked SOD archive contents - essentially a bunch of png files named
+ * [KANJI].png. This directory is packed to a huge file, packed with gzip, with the following contents:
+ * <h4>The header:</h4>
+ * 4 byte int - number of kanji entries; for each entry: 2-byte UTF-16 kanji character, 4-byte png offset in the file.
+ * The entries are ordered by the "offset" value, ascending.
+ *<h4>The contents:</h4>
+ * Basically just a streams of PNG images, one after another.
  * @author Martin Vysny
  */
 public class SodMain {
@@ -78,10 +85,11 @@ public class SodMain {
 
     private void createPackedFile() throws IOException {
         System.out.println("Packaging " + pngLengths.size() + " pngs");
-        final DataOutputStream out = new DataOutputStream(new FileOutputStream("target/sod.dat"));
+        final DataOutputStream out = new DataOutputStream(new GZIPOutputStream(new FileOutputStream("target/sod.dat.gz")));
         try {
             // write index table
-            int offset = pngLengths.size() * 6;
+            int offset = pngLengths.size() * 6 + 4;
+            out.writeInt(pngLengths.size());
             final List<Character> kanjis = new ArrayList<Character>(pngLengths.keySet());
             for (final Character kanji : kanjis) {
                 out.writeChar(kanji);
