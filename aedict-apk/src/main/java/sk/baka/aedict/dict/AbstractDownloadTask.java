@@ -58,8 +58,7 @@ public abstract class AbstractDownloadTask extends AbstractTask<Void, Void> {
 	 * Creates new dictionary downloader.
 	 * 
 	 * @param source
-	 *            download the dictionary files from here. A zipped Lucene index
-	 *            file is expected.
+	 *            download the dictionary files from here.
 	 * @param targetDir
 	 *            unzip the files here
 	 * @param dictName

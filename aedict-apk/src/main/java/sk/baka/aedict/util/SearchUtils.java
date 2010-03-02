@@ -311,9 +311,11 @@ public final class SearchUtils {
 	 *            the expected size of the Lucene dictionary files.
 	 * @param dictName
 	 *            the name of the dictionary, EDict or KanjiDic
+	 * @param factory
+	 *            produces the downloader.
 	 * @return true if the files are available, false otherwise.
 	 */
-	public boolean checkDictionaryFile(final URL source, final String targetDir, final long expectedSize, final String dictName) {
+	public boolean checkDictionaryFile(final URL source, final String targetDir, final long expectedSize, final String dictName, final DownloaderFactory factory) {
 		if (!AbstractDownloadTask.isComplete(targetDir)) {
 			final StatFs stats = new StatFs("/sdcard");
 			final long free = ((long) stats.getBlockSize()) * stats.getAvailableBlocks();
@@ -325,7 +327,7 @@ public final class SearchUtils {
 			new DialogUtils(activity).showYesNoDialog(msg.toString(), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();
-					new DownloadDictTask(source, targetDir, dictName, expectedSize).execute(activity);
+					factory.produce(source, targetDir, dictName, expectedSize).execute(activity);
 				}
 			});
 			return false;
@@ -334,14 +336,56 @@ public final class SearchUtils {
 	}
 
 	/**
-	 * Checks if KANJIDIC exists. If not, user is prompted for a download and
-	 * the files are downloaded if requested.
+	 * Checks if given dictionary exists. If not, user is prompted for a
+	 * download and the files are downloaded if requested.
 	 * 
 	 * @param dict
 	 *            the dictionary type.
 	 * @return true if the files are available, false otherwise.
 	 */
 	public boolean checkDic(final DictTypeEnum dict) {
-		return checkDictionaryFile(dict.getDownloadSite(), dict.getDefaultDictionaryPath(), dict.luceneFileSize(), dict.name());
+		return checkDictionaryFile(dict.getDownloadSite(), dict.getDefaultDictionaryPath(), dict.luceneFileSize(), dict.name(), new DownloaderFactory() {
+			
+			public AbstractDownloadTask produce(URL source, String targetDir, String dictName, long expectedSize) {
+				return new DownloadDictTask(source, targetDir, dictName, expectedSize);
+			}
+		});
+	}
+
+	/**
+	 * Checks if the SOD images exists. If not, user is prompted for a download
+	 * and the files are downloaded if requested.
+	 * 
+	 * @return true if the files are available, false otherwise.
+	 */
+	public boolean checkSod() {
+		return checkDictionaryFile(SodLoader.DOWNLOAD_URL, SodLoader.SDCARD_LOCATION.getParent(), 4584605L, SodLoader.SDCARD_LOCATION.getName(), new DownloaderFactory() {
+			
+			public AbstractDownloadTask produce(URL source, String targetDir, String dictName, long expectedSize) {
+				return new SodDownloadTask(source, targetDir, dictName, expectedSize);
+			}
+		});
+	}
+
+	/**
+	 * Produces the downloader.
+	 * 
+	 * @author Martin Vysny
+	 */
+	public static interface DownloaderFactory {
+		/**
+		 * Creates new dictionary downloader.
+		 * 
+		 * @param source
+		 *            download the dictionary files from here.
+		 * @param targetDir
+		 *            unzip the files here
+		 * @param dictName
+		 *            the dictionary name.
+		 * @param expectedSize
+		 *            the expected file size of unpacked dictionary.
+		 * @return the download instance, not null.
+		 */
+		AbstractDownloadTask produce(final URL source, final String targetDir, final String dictName, final long expectedSize);
 	}
 }
