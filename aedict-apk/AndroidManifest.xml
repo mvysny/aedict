@@ -41,6 +41,7 @@
 		<activity android:name=".skip.Skip4Activity" android:label="@string/skipLookup" />
 		<activity android:name=".DownloadDictionaryActivity" android:label="@string/downloadDictionaryCaption" />
 		<activity android:name=".NotepadActivity" android:label="@string/notepad" />
+		<activity android:name=".StrokeOrderActivity" android:label="@string/showSod" />
 	</application>
 	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4" />
 	<uses-permission android:name="android.permission.INTERNET" />

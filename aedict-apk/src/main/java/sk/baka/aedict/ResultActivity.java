@@ -204,6 +204,16 @@ public class ResultActivity extends ListActivity {
 						return true;
 					}
 				}));
+				final MenuItem miShowSOD = menu.add(Menu.NONE, 6, 6, R.string.showSod);
+				miShowSOD.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+					public boolean onMenuItemClick(MenuItem item) {
+						final Intent intent = new Intent(ResultActivity.this, StrokeOrderActivity.class);
+						intent.putExtra(StrokeOrderActivity.INTENTKEY_KANJILIST, ee.getJapanese());
+						startActivity(intent);
+						return true;
+					}
+				}));
 			}
 		}));
 	}

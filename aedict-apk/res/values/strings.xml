@@ -117,4 +117,5 @@
     <string name="kanjiDrawWarning">Please note that you must use the proper stroke order and count, otherwise your kanji will not be recognized. Also it does not recognize hiragana nor katakana.</string>
     <string name="donate">Donate</string>
     <string name="searchInExamples">Search in examples</string>
+    <string name="showSod">Show stroke order</string>
 </resources>
