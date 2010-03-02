@@ -18,7 +18,6 @@
 
 package sk.baka.aedict;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,8 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DictEntry;
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.Radicals;
@@ -83,11 +82,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 		findViewById(R.id.btnRadicalsSearch).setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
 
 			public void onClick(View v) {
-				try {
-					performSearch();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
+				performSearch();
 			}
 		}));
 		// check that KANJIDIC exists
@@ -99,10 +94,16 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 	private int currentColumn = -1;
 
 	/**
+	 * Appends a new "button" (actually an image view) to the activity, which
+	 * toggles given radical. The button is correctly added to the next row if
+	 * this one has no space free in the screen.
 	 * 
 	 * @param v
+	 *            the layout instance.
 	 * @param radical
+	 *            the radical
 	 * @param strokes
+	 *            number of strokes in this radical.
 	 */
 	private void addRadicalToggle(final TableLayout v, final Character radical, final int strokes) {
 		if (++currentColumn >= radicalsPerRow) {
@@ -202,10 +203,8 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 
 	/**
 	 * Performs kanji search.
-	 * 
-	 * @throws IOException
 	 */
-	private void performSearch() throws IOException {
+	private void performSearch() {
 		final String radicals = getRadicals();
 		if (radicals.length() == 0) {
 			new DialogUtils(this).showErrorDialog(R.string.no_radicals_selected);
@@ -275,7 +274,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 			startActivity(i);
 		}
 	}
-	
+
 	/**
 	 * Imposes an order upon kanjipad entries, such that: first, kanjis with
 	 * lowest stroke counts are returned; next, the native EdictEntry comparator
