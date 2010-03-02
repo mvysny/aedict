@@ -100,4 +100,15 @@ public class KanjiAnalyzeActivityTest extends AbstractAedictTest<KanjiAnalyzeAct
 	private DictEntry get(int i) {
 		return (DictEntry) getActivity().getListAdapter().getItem(i);
 	}
+
+	/**
+	 * Tests for the SOD functionality.
+	 */
+	public void testShowSod() {
+		startActivity("今週のおすすめﾊﾞｰｹﾞﾝTVｹﾞｰﾑ", false);
+		tester.contextMenu(getActivity().getListView(), 10002, 0);
+		tester.assertRequestedActivity(StrokeOrderActivity.class);
+		final String q = getStartedActivityIntent().getStringExtra(StrokeOrderActivity.INTENTKEY_KANJILIST);
+		assertEquals("今", q);
+	}
 }

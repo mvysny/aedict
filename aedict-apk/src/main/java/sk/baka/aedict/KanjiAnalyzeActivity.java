@@ -129,6 +129,14 @@ public class KanjiAnalyzeActivity extends ListActivity {
 						return true;
 					}
 				}));
+				menu.add(R.string.showSod).setOnMenuItemClickListener(AndroidUtils.safe(KanjiAnalyzeActivity.this, new MenuItem.OnMenuItemClickListener() {
+					public boolean onMenuItemClick(MenuItem item) {
+						final Intent intent = new Intent(KanjiAnalyzeActivity.this, StrokeOrderActivity.class);
+						intent.putExtra(StrokeOrderActivity.INTENTKEY_KANJILIST, ee.getJapanese());
+						startActivity(intent);
+						return true;
+					}
+				}));
 			}
 		}));
 	}
