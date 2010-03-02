@@ -25,6 +25,7 @@ import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.ResultActivity;
 import sk.baka.aedict.AedictApp.Config;
+import sk.baka.aedict.dict.AbstractDownloadTask;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.aedict.dict.MatcherEnum;
@@ -313,7 +314,7 @@ public final class SearchUtils {
 	 * @return true if the files are available, false otherwise.
 	 */
 	public boolean checkDictionaryFile(final URL source, final String targetDir, final long expectedSize, final String dictName) {
-		if (!DownloadDictTask.isComplete(targetDir)) {
+		if (!AbstractDownloadTask.isComplete(targetDir)) {
 			final StatFs stats = new StatFs("/sdcard");
 			final long free = ((long) stats.getBlockSize()) * stats.getAvailableBlocks();
 			final StringBuilder msg = new StringBuilder(activity.getString(R.string.dictionary_missing_download, dictName));
