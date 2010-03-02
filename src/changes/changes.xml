@@ -4,7 +4,19 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
-		<release version="0.9" date="27. February 2010">
+		<release version="0.9" date="3. March 2010">
+			<action dev="vyzivus" type="fix">
+				Fixed random NullPointerExceptions, occuring during a search.
+			</action>
+			<action dev="vyzivus" type="add" issue="34">
+				Added the stroke order diagrams.
+			</action>
+			<action dev="vyzivus" type="fix" issue="35">
+				A glitch in the translation code: osusume was not translated in this sentence: 今週のおすすめﾊﾞｰｹﾞﾝTVｹﾞｰﾑ
+			</action>
+			<action dev="vyzivus" type="add">
+				The ResultActivity activity now performs search in a Task background thread
+			</action>
 			<action dev="vyzivus" type="add" issue="31">
 				Implemented the Examples search
 			</action>
