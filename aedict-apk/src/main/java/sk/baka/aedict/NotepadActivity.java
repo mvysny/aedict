@@ -64,8 +64,7 @@ public class NotepadActivity extends ListActivity {
 	private boolean isShowingRomaji;
 
 	/**
-	 * Expects {@link DictEntry} as a value. Adds given entry to the model
-	 * list.
+	 * Expects {@link DictEntry} as a value. Adds given entry to the model list.
 	 */
 	public static final String INTENTKEY_ADD_ENTRY = "addEntry";
 
@@ -107,6 +106,14 @@ public class NotepadActivity extends ListActivity {
 					public boolean onMenuItemClick(MenuItem item) {
 						modelCache.clear();
 						onModelChanged();
+						return true;
+					}
+				}));
+				menu.add(R.string.showSod).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
+					public boolean onMenuItemClick(MenuItem item) {
+						final Intent intent = new Intent(NotepadActivity.this, StrokeOrderActivity.class);
+						intent.putExtra(StrokeOrderActivity.INTENTKEY_KANJILIST, modelCache.get(pos).getJapanese());
+						startActivity(intent);
 						return true;
 					}
 				}));
@@ -168,9 +175,16 @@ public class NotepadActivity extends ListActivity {
 		}
 	}
 
+	/**
+	 * Used for testing purposes only.
+	 */
+	static void invalidateCache() {
+		modelCache = null;
+	}
+
 	private void updateModel() {
 		if (modelCache == null) {
-			new ComputeCacheTask().execute(this);
+			new ComputeCacheTask().execute(AedictApp.isInstrumentation, this);
 		} else {
 			setModel();
 		}
