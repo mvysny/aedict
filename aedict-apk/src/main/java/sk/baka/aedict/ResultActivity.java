@@ -176,7 +176,7 @@ public class ResultActivity extends ListActivity {
 				miSearchInExamples.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
 
 					public boolean onMenuItemClick(MenuItem item) {
-						if (!new SearchUtils(ResultActivity.this).checkDic(query.dictType)) {
+						if (!new SearchUtils(ResultActivity.this).checkDic(DictTypeEnum.Tanaka)) {
 							// the dictionary is not yet available. An activity
 							// was popped up,
 							// which offers dictionary download. Nothing to do
