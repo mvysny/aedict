@@ -36,18 +36,18 @@ public class EntryDetailActivityTest extends AbstractAedictTest<EntryDetailActiv
 	}
 
 	public void testStartActivity() {
-		startActivity("母", "はは", "mother");
+		startActivityMother();
 	}
 
 	public void testCorrectContentsOfViews() {
-		testStartActivity();
+		startActivityMother();
 		tester.assertText(R.id.kanjiSearchEdit, "母");
 		tester.assertText(R.id.readingSearchEdit, "はは");
 		tester.assertText(R.id.englishSearchEdit, "mother");
 	}
 
 	public void testEnglishSearch() {
-		testCorrectContentsOfViews();
+		startActivityMother();
 		tester.click(R.id.englishExactMatch);
 		tester.click(R.id.englishSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
@@ -60,7 +60,7 @@ public class EntryDetailActivityTest extends AbstractAedictTest<EntryDetailActiv
 	}
 
 	public void testKanjiSearch() {
-		testCorrectContentsOfViews();
+		startActivityMother();
 		tester.click(R.id.kanjiExactMatch);
 		tester.click(R.id.kanjiSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
@@ -77,7 +77,7 @@ public class EntryDetailActivityTest extends AbstractAedictTest<EntryDetailActiv
 	}
 
 	public void testReadingSearch() {
-		testCorrectContentsOfViews();
+		startActivityMother();
 		tester.click(R.id.readingExactMatch);
 		tester.click(R.id.readingSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
@@ -99,4 +99,16 @@ public class EntryDetailActivityTest extends AbstractAedictTest<EntryDetailActiv
 		tester.startActivity(i);
 	}
 
+	private void startActivityMother() {
+		startActivity("母", "はは", "mother");
+	}
+
+	public void testAnalysis() {
+		startActivityMother();
+		tester.click(R.id.kanjiAnalyze);
+		tester.assertRequestedActivity(KanjiAnalyzeActivity.class);
+		final Intent i = getStartedActivityIntent();
+		assertFalse(i.getBooleanExtra(KanjiAnalyzeActivity.INTENTKEY_WORD_ANALYSIS, true));
+		assertEquals("母", i.getStringExtra(KanjiAnalyzeActivity.INTENTKEY_WORD));
+	}
 }
