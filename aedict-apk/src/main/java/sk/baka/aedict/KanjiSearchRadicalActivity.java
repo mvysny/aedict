@@ -39,6 +39,7 @@ import sk.baka.autils.MiscUtils;
 import sk.baka.autils.Progress;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
@@ -55,8 +56,14 @@ import android.widget.ImageView.ScaleType;
  * 
  */
 public class KanjiSearchRadicalActivity extends AbstractActivity {
-	private static final int PADDING = 3;
-	private static final int SIZE = 30;
+	/**
+	 * The component padding.
+	 */
+	private static final int PADDING_PIXELS = 3;
+	/**
+	 * The font size, in DIP. See {@link DisplayMetrics} for details.
+	 */
+	private static final int FONT_SIZE_DIP = 30;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +72,15 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 		final TableLayout v = (TableLayout) findViewById(R.id.kanjisearchRadicals);
 		// there is no stupid flow layout in the great Android. Oh well. Let's
 		// emulate that with a table.
-		radicalsPerRow = getWindowManager().getDefaultDisplay().getWidth() / (SIZE + 2 * PADDING);
+		// we cannot just use a simple conversion of 1 DIP = 1 pixel - it doesn't work on Archos5
+		// do the conversion properly
+		// fixes http://code.google.com/p/aedict/issues/detail?id=38
+		final TextView tv = new TextView(this);
+		tv.setTextSize(FONT_SIZE_DIP);
+		radicalViewSizePixels = (int) tv.getPaint().getFontSpacing();
+		final DisplayMetrics dm=new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
+		radicalsPerRow = dm.widthPixels / (radicalViewSizePixels + 2 * PADDING_PIXELS);
 		currentColumn = -1;
 		row = null;
 		int strokeCount = -1;
@@ -89,6 +104,10 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 		new SearchUtils(this).checkDic(DictTypeEnum.Kanjidic);
 	}
 
+	/**
+	 * The real size of the font character. Computed from {@link DisplayMetrics#scaledDensity}.
+	 */
+	private int radicalViewSizePixels;
 	private int radicalsPerRow;
 	private TableRow row = null;
 	private int currentColumn = -1;
@@ -120,20 +139,22 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 			final ImageView iv = new ImageView(this);
 			vv = iv;
 			iv.setImageResource(drawable);
-			iv.setMinimumHeight(SIZE + 2 * PADDING);
-			iv.setMinimumWidth(SIZE + 2 * PADDING);
+			iv.setMinimumHeight(radicalViewSizePixels + 2 * PADDING_PIXELS);
+			iv.setMinimumWidth(radicalViewSizePixels + 2 * PADDING_PIXELS);
 			iv.setScaleType(ScaleType.FIT_CENTER);
 		} else {
 			final TextView tv = new TextView(this);
 			vv = tv;
 			tv.setText(radical == null ? String.valueOf(strokes) : radical.toString());
 			tv.setGravity(Gravity.CENTER);
-			tv.setTextSize(SIZE);
+			tv.setTextSize(FONT_SIZE_DIP);
+			tv.setHeight(radicalViewSizePixels + 2 * PADDING_PIXELS);
+			tv.setWidth(radicalViewSizePixels + 2 * PADDING_PIXELS);
 			if (radical == null) {
 				tv.setBackgroundColor(0xFF993333);
 			}
 		}
-		vv.setPadding(PADDING, PADDING, PADDING, PADDING);
+		vv.setPadding(PADDING_PIXELS, PADDING_PIXELS, PADDING_PIXELS, PADDING_PIXELS);
 		if (radical != null) {
 			final PushButtonListener pbl = new PushButtonListener(radical);
 			vv.setOnClickListener(pbl);
