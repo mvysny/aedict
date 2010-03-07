@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import sk.baka.aedict.util.Constants;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
 import android.content.Context;
@@ -74,7 +75,7 @@ public class KanjiDrawActivity extends AbstractActivity {
 				}
 			}
 		}));
-		new DialogUtils(this).showInfoOnce(0, R.string.kanjiDrawWarning);
+		new DialogUtils(this).showInfoOnce(Constants.INFOONCE_KANJIDRAWWARNING, R.string.kanjiDrawWarning);
 	}
 
 	private void updateStrokes() {

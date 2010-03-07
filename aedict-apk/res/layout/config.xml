@@ -37,5 +37,8 @@
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/cleanup"
 			android:id="@+id/cleanupEdictFilesButton" />
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/showInfoDialogs"
+			android:id="@+id/showInfoDialogsButton" />
 	</LinearLayout>
 </ScrollView>

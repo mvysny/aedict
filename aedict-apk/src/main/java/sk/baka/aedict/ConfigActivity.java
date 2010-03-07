@@ -82,6 +82,16 @@ public class ConfigActivity extends Activity {
 			}
 
 		}));
+		final Button showInfoDialogs = (Button) findViewById(R.id.showInfoDialogsButton);
+		showInfoDialogs.setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
+
+			public void onClick(View v) {
+				final DialogUtils utils = new DialogUtils(ConfigActivity.this);
+				utils.clearInfoOccurency();
+				utils.showToast(R.string.showInfoDialogsEnabled);
+			}
+
+		}));
 		final Spinner s = (Spinner) findViewById(R.id.romanizationSystem);
 		s.setOnItemSelectedListener(new ModificationHandler());
 		AbstractActivity.setButtonActivityLauncher(this, R.id.btnDownloadDictionary, DownloadDictionaryActivity.class);
