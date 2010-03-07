@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import sk.baka.autils.AndroidUtils;
+import sk.baka.autils.DialogUtils;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -73,6 +74,7 @@ public class KanjiDrawActivity extends AbstractActivity {
 				}
 			}
 		}));
+		new DialogUtils(this).showInfoOnce(0, R.string.kanjiDrawWarning);
 	}
 
 	private void updateStrokes() {
