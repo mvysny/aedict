@@ -4,6 +4,23 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
+		<release version="1.0" date="3. April 2010">
+			<action dev="vyzivus" type="add">
+				Added a What''s New dialog
+			</action>
+			<action dev="vyzivus" type="update" issue="42">
+				Kanjipad warning message is now shown only once, in a dialog
+			</action>
+			<action dev="vyzivus" type="fix" issue="38">
+				Fixed Radicals overflowing on Archos5
+			</action>
+			<action dev="vyzivus" type="fix" issue="36">
+				Automatic Tanaka dictionary download now works correctly.
+			</action>
+			<action dev="vyzivus" type="fix" issue="41">
+				Fixed broken search from the detail screen.
+			</action>
+		</release>
 		<release version="0.9" date="3. March 2010">
 			<action dev="vyzivus" type="fix">
 				Fixed random NullPointerExceptions, occuring during a search.

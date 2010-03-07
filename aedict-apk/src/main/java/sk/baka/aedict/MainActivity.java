@@ -20,6 +20,7 @@ package sk.baka.aedict;
 
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.util.SearchUtils;
+import sk.baka.autils.DialogUtils;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,5 +53,6 @@ public class MainActivity extends AbstractActivity {
 				startActivity(i);
 			}
 		});
+		new DialogUtils(this).showInfoOnce(AedictApp.getVersion(), AedictApp.format(R.string.whatsNew, AedictApp.getVersion()), getString(R.string.whatsNewText));
 	}
 }

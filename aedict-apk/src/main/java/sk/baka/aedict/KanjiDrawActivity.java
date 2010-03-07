@@ -75,7 +75,7 @@ public class KanjiDrawActivity extends AbstractActivity {
 				}
 			}
 		}));
-		new DialogUtils(this).showInfoOnce(Constants.INFOONCE_KANJIDRAWWARNING, R.string.kanjiDrawWarning);
+		new DialogUtils(this).showInfoOnce(Constants.INFOONCE_KANJIDRAWWARNING, -1, R.string.kanjiDrawWarning);
 	}
 
 	private void updateStrokes() {
