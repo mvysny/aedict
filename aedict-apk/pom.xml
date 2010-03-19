@@ -49,7 +49,7 @@
 		<dependency>
 			<groupId>sk.baka.autils</groupId>
 			<artifactId>autils</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>0.4</version>
 		</dependency>
 		<dependency>
 			<groupId>sk.baka.tools</groupId>
