@@ -81,8 +81,8 @@ public final class SearchUtils {
 	 *            search.
 	 */
 	private void searchForJapan(final String romaji, final boolean isExact, final boolean isDeinflect) {
-		final Config cfg = AedictApp.loadConfig();
-		final SearchQuery q = SearchQuery.searchForRomaji(romaji, cfg.romanization, isExact, isDeinflect);
+		final Config cfg = AedictApp.getConfig();
+		final SearchQuery q = SearchQuery.searchForRomaji(romaji, cfg.getRomanization(), isExact, isDeinflect);
 		performSearch(q);
 	}
 

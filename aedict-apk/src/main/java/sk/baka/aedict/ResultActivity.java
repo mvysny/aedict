@@ -28,6 +28,7 @@ import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
@@ -133,10 +134,10 @@ public class ResultActivity extends ListActivity {
 			updateModel(true);
 			new SearchTask().execute(AedictApp.isInstrumentation, this, query);
 		}
-		final Config cfg = AedictApp.loadConfig();
+		final Config cfg = AedictApp.getConfig();
 		final String dictName = query.dictType == DictTypeEnum.Tanaka ? DictTypeEnum.Tanaka.name() : cfg.dictionaryName;
 		((TextView) findViewById(R.id.textSelectedDictionary)).setText(AedictApp.format(R.string.searchingInDictionary, dictName));
-		isShowingRomaji = cfg.useRomaji;
+		isShowingRomaji = cfg.isUseRomaji();
 		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -219,7 +220,7 @@ public class ResultActivity extends ListActivity {
 	}
 
 	private void updateModel(final boolean searching) {
-		final Config cfg = AedictApp.loadConfig();
+		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
 		if (model.isEmpty()) {
 			model = Collections.singletonList(DictEntry.newErrorMsg(getString(searching ? R.string.searching : R.string.no_results)));
 		}
@@ -231,7 +232,7 @@ public class ResultActivity extends ListActivity {
 				if (view == null) {
 					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
 				}
-				model.get(position).print(view, isShowingRomaji ? cfg.romanization : null);
+				model.get(position).print(view, isShowingRomaji ? romanization : null);
 				return view;
 			}
 
@@ -307,7 +308,7 @@ public class ResultActivity extends ListActivity {
 
 		@Override
 		public List<DictEntry> impl(SearchQuery... params) throws Exception {
-			final List<DictEntry> result = LuceneSearch.singleSearch(query, query.dictType == DictTypeEnum.Edict ? AedictApp.getDictionaryLoc() : null);
+			final List<DictEntry> result = LuceneSearch.singleSearch(query, query.dictType == DictTypeEnum.Edict ? AedictApp.getConfig().getDictionaryLoc() : null);
 			Collections.sort(result);
 			return result;
 		}

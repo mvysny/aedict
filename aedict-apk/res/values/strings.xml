@@ -22,7 +22,8 @@
     <string name="show_kana">Show kana</string>
     <string name="no_radicals_selected">No radicals selected</string>
     <string name="configuration">Configuration</string>
-    <string name="always_available">Aedict available at all times</string>
+    <string name="always_available">Always available</string>
+    <string name="always_available_summary">Adds or removes notification icon</string>
     <string name="kanjiEntryText">Kanji (tip: to select and/or copy-paste just long-click the edit box. To search for a part of a word just select it and press search)</string>
     <string name="entryReadingText">Reading (when searching, romaji is automatically translated to both hiragana and katakana)</string>
     <string name="nothing_to_search_for">Nothing to search for</string>
@@ -57,7 +58,8 @@
     <string name="copied">Copied "%s" to the clipboard</string>
     <string name="kanaTable">Kana Table</string>
     <string name="showkanaTable">Show kana table</string>
-    <string name="romanizationCaption">Use the following romanization:</string>
+    <string name="romanization">Romanization</string>
+    <string name="romanizationSummary">Which romanization to use, both for romaji input and for display</string>
     <string name="analyze">Analyze</string>
     <string name="kanjiAnalysisOf">Kanji analysis of %s</string>
     <string name="kanjiRadicalLookup">Radical Lookup</string>
@@ -66,7 +68,8 @@
     <string name="radicals">Radicals</string>
     <string name="clear">Clear</string>
     <string name="other">Other</string>
-    <string name="useRomaji">Show romaji instead of katakana/hiragana</string>
+    <string name="useRomaji">Show romaji</string>
+    <string name="useRomaji_summary">Show romaji instead of katakana/hiragana</string>
     <string name="strokes">Strokes: %d</string>
     <string name="plusMinusBetween0And2">The +- number must be 0..2</string>
     <string name="skipLookup">Skip Lookup</string>
@@ -104,7 +107,8 @@
     <string name="translate">Translate</string>
     <string name="jpTranslate">Translate japanese text. Copy-paste the text here (e.g. from a browser). Simple, stupid and slow :-)</string>
     <string name="analyzing">Analyzing</string>
-    <string name="downloadDictionaryCaption">Download additional dictionaries</string>
+    <string name="downloadDictionaries">Download dictionary</string>
+    <string name="downloadDictionariesSummary">Download additional dictionaries</string>
     <string name="downloadingDictionaryList">Downloading list of dictionaries</string>
     <string name="availableDicts">Available dictionaries (click on the name to install)</string>
     <string name="notepad">Notepad</string>

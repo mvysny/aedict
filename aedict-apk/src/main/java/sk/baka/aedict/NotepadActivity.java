@@ -22,10 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sk.baka.aedict.AedictApp.Config;
-import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DictEntry;
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
@@ -72,8 +73,7 @@ public class NotepadActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.notepad);
-		final Config cfg = AedictApp.loadConfig();
-		isShowingRomaji = cfg.useRomaji;
+		isShowingRomaji = AedictApp.getConfig().isUseRomaji();
 		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, final ContextMenuInfo menuInfo) {
@@ -128,13 +128,12 @@ public class NotepadActivity extends ListActivity {
 		if (intent.hasExtra(INTENTKEY_ADD_ENTRY)) {
 			final DictEntry e = (DictEntry) intent.getSerializableExtra(INTENTKEY_ADD_ENTRY);
 			if (modelCache == null) {
-				final Config cfg = AedictApp.loadConfig();
+				final Config cfg = AedictApp.getConfig();
 				if (MiscUtils.isBlank(cfg.notepadItems)) {
 					cfg.notepadItems = e.getJapanese();
 				} else {
 					cfg.notepadItems = cfg.notepadItems + "," + e.getJapanese();
 				}
-				AedictApp.saveConfig(cfg);
 			} else {
 				modelCache.add(e);
 				onModelChanged();
@@ -165,9 +164,8 @@ public class NotepadActivity extends ListActivity {
 		for (final DictEntry entry : modelCache) {
 			b.add(entry.getJapanese());
 		}
-		final Config cfg = new Config();
+		final Config cfg = AedictApp.getConfig();
 		cfg.notepadItems = b.toString();
-		AedictApp.saveConfig(cfg);
 		if (getListAdapter() != null) {
 			// the adapter may be null if this method is invoked from onCreate()
 			// method
@@ -194,7 +192,7 @@ public class NotepadActivity extends ListActivity {
 	 * Sets the ListView model. Expects valid {@link #modelCache model cache}.
 	 */
 	private void setModel() {
-		final Config cfg = AedictApp.loadConfig();
+		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
 		setListAdapter(new ArrayAdapter<DictEntry>(this, android.R.layout.simple_list_item_2, modelCache) {
 
 			@Override
@@ -203,7 +201,7 @@ public class NotepadActivity extends ListActivity {
 				if (view == null) {
 					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
 				}
-				modelCache.get(position).print(view, isShowingRomaji ? cfg.romanization : null);
+				modelCache.get(position).print(view, isShowingRomaji ? romanization : null);
 				return view;
 			}
 
@@ -225,7 +223,7 @@ public class NotepadActivity extends ListActivity {
 
 		@Override
 		public List<DictEntry> impl(Void... params) throws Exception {
-			final Config cfg = AedictApp.loadConfig();
+			final Config cfg = AedictApp.getConfig();
 			final String[] items = MiscUtils.isBlank(cfg.notepadItems) ? new String[0] : cfg.notepadItems.split("\\,");
 			final List<DictEntry> result = new ArrayList<DictEntry>(items.length);
 			// always use the EDICT dictionary instead of user-selected

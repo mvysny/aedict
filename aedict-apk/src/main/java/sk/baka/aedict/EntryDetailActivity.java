@@ -39,10 +39,10 @@ public class EntryDetailActivity extends AbstractActivity {
 		final EditText kanjiSearchEdit = (EditText) findViewById(R.id.kanjiSearchEdit);
 		kanjiSearchEdit.setText(entry.getJapanese());
 		final EditText readingSearchEdit = (EditText) findViewById(R.id.readingSearchEdit);
-		final Config cfg = AedictApp.loadConfig();
+		final Config cfg = AedictApp.getConfig();
 		// fixes Issue 44
 		final String reading = entry.reading == null ? "" : entry.reading;
-		readingSearchEdit.setText(cfg.useRomaji ? cfg.romanization.toRomaji(reading) : reading);
+		readingSearchEdit.setText(cfg.isUseRomaji() ? cfg.getRomanization().toRomaji(reading) : reading);
 		final EditText englishSearchEdit = (EditText) findViewById(R.id.englishSearchEdit);
 		englishSearchEdit.setText(entry.english);
 		final SearchUtils utils = new SearchUtils(this);

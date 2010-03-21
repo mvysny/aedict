@@ -23,14 +23,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import sk.baka.aedict.AedictApp.Config;
+import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DownloadDictTask;
-import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.Radicals;
+import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
@@ -89,7 +89,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		isShowingRomaji = AedictApp.loadConfig().useRomaji;
+		isShowingRomaji = AedictApp.getConfig().isUseRomaji();
 		word = getIntent().getStringExtra(INTENTKEY_WORD);
 		model = (List<DictEntry>) getIntent().getSerializableExtra(INTENTKEY_ENTRYLIST);
 		isAnalysisPerCharacter = !getIntent().getBooleanExtra(INTENTKEY_WORD_ANALYSIS, false);
@@ -142,7 +142,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	}
 
 	private ArrayAdapter<DictEntry> newAdapter() {
-		final Config cfg = AedictApp.loadConfig();
+		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
 		return new ArrayAdapter<DictEntry>(this, R.layout.kanjidetail, model) {
 
 			@Override
@@ -152,7 +152,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 					v = getLayoutInflater().inflate(R.layout.kanjidetail, getListView(), false);
 				}
 				final DictEntry e = model.get(position);
-				((TextView) v.findViewById(android.R.id.text1)).setText(isShowingRomaji ? cfg.romanization.toRomaji(e.reading) : e.reading);
+				((TextView) v.findViewById(android.R.id.text1)).setText(isShowingRomaji ? romanization.toRomaji(e.reading) : e.reading);
 				final StringBuilder sb = new StringBuilder();
 				if (e.radical != null) {
 					// TODO mvy: show radicals as images when available?
@@ -264,7 +264,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 
 		private List<DictEntry> analyzeByWords(final String sentence) throws IOException {
 			final List<DictEntry> result = new ArrayList<DictEntry>();
-			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getDictionaryLoc());
+			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getConfig().getDictionaryLoc());
 			try {
 				final String[] words = getWords(sentence);
 				final int progressMax = getNumberOfCharacters(words);
@@ -336,7 +336,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 
 		private List<DictEntry> analyzeByCharacters(final String word) throws IOException {
 			final List<DictEntry> result = new ArrayList<DictEntry>(word.length());
-			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getDictionaryLoc());
+			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getConfig().getDictionaryLoc());
 			try {
 				LuceneSearch lsKanjidic = null;
 				if (DownloadDictTask.isComplete(DictTypeEnum.Kanjidic)) {

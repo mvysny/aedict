@@ -27,9 +27,7 @@ import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
 import sk.baka.autils.bind.BindToView;
-import sk.baka.autils.bind.Binder;
 import sk.baka.autils.bind.SharedPref;
-import sk.baka.autils.bind.SharedPrefsMapper;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -37,6 +35,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 /**
@@ -44,18 +44,20 @@ import android.util.Log;
  * 
  * @author Martin Vysny
  */
-public class AedictApp extends Application {
+public class AedictApp extends Application implements OnSharedPreferenceChangeListener {
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-//		tests will create multiple instances of this class
-//		if (instance != null) {
-//			throw new IllegalStateException("Not a singleton");
-//		}
+		// tests will create multiple instances of this class
+		// if (instance != null) {
+		// throw new IllegalStateException("Not a singleton");
+		// }
 		instance = this;
 		DialogUtils.resError = R.string.error;
-		apply(loadConfig());
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
+		PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+		apply(new Config(this));
 	}
 
 	private static AedictApp instance;
@@ -131,53 +133,47 @@ public class AedictApp extends Application {
 	 * @author Martin Vysny
 	 */
 	public static class Config {
+		private final SharedPreferences prefs;
 		/**
-		 * Loads default values to null fields.
+		 * Constructs new config instance.
+		 * @param context load default shared preferences from this context.
 		 */
-		public void setDefaults() {
-			if (romanization == null) {
-				romanization = RomanizationEnum.Hepburn;
-			}
-			if (isAlwaysAvailable == null) {
-				isAlwaysAvailable = false;
-			}
-			if (useRomaji == null) {
-				useRomaji = false;
-			}
-			if (dictionaryName == null) {
-				dictionaryName = DEFAULT_DICTIONARY_NAME;
-			}
-			if (notepadItems == null) {
-				notepadItems = "";
-			}
+		public Config(final Context context) {
+			this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		}
 
 		/**
 		 * The name of the default dictionary.
 		 */
 		public static final String DEFAULT_DICTIONARY_NAME = "Default";
+
 		/**
 		 * Which romanization system to use. Defaults to Hepburn.
+		 * 
+		 * @return the romanization system to use. Never null.
 		 */
-		@SharedPref(key = "romanization", removeOnNull = false)
-		@BindToView(R.id.romanizationSystem)
-		public RomanizationEnum romanization;
+		public RomanizationEnum getRomanization() {
+			return RomanizationEnum.valueOf(prefs.getString(ConfigActivity.KEY_ROMANIZATION, null));
+		}
+
 		/**
 		 * If true then a notification icon is registered.
+		 * @return true if the application is always available.
 		 */
-		@SharedPref(key = "isAlwaysAvailable", removeOnNull = false)
-		@BindToView(R.id.cfgNotifBar)
-		public Boolean isAlwaysAvailable;
+		public boolean isAlwaysAvailable(){
+			return prefs.getBoolean(ConfigActivity.KEY_ALWAYS_AVAILABLE, false);
+		}
 		/**
 		 * If true then Romaji will be used instead of katakana/hiragana
 		 * throughout the application.
+		 * @return true if Romaji will be displayed.
 		 */
-		@SharedPref(key = "useRomaji", removeOnNull = false)
-		@BindToView(R.id.cfgUseRomaji)
-		public Boolean useRomaji;
+		public boolean isUseRomaji(){
+			return prefs.getBoolean(ConfigActivity.KEY_USE_ROMAJI, false);
+		}
 		/**
 		 * The dictionary name to use. If null then the default one should be
-		 * used.
+		 * used. Applies to EDICT dictionaries only.
 		 */
 		@SharedPref(key = "dictionaryName", removeOnNull = false)
 		@BindToView(R.id.spinDictionaryPicker)
@@ -188,6 +184,21 @@ public class AedictApp extends Application {
 		 */
 		@SharedPref(key = "notepadItems", removeOnNull = false)
 		public String notepadItems;
+
+		/**
+		 * Returns the dictionary location on the SD card of the EDICT
+		 * dictionary..
+		 * 
+		 * @return absolute OS-specific location of the dictionary.
+		 */
+		public String getDictionaryLoc() {
+			if (dictionaryName == null || dictionaryName.equals(Config.DEFAULT_DICTIONARY_NAME)) {
+				return DictTypeEnum.Edict.getDefaultDictionaryPath();
+			}
+			final String loc = DictTypeEnum.Edict.getDefaultDictionaryPath() + "-" + dictionaryName;
+			final File f = new File(loc);
+			return f.exists() && f.isDirectory() ? loc : DictTypeEnum.Edict.getDefaultDictionaryPath();
+		}
 	}
 
 	/**
@@ -195,24 +206,8 @@ public class AedictApp extends Application {
 	 * 
 	 * @return the configuration.
 	 */
-	public static Config loadConfig() {
-		final SharedPreferences prefs = instance.getSharedPreferences("cfg", Context.MODE_PRIVATE);
-		final Config result = new Config();
-		new Binder().bindToBean(result, new SharedPrefsMapper(), prefs, false);
-		result.setDefaults();
-		return result;
-	}
-
-	/**
-	 * Stores new configuration. null values are left unchanged.
-	 * 
-	 * @param cfg
-	 *            the configuration, must not be null.
-	 */
-	public static void saveConfig(final Config cfg) {
-		final SharedPreferences prefs = instance.getSharedPreferences("cfg", Context.MODE_PRIVATE);
-		new Binder().bindFromBean(cfg, new SharedPrefsMapper(), prefs, false);
-		apply(loadConfig());
+	public static Config getConfig() {
+		return new Config(instance);
 	}
 
 	private static final int NOTIFICATION_ID = 1;
@@ -226,7 +221,7 @@ public class AedictApp extends Application {
 	 */
 	private static void apply(final Config cfg) {
 		final NotificationManager nm = (NotificationManager) instance.getSystemService(Context.NOTIFICATION_SERVICE);
-		if (!cfg.isAlwaysAvailable) {
+		if (!cfg.isAlwaysAvailable()) {
 			nm.cancel(NOTIFICATION_ID);
 		} else {
 			final Notification notification = new Notification(R.drawable.notification, null, 0);
@@ -238,22 +233,13 @@ public class AedictApp extends Application {
 	}
 
 	/**
-	 * Returns the dictionary location on the SD card of the EDICT dictionary..
-	 * 
-	 * @return absolute OS-specific location of the dictionary.
-	 */
-	public static String getDictionaryLoc() {
-		final String dictionaryName = loadConfig().dictionaryName;
-		if (dictionaryName == null || dictionaryName.equals(Config.DEFAULT_DICTIONARY_NAME)) {
-			return DictTypeEnum.Edict.getDefaultDictionaryPath();
-		}
-		final String loc = DictTypeEnum.Edict.getDefaultDictionaryPath() + "-" + dictionaryName;
-		final File f = new File(loc);
-		return f.exists() && f.isDirectory() ? loc : DictTypeEnum.Edict.getDefaultDictionaryPath();
-	}
-	
-	/**
 	 * If true then the instrumentation (testing) is in progress.
 	 */
 	public static boolean isInstrumentation = false;
+
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		if (key.equals(ConfigActivity.KEY_ALWAYS_AVAILABLE)) {
+			apply(getConfig());
+		}
+	}
 }

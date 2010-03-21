@@ -25,4 +25,9 @@
         <item>Hepburn</item>
         <item>Nihon-Shiki</item>
     </string-array>
+    <!-- These values must match names of the RomanizationEnum constants -->
+    <string-array name="romanizations_enum">
+        <item>Hepburn</item>
+        <item>NihonShiki</item>
+    </string-array>
 </resources>

@@ -39,7 +39,7 @@
 		<activity android:name=".skip.SkipActivity" android:label="@string/skipLookup" />
 		<activity android:name=".skip.Skip123Activity" android:label="@string/skipLookup" />
 		<activity android:name=".skip.Skip4Activity" android:label="@string/skipLookup" />
-		<activity android:name=".DownloadDictionaryActivity" android:label="@string/downloadDictionaryCaption" />
+		<activity android:name=".DownloadDictionaryActivity" android:label="@string/downloadDictionaries" />
 		<activity android:name=".NotepadActivity" android:label="@string/notepad" />
 		<activity android:name=".StrokeOrderActivity" android:label="@string/showSod" />
 	</application>

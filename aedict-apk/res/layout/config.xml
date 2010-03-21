@@ -23,7 +23,7 @@
 			android:layout_width="fill_parent" android:text="@string/useRomaji"
 			android:id="@+id/cfgUseRomaji" />
 		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/romanizationCaption" />
+			android:layout_height="wrap_content" android:text="@string/romanization" />
 		<Spinner android:layout_height="wrap_content"
 			android:layout_width="fill_parent" android:id="@+id/romanizationSystem"
 			android:entries="@array/romanizations" />
@@ -32,7 +32,7 @@
 		<Spinner android:layout_height="wrap_content"
 			android:layout_width="fill_parent" android:id="@+id/spinDictionaryPicker" />
 		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/downloadDictionaryCaption"
+			android:layout_height="wrap_content" android:text="@string/downloadDictionaries"
 			android:id="@+id/btnDownloadDictionary" />
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/cleanup"
