@@ -26,7 +26,6 @@ import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
-import sk.baka.autils.bind.BindToView;
 import sk.baka.autils.bind.SharedPref;
 import android.app.Application;
 import android.app.Notification;
@@ -182,19 +181,36 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * The dictionary name to use. If null then the default one should be
 		 * used. Applies to EDICT dictionaries only.
 		 * 
-		 * @return the dictionary name, never null. Returns {@value
-		 *         DEFAULT_DICTIONARY_NAME} for the default Edict file.
+		 * @return the dictionary name, never null. Returns
+		 *         {@value Config#DEFAULT_DICTIONARY_NAME} for the default Edict
+		 *         file.
 		 */
 		public String getDictionaryName() {
 			return prefs.getString(ConfigActivity.KEY_DICTIONARY_NAME, null);
 		}
 
+		public static final String KEY_NOTEPAD_ITEMS = "notepadItems";
+
 		/**
 		 * Persisted notepad items. A mixture of Japanese kanjis, hiragana and
 		 * katakana, comma-separated.
+		 * 
+		 * @return the notepad items, never null.
 		 */
-		@SharedPref(key = "notepadItems", removeOnNull = false)
-		public String notepadItems;
+		public String getNotepadItems() {
+			return prefs.getString(KEY_NOTEPAD_ITEMS, "");
+		}
+
+		/**
+		 * Persisted notepad items. A mixture of Japanese kanjis, hiragana and
+		 * katakana, comma-separated.
+		 * 
+		 * @param notepadItems
+		 *            the new notepad items, never null.
+		 */
+		public void setNotepadItems(final String notepadItems) {
+			prefs.edit().putString(KEY_NOTEPAD_ITEMS, notepadItems).commit();
+		}
 
 		/**
 		 * Returns the dictionary location on the SD card of the EDICT

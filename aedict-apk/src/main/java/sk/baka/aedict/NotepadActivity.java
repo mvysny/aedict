@@ -129,10 +129,11 @@ public class NotepadActivity extends ListActivity {
 			final DictEntry e = (DictEntry) intent.getSerializableExtra(INTENTKEY_ADD_ENTRY);
 			if (modelCache == null) {
 				final Config cfg = AedictApp.getConfig();
-				if (MiscUtils.isBlank(cfg.notepadItems)) {
-					cfg.notepadItems = e.getJapanese();
+				final String items = cfg.getNotepadItems();
+				if (MiscUtils.isBlank(items)) {
+					cfg.setNotepadItems(e.getJapanese());
 				} else {
-					cfg.notepadItems = cfg.notepadItems + "," + e.getJapanese();
+					cfg.setNotepadItems(items + "," + e.getJapanese());
 				}
 			} else {
 				modelCache.add(e);
@@ -165,7 +166,7 @@ public class NotepadActivity extends ListActivity {
 			b.add(entry.getJapanese());
 		}
 		final Config cfg = AedictApp.getConfig();
-		cfg.notepadItems = b.toString();
+		cfg.setNotepadItems(b.toString());
 		if (getListAdapter() != null) {
 			// the adapter may be null if this method is invoked from onCreate()
 			// method
@@ -224,7 +225,8 @@ public class NotepadActivity extends ListActivity {
 		@Override
 		public List<DictEntry> impl(Void... params) throws Exception {
 			final Config cfg = AedictApp.getConfig();
-			final String[] items = MiscUtils.isBlank(cfg.notepadItems) ? new String[0] : cfg.notepadItems.split("\\,");
+			final String notepadItems = cfg.getNotepadItems();
+			final String[] items = MiscUtils.isBlank(notepadItems) ? new String[0] : notepadItems.split("\\,");
 			final List<DictEntry> result = new ArrayList<DictEntry>(items.length);
 			// always use the EDICT dictionary instead of user-selected
 			// dictionary
