@@ -33,7 +33,7 @@
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="sdcardCleanup">SD-Card cleanup</string>
-    <string name="sdcardCleanupSummary">Deletes all Aedict-downloaded files from the SD-Card, including the dictionaries</string>
+    <string name="sdcardCleanupSummary">Deletes all Aedict-downloaded files, including dictionaries</string>
     <string name="warning_less_than_x_mb_free"> Warning: there is less than %d kb of free space on the sd card (%d kb). The download will most probably fail.</string>
     <string name="dictionary_missing_download">The %s dictionary is missing. Do you wish to download it now?</string>
     <string name="downloading_dictionary">Downloading %s</string>
@@ -124,7 +124,7 @@
     <string name="donate">Donate</string>
     <string name="searchInExamples">Search in examples</string>
     <string name="showSod">Show stroke order</string>
-    <string name="resetIntroductions">Reset introduction dialogs</string>
+    <string name="resetIntroductions">Reset introductions</string>
     <string name="resetIntroductionsSummary">All introduction dialogs will be shown again</string>
     <string name="whatsNew">What''s New in %s</string>
     <string name="whatsNewText">- Fixed issue 41: broken search from the detail screen\n- Fixed issue 36: automatic Tanaka dictionary download\n- Fixed issue 38: Radicals overflowing on Archos5\n- Fixed 42: Kanjipad warning message is now shown only once, in a dialog\n- Added this What''s New dialog :-)</string>
