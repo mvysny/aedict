@@ -32,7 +32,8 @@
     <string name="data_files_removed">Data files were removed</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
-    <string name="cleanup">Clean up dictionary files</string>
+    <string name="sdcardCleanup">SD-Card cleanup</string>
+    <string name="sdcardCleanupSummary">Deletes all Aedict-downloaded files from the SD-Card, including the dictionaries</string>
     <string name="warning_less_than_x_mb_free"> Warning: there is less than %d kb of free space on the sd card (%d kb). The download will most probably fail.</string>
     <string name="dictionary_missing_download">The %s dictionary is missing. Do you wish to download it now?</string>
     <string name="downloading_dictionary">Downloading %s</string>
@@ -101,7 +102,8 @@
     <string name="skip3second">Number of strokes in the internal part:</string>
     <string name="skip4">Please count all the strokes in the character, and then choose the first from the options listed below:</string>
     <string name="numberOfStrokes">Number of strokes:</string>
-    <string name="dictionaryPickerHint">Use the following edict dictionary:</string>
+    <string name="edictDictionary">Edict dictionary</string>
+    <string name="edictDictionarySummary">Choose the Edict dictionary</string>
     <string name="analyzeWords">Analyze as words</string>
     <string name="analyzeCharacters">Analyze as characters</string>
     <string name="translate">Translate</string>
@@ -122,8 +124,8 @@
     <string name="donate">Donate</string>
     <string name="searchInExamples">Search in examples</string>
     <string name="showSod">Show stroke order</string>
-    <string name="showInfoDialogs">Show all information dialogs again</string>
-    <string name="showInfoDialogsEnabled">All information dialogs will be shown again</string>
+    <string name="resetIntroductions">Reset introduction dialogs</string>
+    <string name="resetIntroductionsSummary">All introduction dialogs will be shown again</string>
     <string name="whatsNew">What''s New in %s</string>
     <string name="whatsNewText">- Fixed issue 41: broken search from the detail screen\n- Fixed issue 36: automatic Tanaka dictionary download\n- Fixed issue 38: Radicals overflowing on Archos5\n- Fixed 42: Kanjipad warning message is now shown only once, in a dialog\n- Added this What''s New dialog :-)</string>
 </resources>

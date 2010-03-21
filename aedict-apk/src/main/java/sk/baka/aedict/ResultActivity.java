@@ -135,7 +135,7 @@ public class ResultActivity extends ListActivity {
 			new SearchTask().execute(AedictApp.isInstrumentation, this, query);
 		}
 		final Config cfg = AedictApp.getConfig();
-		final String dictName = query.dictType == DictTypeEnum.Tanaka ? DictTypeEnum.Tanaka.name() : cfg.dictionaryName;
+		final String dictName = query.dictType == DictTypeEnum.Tanaka ? DictTypeEnum.Tanaka.name() : cfg.getDictionaryName();
 		((TextView) findViewById(R.id.textSelectedDictionary)).setText(AedictApp.format(R.string.searchingInDictionary, dictName));
 		isShowingRomaji = cfg.isUseRomaji();
 		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {

@@ -134,9 +134,12 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 	 */
 	public static class Config {
 		private final SharedPreferences prefs;
+
 		/**
 		 * Constructs new config instance.
-		 * @param context load default shared preferences from this context.
+		 * 
+		 * @param context
+		 *            load default shared preferences from this context.
 		 */
 		public Config(final Context context) {
 			this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -158,26 +161,34 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 
 		/**
 		 * If true then a notification icon is registered.
+		 * 
 		 * @return true if the application is always available.
 		 */
-		public boolean isAlwaysAvailable(){
+		public boolean isAlwaysAvailable() {
 			return prefs.getBoolean(ConfigActivity.KEY_ALWAYS_AVAILABLE, false);
 		}
+
 		/**
 		 * If true then Romaji will be used instead of katakana/hiragana
 		 * throughout the application.
+		 * 
 		 * @return true if Romaji will be displayed.
 		 */
-		public boolean isUseRomaji(){
+		public boolean isUseRomaji() {
 			return prefs.getBoolean(ConfigActivity.KEY_USE_ROMAJI, false);
 		}
+
 		/**
 		 * The dictionary name to use. If null then the default one should be
 		 * used. Applies to EDICT dictionaries only.
+		 * 
+		 * @return the dictionary name, never null. Returns {@value
+		 *         DEFAULT_DICTIONARY_NAME} for the default Edict file.
 		 */
-		@SharedPref(key = "dictionaryName", removeOnNull = false)
-		@BindToView(R.id.spinDictionaryPicker)
-		public String dictionaryName;
+		public String getDictionaryName() {
+			return prefs.getString(ConfigActivity.KEY_DICTIONARY_NAME, null);
+		}
+
 		/**
 		 * Persisted notepad items. A mixture of Japanese kanjis, hiragana and
 		 * katakana, comma-separated.
@@ -192,6 +203,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * @return absolute OS-specific location of the dictionary.
 		 */
 		public String getDictionaryLoc() {
+			final String dictionaryName = getDictionaryName();
 			if (dictionaryName == null || dictionaryName.equals(Config.DEFAULT_DICTIONARY_NAME)) {
 				return DictTypeEnum.Edict.getDefaultDictionaryPath();
 			}

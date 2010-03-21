@@ -20,24 +20,22 @@ package sk.baka.aedict;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
-import sk.baka.autils.bind.AndroidViewMapper;
-import sk.baka.autils.bind.Binder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.CompoundButton;
 
 /**
  * Configures AEdict.
@@ -48,21 +46,33 @@ public class ConfigActivity extends PreferenceActivity {
 	/**
 	 * Boolean: Always available? (Adds or removes notification icon).
 	 */
-	public static String KEY_ALWAYS_AVAILABLE = "alwaysAvailable";
+	public static final String KEY_ALWAYS_AVAILABLE = "alwaysAvailable";
 	/**
 	 * String (the name of the {@link RomanizationEnum} enum). Which
 	 * romanization system to use.
 	 */
-	public static String KEY_ROMANIZATION = "romanization";
+	public static final String KEY_ROMANIZATION = "romanization";
 	/**
 	 * Boolean. If true then Romaji will be used instead of katakana/hiragana
 	 * throughout the application.
 	 */
-	public static String KEY_USE_ROMAJI = "useRomaji";
+	public static final String KEY_USE_ROMAJI = "useRomaji";
 	/**
 	 * Launches the {@link DownloadDictionaryActivity} activity.
 	 */
-	public static String KEY_DOWNLOAD_DICTIONARIES = "downloadDictionaries";
+	public static final String KEY_DOWNLOAD_DICTIONARIES = "downloadDictionaries";
+	/**
+	 * Which EDICT dictionary to use for search.
+	 */
+	public static final String KEY_DICTIONARY_NAME = "dictionaryName";
+	/**
+	 * Performs the SDCard dictionary cleanup.
+	 */
+	public static final String KEY_SDCARD_CLEANUP = "sdcardCleanup";
+	/**
+	 * Resets the introduction dialogs - all dialogs will be shown again.
+	 */
+	public static final String KEY_RESET_INTRODUCTIONS = "resetIntroductions";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +89,16 @@ public class ConfigActivity extends PreferenceActivity {
 			startActivity(intent);
 			return true;
 		}
+		if (key.equals(KEY_SDCARD_CLEANUP)) {
+			cleanup();
+			return true;
+		}
+		if (key.equals(KEY_RESET_INTRODUCTIONS)) {
+			final DialogUtils utils = new DialogUtils(ConfigActivity.this);
+			utils.clearInfoOccurency();
+			utils.showToast(R.string.resetIntroductionsSummary);
+			return true;
+		}
 		return super.onPreferenceTreeClick(preferenceScreen, preference);
 	}
 
@@ -87,51 +107,10 @@ public class ConfigActivity extends PreferenceActivity {
 		super.onResume();
 		// components are now initialized in onResume phase, to refresh
 		// dictionary list when a new dictionary is downloaded
-		// fill in the components
-		// final Config cfg = AedictApp.loadConfig();
-		// final Spinner dictPicker = (Spinner)
-		// findViewById(R.id.spinDictionaryPicker);
-		// final List<String> dictionaries = new
-		// ArrayList<String>(DownloadDictTask.listEdictDictionaries().keySet());
-		// Collections.sort(dictionaries);
-		// dictPicker.setAdapter(new ArrayAdapter<String>(this,
-		// android.R.layout.simple_spinner_item, dictionaries));
-		// dictPicker.setOnItemSelectedListener(new ModificationHandler());
-		// new Binder().bindFromBean(cfg, new AndroidViewMapper(true), this,
-		// false);
-		// // add modification handlers
-		// final CheckBox cfgNotifBar = (CheckBox)
-		// findViewById(R.id.cfgNotifBar);
-		// cfgNotifBar.setOnCheckedChangeListener(new ModificationHandler());
-		// final CheckBox cfgUseRomaji = (CheckBox)
-		// findViewById(R.id.cfgUseRomaji);
-		// cfgUseRomaji.setOnCheckedChangeListener(new ModificationHandler());
-		// final Button cleanup = (Button)
-		// findViewById(R.id.cleanupEdictFilesButton);
-		// cleanup.setOnClickListener(AndroidUtils.safe(this, new
-		// View.OnClickListener() {
-		//
-		// public void onClick(View v) {
-		// cleanup();
-		// }
-		//
-		// }));
-		// final Button showInfoDialogs = (Button)
-		// findViewById(R.id.showInfoDialogsButton);
-		// showInfoDialogs.setOnClickListener(AndroidUtils.safe(this, new
-		// View.OnClickListener() {
-		//
-		// public void onClick(View v) {
-		// final DialogUtils utils = new DialogUtils(ConfigActivity.this);
-		// utils.clearInfoOccurency();
-		// utils.showToast(R.string.showInfoDialogsEnabled);
-		// }
-		//
-		// }));
-		// final Spinner s = (Spinner) findViewById(R.id.romanizationSystem);
-		// s.setOnItemSelectedListener(new ModificationHandler());
-		// AbstractActivity.setButtonActivityLauncher(this,
-		// R.id.btnDownloadDictionary, DownloadDictionaryActivity.class);
+		final List<String> dictionaries = new ArrayList<String>(DownloadDictTask.listEdictDictionaries().keySet());
+		Collections.sort(dictionaries);
+		((ListPreference) findPreference(KEY_DICTIONARY_NAME)).setEntries(dictionaries.toArray(new CharSequence[0]));
+		((ListPreference) findPreference(KEY_DICTIONARY_NAME)).setEntryValues(dictionaries.toArray(new CharSequence[0]));
 	}
 
 	/**

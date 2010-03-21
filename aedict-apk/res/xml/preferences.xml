@@ -12,19 +12,28 @@
 	-->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
 	<CheckBoxPreference android:key="alwaysAvailable"
 		android:defaultValue="false" android:title="@string/always_available"
 		android:summary="@string/always_available_summary" />
 	<CheckBoxPreference android:key="useRomaji"
 		android:defaultValue="false" android:title="@string/useRomaji"
 		android:summary="@string/useRomaji_summary" />
-	<ListPreference android:key="romanizationSystem"
+	<ListPreference android:key="romanization"
 		android:defaultValue="Hepburn" android:title="@string/romanization"
 		android:summary="@string/romanizationSummary"
 		android:entries="@array/romanizations" android:entryValues="@array/romanizations_enum"
 		android:dialogTitle="@string/romanization" />
+	<ListPreference android:key="dictionaryName"
+		android:defaultValue="Default" android:title="@string/edictDictionary"
+		android:summary="@string/edictDictionarySummary"
+		android:dialogTitle="@string/edictDictionary" />
 	<PreferenceScreen android:key="downloadDictionaries" android:title="@string/downloadDictionaries"
 		android:summary="@string/downloadDictionariesSummary">
+	</PreferenceScreen>
+	<PreferenceScreen android:key="sdcardCleanup" android:title="@string/sdcardCleanup"
+		android:summary="@string/sdcardCleanupSummary">
+	</PreferenceScreen>
+	<PreferenceScreen android:key="resetIntroductions" android:title="@string/resetIntroductions"
+		android:summary="@string/resetIntroductionsSummary">
 	</PreferenceScreen>
 </PreferenceScreen>
