@@ -40,9 +40,8 @@ public class NotepadActivityTest extends AbstractAedictTest<NotepadActivity> {
 	public void setUp() throws Exception {
 		super.setUp();
 		// set the configuration to a known state
-		final Config cfg = new Config();
-		cfg.notepadItems = "母は留守です。";
-		AedictApp.saveConfig(cfg);
+		final Config cfg = AedictApp.getConfig();
+		cfg.setNotepadItems("母は留守です。");
 		NotepadActivity.invalidateCache();
 	}
 
@@ -89,6 +88,6 @@ public class NotepadActivityTest extends AbstractAedictTest<NotepadActivity> {
 		assertTrue(model.contains("母は留守です。"));
 		assertTrue(model.contains("母"));
 		assertEquals(2, getActivity().getListAdapter().getCount());
-		assertEquals("母は留守です。,母", AedictApp.loadConfig().notepadItems);
+		assertEquals("母は留守です。,母", AedictApp.getConfig().getNotepadItems());
 	}
 }

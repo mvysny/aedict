@@ -19,6 +19,8 @@
 package sk.baka.aedict;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.test.ActivityUnitTestCase;
 
 /**
@@ -43,8 +45,8 @@ public abstract class AbstractAedictTest<T extends Activity> extends ActivityUni
 	public void setUp() throws Exception {
 		super.setUp();
 		// reset the config
-		final AedictApp.Config cfg = new AedictApp.Config();
-		cfg.setDefaults();
-		AedictApp.saveConfig(cfg);
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getInstrumentation().getTargetContext());
+		assertTrue(prefs.edit().clear().commit());
+		PreferenceManager.setDefaultValues(getInstrumentation().getTargetContext(), R.xml.preferences, true);
 	}
 }

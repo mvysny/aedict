@@ -114,9 +114,8 @@ public class EntryDetailActivityTest extends AbstractAedictTest<EntryDetailActiv
 	}
 
 	public void testCrashOnNullReading() {
-		final Config cfg = AedictApp.loadConfig();
-		cfg.useRomaji = true;
-		AedictApp.saveConfig(cfg);
+		final Config cfg = AedictApp.getConfig();
+		cfg.setUseRomaji(true);
 		startActivity("母", null, "mother");
 		tester.assertText(R.id.readingSearchEdit, "");
 	}

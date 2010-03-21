@@ -19,8 +19,11 @@
 package sk.baka.aedict;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 import sk.baka.aedict.dict.DictTypeEnum;
+import android.preference.ListPreference;
 
 /**
  * Tests the {@link ConfigActivity} class.
@@ -45,7 +48,7 @@ public class ConfigActivityTest extends AbstractAedictTest<ConfigActivity> {
 		final File tanaka = new File(DictTypeEnum.Tanaka.getDefaultDictionaryPath());
 		assertTrue("The tanaka dictionary does not exist, please download it", tanaka.exists());
 		tester.startActivity();
-		getInstrumentation().callActivityOnResume(getActivity());
-		assertFalse("The tanaka directory is listed in the combobox", tester.isAdapterViewContains(R.id.spinDictionaryPicker, "tanaka"));
+		final List<CharSequence> dictionaries = Arrays.asList(((ListPreference) getActivity().findPreference(ConfigActivity.KEY_DICTIONARY_NAME)).getEntryValues());
+		assertFalse("The tanaka directory is listed in the combobox", dictionaries.contains("tanaka"));
 	}
 }

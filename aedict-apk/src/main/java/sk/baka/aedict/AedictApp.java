@@ -26,7 +26,6 @@ import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
-import sk.baka.autils.bind.SharedPref;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -178,6 +177,15 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		}
 
 		/**
+		 * If true then Romaji will be used instead of katakana/hiragana
+		 * throughout the application.
+		 * 
+		 * @param useRomaji true if Romaji will be displayed.
+		 */
+		public void setUseRomaji(boolean useRomaji) {
+			prefs.edit().putBoolean(ConfigActivity.KEY_USE_ROMAJI, useRomaji).commit();
+		}
+		/**
 		 * The dictionary name to use. If null then the default one should be
 		 * used. Applies to EDICT dictionaries only.
 		 * 
@@ -189,6 +197,9 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 			return prefs.getString(ConfigActivity.KEY_DICTIONARY_NAME, null);
 		}
 
+		/**
+		 * The preference key of the "notepad items" configuration item.
+		 */
 		public static final String KEY_NOTEPAD_ITEMS = "notepadItems";
 
 		/**
