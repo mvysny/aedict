@@ -118,5 +118,6 @@ public class EntryDetailActivityTest extends AbstractAedictTest<EntryDetailActiv
 		cfg.useRomaji = true;
 		AedictApp.saveConfig(cfg);
 		startActivity("母", null, "mother");
+		tester.assertText(R.id.readingSearchEdit, "");
 	}
 }
