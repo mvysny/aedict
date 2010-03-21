@@ -18,6 +18,7 @@
 
 package sk.baka.aedict;
 
+import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.MatcherEnum;
@@ -110,5 +111,12 @@ public class EntryDetailActivityTest extends AbstractAedictTest<EntryDetailActiv
 		final Intent i = getStartedActivityIntent();
 		assertFalse(i.getBooleanExtra(KanjiAnalyzeActivity.INTENTKEY_WORD_ANALYSIS, true));
 		assertEquals("母", i.getStringExtra(KanjiAnalyzeActivity.INTENTKEY_WORD));
+	}
+
+	public void testCrashOnNullReading() {
+		final Config cfg = AedictApp.loadConfig();
+		cfg.useRomaji = true;
+		AedictApp.saveConfig(cfg);
+		startActivity("母", null, "mother");
 	}
 }

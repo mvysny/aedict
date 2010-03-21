@@ -53,6 +53,8 @@ public class MainActivity extends AbstractActivity {
 				startActivity(i);
 			}
 		});
-		new DialogUtils(this).showInfoOnce(AedictApp.getVersion(), AedictApp.format(R.string.whatsNew, AedictApp.getVersion()), getString(R.string.whatsNewText));
+		if (!AedictApp.isInstrumentation) {
+			new DialogUtils(this).showInfoOnce(AedictApp.getVersion(), AedictApp.format(R.string.whatsNew, AedictApp.getVersion()), getString(R.string.whatsNewText));
+		}
 	}
 }
