@@ -303,4 +303,35 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 		}
 		return sb.toString();
 	}
+
+	/**
+	 * Creates an external form of the entry.
+	 * 
+	 * @return the external form, parsable by {@link #fromExternal(String)}.
+	 */
+	public String toExternal() {
+		return kanji + "\1" + reading + "\1" + english;
+	}
+
+	/**
+	 * Parses the external form and creates back the Entry.
+	 * 
+	 * @param external
+	 *            the external form.
+	 * @return the entry instance.
+	 */
+	public static DictEntry fromExternal(final String external) {
+		final String[] contents = new String[3];
+		final int first = external.indexOf(1);
+		contents[0] = external.substring(0, first);
+		final int second = external.indexOf(1, first + 1);
+		contents[1] = external.substring(first + 1, second);
+		contents[2] = external.substring(second + 1);
+		return new DictEntry(contents[0], contents[1], contents[2]);
+	}
+
+	@Override
+	public String toString() {
+		return kanji + " [" + reading + "]: " + english;
+	}
 }

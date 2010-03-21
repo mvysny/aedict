@@ -46,7 +46,7 @@ public class SearchProvider extends ContentProvider {
 	 */
 	public static final String AUTHORITY = "sk.baka.aedict.search";
 
-	private static final String[] COLUMN_NAMES = new String[] { "_id", SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2, SearchManager.SUGGEST_COLUMN_INTENT_ACTION, SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID };
+	private static final String[] COLUMN_NAMES = new String[] { "_id", SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2, SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA };
 	private static final int SEARCH_SUGGEST = 0;
 
 	private static UriMatcher uriMatcher;
@@ -78,9 +78,8 @@ public class SearchProvider extends ContentProvider {
 			entries.add(DictEntry.newErrorMsg(ex.toString()));
 		}
 		Collections.sort(entries);
-		int id = 0;
 		for (final DictEntry entry : entries) {
-			Object[] rowObject = new Object[] { String.valueOf(id++), entry.formatJapanese(), entry.english, "foo", entry };
+			Object[] rowObject = new Object[] { searchString, entry.formatJapanese(), entry.english, entry.toExternal() };
 			cursor.addRow(rowObject);
 		}
 		return cursor;
