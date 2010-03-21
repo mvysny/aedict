@@ -128,4 +128,5 @@
     <string name="resetIntroductionsSummary">All introduction dialogs will be shown again</string>
     <string name="whatsNew">What''s New in %s</string>
     <string name="whatsNewText">- Fixed issue 41: broken search from the detail screen\n- Fixed issue 36: automatic Tanaka dictionary download\n- Fixed issue 38: Radicals overflowing on Archos5\n- Fixed 42: Kanjipad warning message is now shown only once, in a dialog\n- Added this What''s New dialog :-)</string>
+    <string name="searchInEdict">Search in the Edict dictionary</string>
 </resources>

@@ -196,6 +196,18 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 		if (romanize != null && reading != null) {
 			reading = romanize.toRomaji(reading);
 		}
+		text1.setText(formatJapanese());
+		text2.setText(english);
+	}
+
+	/**
+	 * Returns a formatted japanese contents, in the form of {@link #kanji} -
+	 * {@link #reading}. The dash separator is omitted if one of {@link #kanji}
+	 * or {@link #reading} is missing.
+	 * 
+	 * @return a formatted japanese contents.
+	 */
+	public String formatJapanese() {
 		final ListBuilder t1 = new ListBuilder(" - ");
 		if (kanji != null) {
 			t1.add(kanji);
@@ -203,8 +215,7 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 		if (reading != null) {
 			t1.add(reading);
 		}
-		text1.setText(t1.toString());
-		text2.setText(english);
+		return t1.toString();
 	}
 
 	/**
@@ -249,6 +260,28 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 			return result;
 		}
 		return getJapanese().compareTo(another.getJapanese());
+	}
+
+	@Override
+	public int hashCode() {
+		return hashCode(getJapanese()) * 1001 + hashCode(english);
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof DictEntry)) {
+			return false;
+		}
+		final DictEntry o = (DictEntry) other;
+		return equals(getJapanese(), o.getJapanese()) && equals(english, o.english);
+	}
+
+	private int hashCode(Object obj) {
+		return obj == null ? 0 : obj.hashCode();
+	}
+
+	private boolean equals(Object o1, Object o2) {
+		return o1 == null ? o2 == null : o1.equals(o2);
 	}
 
 	private Boolean isCommonNotNull() {

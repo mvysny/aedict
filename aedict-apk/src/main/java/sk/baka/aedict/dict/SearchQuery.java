@@ -225,6 +225,24 @@ public final class SearchQuery implements Serializable {
 	}
 
 	/**
+	 * Creates an EDICT query which searches for an English term.
+	 * 
+	 * @param word
+	 *            the word to search, in English language.
+	 * @param exact
+	 *            if true then performs exact search, if false then performs a
+	 *            substring search.
+	 * @return search query
+	 */
+	public static SearchQuery searchForEnglish(final String word, final boolean exact) {
+		final SearchQuery result = new SearchQuery(DictTypeEnum.Edict);
+		result.query = new String[] { word };
+		result.isJapanese = false;
+		result.matcher = exact ? MatcherEnum.Exact : MatcherEnum.Substring;
+		return result;
+	}
+
+	/**
 	 * Creates an EDICT query which searches for a japanese term.
 	 * 
 	 * @param word
