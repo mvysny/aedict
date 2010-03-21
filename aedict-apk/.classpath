@@ -7,7 +7,7 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/lucene/lucene-core/2.4.1/lucene-core-2.4.1-android.jar" sourcepath="/M2_REPO/org/apache/lucene/lucene-core/2.4.1/lucene-core-2.4.1-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="var" path="M2_REPO/sk/baka/autils/autils/0.4-SNAPSHOT/autils-0.4-SNAPSHOT.jar" sourcepath="/M2_REPO/sk/baka/autils/autils/0.4-SNAPSHOT/autils-0.4-SNAPSHOT-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/sk/baka/autils/autils/0.4/autils-0.4.jar" sourcepath="/M2_REPO/sk/baka/autils/autils/0.4/autils-0.4-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/sk/baka/tools/bakatools/0.5/bakatools-0.5.jar" sourcepath="/M2_REPO/sk/baka/tools/bakatools/0.5/bakatools-0.5-sources.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>
