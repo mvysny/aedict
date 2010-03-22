@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import sk.baka.aedict.dict.AbstractDownloadTask;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DownloadDictTask;
@@ -339,7 +340,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getConfig().getDictionaryLoc());
 			try {
 				LuceneSearch lsKanjidic = null;
-				if (DownloadDictTask.isComplete(DictTypeEnum.Kanjidic)) {
+				if (AbstractDownloadTask.isComplete(DictTypeEnum.Kanjidic)) {
 					lsKanjidic = new LuceneSearch(DictTypeEnum.Kanjidic, null);
 				}
 				try {
