@@ -241,6 +241,7 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	 * {@link DictEntry#isCommon common} words are preferred;</li>
 	 * <li>next, shortest {@link DictEntry#getJapanese() japanese} words are
 	 * preferred (as they usually are the best matches)</li>
+	 * <li>next, more {@link KanjiUtils#getCommonality(String) common} word is preferred</li>
 	 * <li>finally, {@link #getJapanese()} values are compared</li>
 	 * </ul>
 	 */
