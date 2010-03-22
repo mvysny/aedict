@@ -187,7 +187,9 @@ public class Main {
                     new StandardAnalyzer(), true,
                     IndexWriter.MaxFieldLength.UNLIMITED);
             try {
-                indexWithLucene(edict, luceneWriter, fileType);
+                final IDictParser parser = fileType.newParser();
+                indexWithLucene(edict, luceneWriter, parser);
+                parser.onFinish();
                 System.out.println("Optimizing Lucene index");
                 luceneWriter.optimize();
             } finally {
@@ -200,7 +202,7 @@ public class Main {
     }
 
     private static void indexWithLucene(BufferedReader edict,
-            IndexWriter luceneWriter, final FileTypeEnum ft) throws IOException {
+            IndexWriter luceneWriter, final IDictParser parser) throws IOException {
         Document doc = new Document();
         for (String line = edict.readLine(); line != null; line = edict.readLine()) {
             if (line.startsWith("#")) {
@@ -211,7 +213,7 @@ public class Main {
                 // skip blank lines
                 continue;
             }
-            if (ft.addLine(line, doc)) {
+            if (parser.addLine(line, doc)) {
                 luceneWriter.addDocument(doc);
                 doc = new Document();
             }
