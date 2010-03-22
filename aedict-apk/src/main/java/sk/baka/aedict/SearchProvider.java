@@ -25,6 +25,7 @@ import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.MiscUtils;
 import android.app.SearchManager;
 import android.content.ContentProvider;
@@ -62,6 +63,7 @@ public class SearchProvider extends ContentProvider {
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+		final RomanizationEnum romanize = AedictApp.getConfig().isUseRomaji() ? AedictApp.getConfig().getRomanization() : null;
 		final String searchString = uri.getLastPathSegment();
 		final MatrixCursor cursor = new MatrixCursor(COLUMN_NAMES);
 		final List<DictEntry> entries = new ArrayList<DictEntry>();
@@ -79,7 +81,7 @@ public class SearchProvider extends ContentProvider {
 		}
 		Collections.sort(entries);
 		for (final DictEntry entry : entries) {
-			Object[] rowObject = new Object[] { searchString, entry.formatJapanese(), entry.english, entry.toExternal() };
+			Object[] rowObject = new Object[] { searchString, entry.formatJapanese(romanize), entry.english, entry.toExternal() };
 			cursor.addRow(rowObject);
 		}
 		return cursor;

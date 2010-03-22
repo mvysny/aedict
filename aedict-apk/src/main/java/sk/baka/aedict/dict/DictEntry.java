@@ -192,11 +192,7 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	 *            if non-null then katakana/hiragana will be shown as romaji
 	 */
 	public void print(final TextView text1, final TextView text2, final RomanizationEnum romanize) {
-		String reading = this.reading;
-		if (romanize != null && reading != null) {
-			reading = romanize.toRomaji(reading);
-		}
-		text1.setText(formatJapanese());
+		text1.setText(formatJapanese(romanize));
 		text2.setText(english);
 	}
 
@@ -204,13 +200,19 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	 * Returns a formatted japanese contents, in the form of {@link #kanji} -
 	 * {@link #reading}. The dash separator is omitted if one of {@link #kanji}
 	 * or {@link #reading} is missing.
+	 * @param romanize
+	 *            if non-null then katakana/hiragana will be shown as romaji
 	 * 
 	 * @return a formatted japanese contents.
 	 */
-	public String formatJapanese() {
+	public String formatJapanese(final RomanizationEnum romanize) {
 		final ListBuilder t1 = new ListBuilder(" - ");
 		if (kanji != null) {
 			t1.add(kanji);
+		}
+		String reading = this.reading;
+		if (romanize != null && reading != null) {
+			reading = romanize.toRomaji(reading);
 		}
 		if (reading != null) {
 			t1.add(reading);
