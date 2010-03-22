@@ -41,12 +41,14 @@ public enum DictTypeEnum {
 	 */
 	Edict {
 		@Override
-		public String getLuceneQuery(SearchQuery query) {
+		public String[] getLuceneQuery(SearchQuery query) {
 			final ListBuilder sb = new ListBuilder(" OR ");
 			for (final String q : query.query) {
 				sb.add(q.trim());
 			}
-			return sb.toString();
+			// first the common words are returned, then return all the rest
+			// fixes http://code.google.com/p/aedict/issues/detail?id=47
+			return new String[] { "(" + sb + ") AND \\(P\\)", "(" + sb + ") NOT \\(P\\)" };
 		}
 
 		@Override
@@ -145,7 +147,7 @@ public enum DictTypeEnum {
 	 */
 	Kanjidic {
 		@Override
-		public String getLuceneQuery(SearchQuery q) {
+		public String[] getLuceneQuery(SearchQuery q) {
 			// query can be null in case we are performing e.g. a pure SKIP
 			// lookup
 			final ListBuilder qb = new ListBuilder(" AND ");
@@ -172,7 +174,7 @@ public enum DictTypeEnum {
 			if (q.radical != null) {
 				qb.add("radical:" + q.radical);
 			}
-			return qb.toString();
+			return new String[] { qb.toString() };
 		}
 
 		@Override
@@ -266,7 +268,7 @@ public enum DictTypeEnum {
 	 */
 	Tanaka {
 		@Override
-		public String getLuceneQuery(SearchQuery query) {
+		public String[] getLuceneQuery(SearchQuery query) {
 			final ListBuilder result = new ListBuilder(" OR ");
 			for (final String q : query.query) {
 				if (query.isJapanese) {
@@ -276,7 +278,7 @@ public enum DictTypeEnum {
 					result.add("english:" + q);
 				}
 			}
-			return result.toString();
+			return new String[] { result.toString() };
 		}
 
 		@Override
@@ -321,9 +323,11 @@ public enum DictTypeEnum {
 	 * 
 	 * @param query
 	 *            the query.
-	 * @return the Apache Lucene query
+	 * @return the Apache Lucene query, or a list of queries. Must not be null
+	 *         nor empty. If multiple queries are returned they have to be
+	 *         executed in given order.
 	 */
-	public abstract String getLuceneQuery(final SearchQuery query);
+	public abstract String[] getLuceneQuery(final SearchQuery query);
 
 	/**
 	 * The default dictionary location. A directory name without the

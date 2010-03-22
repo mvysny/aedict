@@ -94,24 +94,38 @@ public final class LuceneSearch implements Closeable {
 	 */
 	public List<DictEntry> search(final SearchQuery query, final int maxResults) throws IOException {
 		final List<DictEntry> r = new ArrayList<DictEntry>();
-		final Query parsedQuery;
-		try {
-			parsedQuery = parser.parse(dictType.getLuceneQuery(query));
-		} catch (ParseException e) {
-			// not expected - the SearchQuery object should produce valid query
-			// strings... indicates a bug in Aedict code.
-			throw new RuntimeException(e);
-		}
+		final String[] queries = dictType.getLuceneQuery(query);
+		// 5000 is just an approximate value.
+		// we are searching for an exact match. We cannot simply grab the first
+		// "maxResults" results and filter out non-exact results - we can filter
+		// out all results this way, and the real, exact matches, may remain
+		// unretrieved by Lucene. TODO perhaps a better Lucene query might help.
 		final int maxLuceneResults = query.matcher == MatcherEnum.Exact ? 5000 : maxResults;
-		final TopDocs result = searcher.search(parsedQuery, null, maxLuceneResults);
-		for (final ScoreDoc sd : result.scoreDocs) {
-			final Document doc = searcher.doc(sd.doc);
-			final DictEntry entry = dictType.tryGetEntry(doc, query);
-			if (entry != null) {
-				r.add(entry);
-				if (r.size() >= maxResults) {
-					break;
+		int resultsToFind = maxLuceneResults;
+		for (final String q : queries) {
+			// gradually walk through the queries and fill the result list.
+			final Query parsedQuery;
+			try {
+				parsedQuery = parser.parse(q);
+			} catch (ParseException e) {
+				// not expected - the SearchQuery object should produce valid
+				// query strings... indicates a bug in Aedict code.
+				throw new RuntimeException(e);
+			}
+			final TopDocs result = searcher.search(parsedQuery, null, resultsToFind);
+			for (final ScoreDoc sd : result.scoreDocs) {
+				final Document doc = searcher.doc(sd.doc);
+				final DictEntry entry = dictType.tryGetEntry(doc, query);
+				if (entry != null) {
+					r.add(entry);
+					if (r.size() >= maxResults) {
+						break;
+					}
 				}
+			}
+			resultsToFind = maxLuceneResults - r.size();
+			if (resultsToFind <= 0) {
+				break;
 			}
 		}
 		return r;
