@@ -259,15 +259,21 @@ public class ResultActivity extends ListActivity {
 		}
 
 		public boolean onMenuItemClick(MenuItem item) {
-			final Intent data = new Intent();
-			data.putExtra(SIMEJI_INTENTKEY_REPLACE, stringToReturn);
-			setResult(RESULT_OK, data);
-			finish();
+			returnToSimeji(stringToReturn);
 			return true;
 		}
 
 	}
 
+	private void returnToSimeji(final String stringToReturn) {
+		final Intent data = new Intent(SIMEJI_ACTION_INTERCEPT);
+		data.addCategory("com.adamrocker.android.simeji.REPLACE");
+		data.addCategory("android.intent.category.DEFAULT");
+		data.putExtra(SIMEJI_INTENTKEY_REPLACE, stringToReturn);
+		setResult(RESULT_OK, data);
+		finish();
+	}
+	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		final DictEntry e = model.get(position);
@@ -275,11 +281,7 @@ public class ResultActivity extends ListActivity {
 			return;
 		}
 		if (isSimeji) {
-			final Intent data = new Intent();
-			final String result = query.isJapanese ? e.english : e.getJapanese();
-			data.putExtra(SIMEJI_INTENTKEY_REPLACE, result);
-			setResult(RESULT_OK, data);
-			finish();
+			returnToSimeji(query.isJapanese ? e.english : e.getJapanese());
 		} else {
 			final Intent intent = new Intent(this, EntryDetailActivity.class);
 			intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, e);
