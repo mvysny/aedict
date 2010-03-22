@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 
+import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
@@ -200,6 +201,7 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	 * Returns a formatted japanese contents, in the form of {@link #kanji} -
 	 * {@link #reading}. The dash separator is omitted if one of {@link #kanji}
 	 * or {@link #reading} is missing.
+	 * 
 	 * @param romanize
 	 *            if non-null then katakana/hiragana will be shown as romaji
 	 * 
@@ -258,6 +260,10 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 			return result;
 		}
 		result = getJapanese().length() - another.getJapanese().length();
+		if (result != 0) {
+			return result;
+		}
+		result = getCommonality() - another.getCommonality();
 		if (result != 0) {
 			return result;
 		}
@@ -335,5 +341,20 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	@Override
 	public String toString() {
 		return kanji + " [" + reading + "]: " + english;
+	}
+
+	private int commonality = -1;
+
+	/**
+	 * Computes commonality of this japanese entry, as per
+	 * {@link KanjiUtils#getCommonality(String)}.
+	 * 
+	 * @return the commonality.
+	 */
+	public int getCommonality() {
+		if (commonality == -1) {
+			commonality = KanjiUtils.getCommonality(getJapanese());
+		}
+		return commonality;
 	}
 }
