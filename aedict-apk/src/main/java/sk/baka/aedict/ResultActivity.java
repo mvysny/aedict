@@ -215,6 +215,18 @@ public class ResultActivity extends ListActivity {
 						return true;
 					}
 				}));
+				if (ee.isVerb()) {
+					final MenuItem miShowConjugations = menu.add(Menu.NONE, 7, 7, R.string.showConjugations);
+					miShowConjugations.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+						public boolean onMenuItemClick(MenuItem item) {
+							final Intent intent = new Intent(ResultActivity.this, VerbInflectionActivity.class);
+							intent.putExtra(VerbInflectionActivity.INTENTKEY_ENTRY, ee);
+							startActivity(intent);
+							return true;
+						}
+					}));
+				}
 			}
 		}));
 	}
@@ -273,7 +285,7 @@ public class ResultActivity extends ListActivity {
 		setResult(RESULT_OK, data);
 		finish();
 	}
-	
+
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		final DictEntry e = model.get(position);

@@ -54,6 +54,7 @@
 			<meta-data android:name="android.app.searchable"
 				android:resource="@xml/searchable" />
 		</activity>
+		<activity android:name=".VerbInflectionActivity" android:label="@string/showConjugations" />
 		<provider android:name=".SearchProvider" android:authorities="sk.baka.aedict.search"
 			android:syncable="false" />
 	</application>
