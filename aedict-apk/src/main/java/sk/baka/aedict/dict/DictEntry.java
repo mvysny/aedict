@@ -241,7 +241,8 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	 * {@link DictEntry#isCommon common} words are preferred;</li>
 	 * <li>next, shortest {@link DictEntry#getJapanese() japanese} words are
 	 * preferred (as they usually are the best matches)</li>
-	 * <li>next, more {@link KanjiUtils#getCommonality(String) common} word is preferred</li>
+	 * <li>next, more {@link KanjiUtils#getCommonality(String) common} word is
+	 * preferred</li>
 	 * <li>finally, {@link #getJapanese()} values are compared</li>
 	 * </ul>
 	 */
@@ -357,5 +358,32 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 			commonality = KanjiUtils.getCommonality(getJapanese());
 		}
 		return commonality;
+	}
+
+	/**
+	 * Checks if this entry is a ichidan verb.
+	 * 
+	 * @return true if this entry is a ichidan verb, false otherwise.
+	 */
+	public boolean isIchidan() {
+		return isValid() && english.contains("v1");
+	}
+
+	/**
+	 * Checks if this entry is a godan verb.
+	 * 
+	 * @return true if this entry is a godan verb, false otherwise.
+	 */
+	public boolean isGodan() {
+		return isValid() && english.contains("v5");
+	}
+
+	/**
+	 * Checks if this entry contains a verb.
+	 * 
+	 * @return true if this entry is a verb, false otherwise.
+	 */
+	public boolean isVerb() {
+		return isIchidan() || isGodan();
 	}
 }
