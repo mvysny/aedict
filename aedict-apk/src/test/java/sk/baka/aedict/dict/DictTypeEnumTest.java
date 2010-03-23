@@ -18,10 +18,8 @@
 
 package sk.baka.aedict.dict;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.Assert.*;
+import static sk.baka.tools.test.Assert.*;
 import java.text.ParseException;
 
 import org.apache.lucene.document.Document;
@@ -128,8 +126,8 @@ public class DictTypeEnumTest {
 		final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
 		q.query = new String[] { "foo", "bar" };
 		q.isJapanese = true;
-		assertEquals("japanese:foo OR jp-deinflected:foo OR japanese:bar OR jp-deinflected:bar", DictTypeEnum.Tanaka.getLuceneQuery(q));
+		assertArrayEquals(new String[] { "japanese:foo OR jp-deinflected:foo OR japanese:bar OR jp-deinflected:bar" }, DictTypeEnum.Tanaka.getLuceneQuery(q));
 		q.isJapanese = false;
-		assertEquals("english:foo OR english:bar", DictTypeEnum.Tanaka.getLuceneQuery(q));
+		assertArrayEquals(new String[] { "english:foo OR english:bar" }, DictTypeEnum.Tanaka.getLuceneQuery(q));
 	}
 }
