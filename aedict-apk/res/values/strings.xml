@@ -179,4 +179,6 @@
     <string name="whetherOrNotFormExamples">Kare wa dekiru ka dou ka kikimashou.\nI\'ll ask him whether or not he can do it.\nWatashitachi wa iku ka dou ka mada wakarimasen.\nI don\'t know if we are going yet.\nHideki wa ashita yasumu ka dou ka wakarimasu ka.\nDo you know if Hideki has tomorrow off?</string>
     <string name="maybeILLDoSomething">Maybe I\'ll do something.</string>
     <string name="maybeFormExamples">Watashi wa raishuu Oosaka ni iku kamo shiremasen.\nMaybe I\'ll go to Osaka next week.\n_Jakku_ mo kuru kamo shiremasen.\nJack may also come.\nAshita yuki ga furu kamo shiremasen.\nIt might snow tomorrow.\nAshita ame ga furu kamo shirenai.\nIt might rain tomorrow.\nKonban watashitachi wa soto de taberu kamo shirenai.\nWe may eat out tonight.</string>
+    <string name="showBasic">Show basic</string>
+    <string name="showAdvanced">Show advanced</string>
 </resources>

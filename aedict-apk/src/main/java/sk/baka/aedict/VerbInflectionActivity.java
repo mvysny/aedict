@@ -26,8 +26,15 @@ import java.util.Map;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.kanji.VerbInflection;
+import sk.baka.aedict.kanji.VerbInflection.Form;
+import sk.baka.autils.AndroidUtils;
 import android.app.ExpandableListActivity;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.SimpleExpandableListAdapter;
 
 /**
@@ -45,6 +52,10 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 	 * true if romaji is shown instead of katakana/hiragana.
 	 */
 	private boolean isShowingRomaji;
+	/**
+	 * true if we are showing only {@link Form#basic} forms.
+	 */
+	private boolean isShowingBasicOnly = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +63,21 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 		isShowingRomaji = AedictApp.getConfig().isUseRomaji();
 		entry = (DictEntry) getIntent().getSerializableExtra(INTENTKEY_ENTRY);
 		buildAndSetAdapter();
+		getExpandableListView().setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+
+			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+				final MenuItem miShowRomaji = menu.add(Menu.NONE, 0, 0, isShowingRomaji ? R.string.show_kana : R.string.show_romaji);
+				miShowRomaji.setOnMenuItemClickListener(AndroidUtils.safe(VerbInflectionActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+					public boolean onMenuItemClick(MenuItem item) {
+						isShowingRomaji = !isShowingRomaji;
+						buildAndSetAdapter();
+						return true;
+					}
+
+				}));
+			}
+		});
 	}
 
 	private String convertInflectionProduct(final String romaji) {
@@ -77,6 +103,11 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 		}
 		// now, add all possible inflections
 		for (final VerbInflection.Form form : VerbInflection.ALL_FORMS) {
+			// filter out the form if we are showing basic forms only
+			if (isShowingBasicOnly && !form.basic) {
+				continue;
+			}
+			// okay, add it to the list
 			Map<String, String> data = new HashMap<String, String>(2);
 			data.put(KEY_JP, convertInflectionProduct(form.inflect(entry.reading, isIchidan)));
 			data.put(KEY_EN, getString(form.explanationResId));
@@ -94,5 +125,21 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 		}
 		// set the adapter
 		setListAdapter(new SimpleExpandableListAdapter(this, groupData, R.layout.simple_expandable_list_item_2, new String[] { KEY_JP, KEY_EN }, new int[] { android.R.id.text1, android.R.id.text2 }, childData, R.layout.simple_expandable_list_item_2, new String[] { KEY_JP, KEY_EN }, new int[] { android.R.id.text1, android.R.id.text2 }));
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.removeGroup(0);
+		final MenuItem item2 = menu.add(0, 0, 0, isShowingBasicOnly ? R.string.showAdvanced : R.string.showBasic);
+		item2.setIcon(android.R.drawable.ic_menu_add);
+		item2.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
+
+			public boolean onMenuItemClick(MenuItem item) {
+				isShowingBasicOnly = !isShowingBasicOnly;
+				buildAndSetAdapter();
+				return true;
+			}
+		}));
+		return true;
 	}
 }
