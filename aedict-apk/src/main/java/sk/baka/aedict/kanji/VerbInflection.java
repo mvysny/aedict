@@ -21,6 +21,9 @@ package sk.baka.aedict.kanji;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.StringTokenizer;
+
+import android.content.Context;
 
 import sk.baka.aedict.R;
 
@@ -353,64 +356,64 @@ public final class VerbInflection {
 	 * The verb's "Do something!" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson10.htm
 	 */
-	public static final Form SIMPLE_COMMAND_FORM = new Form(new Base2Inflector(), "nasai", true, -1, new int[] {});
+	public static final Form SIMPLE_COMMAND_FORM = new Form(new Base2Inflector(), "nasai", true, R.string.doSomething, R.string.simpleCommandExamples);
 	/**
 	 * The verb's "I'm going to do something" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson13.htm
 	 */
-	public static final Form GOING_FORM = new Form(new Base2Inflector(), " ni iku", true, -1, new int[] {});
+	public static final Form GOING_FORM = new Form(new Base2Inflector(), " ni iku", true, R.string.imGoingToDoSomething, R.string.goingFormExamples);
 	/**
 	 * The verb's "I'm going to arrive" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson13.htm
 	 */
-	public static final Form ARRIVE_FORM = new Form(new Base2Inflector(), " ni kuru", true, -1, new int[] {});
+	public static final Form ARRIVE_FORM = new Form(new Base2Inflector(), " ni kuru", true, R.string.imGoingToArrive, R.string.arriveFormExamples);
 	/**
 	 * The verb's "It is hard to do something" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson14.htm
 	 */
-	public static final Form HARD_TO_DO_FORM = new Form(new Base2Inflector(), "nikui", false, -1, new int[] {});
+	public static final Form HARD_TO_DO_FORM = new Form(new Base2Inflector(), "nikui", false, R.string.itIsHardToDoSomething, R.string.hardToDoFormExamples);
 	/**
 	 * The verb's "It is easy to do something." form:
 	 * http://www.timwerx.net/language/jpverbs/lesson14.htm
 	 */
-	public static final Form EASY_TO_DO_FORM = new Form(new Base2Inflector(), "yasui", false, -1, new int[] {});
+	public static final Form EASY_TO_DO_FORM = new Form(new Base2Inflector(), "yasui", false, R.string.itIsEasyToDoSomething, R.string.easyToDoFormExamples);
 	/**
 	 * The verb's "I went too far doing something." form:
 	 * http://www.timwerx.net/language/jpverbs/lesson15.htm
 	 */
-	public static final Form GO_TOO_FAR_FORM = new Form(new Base2Inflector(), "sugiru", false, -1, new int[] {});
+	public static final Form GO_TOO_FAR_FORM = new Form(new Base2Inflector(), "sugiru", false, R.string.iWentTooFarDoingSomething, R.string.goTooFarFormExamples);
 	/**
 	 * The verb's "I did X while I was doing Y." form:
 	 * http://www.timwerx.net/language/jpverbs/lesson16.htm
 	 */
-	public static final Form WHILE_DOING_FORM = new Form(new Base2Inflector(), "nagara", false, -1, new int[] {});
+	public static final Form WHILE_DOING_FORM = new Form(new Base2Inflector(), "nagara", false, R.string.iDidXWhileIWasDoingY, R.string.whileDoingFormExamples);
 	/**
 	 * The verb's "I do not do something." form:
 	 * http://www.timwerx.net/language/jpverbs/lesson17.htm
 	 */
-	public static final Form NEGATIVE_FORM = new Form(new Base1Inflector(), "nai", true, -1, new int[] {});
+	public static final Form NEGATIVE_FORM = new Form(new Base1Inflector(), "nai", true, R.string.iDoNotDoSomething, R.string.negativeFormExamples);
 	/**
 	 * The verb's "I probably do not do something." form:
 	 * http://www.timwerx.net/language/jpverbs/lesson18.htm
 	 */
-	public static final Form PROBABLE_NEGATIVE_FORM = new Form(new Base1Inflector(), "nai desyou", true, -1, new int[] {});
+	public static final Form PROBABLE_NEGATIVE_FORM = new Form(new Base1Inflector(), "nai desyou", true, R.string.iProbablyDoNotDoSomething, R.string.probableNegativeFormExamples);
 	/**
 	 * The verb's "I didn't do something." form:
 	 * http://www.timwerx.net/language/jpverbs/lesson19.htm
 	 */
-	public static final Form NEGATIVE_PAST_FORM = new Form(new Base1Inflector(), "nakatta", true, -1, new int[] {});
+	public static final Form NEGATIVE_PAST_FORM = new Form(new Base1Inflector(), "nakatta", true, R.string.iDidNotDoSomething, R.string.negativePastFormExamples);
 	/**
 	 * The verb's "If I do not do something" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson20.htm
 	 */
-	public static final Form NEGATIVE_CONDITIONAL_FORM = new Form(new Base1Inflector(), "nakereba", false, -1, new int[] {});
+	public static final Form NEGATIVE_CONDITIONAL_FORM = new Form(new Base1Inflector(), "nakereba", false, R.string.ifIDoNotDoSomething, R.string.negativeConditionalFormExamples);
 	/**
 	 * The verb's "I have to do something (It won't go otherwise)" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson21.htm
 	 */
-	public static final Form HAS_TO_FORM = new Form(new Base1Inflector(), "nakereba narimasen", true, -1, new int[] {});
+	public static final Form HAS_TO_FORM = new Form(new Base1Inflector(), "nakereba narimasen", true, R.string.iHaveToDoSomething, R.string.hasToFormExamples);
 	/**
-	 * The verb's "I'll let/have/make him to do something" form:
+	 * The verb's "I'll let/have/make him do something" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson22.htm
 	 */
 	public static final Form LET_HIM_FORM = new LetHimForm();
@@ -466,20 +469,75 @@ public final class VerbInflection {
 		 */
 		public final int explanationResId;
 		/**
-		 * A new-line-separated list of example sentences, first in Japanese (a {@link RomanizationEnum#Hepburn}-romanized), then in English.
+		 * A new-line-separated list of example sentences, first in Japanese (a
+		 * {@link RomanizationEnum#Hepburn}-romanized), then in English. The
+		 * Japanese are directly taken from Tim Matheson's site, with very minor
+		 * alternations. Therefore, you'll have to:
+		 * <ul>
+		 * <li>Convert the jp string to lower case</li>
+		 * <li>Convert a lone-standing wa into ha</li>
+		 * <li>Convert a lone o to wo</li>
+		 * <li>Convert _text_ to katakana</li>
+		 * </ul>
 		 */
 		public final int examples;
+
+		/**
+		 * Returns the examples as a list of string pairs.
+		 * 
+		 * @param context
+		 *            used to resolve the string
+		 * @param romanization
+		 *            use optionally this romanization for Japanese sentences.
+		 *            May be null.
+		 * @return a list of pairs: first pair item is the Japanese sentence,
+		 *         second pair item is the English translation. Never null.
+		 */
+		public String[][] getExamples(final Context context, final RomanizationEnum romanization) {
+			final String[] e = context.getString(examples).split("\n");
+			final String[][] result = new String[e.length / 2][];
+			for (int i = 0; i < e.length / 2; i++) {
+				final String english = e[i * 2 + 1];
+				String japanese = e[i * 2].toLowerCase();
+				// fix wa and o
+				japanese = japanese.replaceAll("\\s+wa\\s+", " ha ").replaceAll("\\s+o\\s+", " wo ");
+				// convert words marked with _ to katakana
+				boolean inUnderscore = false;
+				final StringBuilder jp = new StringBuilder(japanese.length());
+				for (final StringTokenizer t = new StringTokenizer(japanese, "_"); t.hasMoreElements();) {
+					final String token = t.nextToken();
+					jp.append(inUnderscore ? RomanizationEnum.Hepburn.toKatakana(token) : token);
+					inUnderscore = !inUnderscore;
+				}
+				japanese = RomanizationEnum.Hepburn.toHiragana(jp.toString());
+				if (romanization != null) {
+					japanese = romanization.toRomaji(japanese);
+				}
+				result[i] = new String[] { japanese, english };
+			}
+			return result;
+		}
+
 		/**
 		 * If true this expression is widely used.
 		 */
 		public final boolean frequent;
+
 		/**
 		 * Creates a new form object instance.
-		 * @param inflector the verb inflector, denotes the required base of the verb.
-		 * @param suffix additional suffix to add to the inflected verb
-		 * @param frequent if true this expression is widely used
-		 * @param explanationResId explanation of the form (e.g. I don't do something).
-		 * @param examples a new-line-separated list of example sentences, first in Japanese (a {@link RomanizationEnum#Hepburn}-romanized), then in English.
+		 * 
+		 * @param inflector
+		 *            the verb inflector, denotes the required base of the verb.
+		 * @param suffix
+		 *            additional suffix to add to the inflected verb
+		 * @param frequent
+		 *            if true this expression is widely used
+		 * @param explanationResId
+		 *            explanation of the form (e.g. I don't do something).
+		 * @param examples
+		 *            a new-line-separated list of example sentences, first in
+		 *            Japanese (a {@link RomanizationEnum#Hepburn}-romanized),
+		 *            then in English.
 		 */
 		protected Form(final AbstractBaseInflector inflector, final String suffix, final boolean frequent, final int explanationResId, final int examples) {
 			this(inflector, suffix, null, frequent, explanationResId, examples);
@@ -487,12 +545,23 @@ public final class VerbInflection {
 
 		/**
 		 * Creates a new form object instance.
-		 * @param inflector the verb inflector, denotes the required base of the verb.
-		 * @param suffixGodan additional suffix to add to the inflected verb, only applicable to Godan verbs.
-		 * @param suffixIchidan additional suffix to add to the inflected verb, only applicable to Ichidan verbs.
-		 * @param frequent if true this expression is widely used
-		 * @param explanationResId explanation of the form (e.g. I don't do something).
-		 * @param examples a new-line-separated list of example sentences, first in Japanese  (a {@link RomanizationEnum#Hepburn}-romanized), then in English.
+		 * 
+		 * @param inflector
+		 *            the verb inflector, denotes the required base of the verb.
+		 * @param suffixGodan
+		 *            additional suffix to add to the inflected verb, only
+		 *            applicable to Godan verbs.
+		 * @param suffixIchidan
+		 *            additional suffix to add to the inflected verb, only
+		 *            applicable to Ichidan verbs.
+		 * @param frequent
+		 *            if true this expression is widely used
+		 * @param explanationResId
+		 *            explanation of the form (e.g. I don't do something).
+		 * @param examples
+		 *            a new-line-separated list of example sentences, first in
+		 *            Japanese (a {@link RomanizationEnum#Hepburn}-romanized),
+		 *            then in English.
 		 */
 		protected Form(final AbstractBaseInflector inflector, final String suffixGodan, final String suffixIchidan, final boolean frequent, final int explanationResId, final int examples) {
 			this.inflector = inflector;
@@ -524,7 +593,7 @@ public final class VerbInflection {
 	protected static final class LetHimForm extends Form {
 
 		protected LetHimForm() {
-			super(new Base1Inflector(), "seru", "saseru", false, -1, new int[] {});
+			super(new Base1Inflector(), "seru", "saseru", false, R.string.iLLLetHimDoSomething, R.string.letHimFormExamples);
 		}
 
 		@Override
