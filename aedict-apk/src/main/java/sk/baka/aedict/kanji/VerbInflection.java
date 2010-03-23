@@ -393,7 +393,7 @@ public final class VerbInflection {
 	 * The verb's "Do something!" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson10.htm
 	 */
-	public static final Form SIMPLE_COMMAND_FORM = new Form(new Base2Inflector(), "nasai", true, R.string.doSomething, R.string.simpleCommandExamples);
+	public static final Form SIMPLE_COMMAND_FORM = new Form(new Base2Inflector(), "nasai", false, R.string.doSomething, R.string.simpleCommandExamples);
 	/**
 	 * The verb's "I'm going to do something" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson13.htm
@@ -433,7 +433,7 @@ public final class VerbInflection {
 	 * The verb's "I probably do not do something." form:
 	 * http://www.timwerx.net/language/jpverbs/lesson18.htm
 	 */
-	public static final Form PROBABLE_NEGATIVE_FORM = new Form(new Base1Inflector(), "nai desyou", true, R.string.iProbablyDoNotDoSomething, R.string.probableNegativeFormExamples);
+	public static final Form PROBABLE_NEGATIVE_FORM = new Form(new Base1Inflector(), "nai desyou", false, R.string.iProbablyDoNotDoSomething, R.string.probableNegativeFormExamples);
 	/**
 	 * The verb's "I didn't do something." form:
 	 * http://www.timwerx.net/language/jpverbs/lesson19.htm
@@ -463,12 +463,12 @@ public final class VerbInflection {
 	 * The verb's "I'll probably do something" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson24.htm
 	 */
-	public static final Form PROBABLE_FORM = new Form(new Base3Inflector(), " desyou", true, R.string.iLLProbablyDoSomething, R.string.probableFormExamples);
+	public static final Form PROBABLE_FORM = new Form(new Base3Inflector(), " desyou", false, R.string.iLLProbablyDoSomething, R.string.probableFormExamples);
 	/**
 	 * The verb's "I plan to do something" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson25.htm
 	 */
-	public static final Form PLAN_FORM = new Form(new Base3Inflector(), " hazu", true, R.string.iPlanToDoSomething, R.string.planFormExamples);
+	public static final Form PLAN_FORM = new Form(new Base3Inflector(), " hazu", false, R.string.iPlanToDoSomething, R.string.planFormExamples);
 	/**
 	 * The verb's "I should do something" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson26.htm
@@ -561,7 +561,7 @@ public final class VerbInflection {
 		/**
 		 * If true this expression is widely used.
 		 */
-		public final boolean frequent;
+		public final boolean basic;
 
 		/**
 		 * Creates a new form object instance.
@@ -570,8 +570,8 @@ public final class VerbInflection {
 		 *            the verb inflector, denotes the required base of the verb.
 		 * @param suffix
 		 *            additional suffix to add to the inflected verb
-		 * @param frequent
-		 *            if true this expression is widely used
+		 * @param basic
+		 *            if true this expression is a basic one
 		 * @param explanationResId
 		 *            explanation of the form (e.g. I don't do something).
 		 * @param examples
@@ -579,8 +579,8 @@ public final class VerbInflection {
 		 *            Japanese (a {@link RomanizationEnum#Hepburn}-romanized),
 		 *            then in English.
 		 */
-		protected Form(final AbstractBaseInflector inflector, final String suffix, final boolean frequent, final int explanationResId, final int examples) {
-			this(inflector, suffix, null, frequent, explanationResId, examples);
+		protected Form(final AbstractBaseInflector inflector, final String suffix, final boolean basic, final int explanationResId, final int examples) {
+			this(inflector, suffix, null, basic, explanationResId, examples);
 		}
 
 		/**
@@ -594,8 +594,8 @@ public final class VerbInflection {
 		 * @param suffixIchidan
 		 *            additional suffix to add to the inflected verb, only
 		 *            applicable to Ichidan verbs.
-		 * @param frequent
-		 *            if true this expression is widely used
+		 * @param basic
+		 *            if true this form is a basic one.
 		 * @param explanationResId
 		 *            explanation of the form (e.g. I don't do something).
 		 * @param examples
@@ -603,11 +603,11 @@ public final class VerbInflection {
 		 *            Japanese (a {@link RomanizationEnum#Hepburn}-romanized),
 		 *            then in English.
 		 */
-		protected Form(final AbstractBaseInflector inflector, final String suffixGodan, final String suffixIchidan, final boolean frequent, final int explanationResId, final int examples) {
+		protected Form(final AbstractBaseInflector inflector, final String suffixGodan, final String suffixIchidan, final boolean basic, final int explanationResId, final int examples) {
 			this.inflector = inflector;
 			this.suffix = suffixGodan;
 			this.suffixIchidan = suffixIchidan;
-			this.frequent = frequent;
+			this.basic = basic;
 			this.explanationResId = explanationResId;
 			this.examples = examples;
 		}
