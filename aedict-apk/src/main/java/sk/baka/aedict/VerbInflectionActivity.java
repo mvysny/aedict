@@ -18,30 +18,29 @@
 package sk.baka.aedict;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.kanji.VerbInflection;
-import android.app.ListActivity;
+import android.app.ExpandableListActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.TwoLineListItem;
+import android.widget.SimpleExpandableListAdapter;
 
 /**
  * Shows possible verb inflections, with examples.
  * 
  * @author Martin Vysny
  */
-public class VerbInflectionActivity extends ListActivity {
+public class VerbInflectionActivity extends ExpandableListActivity {
 	/**
 	 * Expects {@link DictEntry} to be present in the Intent.
 	 */
 	public static final String INTENTKEY_ENTRY = "entry";
 	private DictEntry entry;
-	private List<String[]> model;
 	/**
 	 * true if romaji is shown instead of katakana/hiragana.
 	 */
@@ -52,32 +51,48 @@ public class VerbInflectionActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		isShowingRomaji = AedictApp.getConfig().isUseRomaji();
 		entry = (DictEntry) getIntent().getSerializableExtra(INTENTKEY_ENTRY);
-		final boolean isIchidan = entry.isIchidan();
-		model = new ArrayList<String[]>();
-		for (final VerbInflection.AbstractBaseInflector inflector : VerbInflection.INFLECTORS) {
-			model.add(new String[] { convert(inflector.inflect(entry.reading, isIchidan)), inflector.getName() });
-		}
-		for (final VerbInflection.Form form : VerbInflection.ALL_FORMS) {
-			model.add(new String[] { convert(form.inflect(entry.reading, isIchidan)), getString(form.explanationResId) });
-		}
-		getListView().setAdapter(new ArrayAdapter<String[]>(this, android.R.layout.simple_list_item_2, model) {
-
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
-				TwoLineListItem view = (TwoLineListItem) convertView;
-				if (view == null) {
-					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
-				}
-				view.getText1().setText(model.get(position)[0]);
-				view.getText2().setText(model.get(position)[1]);
-				return view;
-			}
-
-		});
+		buildAndSetAdapter();
 	}
 
-	private String convert(final String romaji) {
+	private String convertInflectionProduct(final String romaji) {
 		final String kana = RomanizationEnum.NihonShiki.toHiragana(romaji);
 		return isShowingRomaji ? AedictApp.getConfig().getRomanization().toRomaji(kana) : kana;
+	}
+
+	private static final String KEY_JP = "jp";
+	private static final String KEY_EN = "en";
+
+	private void buildAndSetAdapter() {
+		final boolean isIchidan = entry.isIchidan();
+		final RomanizationEnum romanization = !isShowingRomaji ? null : AedictApp.getConfig().getRomanization();
+		final List<Map<String, String>> groupData = new ArrayList<Map<String, String>>();
+		final List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();
+		// first, add all Base-x inflections
+		for (final VerbInflection.AbstractBaseInflector inflector : VerbInflection.INFLECTORS) {
+			final Map<String, String> data = new HashMap<String, String>(2);
+			data.put(KEY_JP, convertInflectionProduct(inflector.inflect(entry.reading, isIchidan)));
+			data.put(KEY_EN, inflector.getName());
+			groupData.add(data);
+			childData.add(Collections.<Map<String, String>> emptyList());
+		}
+		// now, add all possible inflections
+		for (final VerbInflection.Form form : VerbInflection.ALL_FORMS) {
+			Map<String, String> data = new HashMap<String, String>(2);
+			data.put(KEY_JP, convertInflectionProduct(form.inflect(entry.reading, isIchidan)));
+			data.put(KEY_EN, getString(form.explanationResId));
+			groupData.add(data);
+			// add example sentences as a sublist
+			final String[][] examples = form.getExamples(this, romanization);
+			final List<Map<String, String>> childDataItem = new ArrayList<Map<String, String>>();
+			for (final String[] pair : examples) {
+				data = new HashMap<String, String>(2);
+				data.put(KEY_JP, pair[0]);
+				data.put(KEY_EN, pair[1]);
+				childDataItem.add(data);
+			}
+			childData.add(childDataItem);
+		}
+		// set the adapter
+		setListAdapter(new SimpleExpandableListAdapter(this, groupData, R.layout.simple_expandable_list_item_2, new String[] { KEY_JP, KEY_EN }, new int[] { android.R.id.text1, android.R.id.text2 }, childData, R.layout.simple_expandable_list_item_2, new String[] { KEY_JP, KEY_EN }, new int[] { android.R.id.text1, android.R.id.text2 }));
 	}
 }

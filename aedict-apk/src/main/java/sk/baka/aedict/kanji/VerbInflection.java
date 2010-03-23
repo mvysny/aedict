@@ -541,10 +541,13 @@ public final class VerbInflection {
 				// convert words marked with _ to katakana
 				boolean inUnderscore = false;
 				final StringBuilder jp = new StringBuilder(japanese.length());
-				for (final StringTokenizer t = new StringTokenizer(japanese, "_"); t.hasMoreElements();) {
+				for (final StringTokenizer t = new StringTokenizer(japanese, "_", true); t.hasMoreElements();) {
 					final String token = t.nextToken();
-					jp.append(inUnderscore ? RomanizationEnum.Hepburn.toKatakana(token) : token);
-					inUnderscore = !inUnderscore;
+					if (token.equals("_")) {
+						inUnderscore = !inUnderscore;
+					} else {
+						jp.append(inUnderscore ? RomanizationEnum.Hepburn.toKatakana(token) : token);
+					}
 				}
 				japanese = RomanizationEnum.Hepburn.toHiragana(jp.toString());
 				if (romanization != null) {
