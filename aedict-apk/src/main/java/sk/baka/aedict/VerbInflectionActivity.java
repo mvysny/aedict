@@ -41,7 +41,7 @@ public class VerbInflectionActivity extends ListActivity {
 	 */
 	public static final String INTENTKEY_ENTRY = "entry";
 	private DictEntry entry;
-	private List<String> model;
+	private List<String[]> model;
 	/**
 	 * true if romaji is shown instead of katakana/hiragana.
 	 */
@@ -53,14 +53,14 @@ public class VerbInflectionActivity extends ListActivity {
 		isShowingRomaji = AedictApp.getConfig().isUseRomaji();
 		entry = (DictEntry) getIntent().getSerializableExtra(INTENTKEY_ENTRY);
 		final boolean isIchidan = entry.isIchidan();
-		model = new ArrayList<String>();
+		model = new ArrayList<String[]>();
 		for (final VerbInflection.AbstractBaseInflector inflector : VerbInflection.INFLECTORS) {
-			model.add(convert(inflector.inflect(entry.reading, isIchidan)));
+			model.add(new String[] { convert(inflector.inflect(entry.reading, isIchidan)), inflector.getName() });
 		}
 		for (final VerbInflection.Form form : VerbInflection.ALL_FORMS) {
-			model.add(convert(form.inflect(entry.reading, isIchidan)));
+			model.add(new String[] { convert(form.inflect(entry.reading, isIchidan)), getString(form.explanationResId) });
 		}
-		getListView().setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_2, model) {
+		getListView().setAdapter(new ArrayAdapter<String[]>(this, android.R.layout.simple_list_item_2, model) {
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
@@ -68,7 +68,8 @@ public class VerbInflectionActivity extends ListActivity {
 				if (view == null) {
 					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
 				}
-				view.getText1().setText(model.get(position));
+				view.getText1().setText(model.get(position)[0]);
+				view.getText2().setText(model.get(position)[1]);
 				return view;
 			}
 

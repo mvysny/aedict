@@ -57,6 +57,11 @@ public final class VerbInflection {
 		protected String inflectSuru() {
 			return "si";
 		}
+
+		@Override
+		public String getName() {
+			return "Base 1";
+		}
 	}
 
 	private final static class Base2Inflector extends AbstractBaseInflector {
@@ -78,6 +83,11 @@ public final class VerbInflection {
 		@Override
 		protected String inflectSuru() {
 			return "si";
+		}
+
+		@Override
+		public String getName() {
+			return "Base 2";
 		}
 	}
 
@@ -101,6 +111,11 @@ public final class VerbInflection {
 		protected String inflectSuru() {
 			return "suru";
 		}
+
+		@Override
+		public String getName() {
+			return "Base 3";
+		}
 	}
 
 	private final static class Base4Inflector extends AbstractBaseInflector {
@@ -123,6 +138,11 @@ public final class VerbInflection {
 		protected String inflectSuru() {
 			return "sure";
 		}
+
+		@Override
+		public String getName() {
+			return "Base 4";
+		}
 	}
 
 	private final static class Base5Inflector extends AbstractBaseInflector {
@@ -144,6 +164,11 @@ public final class VerbInflection {
 		@Override
 		protected String inflectSuru() {
 			return "siyou";
+		}
+
+		@Override
+		public String getName() {
+			return "Base 5";
 		}
 	}
 
@@ -252,6 +277,13 @@ public final class VerbInflection {
 			}
 			return inflectGodan(romanized);
 		}
+
+		/**
+		 * Returns a displayable name of this inflection.
+		 * 
+		 * @return the displayable name, never null.
+		 */
+		public abstract String getName();
 	}
 
 	private static abstract class AbstractBaseTeTaInflector extends AbstractBaseInflector {
@@ -295,6 +327,11 @@ public final class VerbInflection {
 		@Override
 		protected final String inflectSuru() {
 			return "sit" + ending;
+		}
+
+		@Override
+		public final String getName() {
+			return "Base T" + ending;
 		}
 	}
 
@@ -421,32 +458,32 @@ public final class VerbInflection {
 	 * The verb's "I did X without doing Y" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson23.htm
 	 */
-	public static final Form DID_X_WITHOUT_DOING_Y_FORM = new Form(new Base1Inflector(), "zu ni", false, -1, new int[] {});
+	public static final Form DID_X_WITHOUT_DOING_Y_FORM = new Form(new Base1Inflector(), "zu ni", false, R.string.iDidXWithoutDoingY, R.string.didXWithoutDoingYFormExamples);
 	/**
 	 * The verb's "I'll probably do something" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson24.htm
 	 */
-	public static final Form PROBABLE_FORM = new Form(new Base3Inflector(), " desyou", true, -1, new int[] {});
+	public static final Form PROBABLE_FORM = new Form(new Base3Inflector(), " desyou", true, R.string.iLLProbablyDoSomething, R.string.probableFormExamples);
 	/**
 	 * The verb's "I plan to do something" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson25.htm
 	 */
-	public static final Form PLAN_FORM = new Form(new Base3Inflector(), " hazu", true, -1, new int[] {});
+	public static final Form PLAN_FORM = new Form(new Base3Inflector(), " hazu", true, R.string.iPlanToDoSomething, R.string.planFormExamples);
 	/**
 	 * The verb's "I should do something" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson26.htm
 	 */
-	public static final Form SHOULD_FORM = new Form(new Base3Inflector(), " hou ga ii", true, -1, new int[] {});
+	public static final Form SHOULD_FORM = new Form(new Base3Inflector(), " hou ga ii", true, R.string.iShouldDoSomething, R.string.shouldFormExamples);
 	/**
 	 * The verb's "I don't know whether I do something or not." form:
 	 * http://www.timwerx.net/language/jpverbs/lesson27.htm
 	 */
-	public static final Form WHETHER_OR_NOT_FORM = new Form(new Base3Inflector(), " ka dou ka", false, -1, new int[] {});
+	public static final Form WHETHER_OR_NOT_FORM = new Form(new Base3Inflector(), " ka dou ka", false, R.string.iDontKnowWhetherIDoSomethingOrNot, R.string.whetherOrNotFormExamples);
 	/**
 	 * The verb's "Maybe I'll do something." form:
 	 * http://www.timwerx.net/language/jpverbs/lesson28.htm
 	 */
-	public static final Form MAYBE_FORM = new Form(new Base3Inflector(), " kamo siremasen", true, -1, new int[] {});
+	public static final Form MAYBE_FORM = new Form(new Base3Inflector(), " kamo siremasen", true, R.string.maybeILLDoSomething, R.string.maybeFormExamples);
 	/**
 	 * A list of all forms, ordered as in the
 	 * http://www.timwerx.net/language/jpverbs/index.htm#contents table of
