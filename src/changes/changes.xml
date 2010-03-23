@@ -5,14 +5,32 @@
 	</properties>
 	<body>
 		<release version="1.0" date="3. April 2010">
+			<action dev="vyzivus" type="fix">
+				Fixed: ボッブ was not correctly romanized to bobbu.
+			</action>
+			<action dev="vyzivus" type="fix" issue="47">
+				Searching for hana yelds only the "nose" result.
+			</action>
+			<action dev="vyzivus" type="update" issue="39">
+				Sort ordering is better in Tagaini Jisho. Fixed by performing ordering also by kanji commonality.
+			</action>
+			<action dev="vyzivus" type="add" issue="49">
+				Pressing the 'search' button should open the Search Activity. Note that this works only with Android 1.6.
+			</action>
+			<action dev="vyzivus" type="update" issue="48">
+				The Configuration dialog should receive the standard Android config dialog look.
+			</action>
+			<action dev="vyzivus" type="fix" issue="44">
+				Fixed: Crash selecting examples in Tanaka dict.
+			</action>
 			<action dev="vyzivus" type="add">
 				Added a What''s New dialog
 			</action>
 			<action dev="vyzivus" type="update" issue="42">
-				Kanjipad warning message is now shown only once, in a dialog
+				Kanjipad warning message is now shown only once, in a dialog.
 			</action>
 			<action dev="vyzivus" type="fix" issue="38">
-				Fixed Radicals overflowing on Archos5
+				Fixed Radicals overflowing on Archos5.
 			</action>
 			<action dev="vyzivus" type="fix" issue="36">
 				Automatic Tanaka dictionary download now works correctly.
