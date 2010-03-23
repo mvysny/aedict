@@ -126,8 +126,21 @@
     <string name="showSod">Show stroke order</string>
     <string name="resetIntroductions">Reset introductions</string>
     <string name="resetIntroductionsSummary">All introduction dialogs will be shown again</string>
-    <string name="whatsNew">What''s New in %s</string>
+    <string name="whatsNew">What\'s New in %s</string>
     <string name="whatsNewText">- Fixed issue 41: broken search from the detail screen\n- Fixed issue 36: automatic Tanaka dictionary download\n- Fixed issue 38: Radicals overflowing on Archos5\n- Fixed 42: Kanjipad warning message is now shown only once, in a dialog\n- Added this What''s New dialog :-)</string>
     <string name="searchInEdict">Search in the Edict dictionary</string>
     <string name="showConjugations">Show verb conjugations</string>
+    <string name="iDoSomething">I do something.</string>
+    <string name="plainFormExamples">Mama wa mise de banana o kau.\nMom buys/will buy bananas at the store.\nJim wa manga o yomu.\nJim will read a comic book.\nOjii-san wa sugu kaeru.\nGrandpa will return soon.\nWatashi wa ringo o taberu.\nI\'ll eat an apple.\nNaomi wa terebi o miru.\nNaomi will watch TV.</string>
+    <string name="politeFormExamples">Mama wa mise de banana o kaimasu.\nMom buys/will buy bananas at the store.\nJim wa manga o yomimasu.\nJim will read a comic book.\nOjii-san wa sugu kaerimasu.\nGrandpa will return soon.\nWatashi wa ashita kimemasu.\nI\'ll decide tomorrow.\nJerry wa sugu heya kara demasu.\nJerry will come out of the room soon.\nAyako wa mainichi terebi o mimasu.\nAyako watches the TV every day.</string>
+    <string name="iDoNotDoSomething">I do not do something.</string>
+    <string name="politeNegativeFormExamples">Watashi wa kasa o kaimasen.\nI\'m not going to buy an umbrella.\nKare wa machimasen.\nHe won\'t wait.\nKimiko wa Osaka ni ikimasen.\nKimiko isn\'t going to Osaka.\nWatashi wa ima tabemasen.\nI\'m not going to eat now.\nKanojo wa kasa o karimasen.\nShe isn\'t going to borrow an umbrella.</string>
+    <string name="iDidSomething">I did something.</string>
+    <string name="politePastFormExamples">John wa Sendai ni ikimashita.\nJohn went to Sendai.\nKodomotachi wa kouen de asobimashita.\nThe children played at the park.\nYoshi wa ringo o tabemashita.\nYoshi ate an apple.\nShizu wa manga o kaimashita.\nShizu bought a comic book.\nBob wa sono eiga o mimashita.\nBob saw that movie.</string>
+    <string name="iDidNotDoSomething">I didn't do something.</string>
+    <string name="politePastNegativeFormExamples">John wa Sendai ni ikimasen deshita.\nJohn didn\'t go to Sendai.\nKodomotachi wa kouen de asobimasen deshita.\nThe children didn\'t play at the park.\nYoshi wa ringo o tabemasen deshita.\nYoshi didn\'t eat an apple.</string>
+    <string name="iWantToDoSomething">I want to do something.</string>
+    <string name="wantFormExamples">Watashi wa kasa o kaitai.\nI want to buy an umbrella.\nKodomotachi wa asobitai.\nThe children want to play.\nBob wa tempura o tabetai desu.\nBob wants to eat tempura.\nMiki wa sono eiga o mitai desu.\nMiki wants to see that movie.\nWatakushi wa kasa o kaitakunai.\nI don\'t want to buy an umbrella.\nKodomotachi wa asobitakunai.\nThe children don\'t want to play.\nTerebi o mitakereba, yuushoku o hayaku tabenasai.\nIf you want to watch TV, hurry and eat your dinner.\nShichiji no densha ni noritakereba, ashita hayaku okimashou.\nIf you want to make the 7:00 train, let\'s get up early tomorrow.</string>
+    <string name="letsDoSomething">Let\'s do something</string>
+    <string name="letsFormExamples">Ikimashou.\nLet\'s go.\nTabemashou.\nLet\'s eat.\nYasumimashou.\nLet\'s take a break.\nWatashi ga hakobimashou.\nI\'ll carry this / these [for you].\nEsa o agemashou.\n(To a pet) Let\'s get you some food.\nAnata no jitensha o naoshimashou.\nI\'ll fix your bicycle. / I\'ll help you fix your bicycle.</string>
 </resources>

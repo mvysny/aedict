@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import sk.baka.aedict.R;
+
 /**
  * Holds rules for verb inflection and also provides examples of inflected
  * verbs.
@@ -313,40 +315,40 @@ public final class VerbInflection {
 	public static final List<AbstractBaseInflector> INFLECTORS = Collections.unmodifiableList(Arrays.asList(new Base1Inflector(), new Base2Inflector(), new Base3Inflector(), new Base4Inflector(), new Base5Inflector(), new BaseTeInflector(), new BaseTaInflector()));
 
 	/**
-	 * The verb's plain form:
+	 * The verb's plain form - I do something:
 	 * http://www.timwerx.net/language/jpverbs/lesson1.htm
 	 */
-	public static final Form PLAIN_FORM = new Form(new Base3Inflector(), "", true, -1, new int[] {});
+	public static final Form PLAIN_FORM = new Form(new Base3Inflector(), "", true, R.string.iDoSomething, R.string.plainFormExamples);
 	/**
 	 * The verb's polite plain form (I do something):
 	 * http://www.timwerx.net/language/jpverbs/lesson2.htm
 	 */
-	public static final Form POLITE_PLAIN_FORM = new Form(new Base2Inflector(), "masu", true, -1, new int[] {});
+	public static final Form POLITE_FORM = new Form(new Base2Inflector(), "masu", true, R.string.iDoSomething, R.string.politeFormExamples);
 	/**
 	 * The verb's polite negative form (I do not do something):
 	 * http://www.timwerx.net/language/jpverbs/lesson4.htm
 	 */
-	public static final Form POLITE_NEGATIVE_FORM = new Form(new Base2Inflector(), "masen", true, -1, new int[] {});
+	public static final Form POLITE_NEGATIVE_FORM = new Form(new Base2Inflector(), "masen", true, R.string.iDoNotDoSomething, R.string.politeNegativeFormExamples);
 	/**
 	 * The verb's polite past form (I did something):
 	 * http://www.timwerx.net/language/jpverbs/lesson5.htm
 	 */
-	public static final Form POLITE_PAST_FORM = new Form(new Base2Inflector(), "masita", true, -1, new int[] {});
+	public static final Form POLITE_PAST_FORM = new Form(new Base2Inflector(), "masita", true, R.string.iDidSomething, R.string.politePastFormExamples);
 	/**
 	 * The verb's polite past negative form (I didn't do something):
 	 * http://www.timwerx.net/language/jpverbs/lesson6.htm
 	 */
-	public static final Form POLITE_PAST_NEGATIVE_FORM = new Form(new Base2Inflector(), "masen desita", true, -1, new int[] {});
+	public static final Form POLITE_PAST_NEGATIVE_FORM = new Form(new Base2Inflector(), "masen desita", true, R.string.iDidNotDoSomething, R.string.politePastNegativeFormExamples);
 	/**
 	 * To hell with official names :-) The verb's "want" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson8.htm
 	 */
-	public static final Form WANT_FORM = new Form(new Base2Inflector(), "tai", true, -1, new int[] {});
+	public static final Form WANT_FORM = new Form(new Base2Inflector(), "tai", true, R.string.iWantToDoSomething, R.string.wantFormExamples);
 	/**
 	 * The verb's "Let's do something." form:
 	 * http://www.timwerx.net/language/jpverbs/lesson9.htm
 	 */
-	public static final Form LET_S_FORM = new Form(new Base2Inflector(), "masyou", true, -1, new int[] {});
+	public static final Form LET_S_FORM = new Form(new Base2Inflector(), "masyou", true, R.string.letsDoSomething, R.string.letsFormExamples);
 	/**
 	 * The verb's "Do something!" form:
 	 * http://www.timwerx.net/language/jpverbs/lesson10.htm
@@ -447,7 +449,7 @@ public final class VerbInflection {
 	 * http://www.timwerx.net/language/jpverbs/index.htm#contents table of
 	 * contents.
 	 */
-	public static final List<Form> ALL_FORMS = Collections.unmodifiableList(Arrays.asList(PLAIN_FORM, POLITE_PLAIN_FORM, POLITE_NEGATIVE_FORM, POLITE_PAST_FORM, POLITE_PAST_NEGATIVE_FORM, WANT_FORM, LET_S_FORM, SIMPLE_COMMAND_FORM, GOING_FORM, ARRIVE_FORM, HARD_TO_DO_FORM, EASY_TO_DO_FORM, GO_TOO_FAR_FORM, WHILE_DOING_FORM, NEGATIVE_FORM, PROBABLE_NEGATIVE_FORM, NEGATIVE_PAST_FORM,
+	public static final List<Form> ALL_FORMS = Collections.unmodifiableList(Arrays.asList(PLAIN_FORM, POLITE_FORM, POLITE_NEGATIVE_FORM, POLITE_PAST_FORM, POLITE_PAST_NEGATIVE_FORM, WANT_FORM, LET_S_FORM, SIMPLE_COMMAND_FORM, GOING_FORM, ARRIVE_FORM, HARD_TO_DO_FORM, EASY_TO_DO_FORM, GO_TOO_FAR_FORM, WHILE_DOING_FORM, NEGATIVE_FORM, PROBABLE_NEGATIVE_FORM, NEGATIVE_PAST_FORM,
 			NEGATIVE_CONDITIONAL_FORM, HAS_TO_FORM, LET_HIM_FORM, DID_X_WITHOUT_DOING_Y_FORM, PROBABLE_FORM, PLAN_FORM, SHOULD_FORM, WHETHER_OR_NOT_FORM, MAYBE_FORM));
 
 	/**
@@ -459,15 +461,40 @@ public final class VerbInflection {
 		private final AbstractBaseInflector inflector;
 		private final String suffix;
 		private final String suffixIchidan;
-		private final int explanationResId;
-		private final int[] examples;
-		private final boolean frequent;
-
-		protected Form(final AbstractBaseInflector inflector, final String suffix, final boolean frequent, final int explanationResId, final int[] examples) {
+		/**
+		 * Explanation of the form (e.g. I don't do something).
+		 */
+		public final int explanationResId;
+		/**
+		 * A new-line-separated list of example sentences, first in Japanese (a {@link RomanizationEnum#Hepburn}-romanized), then in English.
+		 */
+		public final int examples;
+		/**
+		 * If true this expression is widely used.
+		 */
+		public final boolean frequent;
+		/**
+		 * Creates a new form object instance.
+		 * @param inflector the verb inflector, denotes the required base of the verb.
+		 * @param suffix additional suffix to add to the inflected verb
+		 * @param frequent if true this expression is widely used
+		 * @param explanationResId explanation of the form (e.g. I don't do something).
+		 * @param examples a new-line-separated list of example sentences, first in Japanese (a {@link RomanizationEnum#Hepburn}-romanized), then in English.
+		 */
+		protected Form(final AbstractBaseInflector inflector, final String suffix, final boolean frequent, final int explanationResId, final int examples) {
 			this(inflector, suffix, null, frequent, explanationResId, examples);
 		}
 
-		protected Form(final AbstractBaseInflector inflector, final String suffixGodan, final String suffixIchidan, final boolean frequent, final int explanationResId, final int[] examples) {
+		/**
+		 * Creates a new form object instance.
+		 * @param inflector the verb inflector, denotes the required base of the verb.
+		 * @param suffixGodan additional suffix to add to the inflected verb, only applicable to Godan verbs.
+		 * @param suffixIchidan additional suffix to add to the inflected verb, only applicable to Ichidan verbs.
+		 * @param frequent if true this expression is widely used
+		 * @param explanationResId explanation of the form (e.g. I don't do something).
+		 * @param examples a new-line-separated list of example sentences, first in Japanese  (a {@link RomanizationEnum#Hepburn}-romanized), then in English.
+		 */
+		protected Form(final AbstractBaseInflector inflector, final String suffixGodan, final String suffixIchidan, final boolean frequent, final int explanationResId, final int examples) {
 			this.inflector = inflector;
 			this.suffix = suffixGodan;
 			this.suffixIchidan = suffixIchidan;
