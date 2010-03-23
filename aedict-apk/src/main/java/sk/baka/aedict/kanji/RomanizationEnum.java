@@ -261,7 +261,7 @@ public enum RomanizationEnum {
 				}
 			}
 			// check for small "tsu"
-			if (romaji == null && "っ".equals(kana)) {
+			if (romaji == null && ("っ".equals(kana) || "ッ".equals(kana))) {
 				wasXtsu = true;
 				continue;
 			}

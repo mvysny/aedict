@@ -55,6 +55,7 @@ public class RomanizationEnumTest {
 	public void testHepburnToKatakana() {
 		assertEquals("ミニコン", RomanizationEnum.Hepburn.toKatakana("minikon"));
 		assertEquals("コンピュータ", RomanizationEnum.Hepburn.toKatakana("konpyuuta"));
+		assertEquals("ボッブ", RomanizationEnum.Hepburn.toKatakana("bobbu"));
 	}
 	@Test
 	public void testNihonShikiToKatakana() {
@@ -73,6 +74,7 @@ public class RomanizationEnumTest {
 		assertEquals("minikon", RomanizationEnum.Hepburn.toRomaji("ミニコン"));
 		assertEquals("konpyuuta", RomanizationEnum.Hepburn.toRomaji("コンピュータ"));
 		assertEquals("ocha", RomanizationEnum.Hepburn.toRomaji("おちゃ"));
+		assertEquals("bobbu", RomanizationEnum.Hepburn.toRomaji("ボッブ"));
 	}
 	@Test
 	public void testNihonShikiToRomaji() {
@@ -82,5 +84,6 @@ public class RomanizationEnumTest {
 		assertEquals("minikon", RomanizationEnum.NihonShiki.toRomaji("ミニコン"));
 		assertEquals("konpyuuta", RomanizationEnum.NihonShiki.toRomaji("コンピュータ"));
 		assertEquals("otya", RomanizationEnum.NihonShiki.toRomaji("おちゃ"));
+		assertEquals("bobbu", RomanizationEnum.NihonShiki.toRomaji("ボッブ"));
 	}
 }
