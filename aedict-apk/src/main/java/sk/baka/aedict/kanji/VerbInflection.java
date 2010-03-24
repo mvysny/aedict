@@ -603,6 +603,11 @@ public final class VerbInflection {
 		 */
 		IN_SPITE_OF(new Base3Inflector(), " noni", false, R.string.inSpiteOfX, R.string.inSpiteOfFormExamples),
 		/**
+		 * The verb's "I was just about to do X." form:
+		 * http://www.timwerx.net/language/jpverbs/lesson82.htm
+		 */
+		NEARLY(new Base3Inflector(), " tokoro datta", false, R.string.iWasJustAboutToDoX, R.string.nearlyFormExamples),
+		/**
 		 * The verb's "I heard that X" form:
 		 * http://www.timwerx.net/language/jpverbs/lesson42.htm
 		 */
@@ -738,6 +743,11 @@ public final class VerbInflection {
 		 */
 		TO_TRY(new BaseTeInflector(), " miru", false, R.string.iLLTryDoingX, R.string.toTryFormExamples),
 		/**
+		 * The verb's "even IF (something were to happen), you must remember that (something else)..." form:
+		 * http://www.timwerx.net/language/jpverbs/lesson80.htm
+		 */
+		EVEN_IF2(new BaseTeInflector(), " mo", false, R.string.evenIfXYouMustRememberThatY, R.string.evenIf2FormExamples),
+		/**
 		 * The verb's "Can I do X? (Do I have a permission?)" form:
 		 * http://www.timwerx.net/language/jpverbs/lesson66.htm
 		 */
@@ -778,15 +788,15 @@ public final class VerbInflection {
 		 */
 		PAST_TENSE(new BaseTaInflector(), "", true, R.string.iDidX, R.string.pastTenseFormExamples),
 		/**
-		 * The verb's "I did X just now" form:
+		 * The verb's "I did X recently" form:
 		 * http://www.timwerx.net/language/jpverbs/lesson74.htm
 		 */
-		I_DID_NOW(new BaseTaInflector(), " bakari", false, R.string.iDidXJustNow, R.string.iDidNowFormExamples),
+		I_DID_RECENTLY(new BaseTaInflector(), " bakari", false, R.string.iDidXRecently, R.string.iDidRecentlyFormExamples),
 		/**
 		 * The verb's "I experienced X" form:
 		 * http://www.timwerx.net/language/jpverbs/lesson75.htm
 		 */
-		EXPERIENCED(new BaseTaInflector(), " koto ga aru", false, R.string.iExperiencedX, R.string.experiencedFormExamples),
+		EXPERIENCED(new BaseTaInflector(), " koto ga aru", true, R.string.iExperiencedX, R.string.experiencedFormExamples),
 		/**
 		 * The verb's "If X, then" form:
 		 * http://www.timwerx.net/language/jpverbs/lesson76.htm
@@ -801,7 +811,27 @@ public final class VerbInflection {
 		 * The verb's "I roughly did X" form:
 		 * http://www.timwerx.net/language/jpverbs/lesson78.htm
 		 */
-		ROUGHLY(new BaseTaInflector(), "ri", false, R.string.iRoughlyDidX, R.string.roughlyFormExamples);
+		ROUGHLY(new BaseTaInflector(), "ri", false, R.string.iRoughlyDidX, R.string.roughlyFormExamples),
+		/**
+		 * The verb's "If I were to do X, ..." form:
+		 * http://www.timwerx.net/language/jpverbs/lesson79.htm
+		 */
+		SUPPOSITION(new BaseTaInflector(), " to sitara", false, R.string.ifIWereToDoX, R.string.suppositionFormExamples),
+		/**
+		 * The verb's "even IF X, you must remember that Y." form:
+		 * http://www.timwerx.net/language/jpverbs/lesson80.htm
+		 */
+		EVEN_IF(new BaseTaInflector(), " to site mo", false, R.string.evenIfXYouMustRememberThatY, R.string.evenIfFormExamples),
+		/**
+		 * The verb's "When I did X..." form:
+		 * http://www.timwerx.net/language/jpverbs/lesson81.htm
+		 */
+		WHEN(new BaseTaInflector(), " toki", false, R.string.whenIDidX, R.string.whenFormExamples),
+		/**
+		 * The verb's "I did X just now." form:
+		 * http://www.timwerx.net/language/jpverbs/lesson82.htm
+		 */
+		I_DID_JUST_NOW(new BaseTaInflector(), " tokoro", false, R.string.iDidXJustNow, R.string.iDidJustNowFormExamples);
 
 		private final AbstractBaseInflector inflector;
 		private final String suffix;
