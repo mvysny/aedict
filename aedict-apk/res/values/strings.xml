@@ -228,4 +228,10 @@
     <string name="iWonderIfIShouldFormExamples">Kaimono ni ikou ka na.\nI think I\'ll go shopping.\nKaimono ni ikou ka naa.\nI wonder if I should go shopping.\n_Terebi_ o miyou ka na.\nMaybe I\'ll watch TV.\n_Bobbu_ ni denwa shiyou ka naa.\nI wonder if I should call Bob.\nKyou wa tenki ga ii kara, arukou ka na.\nI think I\'ll walk today since the weather\'s nice.</string>
     <string name="tryToDoX">Try to do X</string>
     <string name="tryToFormExamples">_Jon_ wa koyou to suru to omou.\nI think John will try to come.\nNaoto wa hikouki o miyou to shimashita ga, miemasen deshita.\nNaoto tried to see the airplane, but he couldn\'t.</string>
+    <string name="doSomethingMild">Do something.</string>
+    <string name="mildCommandFormExamples">Rokuji ni kite.\nCome at six o\'clock.\nMatte.\nWait.\nDouzo, tabete.\nGo ahead and eat.\nKoko ni kite.\nCome here.\nKore o kiite.\nListen to this.\nKore o kitte.\nCut this.\n_Terebi_ o minaide.\nDon\'t watch the TV.\nIkanaide.\nDon\'t go.</string>
+    <string name="pleaseDoSomething">Please do X.</string>
+    <string name="politeCommandFormExamples">Douzo, tabete kudasai.\nGo ahead, please eat.\nChotto matte kudasai.\nPlease wait a bit.\nRokuji ni kite kudasai.\nPlease come at six o\'clock.\nRokuji ni kite kudasai.\nPlease come at six o\'clock.\nRokuji ni kite kudasaru?\nWill you please come at six o\'clock? [plain]\nRokuji ni kite kudasaimasu ka.\nWill you please come at six o\'clock? [polite]\nRokuji ni kite kudasaimasen ka.\nWon\'t you please come at six o\'clock?</string>
+    <string name="letMeDoSomethingForYou">Let me do X for you.</string>
+    <string name="politeCommand2FormExamples">Matte ageru.\nI\'ll wait for you.\nAto de denwa shite ageru.\nI\'ll call you later.\nTabetakunakereba, tabete ageru.\nIf you don\'t want to eat it, I\'ll eat it for you.\n_Bobbu_ ni pen o kashite agete.\nLend Bob your pen.\nShizuka no kutsu no himo o musunde agete.\nTie Shizuka\'s shoelaces.</string>
 </resources>

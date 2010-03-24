@@ -18,18 +18,13 @@
 
 package sk.baka.aedict.kanji;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 
-import android.content.Context;
-
 import sk.baka.aedict.R;
+import android.content.Context;
 
 /**
  * Holds rules for verb inflection and also provides examples of inflected
@@ -681,7 +676,22 @@ public final class VerbInflection {
 		 * The verb's "Try to do X" form:
 		 * http://www.timwerx.net/language/jpverbs/lesson54.htm
 		 */
-		TRY_TO(new Base5Inflector(), " to suru", false, R.string.tryToDoX, R.string.tryToFormExamples);
+		TRY_TO(new Base5Inflector(), " to suru", false, R.string.tryToDoX, R.string.tryToFormExamples),
+		/**
+		 * The verb's "Do something." form:
+		 * http://www.timwerx.net/language/jpverbs/lesson55.htm
+		 */
+		MILD_COMMAND(new BaseTeInflector(), "", false, R.string.doSomethingMild, R.string.mildCommandFormExamples),
+		/**
+		 * The verb's "Please do something." form:
+		 * http://www.timwerx.net/language/jpverbs/lesson55.htm
+		 */
+		POLITE_COMMAND(new BaseTeInflector(), " kudasai", true, R.string.pleaseDoSomething, R.string.politeCommandFormExamples),
+		/**
+		 * The verb's "Let me do something for you." form:
+		 * http://www.timwerx.net/language/jpverbs/lesson56.htm
+		 */
+		LET_ME_DO_SOMETHING_FOR_YOU(new BaseTeInflector(), " ageru", true, R.string.letMeDoSomethingForYou, R.string.politeCommand2FormExamples);
 
 		private final AbstractBaseInflector inflector;
 		private final String suffix;
