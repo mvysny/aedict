@@ -34,7 +34,7 @@ import sk.baka.aedict.R;
  * @author Martin Vysny
  */
 public final class VerbInflection {
-	private final static class Base1Inflector extends AbstractBaseInflector {
+	final static class Base1Inflector extends AbstractBaseInflector {
 		@Override
 		protected String inflectIchidan(final String verb) {
 			return getIchidanForm1(verb);
@@ -64,7 +64,7 @@ public final class VerbInflection {
 		}
 	}
 
-	private final static class Base2Inflector extends AbstractBaseInflector {
+	final static class Base2Inflector extends AbstractBaseInflector {
 		@Override
 		protected String inflectIchidan(final String verb) {
 			return getIchidanForm1(verb);
@@ -91,7 +91,7 @@ public final class VerbInflection {
 		}
 	}
 
-	private final static class Base3Inflector extends AbstractBaseInflector {
+	final static class Base3Inflector extends AbstractBaseInflector {
 		@Override
 		protected String inflectIchidan(final String verb) {
 			return verb;
@@ -118,7 +118,7 @@ public final class VerbInflection {
 		}
 	}
 
-	private final static class Base4Inflector extends AbstractBaseInflector {
+	final static class Base4Inflector extends AbstractBaseInflector {
 		@Override
 		protected String inflectIchidan(final String verb) {
 			return getIchidanForm1(verb) + "re";
@@ -145,7 +145,7 @@ public final class VerbInflection {
 		}
 	}
 
-	private final static class Base5Inflector extends AbstractBaseInflector {
+	final static class Base5Inflector extends AbstractBaseInflector {
 		@Override
 		protected String inflectIchidan(final String verb) {
 			return getIchidanForm1(verb) + "you";
@@ -221,7 +221,7 @@ public final class VerbInflection {
 		 *         romanization.
 		 */
 		protected String inflectIku() {
-			return inflect("iku", false);
+			return inflectGodan("iku");
 		}
 
 		/**
@@ -299,7 +299,7 @@ public final class VerbInflection {
 		public abstract String getName();
 	}
 
-	private static abstract class AbstractBaseTeTaInflector extends AbstractBaseInflector {
+	static abstract class AbstractBaseTeTaInflector extends AbstractBaseInflector {
 		private final char ending;
 
 		protected AbstractBaseTeTaInflector(boolean te) {
@@ -314,20 +314,24 @@ public final class VerbInflection {
 		@Override
 		protected final String inflectGodan(final String verb) {
 			final String stripped = stripGodan(verb);
-			if (stripped.endsWith("a") || stripped.endsWith("e") || stripped.endsWith("i") || stripped.endsWith("o") || stripped.endsWith("u") || stripped.endsWith("t") || stripped.endsWith("r")) {
+			final String base = stripped.substring(0, stripped.length() - 1);
+			if (stripped.endsWith("a") || stripped.endsWith("e") || stripped.endsWith("i") || stripped.endsWith("o") || stripped.endsWith("u")) {
 				return stripped + "tt" + ending;
 			}
+			if (stripped.endsWith("t") || stripped.endsWith("r")) {
+				return base + "tt" + ending;
+			}
 			if (stripped.endsWith("k")) {
-				return stripped + "it" + ending;
+				return base + "it" + ending;
 			}
 			if (stripped.endsWith("g")) {
-				return stripped + "id" + ending;
+				return base + "id" + ending;
 			}
 			if (stripped.endsWith("s")) {
-				return stripped + "sit" + ending;
+				return base + "sit" + ending;
 			}
 			if (stripped.endsWith("n") || stripped.endsWith("b") || stripped.endsWith("m")) {
-				return stripped + "nd" + ending;
+				return base + "nd" + ending;
 			}
 			throw new RuntimeException("Not a valid japanese base-3 verb: " + verb);
 		}
@@ -354,14 +358,14 @@ public final class VerbInflection {
 
 	}
 
-	private static final class BaseTeInflector extends AbstractBaseTeTaInflector {
+	static final class BaseTeInflector extends AbstractBaseTeTaInflector {
 
 		public BaseTeInflector() {
 			super(true);
 		}
 	}
 
-	private static final class BaseTaInflector extends AbstractBaseTeTaInflector {
+	static final class BaseTaInflector extends AbstractBaseTeTaInflector {
 
 		public BaseTaInflector() {
 			super(false);
@@ -447,7 +451,7 @@ public final class VerbInflection {
 	 * The verb's "I do not do something." form:
 	 * http://www.timwerx.net/language/jpverbs/lesson17.htm
 	 */
-	public static final Form NEGATIVE_FORM = new Form(new Base1Inflector(), "nai", true, R.string.iDoNotDoSomething, R.string.negativeFormExamples);
+	public static final Form NEGATIVE_FORM = new NegativeForm();
 	/**
 	 * The verb's "I probably do not do something." form:
 	 * http://www.timwerx.net/language/jpverbs/lesson18.htm
@@ -656,7 +660,8 @@ public final class VerbInflection {
 		 * 
 		 * @param verb
 		 *            a verb, must be in {@link RomanizationEnum#NihonShiki}
-		 *            romanization. Must be in Base 3 form. Note that "desu" cannot be inflected.
+		 *            romanization. Must be in Base 3 form. Note that "desu"
+		 *            cannot be inflected.
 		 * @param ichidan
 		 *            true if the verb is ichidan, false if it is godan.
 		 * @return inflected verb, never null, in the
@@ -697,5 +702,19 @@ public final class VerbInflection {
 			return super.inflect(verb, ichidan);
 		}
 
+	}
+
+	protected static final class NegativeForm extends Form {
+		protected NegativeForm() {
+			super(new Base1Inflector(), "nai", true, R.string.iDoNotDoSomething, R.string.negativeFormExamples);
+		}
+
+		@Override
+		public String inflect(String verb, boolean ichidan) {
+			if (verb.equals("aru")) {
+				return "nai";
+			}
+			return super.inflect(verb, ichidan);
+		}
 	}
 }
