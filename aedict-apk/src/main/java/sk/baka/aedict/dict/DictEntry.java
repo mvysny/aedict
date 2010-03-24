@@ -384,6 +384,24 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	 * @return true if this entry is a verb, false otherwise.
 	 */
 	public boolean isVerb() {
-		return isIchidan() || isGodan();
+		return isIchidan() || isGodan() || isSuru() || isKuru();
+	}
+
+	/**
+	 * Checks if this entry is a "suru" entry.
+	 * 
+	 * @return true if this entry describes the "suru" irregular verb.
+	 */
+	public boolean isSuru() {
+		return english.contains("vs-i") || english.contains("vs-s");
+	}
+
+	/**
+	 * Checks if this entry is a "kuru" entry.
+	 * 
+	 * @return true if this entry describes the "kuru" irregular verb.
+	 */
+	public boolean isKuru() {
+		return english.contains("vk");
 	}
 }
