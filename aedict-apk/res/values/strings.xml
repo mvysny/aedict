@@ -222,4 +222,10 @@
     <string name="iRegretX">I regret X</string>
     <string name="iRegretFormExamples">Hachiji ni kureba yokatta.\nWe should have come at 8:00.\nKouen ni ikeba yokatta.\nI wish we had gone to the park.\n_Suteeki_ o chuumon sureba yokatta.\nI wish I had ordered the steak.</string>
     <string name="plainCommandFormExamples">Damare!\nShut up!\nIke!\nGo!\nYare!\nDo it!</string>
+    <string name="ableToDo2FormExamples">Watashi wa nihongo o yomeru.\nI can read Japanese.\nKeiko wa _piano_ o hikeru.\nKeiko can play the piano.\nAshita _Jakku_ wa Tokushima ni ikeru.\nJack can go to Tokushima tomorrow.\nKeiko wa _piano_ o hikemasu.\nKeiko can play the piano. [polite]\nKeiko wa _baiorin_ o hikemasen.\nKeiko can\'t play the violin.\n_Jakku_ wa Tokushima ni ikemashita.\nJack was able to go to Tokushima.\nKare wa Oosaka ni ikemasen deshita.\nHe wasn\'t able to go to Osaka.\nKare wa raigetsu ikeru kamo shiremasen.\nHe might be able to go next month.</string>
+    <string name="letS2FormExamples">Ikou.\nLet\'s go.\nTabeyou.\nLet\'s eat.\nYasumou.\nLet\'s take a break.\n</string>
+    <string name="iWonderIfIShould">I wonder if I should ...</string>
+    <string name="iWonderIfIShouldFormExamples">Kaimono ni ikou ka na.\nI think I\'ll go shopping.\nKaimono ni ikou ka naa.\nI wonder if I should go shopping.\n_Terebi_ o miyou ka na.\nMaybe I\'ll watch TV.\n_Bobbu_ ni denwa shiyou ka naa.\nI wonder if I should call Bob.\nKyou wa tenki ga ii kara, arukou ka na.\nI think I\'ll walk today since the weather\'s nice.</string>
+    <string name="tryToDoX">Try to do X</string>
+    <string name="tryToFormExamples">_Jon_ wa koyou to suru to omou.\nI think John will try to come.\nNaoto wa hikouki o miyou to shimashita ga, miemasen deshita.\nNaoto tried to see the airplane, but he couldn\'t.</string>
 </resources>

@@ -102,7 +102,7 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 			childData.add(Collections.<Map<String, String>> emptyList());
 		}
 		// now, add all possible inflections
-		for (final VerbInflection.Form form : VerbInflection.ALL_FORMS) {
+		for (final VerbInflection.Form form : VerbInflection.Form.values()) {
 			// filter out the form if we are showing basic forms only
 			if (isShowingBasicOnly && !form.basic) {
 				continue;
