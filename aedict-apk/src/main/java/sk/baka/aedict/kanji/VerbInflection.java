@@ -701,8 +701,27 @@ public final class VerbInflection {
 		 * The verb's "I am doing X." form:
 		 * http://www.timwerx.net/language/jpverbs/lesson58.htm
 		 */
-		PROGRESSIVE_TENSE(new BaseTeInflector(), " iru", true, R.string.iAmDoingX, R.string.progressiveTenseFormExamples);
-		
+		PROGRESSIVE_TENSE(new BaseTeInflector(), " iru", true, R.string.iAmDoingX, R.string.progressiveTenseFormExamples),
+		/**
+		 * The verb's "I humbly partake" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson61.htm
+		 */
+		VERY_POLITE_COMMAND(new BaseTeInflector(), " itadaku", true, R.string.iHumblyPartake, R.string.veryPoliteCommandFormExamples),
+		/**
+		 * The verb's "I humbly receive" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson61.htm
+		 */
+		I_HUMBLY_RECEIVE_COMMAND(new BaseTeInflector(), " morau", true, R.string.iHumblyReceive, R.string.iHumblyReceiveFormExamples),
+		/**
+		 * The verb's "After doing X..." form:
+		 * http://www.timwerx.net/language/jpverbs/lesson62.htm
+		 */
+		AFTER(new BaseTeInflector(), " kara", true, R.string.afterDoingX, R.string.afterFormExamples),
+		/**
+		 * The verb's "Please do X..." form:
+		 * http://www.timwerx.net/language/jpverbs/lesson62.htm
+		 */
+		REGULAR_PLEASE(new BaseTeInflector(), " kureru", true, R.string.pleaseDoSomething, R.string.regularPleaseFormExamples);
 
 		private final AbstractBaseInflector inflector;
 		private final String suffix;
