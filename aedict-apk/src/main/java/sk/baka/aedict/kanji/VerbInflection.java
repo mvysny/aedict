@@ -18,9 +18,13 @@
 
 package sk.baka.aedict.kanji;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import android.content.Context;
@@ -528,12 +532,83 @@ public final class VerbInflection {
 	 */
 	public static final Form DECIDED_TO_DO_FORM = new Form(new Base3Inflector(), " koto ni suru", false, R.string.iDecidedToDoSomething, R.string.decidedToDoFormExamples);
 	/**
+	 * The verb's "... until X." form:
+	 * http://www.timwerx.net/language/jpverbs/lesson33.htm
+	 */
+	public static final Form UNTIL_FORM = new Form(new Base3Inflector(), " made", false, R.string.untilX, R.string.untilFormExamples);
+	/**
+	 * The verb's "Don't do X!" form:
+	 * http://www.timwerx.net/language/jpverbs/lesson34.htm
+	 */
+	public static final Form NEGATIVE_COMMAND_FORM = new Form(new Base3Inflector(), " na!", false, R.string.dontDoX, R.string.negativeCommandFormExamples);
+
+	/**
+	 * The verb's "If X, then..." form:
+	 * http://www.timwerx.net/language/jpverbs/lesson35.htm
+	 */
+	public static final Form IF_FORM = new Form(new Base3Inflector(), " nara", true, R.string.ifXThen, R.string.ifFormExamples);
+	/**
+	 * The verb's "X which/where/who Y" form:
+	 * http://www.timwerx.net/language/jpverbs/lesson36.htm
+	 */
+	public static final Form WHICH_WHERE_WHO_FORM = new Form(new Base3Inflector(), "", true, R.string.whichWhereWho, R.string.whichWhereWhoFormExamples);
+	/**
+	 * The verb's "In order to do something" form:
+	 * http://www.timwerx.net/language/jpverbs/lesson38.htm
+	 */
+	public static final Form IN_ORDER_TO_FORM = new Form(new Base3Inflector(), " no ni", false, R.string.inOrderToDoSomething, R.string.inOrderToFormExamples);
+	/**
+	 * The verb's "No wa" form:
+	 * http://www.timwerx.net/language/jpverbs/lesson39.htm
+	 */
+	public static final Form NO_WA_FORM = new Form(new Base3Inflector(), " no wa", false, R.string.noWa, R.string.noWaExamples);
+	/**
+	 * The verb's "Because of X" form:
+	 * http://www.timwerx.net/language/jpverbs/lesson40.htm
+	 */
+	public static final Form BECAUSE_OF2_FORM = new Form(new Base3Inflector(), " node", false, R.string.becauseOfX, R.string.becauseOf2FormExamples);
+	/**
+	 * The verb's "In spite of X" form:
+	 * http://www.timwerx.net/language/jpverbs/lesson41.htm
+	 */
+	public static final Form IN_SPITE_OF_FORM = new Form(new Base3Inflector(), " noni", false, R.string.inSpiteOfX, R.string.inSpiteOfFormExamples);
+	/**
+	 * The verb's "I heard that X" form:
+	 * http://www.timwerx.net/language/jpverbs/lesson42.htm
+	 */
+	public static final Form I_HEARD_FORM = new Form(new Base3Inflector(), " sou desu", false, R.string.iHeardThatX, R.string.iHeardFormExamples);
+	/**
+	 * The verb's "For the purpose of X" form:
+	 * http://www.timwerx.net/language/jpverbs/lesson43.htm
+	 */
+	public static final Form FOR_THE_PURPOSE_OF_FORM = new Form(new Base3Inflector(), " tame ni", true, R.string.forThePurposeOf, R.string.forThePurposeOfFormExamples);
+	/**
 	 * A list of all forms, ordered as in the
 	 * http://www.timwerx.net/language/jpverbs/index.htm#contents table of
 	 * contents.
 	 */
 	public static final List<Form> ALL_FORMS = Collections.unmodifiableList(Arrays.asList(PLAIN_FORM, POLITE_FORM, POLITE_NEGATIVE_FORM, POLITE_PAST_FORM, POLITE_PAST_NEGATIVE_FORM, WANT_FORM, LET_S_FORM, SIMPLE_COMMAND_FORM, GOING_FORM, ARRIVE_FORM, HARD_TO_DO_FORM, EASY_TO_DO_FORM, GO_TOO_FAR_FORM, WHILE_DOING_FORM, NEGATIVE_FORM, PROBABLE_NEGATIVE_FORM, NEGATIVE_PAST_FORM,
-			NEGATIVE_CONDITIONAL_FORM, HAS_TO_FORM, LET_HIM_FORM, DID_X_WITHOUT_DOING_Y_FORM, PROBABLE_FORM, PLAN_FORM, SHOULD_FORM, WHETHER_OR_NOT_FORM, MAYBE_FORM, BECAUSE_OF_FORM, BUT_FORM, ABLE_TO_DO_FORM, DECIDED_TO_DO_FORM));
+			NEGATIVE_CONDITIONAL_FORM, HAS_TO_FORM, LET_HIM_FORM, DID_X_WITHOUT_DOING_Y_FORM, PROBABLE_FORM, PLAN_FORM, SHOULD_FORM, WHETHER_OR_NOT_FORM, MAYBE_FORM, BECAUSE_OF_FORM, BUT_FORM, ABLE_TO_DO_FORM, DECIDED_TO_DO_FORM, UNTIL_FORM, NEGATIVE_COMMAND_FORM, IF_FORM, WHICH_WHERE_WHO_FORM, IN_ORDER_TO_FORM, NO_WA_FORM, BECAUSE_OF2_FORM, IN_SPITE_OF_FORM, I_HEARD_FORM));
+	static {
+		// sanity check to verify that we registered all forms
+		final Set<Form> forms = new HashSet<Form>();
+		try {
+			for (final Field f : VerbInflection.class.getFields()) {
+				if (Modifier.isStatic(f.getModifiers()) && f.getName().endsWith("_FORM")) {
+					forms.add((Form) f.get(null));
+				}
+			}
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+		if (forms.isEmpty()) {
+			throw new RuntimeException("Something went wrong");
+		}
+		forms.removeAll(ALL_FORMS);
+		if (!forms.isEmpty()) {
+			throw new RuntimeException("Several forms missing: " + forms);
+		}
+	}
 
 	/**
 	 * Holds information about a verb inflection form.
@@ -670,6 +745,11 @@ public final class VerbInflection {
 		 */
 		public String inflect(final String verb, final boolean ichidan) {
 			return inflector.inflect(verb, ichidan) + (suffixIchidan == null ? suffix : (ichidan ? suffixIchidan : suffix));
+		}
+
+		@Override
+		public String toString() {
+			return inflector.getName() + "+" + suffix;
 		}
 	}
 
