@@ -485,12 +485,32 @@ public final class VerbInflection {
 	 */
 	public static final Form MAYBE_FORM = new Form(new Base3Inflector(), " kamo siremasen", true, R.string.maybeILLDoSomething, R.string.maybeFormExamples);
 	/**
+	 * The verb's "Because of X..." form:
+	 * http://www.timwerx.net/language/jpverbs/lesson29.htm
+	 */
+	public static final Form BECAUSE_OF_FORM = new Form(new Base3Inflector(), " kara", false, R.string.becauseOfX, R.string.becauseOfFormExamples);
+	/**
+	 * The verb's "He does X, but..." form:
+	 * http://www.timwerx.net/language/jpverbs/lesson30.htm
+	 */
+	public static final Form BUT_FORM = new Form(new Base3Inflector(), " keredomo", false, R.string.heDoesXBut, R.string.butFormExamples);
+	/**
+	 * The verb's "I'm able to do something." form:
+	 * http://www.timwerx.net/language/jpverbs/lesson31.htm
+	 */
+	public static final Form ABLE_TO_DO_FORM = new AbleToDoForm();
+	/**
+	 * The verb's "I decided to do something." form:
+	 * http://www.timwerx.net/language/jpverbs/lesson32.htm
+	 */
+	public static final Form DECIDED_TO_DO_FORM = new Form(new Base3Inflector(), " koto ni suru", false, R.string.iDecidedToDoSomething, R.string.decidedToDoFormExamples);
+	/**
 	 * A list of all forms, ordered as in the
 	 * http://www.timwerx.net/language/jpverbs/index.htm#contents table of
 	 * contents.
 	 */
 	public static final List<Form> ALL_FORMS = Collections.unmodifiableList(Arrays.asList(PLAIN_FORM, POLITE_FORM, POLITE_NEGATIVE_FORM, POLITE_PAST_FORM, POLITE_PAST_NEGATIVE_FORM, WANT_FORM, LET_S_FORM, SIMPLE_COMMAND_FORM, GOING_FORM, ARRIVE_FORM, HARD_TO_DO_FORM, EASY_TO_DO_FORM, GO_TOO_FAR_FORM, WHILE_DOING_FORM, NEGATIVE_FORM, PROBABLE_NEGATIVE_FORM, NEGATIVE_PAST_FORM,
-			NEGATIVE_CONDITIONAL_FORM, HAS_TO_FORM, LET_HIM_FORM, DID_X_WITHOUT_DOING_Y_FORM, PROBABLE_FORM, PLAN_FORM, SHOULD_FORM, WHETHER_OR_NOT_FORM, MAYBE_FORM));
+			NEGATIVE_CONDITIONAL_FORM, HAS_TO_FORM, LET_HIM_FORM, DID_X_WITHOUT_DOING_Y_FORM, PROBABLE_FORM, PLAN_FORM, SHOULD_FORM, WHETHER_OR_NOT_FORM, MAYBE_FORM, BECAUSE_OF_FORM, BUT_FORM, ABLE_TO_DO_FORM, DECIDED_TO_DO_FORM));
 
 	/**
 	 * Holds information about a verb inflection form.
@@ -530,7 +550,7 @@ public final class VerbInflection {
 		 * @return a list of pairs: first pair item is the Japanese sentence,
 		 *         second pair item is the English translation. Never null.
 		 */
-		public String[][] getExamples(final Context context, final RomanizationEnum romanization) {
+		public final String[][] getExamples(final Context context, final RomanizationEnum romanization) {
 			final String[] e = context.getString(examples).split("\n");
 			final String[][] result = new String[e.length / 2][];
 			for (int i = 0; i < e.length / 2; i++) {
@@ -616,9 +636,8 @@ public final class VerbInflection {
 		 * Inflects a verb to the appropriate form.
 		 * 
 		 * @param verb
-		 *            a verb, may be in kanji+hiragana, or in the
-		 *            {@link RomanizationEnum#NihonShiki} romanization. Must be
-		 *            in Base 3 form.
+		 *            a verb, must be in {@link RomanizationEnum#NihonShiki}
+		 *            romanization. Must be in Base 3 form.
 		 * @param ichidan
 		 *            true if the verb is ichidan, false if it is godan.
 		 * @return inflected verb, never null, in the
@@ -640,6 +659,21 @@ public final class VerbInflection {
 		public String inflect(String verb, boolean ichidan) {
 			if (verb.endsWith("suru")) {
 				return verb.substring(0, verb.length() - 4) + "saseru";
+			}
+			return super.inflect(verb, ichidan);
+		}
+
+	}
+
+	protected static final class AbleToDoForm extends Form {
+		protected AbleToDoForm() {
+			super(new Base3Inflector(), " koto ga dekiru", true, R.string.imAbleToDoSomething, R.string.ableToDoFormExamples);
+		}
+
+		@Override
+		public String inflect(String verb, boolean ichidan) {
+			if (verb.endsWith("suru")) {
+				return verb.substring(0, verb.length() - 4) + " dekiru";
 			}
 			return super.inflect(verb, ichidan);
 		}

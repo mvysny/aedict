@@ -109,7 +109,7 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 			}
 			// okay, add it to the list
 			Map<String, String> data = new HashMap<String, String>(2);
-			data.put(KEY_JP, convertInflectionProduct(form.inflect(entry.reading, isIchidan)));
+			data.put(KEY_JP, convertInflectionProduct(form.inflect(RomanizationEnum.NihonShiki.toRomaji(entry.reading), isIchidan)));
 			data.put(KEY_EN, getString(form.explanationResId));
 			groupData.add(data);
 			// add example sentences as a sublist
