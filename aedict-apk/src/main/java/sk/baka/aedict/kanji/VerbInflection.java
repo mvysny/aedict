@@ -583,12 +583,38 @@ public final class VerbInflection {
 	 */
 	public static final Form FOR_THE_PURPOSE_OF_FORM = new Form(new Base3Inflector(), " tame ni", true, R.string.forThePurposeOf, R.string.forThePurposeOfFormExamples);
 	/**
+	 * The verb's "When/If" form:
+	 * http://www.timwerx.net/language/jpverbs/lesson44.htm
+	 */
+	public static final Form WHEN_IF_FORM = new Form(new Base3Inflector(), " ni", false, R.string.whenIf, R.string.whenIfFormExamples);
+	/**
+	 * The verb's "I think that X" form:
+	 * http://www.timwerx.net/language/jpverbs/lesson45.htm
+	 */
+	public static final Form I_THINK_THAT_FORM = new Form(new Base3Inflector(), " to omou", true, R.string.iThinkThat, R.string.iThinkThatFormExamples);
+	/**
+	 * The verb's "I intent to X" form:
+	 * http://www.timwerx.net/language/jpverbs/lesson46.htm
+	 */
+	public static final Form I_INTENT_FORM = new Form(new Base3Inflector(), " tsumori", false, R.string.iIntentToX, R.string.iIntentFormExamples);
+	/**
+	 * The verb's "It seems to X" form:
+	 * http://www.timwerx.net/language/jpverbs/lesson47.htm
+	 */
+	public static final Form IT_SEEMS_TO_FORM = new Form(new Base3Inflector(), " you desu", false, R.string.itSeemsToX, R.string.itSeemsToFormExamples);
+	/**
+	 * The verb's "If X, then..." form:
+	 * http://www.timwerx.net/language/jpverbs/lesson47.htm
+	 */
+	public static final Form IF2_FORM = new Form(new Base4Inflector(), "ba", true, R.string.ifXThen, R.string.if2FormExamples);
+	/**
 	 * A list of all forms, ordered as in the
 	 * http://www.timwerx.net/language/jpverbs/index.htm#contents table of
 	 * contents.
 	 */
 	public static final List<Form> ALL_FORMS = Collections.unmodifiableList(Arrays.asList(PLAIN_FORM, POLITE_FORM, POLITE_NEGATIVE_FORM, POLITE_PAST_FORM, POLITE_PAST_NEGATIVE_FORM, WANT_FORM, LET_S_FORM, SIMPLE_COMMAND_FORM, GOING_FORM, ARRIVE_FORM, HARD_TO_DO_FORM, EASY_TO_DO_FORM, GO_TOO_FAR_FORM, WHILE_DOING_FORM, NEGATIVE_FORM, PROBABLE_NEGATIVE_FORM, NEGATIVE_PAST_FORM,
-			NEGATIVE_CONDITIONAL_FORM, HAS_TO_FORM, LET_HIM_FORM, DID_X_WITHOUT_DOING_Y_FORM, PROBABLE_FORM, PLAN_FORM, SHOULD_FORM, WHETHER_OR_NOT_FORM, MAYBE_FORM, BECAUSE_OF_FORM, BUT_FORM, ABLE_TO_DO_FORM, DECIDED_TO_DO_FORM, UNTIL_FORM, NEGATIVE_COMMAND_FORM, IF_FORM, WHICH_WHERE_WHO_FORM, IN_ORDER_TO_FORM, NO_WA_FORM, BECAUSE_OF2_FORM, IN_SPITE_OF_FORM, I_HEARD_FORM));
+			NEGATIVE_CONDITIONAL_FORM, HAS_TO_FORM, LET_HIM_FORM, DID_X_WITHOUT_DOING_Y_FORM, PROBABLE_FORM, PLAN_FORM, SHOULD_FORM, WHETHER_OR_NOT_FORM, MAYBE_FORM, BECAUSE_OF_FORM, BUT_FORM, ABLE_TO_DO_FORM, DECIDED_TO_DO_FORM, UNTIL_FORM, NEGATIVE_COMMAND_FORM, IF_FORM, WHICH_WHERE_WHO_FORM, IN_ORDER_TO_FORM, NO_WA_FORM, BECAUSE_OF2_FORM, IN_SPITE_OF_FORM, I_HEARD_FORM, WHEN_IF_FORM,
+			I_THINK_THAT_FORM, I_INTENT_FORM, IT_SEEMS_TO_FORM, IF2_FORM));
 	static {
 		// sanity check to verify that we registered all forms
 		final Set<Form> forms = new HashSet<Form>();
