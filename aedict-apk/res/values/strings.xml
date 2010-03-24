@@ -217,4 +217,9 @@
     <string name="itSeemsToX">It seems to X</string>
     <string name="itSeemsToFormExamples">_Mari_ wa ashita kuru you desu.\nIt seems that Mary will be coming tomorrow.\nSachiko wa _kanada_ ni iku you desu.\nIt looks like Sachiko is going to Canada.\n_Ken_ wa _piano_ o hiku koto ga dekiru you desu.\nIt looks like Ken can play the piano.</string>
     <string name="if2FormExamples">Isogeba, tsugi no densha ni noru koto ga dekiru yo.\nIf we hurry we'll be able to make the next train.\nAme ga fureba, shiai o enki shinakereba naranai.\nIf it rains we'll have to put off the game.\nKodomotachi wa ima sunakku o tabereba, yuushoku o tabenai deshou.\nIf the kids eat a snack now, they probably won\'t eat dinner.\nKyouto ni ikeba?\nWhy don\'t you go to Kyoto?\nShichiji han ni dereba?\nWhy don\'t you leave at 7:30?</string>
+    <string name="itWouldBeGoodIfX">It would be good if X</string>
+    <string name="itWouldBeGoodIfFormExamples">Soto de asobeba ii.\nIt would be good if you played outside.\nIma benkyou sureba ii.\nNow would be a good time to study.\nWatashitachi wa karui shokuji o tabereba ii to omou.\nI think it would be good if we ate a light meal.</string>
+    <string name="iRegretX">I regret X</string>
+    <string name="iRegretFormExamples">Hachiji ni kureba yokatta.\nWe should have come at 8:00.\nKouen ni ikeba yokatta.\nI wish we had gone to the park.\n_Suteeki_ o chuumon sureba yokatta.\nI wish I had ordered the steak.</string>
+    <string name="plainCommandFormExamples">Damare!\nShut up!\nIke!\nGo!\nYare!\nDo it!</string>
 </resources>
