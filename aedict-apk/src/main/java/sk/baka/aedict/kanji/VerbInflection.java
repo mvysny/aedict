@@ -215,6 +215,16 @@ public final class VerbInflection {
 		protected abstract String inflectSuru();
 
 		/**
+		 * Returns an inflected "iku" verb.
+		 * 
+		 * @return inflected iku verb in {@link RomanizationEnum#NihonShiki}
+		 *         romanization.
+		 */
+		protected String inflectIku() {
+			return inflect("iku", false);
+		}
+
+		/**
 		 * Returns given ichidan verb in form 1 (with trailing -ru removed). The
 		 * function performs several checks that a proper verb is given.
 		 * 
@@ -256,7 +266,7 @@ public final class VerbInflection {
 		 * @param verb
 		 *            a verb, may be in kanji+hiragana, or in the
 		 *            {@link RomanizationEnum#NihonShiki} romanization. Must be
-		 *            in Base 3 form.
+		 *            in Base 3 form. Note that "desu" cannot be inflected.
 		 * @param ichidan
 		 *            true if the verb is ichidan, false if it is godan or
 		 *            irregular, like kuru/suru.
@@ -271,6 +281,9 @@ public final class VerbInflection {
 			}
 			if (romanized.endsWith("suru")) {
 				return romanized.substring(0, romanized.length() - 4) + inflectSuru();
+			}
+			if (romanized.equals("iku")) {
+				return inflectIku();
 			}
 			if (ichidan) {
 				return inflectIchidan(romanized);
@@ -333,6 +346,12 @@ public final class VerbInflection {
 		public final String getName() {
 			return "Base T" + ending;
 		}
+
+		@Override
+		protected String inflectIku() {
+			return "itt" + ending;
+		}
+
 	}
 
 	private static final class BaseTeInflector extends AbstractBaseTeTaInflector {
@@ -637,7 +656,7 @@ public final class VerbInflection {
 		 * 
 		 * @param verb
 		 *            a verb, must be in {@link RomanizationEnum#NihonShiki}
-		 *            romanization. Must be in Base 3 form.
+		 *            romanization. Must be in Base 3 form. Note that "desu" cannot be inflected.
 		 * @param ichidan
 		 *            true if the verb is ichidan, false if it is godan.
 		 * @return inflected verb, never null, in the
