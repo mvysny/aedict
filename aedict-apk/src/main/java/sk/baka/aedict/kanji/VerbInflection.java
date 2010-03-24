@@ -691,7 +691,18 @@ public final class VerbInflection {
 		 * The verb's "Let me do something for you." form:
 		 * http://www.timwerx.net/language/jpverbs/lesson56.htm
 		 */
-		LET_ME_DO_SOMETHING_FOR_YOU(new BaseTeInflector(), " ageru", true, R.string.letMeDoSomethingForYou, R.string.politeCommand2FormExamples);
+		LET_ME_DO_SOMETHING_FOR_YOU(new BaseTeInflector(), " ageru", true, R.string.letMeDoSomethingForYou, R.string.politeCommand2FormExamples),
+		/**
+		 * The verb's "honorably take a look." form:
+		 * http://www.timwerx.net/language/jpverbs/lesson57.htm
+		 */
+		HONORABLY_TAKE_A_LOOK(new BaseTeInflector(), " goran", false, R.string.honorablyTakeALook, R.string.honorablyTakeALookFormExamples),
+		/**
+		 * The verb's "I am doing X." form:
+		 * http://www.timwerx.net/language/jpverbs/lesson58.htm
+		 */
+		PROGRESSIVE_TENSE(new BaseTeInflector(), " iru", true, R.string.iAmDoingX, R.string.progressiveTenseFormExamples);
+		
 
 		private final AbstractBaseInflector inflector;
 		private final String suffix;
