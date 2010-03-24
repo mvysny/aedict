@@ -541,7 +541,7 @@ public final class VerbInflection {
 		 * The verb's "He does X, but..." form:
 		 * http://www.timwerx.net/language/jpverbs/lesson30.htm
 		 */
-		BUT(new Base3Inflector(), " keredomo", false, R.string.heDoesXBut, R.string.butFormExamples),
+		BUT(new Base3Inflector(), " keredomo / kedo", false, R.string.heDoesXBut, R.string.butFormExamples),
 		/**
 		 * The verb's "I'm able to do something." form:
 		 * http://www.timwerx.net/language/jpverbs/lesson31.htm
@@ -591,7 +591,7 @@ public final class VerbInflection {
 		 * The verb's "No wa" form:
 		 * http://www.timwerx.net/language/jpverbs/lesson39.htm
 		 */
-		NO_WA(new Base3Inflector(), " no wa", false, R.string.noWa, R.string.noWaExamples),
+		NO_WA(new Base3Inflector(), " no ha", false, R.string.noWa, R.string.noWaExamples),
 		/**
 		 * The verb's "Because of X" form:
 		 * http://www.timwerx.net/language/jpverbs/lesson40.htm
@@ -626,7 +626,7 @@ public final class VerbInflection {
 		 * The verb's "I intent to X" form:
 		 * http://www.timwerx.net/language/jpverbs/lesson46.htm
 		 */
-		I_INTENT(new Base3Inflector(), " tsumori", false, R.string.iIntentToX, R.string.iIntentFormExamples),
+		I_INTENT(new Base3Inflector(), " tumori", false, R.string.iIntentToX, R.string.iIntentFormExamples),
 		/**
 		 * The verb's "It seems to X" form:
 		 * http://www.timwerx.net/language/jpverbs/lesson47.htm
@@ -719,9 +719,89 @@ public final class VerbInflection {
 		AFTER(new BaseTeInflector(), " kara", true, R.string.afterDoingX, R.string.afterFormExamples),
 		/**
 		 * The verb's "Please do X..." form:
-		 * http://www.timwerx.net/language/jpverbs/lesson62.htm
+		 * http://www.timwerx.net/language/jpverbs/lesson63.htm
 		 */
-		REGULAR_PLEASE(new BaseTeInflector(), " kureru", true, R.string.pleaseDoSomething, R.string.regularPleaseFormExamples);
+		REGULAR_PLEASE(new BaseTeInflector(), " kureru", true, R.string.pleaseDoSomething, R.string.regularPleaseFormExamples),
+		/**
+		 * The verb's "X finished" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson64.htm
+		 */
+		TO_FINISH(new BaseTeInflector(), " kuru", true, R.string.xFinished, R.string.toFinishFormExamples),
+		/**
+		 * The verb's "X will start" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson64.htm
+		 */
+		TO_START(new BaseTeInflector(), " iku", true, R.string.xWillStart, R.string.toStartFormExamples),
+		/**
+		 * The verb's "I'll try doing X" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson65.htm
+		 */
+		TO_TRY(new BaseTeInflector(), " miru", false, R.string.iLLTryDoingX, R.string.toTryFormExamples),
+		/**
+		 * The verb's "Can I do X? (Do I have a permission?)" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson66.htm
+		 */
+		CAN(new BaseTeInflector(), " mo ii", true, R.string.canIDoX, R.string.canFormExamples),
+		/**
+		 * The verb's "All he does is X" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson66.htm
+		 */
+		ALL_HE_DOES(new BaseTeInflector(), " bakari", false, R.string.allHeDoesIsX, R.string.allHeDoesFormExamples),
+		/**
+		 * The verb's "I will certainly do X" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson67.htm
+		 */
+		I_WILL_CERTAINLY_DO(new BaseTeInflector(), " oku", false, R.string.iWillCertainlyDoX, R.string.iWillCertainlyDoFormExamples),
+		/**
+		 * The verb's "To complete doing X / To do something unexpected / Something negative may happen" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson68.htm
+		 */
+		COMPLETE(new BaseTeInflector(), " simau", false, R.string.toCompleteDoingX, R.string.completeFormExamples),
+		/**
+		 * The verb's "How about doing X?" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson69.htm
+		 */
+		HOW_ABOUT(new BaseTeInflector(), " ha ikaga / dou desu ka", false, R.string.howAboutDoingX, R.string.howAboutFormExamples),
+		/**
+		 * The verb's "You must not do X!" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson70.htm
+		 */
+		FORBIDDEN(new BaseTeInflector(), " ha ikemasen", true, R.string.youMustNotDoX, R.string.forbiddenFormExamples),
+		/**
+		 * The verb's "I did X, then Y, then Z..." form:
+		 * http://www.timwerx.net/language/jpverbs/lesson71.htm
+		 */
+		CONTINUATION(new BaseTeInflector(), "", true, R.string.iDidXThenYThenZ, R.string.continuationFormExamples),
+		/**
+		 * The verb's "I did X" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson72.htm
+		 */
+		PAST_TENSE(new BaseTaInflector(), "", true, R.string.iDidX, R.string.pastTenseFormExamples),
+		/**
+		 * The verb's "I did X just now" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson74.htm
+		 */
+		I_DID_NOW(new BaseTaInflector(), " bakari", false, R.string.iDidXJustNow, R.string.iDidNowFormExamples),
+		/**
+		 * The verb's "I experienced X" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson75.htm
+		 */
+		EXPERIENCED(new BaseTaInflector(), " koto ga aru", false, R.string.iExperiencedX, R.string.experiencedFormExamples),
+		/**
+		 * The verb's "If X, then" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson76.htm
+		 */
+		IF3(new BaseTaInflector(), " ra", false, R.string.ifXThen, R.string.if3FormExamples),
+		/**
+		 * The verb's "If X, then" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson77.htm
+		 */
+		IT_SEEMS_TO2(new BaseTaInflector(), " rasii", false, R.string.itSeemsToX, R.string.itSeemsTo2FormExamples),
+		/**
+		 * The verb's "I roughly did X" form:
+		 * http://www.timwerx.net/language/jpverbs/lesson78.htm
+		 */
+		ROUGHLY(new BaseTaInflector(), "ri", false, R.string.iRoughlyDidX, R.string.roughlyFormExamples);
 
 		private final AbstractBaseInflector inflector;
 		private final String suffix;
