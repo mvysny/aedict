@@ -4,7 +4,10 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
-		<release version="1.0" date="3. April 2010">
+		<release version="1.0" date="25. March 2010">
+			<action dev="vyzivus" type="add" issue="43">
+				Show a verb inflection chart.
+			</action>
 			<action dev="vyzivus" type="fix">
 				Fixed: ボッブ was not correctly romanized to bobbu.
 			</action>
