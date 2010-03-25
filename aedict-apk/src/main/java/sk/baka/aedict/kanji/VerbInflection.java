@@ -801,7 +801,7 @@ public final class VerbInflection {
 		 * The verb's "If X, then" form:
 		 * http://www.timwerx.net/language/jpverbs/lesson76.htm
 		 */
-		IF3(new BaseTaInflector(), " ra", false, R.string.ifXThen, R.string.if3FormExamples),
+		IF3(new BaseTaInflector(), "ra", false, R.string.ifXThen, R.string.if3FormExamples),
 		/**
 		 * The verb's "If X, then" form:
 		 * http://www.timwerx.net/language/jpverbs/lesson77.htm
