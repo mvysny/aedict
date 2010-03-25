@@ -28,6 +28,7 @@ import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.kanji.VerbInflection;
 import sk.baka.aedict.kanji.VerbInflection.Form;
 import sk.baka.autils.AndroidUtils;
+import sk.baka.autils.DialogUtils;
 import android.app.ExpandableListActivity;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -78,6 +79,7 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 				}));
 			}
 		});
+		new DialogUtils(this).showInfoOnce(getClass().getName(), R.string.info, R.string.inflectionWarning);
 	}
 
 	private String convertInflectionProduct(final String romaji) {

@@ -39,6 +39,7 @@
     <string name="downloading_dictionary">Downloading %s</string>
     <string name="interrupted">Interrupted</string>
     <string name="error">Error</string>
+    <string name="info">Information</string>
     <string name="failed_to_download_dictionary">Failed to download %s: </string>
     <string name="connecting">Connecting</string>
     <string name="app_name">Aedict</string>
@@ -286,4 +287,5 @@
     <string name="iDidJustNowFormExamples">Watashi wa ima kaetta tokoro.\nI just got back now.\nKodomotachi wa ima tabeta tokoro.\nThe kids just finished eating.\nKono heya o souji shita tokoro desu.\nI just cleaned this room.</string>
     <string name="iWasJustAboutToDoX">I was just about to do X.</string>
     <string name="nearlyFormExamples">Ima Sachiko ni denwa suru tokoro datta.\nI was just about to call Sachiko.\nWatashi no saifu o wasureru tokoro datta.\nI almost forgot my wallet.</string>
+    <string name="inflectionWarning">Please note that the conjugation is performed automatically and may produce weird results, especially with kuru/suru. Don't believe everything you see :-)</string>
 </resources>
