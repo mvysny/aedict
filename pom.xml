@@ -31,9 +31,9 @@
 	</prerequisites>
 	
 	<scm>
-		<connection>scm:hg:https://aedict.googlecode.com/hg/</connection>
-		<developerConnection>scm:hg:https://aedict.googlecode.com/hg/</developerConnection>
-		<url>https://aedict.googlecode.com/hg/</url>
+		<connection>scm:hg:https://1-x.aedict.googlecode.com/hg/</connection>
+		<developerConnection>scm:hg:https://1-x.aedict.googlecode.com/hg/</developerConnection>
+		<url>https://1-x.aedict.googlecode.com/hg/</url>
 	</scm>
 	
 	<licenses>
