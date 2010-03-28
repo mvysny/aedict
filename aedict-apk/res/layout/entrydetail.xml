@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<!--
+		Aedict - an EDICT browser for Android Copyright (C) 2007 Martin Vysny
+
+		This program is free software: you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation, either version 3 of the License, or (at
+		your option) any later version. This program is distributed in the
+		hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+		the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+		PURPOSE. See the GNU General Public License for more details. You
+		should have received a copy of the GNU General Public License along
+		with this program. If not, see <http://www.gnu.org/licenses/>.
+	-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="fill_parent"
+	android:layout_width="fill_parent">
+	<LinearLayout android:orientation="vertical" android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		<TextView android:layout_width="fill_parent"  android:textColor="#FFF" android:background="#666"
+			android:layout_height="wrap_content" android:text="@string/kanjiEntryText"></TextView>
+		<LinearLayout android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:orientation="horizontal">
+			<CheckBox android:layout_height="wrap_content" android:id="@+id/kanjiExactMatch"
+				android:text="@string/exactMatch" android:layout_width="wrap_content"
+				android:layout_weight="1"></CheckBox>
+			<Button android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/analyze"
+				android:id="@+id/kanjiAnalyze"></Button>
+			<Button android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/search"
+				android:id="@+id/kanjiSearch"></Button>
+		</LinearLayout>
+		<LinearLayout android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:orientation="horizontal">
+			<EditText android:layout_height="wrap_content" android:id="@+id/kanjiSearchEdit"
+				android:layout_width="wrap_content" android:layout_weight="1"
+				android:inputType="text" android:imeOptions="actionDone"></EditText>
+			<Button android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/copy"
+				android:id="@+id/kanjiCopy"></Button>
+		</LinearLayout>
+		<TextView android:layout_width="fill_parent"  android:textColor="#FFF" android:background="#666"
+			android:layout_height="wrap_content" android:text="@string/entryReadingText"></TextView>
+		<LinearLayout android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:orientation="horizontal">
+			<CheckBox android:layout_height="wrap_content" android:id="@+id/readingExactMatch"
+				android:text="@string/exactMatch" android:layout_width="wrap_content"
+				android:layout_weight="1"></CheckBox>
+			<Button android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/search"
+				android:id="@+id/readingSearch"></Button>
+		</LinearLayout>
+		<LinearLayout android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:orientation="horizontal">
+			<EditText android:layout_height="wrap_content" android:id="@+id/readingSearchEdit"
+				android:layout_width="wrap_content" android:layout_weight="1"
+				android:inputType="text" android:imeOptions="actionDone"></EditText>
+			<Button android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/copy"
+				android:id="@+id/readingCopy"></Button>
+		</LinearLayout>
+		<TextView android:layout_width="fill_parent" android:textColor="#FFF" android:background="#666"
+			android:layout_height="wrap_content" android:text="English"></TextView>
+		<LinearLayout android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:orientation="horizontal">
+			<CheckBox android:layout_height="wrap_content" android:id="@+id/englishExactMatch"
+				android:text="@string/exactMatch" android:layout_width="wrap_content"
+				android:layout_weight="1"></CheckBox>
+			<Button android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/search"
+				android:id="@+id/englishSearch"></Button>
+		</LinearLayout>
+		<LinearLayout android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:orientation="horizontal">
+			<EditText android:layout_height="wrap_content" android:id="@+id/englishSearchEdit"
+				android:layout_width="wrap_content" android:layout_weight="1"
+				android:inputType="text" android:imeOptions="actionDone"></EditText>
+			<Button android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/copy"
+				android:id="@+id/englishCopy"></Button>
+		</LinearLayout>
+	</LinearLayout>
+</ScrollView>

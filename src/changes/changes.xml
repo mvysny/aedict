@@ -1,0 +1,208 @@
+<document>
+	<properties>
+		<title>Aedict changelog</title>
+		<author email="vysny@baka.sk">Martin Vyšný</author>
+	</properties>
+	<body>
+		<release version="1.0" date="25. March 2010">
+			<action dev="vyzivus" type="add" issue="43">
+				Show a verb inflection chart.
+			</action>
+			<action dev="vyzivus" type="fix">
+				Fixed: ボッブ was not correctly romanized to bobbu.
+			</action>
+			<action dev="vyzivus" type="fix" issue="47">
+				Searching for hana yelds only the "nose" result.
+			</action>
+			<action dev="vyzivus" type="update" issue="39">
+				Sort ordering is better in Tagaini Jisho. Fixed by performing ordering also by kanji commonality.
+			</action>
+			<action dev="vyzivus" type="add" issue="49">
+				Pressing the 'search' button should open the Search Activity. Note that this works only with Android 1.6.
+			</action>
+			<action dev="vyzivus" type="update" issue="48">
+				The Configuration dialog should receive the standard Android config dialog look.
+			</action>
+			<action dev="vyzivus" type="fix" issue="44">
+				Fixed: Crash selecting examples in Tanaka dict.
+			</action>
+			<action dev="vyzivus" type="add">
+				Added a What''s New dialog
+			</action>
+			<action dev="vyzivus" type="update" issue="42">
+				Kanjipad warning message is now shown only once, in a dialog.
+			</action>
+			<action dev="vyzivus" type="fix" issue="38">
+				Fixed Radicals overflowing on Archos5.
+			</action>
+			<action dev="vyzivus" type="fix" issue="36">
+				Automatic Tanaka dictionary download now works correctly.
+			</action>
+			<action dev="vyzivus" type="fix" issue="41">
+				Fixed broken search from the detail screen.
+			</action>
+		</release>
+		<release version="0.9" date="3. March 2010">
+			<action dev="vyzivus" type="fix">
+				Fixed random NullPointerExceptions, occuring during a search.
+			</action>
+			<action dev="vyzivus" type="add" issue="34">
+				Added the stroke order diagrams.
+			</action>
+			<action dev="vyzivus" type="fix" issue="35">
+				A glitch in the translation code: osusume was not translated in this sentence: 今週のおすすめﾊﾞｰｹﾞﾝTVｹﾞｰﾑ
+			</action>
+			<action dev="vyzivus" type="add">
+				The ResultActivity activity now performs search in a Task background thread
+			</action>
+			<action dev="vyzivus" type="add" issue="31">
+				Implemented the Examples search
+			</action>
+			<action dev="vyzivus" type="fix">
+				Fixed possible IndexOutOfBoundsException in the KanjiAnalyzeActivity
+			</action>
+			<action dev="vyzivus" type="fix">
+				Fixed the isHiragana/isKatakana methods: the methods failed to work correctly for small ya, yu, yo characters
+			</action>
+			<action dev="vyzivus" type="update">
+				The word analysis progress is displayed more accurately
+			</action>
+			<action dev="vyzivus" type="add">
+				Added the Donate button
+			</action>
+			<action dev="vyzivus" type="add">
+				Added warning for KanjiDraw about the proper stroke order
+			</action>
+			<action dev="vyzivus" type="add">
+				Added Japanese-French downloadable dictionary.
+			</action>
+			<action dev="vyzivus" type="add">
+				Added Japanese-German downloadable dictionary.
+			</action>
+			<action dev="vyzivus" type="add">
+				When downloading a dictionary, a copyright notice and a dictionary homepage is now shown
+			</action>
+			<action dev="vyzivus" type="add">
+				You can now directly perform analysis of a notepad entry
+			</action>
+			<action dev="vyzivus" type="add" issue="33">
+				Implemented the verb deinflection
+			</action>
+		</release>
+		<release version="0.8" date="16. January 2010">
+			<action dev="vyzivus" type="fix" issue="29">
+				Regression: SKIP search finds the kanjis but does not display them
+			</action>
+		</release>
+		<release version="0.7" date="09. January 2010">
+			<action dev="vyzivus" type="add">
+				Search Result Browser now shows the dictionary used for the search
+			</action>
+			<action dev="vyzivus" type="add" issue="25">
+				Added a notepad functionality
+			</action>
+			<action dev="vyzivus" type="add" issue="28">
+				Show hint on reading: Long click on SearchResult and Analysis activity should allow user to see romaji reading of all hiragana/katakana characters
+			</action>
+			<action dev="vyzivus" type="add" issue="27">
+				Added more downloadable dictionaries: ENAMDICT and COMPDIC are now downloadable using the Configuration activity.
+			</action>
+			<action dev="vyzivus" type="add" issue="24">
+				A very simple and slow sentence translation added.
+			</action>
+			<action dev="vyzivus" type="add" issue="23">
+				Added support for analyzing words, not just kanjis.
+			</action>
+		</release>
+		<release version="0.6" date="10. December 2009">
+			<action dev="vyzivus" type="add" issue="13">
+				Added support for multiple EDICT dictionaries.
+			</action>
+			<action dev="vyzivus" type="add" issue="20">
+				Implemented the SKIP system lookup.
+			</action>
+			<action dev="vyzivus" type="fix" issue="21">
+				Fixed regression: added back the missing about dialog.
+			</action>
+			<action dev="vyzivus" type="update" issue="22">
+				Exact matches first: When performing a search, best matches and common words are shown first.
+			</action>
+		</release>
+		<release version="0.5" date="15. November 2009">
+			<action dev="vyzivus" type="add" issue="19">
+				Optionally show Romaji instead of katakana/hiragana
+			</action>
+			<action dev="vyzivus" type="add" issue="16">
+				Implemented a kanji drawing recognition (a kanjipad)
+			</action>
+			<action dev="vyzivus" type="add" issue="17">
+				Implemented Kanji Radical Lookup
+			</action>
+			<action dev="vyzivus" type="add" issue="18">
+				Added support for KANJIDIC
+			</action>
+			<action dev="vyzivus" type="add" issue="15">
+				Added an Analysis Activity which lists all kanjis and their information.
+			</action>
+			<action dev="vyzivus" type="add" issue="14">
+				Configurable results for Simeji. Just long-click on the result list and pick what to return.
+			</action>
+			<action dev="vyzivus" type="update">
+				The application made more stable by catching all exceptions in event handler
+			</action>
+			<action dev="vyzivus" type="fix" issue="12">
+				ai.bat ignores command-line parameters and always prints that it missies -f -d or -u argument
+			</action>
+		</release>
+		<release version="0.4" date="1. November 2009">
+			<action dev="vyzivus" type="update" issue="10">
+				Added support for custom dictionary files
+			</action>
+			<action dev="vyzivus" type="fix" issue="8">
+				Fixed: Crash on Dictionary Download on Donut phones
+			</action>
+		</release>
+		<release version="0.3" date="21. October 2009">
+			<action dev="vyzivus" type="add" issue="6">
+				Added support for both Hepburn and Nihon-Shiki romanization.
+			</action>
+			<action dev="vyzivus" type="update" issue="7">
+				The KanaTable writings are now in Hepburn or Nihon-Shiki, depending on the setting
+			</action>
+		</release>
+		<release version="0.2" date="12. October 2009">
+			<action dev="vyzivus" type="add" issue="4">
+				Added support for Simeji.
+			</action>
+			<action dev="vyzivus" type="fix" issue="5">
+				The hiragana/katakana table is now stored in a Java source instead of in a property file.
+			</action>
+			<action dev="vyzivus" type="add">
+				Marked as compatible with all screen sizes and Android APIs both 1.5 and 1.6
+			</action>
+			<action dev="vyzivus" type="add">
+				Added a hiragana/katakana table.
+			</action>
+			<action dev="vyzivus" type="fix" issue="2">
+				fixes OutOfMemory errors on MacOSX while building dex.
+			</action>
+			<action dev="vyzivus" type="update">
+				The search result list is now sorted.
+			</action>
+			<action dev="vyzivus" type="fix" issue="3">
+				Added copy-paste support
+			</action>
+			<action dev="vyzivus" type="fix" issue="1">
+				Fixed bug with incorrect free space computation
+			</action>
+			<action dev="vyzivus" type="add">
+				Added the "About" activity.
+			</action>
+		</release>
+		<release version="0.1" date="22. August 2009">
+			<action dev="vyzivus" type="add">
+				Initial release.
+			</action>
+		</release>
+	</body>
+</document>

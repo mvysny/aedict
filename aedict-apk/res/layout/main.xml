@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		Aedict - an EDICT browser for Android Copyright (C) 2007 Martin Vysny
+
+		This program is free software: you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation, either version 3 of the License, or (at
+		your option) any later version. This program is distributed in the
+		hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+		the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+		PURPOSE. See the GNU General Public License for more details. You
+		should have received a copy of the GNU General Public License along
+		with this program. If not, see <http://www.gnu.org/licenses/>.
+	-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="fill_parent"
+	android:layout_width="fill_parent">
+<LinearLayout
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text="@string/jpSearch" android:textColor="#FFF" android:background="#666"/>
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:orientation="horizontal">
+		<CheckBox android:layout_height="wrap_content" android:id="@+id/jpExactMatch"
+			android:text="@string/exactMatch" android:layout_width="wrap_content"
+			android:layout_weight="1"></CheckBox>
+		<CheckBox android:layout_height="wrap_content" android:id="@+id/jpDeinflectVerbs"
+			android:text="@string/deinflectVerbs" android:layout_width="wrap_content"
+			android:layout_weight="1"></CheckBox>
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/search"
+			android:id="@+id/jpSearch"/>
+	</LinearLayout>
+	<EditText android:layout_height="wrap_content" android:id="@+id/jpSearchEdit"
+		android:layout_width="fill_parent" android:hint="@string/enterRomajiWord"
+		android:inputType="text" android:imeOptions="actionDone"></EditText>
+	<TextView android:layout_width="fill_parent" android:textColor="#FFF" android:background="#666"
+		android:layout_height="wrap_content" android:text="@string/englishSearch"></TextView>
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+		<CheckBox android:id="@+id/engExactMatch"
+			android:layout_width="wrap_content" android:layout_weight="1"
+			android:layout_height="wrap_content" android:text="@string/exactMatch"></CheckBox>
+		<CheckBox android:id="@+id/engSearchExamples"
+			android:layout_width="wrap_content" android:layout_weight="1"
+			android:layout_height="wrap_content" android:text="@string/searchInExamples"></CheckBox>
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/search"
+			android:id="@+id/engSearch"/>
+	</LinearLayout>
+	<EditText android:layout_height="wrap_content" android:id="@+id/engSearchEdit"
+		android:layout_width="fill_parent" android:hint="@string/enterWordOrExpression"
+		android:inputType="text" android:imeOptions="actionDone"></EditText>
+	<TextView android:layout_width="fill_parent" android:textColor="#FFF" android:background="#666"
+		android:layout_height="wrap_content" android:text="@string/jpTranslate"/>
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+		<EditText android:id="@+id/txtJpTranslate"
+			android:layout_width="wrap_content" android:layout_weight="1"
+			android:layout_height="wrap_content"/>
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/translate"
+			android:id="@+id/btnJpTranslate"/>
+	</LinearLayout>
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text="@string/other" android:textColor="#FFF" android:background="#666"/>
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/aboutCaption"
+			android:id="@+id/btnAbout"/>
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/donate"
+			android:id="@+id/btnDonate"/>
+	</LinearLayout>
+</LinearLayout>
+</ScrollView>

@@ -1,0 +1,8 @@
+syntax: glob
+.settings
+bin
+gen
+eclipse-target
+default.properties
+target
+
