@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import sk.baka.aedict.dict.DictEntry;
+import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.kanji.VerbInflection;
 import sk.baka.aedict.kanji.VerbInflection.Form;
@@ -45,10 +45,10 @@ import android.widget.SimpleExpandableListAdapter;
  */
 public class VerbInflectionActivity extends ExpandableListActivity {
 	/**
-	 * Expects {@link DictEntry} to be present in the Intent.
+	 * Expects {@link EdictEntry} to be present in the Intent.
 	 */
 	public static final String INTENTKEY_ENTRY = "entry";
-	private DictEntry entry;
+	private EdictEntry entry;
 	/**
 	 * true if romaji is shown instead of katakana/hiragana.
 	 */
@@ -62,7 +62,7 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		isShowingRomaji = AedictApp.getConfig().isUseRomaji();
-		entry = (DictEntry) getIntent().getSerializableExtra(INTENTKEY_ENTRY);
+		entry = (EdictEntry) getIntent().getSerializableExtra(INTENTKEY_ENTRY);
 		buildAndSetAdapter();
 		getExpandableListView().setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
 

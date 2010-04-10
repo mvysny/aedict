@@ -25,6 +25,7 @@ import sk.baka.aedict.AbstractAedictTest;
 import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.dict.DictEntry;
+import sk.baka.aedict.dict.KanjidicEntry;
 
 /**
  * Tests the {@link Skip4Activity} class.
@@ -70,7 +71,7 @@ public class Skip4ActivityTest extends AbstractAedictTest<Skip4Activity> {
 		final List<DictEntry> entries = (List<DictEntry>) i.getSerializableExtra(KanjiAnalyzeActivity.INTENTKEY_ENTRYLIST);
 		assertFalse(entries.isEmpty());
 		for (DictEntry e : entries) {
-			assertEquals(skipNumber, e.skip);
+			assertEquals(skipNumber, ((KanjidicEntry)e).skip);
 		}
 	}
 }

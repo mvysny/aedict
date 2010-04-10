@@ -34,7 +34,7 @@ import android.widget.TwoLineListItem;
  * 
  * @author Martin Vysny
  */
-public final class DictEntry implements Comparable<DictEntry>, Serializable {
+public class DictEntry implements Comparable<DictEntry>, Serializable {
 	private static final long serialVersionUID = 1L;
 	/**
 	 * The kanji expression, may be null if the entry does not contain any kanji
@@ -45,32 +45,9 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	 */
 	public final String reading;
 	/**
-	 * The English translation
+	 * The English translation, in raw format (including POS Markings, multiple meanings separated by slash etc).
 	 */
 	public final String english;
-	/**
-	 * The classification radical number of the kanji (as in Nelson). Non-null
-	 * only when {@link #kanji} is a single kanji and this entry was parsed from
-	 * KANJIDIC.
-	 */
-	public final Integer radical;
-	/**
-	 * The total stroke-count of the kanji. Non-null only when {@link #kanji} is
-	 * a single kanji and this entry was parsed from KANJIDIC.
-	 */
-	public final Integer strokes;
-	/**
-	 * The "SKIP" coding of the kanji, as used in Halpern. Non-null only when
-	 * {@link #kanji} is a single kanji and this entry was parsed from KANJIDIC.
-	 */
-	public final String skip;
-	/**
-	 * The "grade" of the kanji, In this case, G2 means it is a Jouyou (general
-	 * use) kanji taught in the second year of elementary schooling in Japan.
-	 * Non-null only when {@link #kanji} is a single kanji and this entry was
-	 * parsed from KANJIDIC.
-	 */
-	public final Integer grade;
 	/**
 	 * if true then this word is a common one. null if not known.
 	 */
@@ -88,7 +65,7 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	 *            the English translation
 	 */
 	public DictEntry(final String kanji, final String reading, final String english) {
-		this(kanji, reading, english, null, null, null, null, null);
+		this(kanji, reading, english, null);
 	}
 
 	/**
@@ -101,35 +78,16 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	 *            the reading, in hiragana or katakana.
 	 * @param english
 	 *            the English translation
-	 * @param radical
-	 *            The classification radical number of the kanji (as in Nelson).
-	 *            Non-null only when {@link #kanji} is a single kanji and this
-	 *            entry was parsed from KANJIDIC.
-	 * @param strokes
-	 *            The total stroke-count of the kanji. Non-null only when
-	 *            {@link #kanji} is a single kanji and this entry was parsed
-	 *            from KANJIDIC.
-	 * @param skip
-	 *            The "SKIP" coding of the kanji, as used in Halpern. Non-null
-	 *            only when {@link #kanji} is a single kanji and this entry was
-	 *            parsed from KANJIDIC.
-	 * @param grade
-	 *            The "grade" of the kanji, In this case, G2 means it is a
-	 *            Jouyou (general use) kanji taught in the second year of
-	 *            elementary schooling in Japan. Non-null only when
-	 *            {@link #kanji} is a single kanji and this entry was parsed
-	 *            from KANJIDIC.
 	 * @param isCommon
 	 *            if true then this word is a common one. null if not known.
 	 */
-	public DictEntry(final String kanji, final String reading, final String english, final Integer radical, final Integer strokes, final String skip, final Integer grade, final Boolean isCommon) {
+	public DictEntry(final String kanji, final String reading, final String english, final Boolean isCommon) {
+		if (english == null) {
+			throw new IllegalArgumentException("english must not be null");
+		}
 		this.kanji = kanji;
 		this.reading = reading;
 		this.english = english;
-		this.radical = radical;
-		this.strokes = strokes;
-		this.skip = skip;
-		this.grade = grade;
 		this.isCommon = isCommon;
 	}
 
@@ -139,7 +97,7 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	 * @return true if it is valid (the kanji or the reading is not blank),
 	 *         false otherwise.
 	 */
-	public boolean isValid() {
+	public final boolean isValid() {
 		return !MiscUtils.isBlank(kanji) || !MiscUtils.isBlank(reading);
 	}
 
@@ -228,7 +186,7 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	 * 
 	 * @return a japanese translation, kanji or hiragana/katakana.
 	 */
-	public String getJapanese() {
+	public final String getJapanese() {
 		return kanji != null ? kanji : reading;
 	}
 
@@ -245,8 +203,10 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	 * preferred</li>
 	 * <li>finally, {@link #getJapanese()} values are compared</li>
 	 * </ul>
+	 * @param another compare to this entry.
+	 * @return see {@link Comparable} for details
 	 */
-	public int compareTo(DictEntry another) {
+	public final int compareTo(DictEntry another) {
 		if (!isValid()) {
 			if (another.isValid()) {
 				return 1;
@@ -273,12 +233,12 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	}
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		return hashCode(getJapanese()) * 1001 + hashCode(english);
 	}
 
 	@Override
-	public boolean equals(Object other) {
+	public final boolean equals(Object other) {
 		if (!(other instanceof DictEntry)) {
 			return false;
 		}
@@ -286,15 +246,15 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 		return equals(getJapanese(), o.getJapanese()) && equals(english, o.english);
 	}
 
-	private int hashCode(Object obj) {
+	private final int hashCode(Object obj) {
 		return obj == null ? 0 : obj.hashCode();
 	}
 
-	private boolean equals(Object o1, Object o2) {
+	private final boolean equals(Object o1, Object o2) {
 		return o1 == null ? o2 == null : o1.equals(o2);
 	}
 
-	private Boolean isCommonNotNull() {
+	private final Boolean isCommonNotNull() {
 		return isCommon == null ? false : isCommon;
 	}
 
@@ -319,7 +279,7 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	 * 
 	 * @return the external form, parsable by {@link #fromExternal(String)}.
 	 */
-	public String toExternal() {
+	public final String toExternal() {
 		return kanji + "\1" + reading + "\1" + english;
 	}
 
@@ -353,55 +313,10 @@ public final class DictEntry implements Comparable<DictEntry>, Serializable {
 	 * 
 	 * @return the commonality.
 	 */
-	public int getCommonality() {
+	public final int getCommonality() {
 		if (commonality == -1) {
 			commonality = KanjiUtils.getCommonality(getJapanese());
 		}
 		return commonality;
-	}
-
-	/**
-	 * Checks if this entry is a ichidan verb.
-	 * 
-	 * @return true if this entry is a ichidan verb, false otherwise.
-	 */
-	public boolean isIchidan() {
-		return isValid() && english.contains("v1");
-	}
-
-	/**
-	 * Checks if this entry is a godan verb.
-	 * 
-	 * @return true if this entry is a godan verb, false otherwise.
-	 */
-	public boolean isGodan() {
-		return isValid() && english.contains("v5");
-	}
-
-	/**
-	 * Checks if this entry contains a verb.
-	 * 
-	 * @return true if this entry is a verb, false otherwise.
-	 */
-	public boolean isVerb() {
-		return isIchidan() || isGodan() || isSuru() || isKuru();
-	}
-
-	/**
-	 * Checks if this entry is a "suru" entry.
-	 * 
-	 * @return true if this entry describes the "suru" irregular verb.
-	 */
-	public boolean isSuru() {
-		return english.contains("vs-i") || english.contains("vs-s");
-	}
-
-	/**
-	 * Checks if this entry is a "kuru" entry.
-	 * 
-	 * @return true if this entry describes the "kuru" irregular verb.
-	 */
-	public boolean isKuru() {
-		return english.contains("vk");
 	}
 }
