@@ -39,6 +39,9 @@ public class RomanizationEnumTest {
 		assertEquals("よこはま", RomanizationEnum.Hepburn.toHiragana("yokohama"));
 		assertEquals("ずっと", RomanizationEnum.Hepburn.toHiragana("zutto"));
 		assertEquals("おちゃ", RomanizationEnum.Hepburn.toHiragana("ocha"));
+		assertEquals("そんな", RomanizationEnum.Hepburn.toHiragana("sonna"));
+		assertEquals("そんんあ", RomanizationEnum.Hepburn.toHiragana("sonxna"));
+		assertEquals("んあ", RomanizationEnum.Hepburn.toHiragana("xna"));
 	}
 	@Test
 	public void testNihonShikiToHiragana() {
@@ -46,6 +49,9 @@ public class RomanizationEnumTest {
 		assertEquals("よこはま", RomanizationEnum.NihonShiki.toHiragana("yokohama"));
 		assertEquals("ずっと", RomanizationEnum.NihonShiki.toHiragana("zutto"));
 		assertEquals("おちゃ", RomanizationEnum.NihonShiki.toHiragana("otya"));
+		assertEquals("そんな", RomanizationEnum.NihonShiki.toHiragana("sonna"));
+		assertEquals("そんんあ", RomanizationEnum.NihonShiki.toHiragana("sonxna"));
+		assertEquals("んあ", RomanizationEnum.NihonShiki.toHiragana("xna"));
 	}
 
 	/**
@@ -56,11 +62,17 @@ public class RomanizationEnumTest {
 		assertEquals("ミニコン", RomanizationEnum.Hepburn.toKatakana("minikon"));
 		assertEquals("コンピュータ", RomanizationEnum.Hepburn.toKatakana("konpyuuta"));
 		assertEquals("ボッブ", RomanizationEnum.Hepburn.toKatakana("bobbu"));
+		assertEquals("ソンナ", RomanizationEnum.Hepburn.toKatakana("sonna"));
+		assertEquals("ソンンア", RomanizationEnum.Hepburn.toKatakana("sonxna"));
+		assertEquals("ンア", RomanizationEnum.Hepburn.toKatakana("xna"));
 	}
 	@Test
 	public void testNihonShikiToKatakana() {
-		assertEquals("ミニコン", RomanizationEnum.Hepburn.toKatakana("minikon"));
-		assertEquals("コンピュータ", RomanizationEnum.Hepburn.toKatakana("konpyuuta"));
+		assertEquals("ミニコン", RomanizationEnum.NihonShiki.toKatakana("minikon"));
+		assertEquals("コンピュータ", RomanizationEnum.NihonShiki.toKatakana("konpyuuta"));
+		assertEquals("ボッブ", RomanizationEnum.NihonShiki.toKatakana("bobbu"));
+		assertEquals("ソンナ", RomanizationEnum.NihonShiki.toKatakana("sonna"));
+		assertEquals("ンア", RomanizationEnum.NihonShiki.toKatakana("xna"));
 	}
 
 	/**
@@ -75,6 +87,9 @@ public class RomanizationEnumTest {
 		assertEquals("konpyuuta", RomanizationEnum.Hepburn.toRomaji("コンピュータ"));
 		assertEquals("ocha", RomanizationEnum.Hepburn.toRomaji("おちゃ"));
 		assertEquals("bobbu", RomanizationEnum.Hepburn.toRomaji("ボッブ"));
+		assertEquals("sonna", RomanizationEnum.Hepburn.toRomaji("そんな"));
+		assertEquals("sonna", RomanizationEnum.Hepburn.toRomaji("そんんあ"));
+		assertEquals("na", RomanizationEnum.Hepburn.toRomaji("んあ"));
 	}
 	@Test
 	public void testNihonShikiToRomaji() {
@@ -85,5 +100,8 @@ public class RomanizationEnumTest {
 		assertEquals("konpyuuta", RomanizationEnum.NihonShiki.toRomaji("コンピュータ"));
 		assertEquals("otya", RomanizationEnum.NihonShiki.toRomaji("おちゃ"));
 		assertEquals("bobbu", RomanizationEnum.NihonShiki.toRomaji("ボッブ"));
+		assertEquals("sonna", RomanizationEnum.NihonShiki.toRomaji("そんな"));
+		assertEquals("sonna", RomanizationEnum.NihonShiki.toRomaji("そんんあ"));
+		assertEquals("na", RomanizationEnum.NihonShiki.toRomaji("んあ"));
 	}
 }

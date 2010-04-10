@@ -79,5 +79,9 @@
 				android:layout_height="wrap_content" android:text="@string/copy"
 				android:id="@+id/englishCopy"></Button>
 		</LinearLayout>
+		<TextView android:layout_width="fill_parent"  android:textColor="#FFF" android:background="#666"
+			android:layout_height="wrap_content" android:text="@string/posMarkings"></TextView>
+		<TableLayout android:id="@+id/posMarkings"
+			android:layout_width="fill_parent" android:layout_height="fill_parent" />
 	</LinearLayout>
 </ScrollView>

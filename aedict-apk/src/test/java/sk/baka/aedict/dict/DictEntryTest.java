@@ -29,8 +29,14 @@ import static org.junit.Assert.*;
 public class DictEntryTest {
 	@Test
 	public void testEquals() {
-		assertCorrectEquals(new DictEntry("kanji", "reading", "english"), new DictEntry("kanji", "reading2", "english"), new DictEntry("kanji2", "reading", "english"), null);
-		assertCorrectEquals(new DictEntry(null, "reading", "english"), new DictEntry(null, "reading", "english"), new DictEntry(null, "reading", "english2"), null);
+		// we will cheat a bit here: regularly, a subclass cannot be equal to
+		// its parent under any circumstances. However, DictEntry is an
+		// exception as multiple DictEntry types may be intermixed in a single
+		// Collection.
+		assertCorrectEquals(new DictEntry("kanji", "reading", "english"), new DictEntry("kanji", "reading2", "english"), new DictEntry("kanji2", "reading", "english"), new EdictEntry("CHEAT",
+				"CHEAT", "CHEAT", false));
+		assertCorrectEquals(new DictEntry(null, "reading", "english"), new DictEntry(null, "reading", "english"), new DictEntry(null, "reading", "english2"), new EdictEntry("CHEAT",
+				"CHEAT", "CHEAT", false));
 	}
 
 	@Test

@@ -26,7 +26,7 @@ import java.util.List;
 import sk.baka.aedict.dict.AbstractDownloadTask;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.dict.DownloadDictTask;
+import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
@@ -62,8 +62,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	 */
 	public static final String INTENTKEY_WORD = "word";
 	/**
-	 * A list of {@link DictEntry} with all information filled (radical, stroke
-	 * count, etc).
+	 * A list of {@link KanjidicEntry}.
 	 */
 	public static final String INTENTKEY_ENTRYLIST = "entrylist";
 	/**
@@ -155,18 +154,15 @@ public class KanjiAnalyzeActivity extends ListActivity {
 				final DictEntry e = model.get(position);
 				((TextView) v.findViewById(android.R.id.text1)).setText(isShowingRomaji ? romanization.toRomaji(e.reading) : e.reading);
 				final StringBuilder sb = new StringBuilder();
-				if (e.radical != null) {
+				if (e instanceof KanjidicEntry) {
+					final KanjidicEntry ee = (KanjidicEntry) e;
 					// TODO mvy: show radicals as images when available?
-					sb.append(' ').append(Radicals.getRadicals(e.kanji.charAt(0)));
-				}
-				if (e.strokes != null) {
-					sb.append(" Strokes:").append(e.strokes);
-				}
-				if (e.skip != null) {
-					sb.append(" SKIP:").append(e.skip);
-				}
-				if (e.grade != null) {
-					sb.append(" Grade:").append(e.grade);
+					sb.append(' ').append(Radicals.getRadicals(ee.kanji.charAt(0)));
+					sb.append(" Strokes:").append(ee.strokes);
+					sb.append(" SKIP:").append(ee.skip);
+					if (ee.grade != null) {
+						sb.append(" Grade:").append(ee.grade);
+					}
 				}
 				if (sb.length() > 0) {
 					sb.replace(0, 1, "\n");

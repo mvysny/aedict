@@ -24,6 +24,7 @@ import sk.baka.aedict.AbstractAedictTest;
 import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.dict.DictEntry;
+import sk.baka.aedict.dict.KanjidicEntry;
 import android.content.Intent;
 
 /**
@@ -88,7 +89,7 @@ public class Skip123ActivityTest extends AbstractAedictTest<Skip123Activity> {
 			if (!e.isValid()) {
 				throw new AssertionError("Invalid entry encountered: " + e.english);
 			}
-			assertEquals(skipNumber, e.skip);
+			assertEquals(skipNumber, ((KanjidicEntry)e).skip);
 		}
 	}
 }
