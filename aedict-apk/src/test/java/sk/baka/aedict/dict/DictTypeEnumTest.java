@@ -72,7 +72,7 @@ public class DictTypeEnumTest {
 	}
 
 	private DictEntry entryjp(final String jp) {
-		return new DictEntry(null, jp, null);
+		return new DictEntry(null, jp, "English");
 	}
 
 	private DictEntry entry(final String eng) {

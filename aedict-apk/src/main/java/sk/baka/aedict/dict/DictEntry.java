@@ -26,6 +26,7 @@ import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
+import sk.baka.tools.concurrent.Immutable;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
 
@@ -34,6 +35,7 @@ import android.widget.TwoLineListItem;
  * 
  * @author Martin Vysny
  */
+@Immutable
 public class DictEntry implements Comparable<DictEntry>, Serializable {
 	private static final long serialVersionUID = 1L;
 	/**
