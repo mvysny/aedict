@@ -18,9 +18,9 @@
 package sk.baka.aedict.dict;
 
 import static sk.baka.tools.test.Assert.*;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -43,5 +43,67 @@ public class EdictEntryTest {
 			result.add(new EdictEntry.Marking(m, 0));
 		}
 		return result;
+	}
+
+	@Test
+	public void testNotVerb() {
+		final EdictEntry e = new EdictEntry(null, "チェコスロバキア", "(n) Czechoslovakia; (P);", false);
+		assertFalse(e.isVerb());
+		assertFalse(e.isGodan());
+		assertFalse(e.isIchidan());
+		assertFalse(e.isKuru());
+		assertFalse(e.isSuru());
+	}
+
+	@Test
+	public void testIsIchidan() {
+		EdictEntry e = new EdictEntry("食い過ぎる", "くいすぎる", "(v1,vi) to eat too much; to overeat;", false);
+		assertTrue(e.isVerb());
+		assertFalse(e.isGodan());
+		assertTrue(e.isIchidan());
+		assertFalse(e.isKuru());
+		assertFalse(e.isSuru());
+	}
+
+	@Test
+	public void testIsGodan() {
+		EdictEntry e = new EdictEntry(
+				"翫ぶ",
+				"もてあそぶ",
+				"(v5b,vt) (1) (uk) to play with (a toy, one's hair, etc.); to fiddle with; (2) to toy with (one's emotions, etc.); to trifle with; (3) to do with something as one pleases; (4) to appreciate;",
+				false);
+		assertTrue(e.isVerb());
+		assertTrue(e.isGodan());
+		assertFalse(e.isIchidan());
+		assertFalse(e.isKuru());
+		assertFalse(e.isSuru());
+	}
+
+	@Test
+	public void testIsKuru() {
+		EdictEntry e = new EdictEntry(
+				"来る",
+				"くる",
+				"(vk,vi,aux-v) (1) to come (spatially or temporally); to approach; to arrive; (2) to come back; to do ... and come back; (3) to come to be; to become; to get; to grow; to continue; (vk,vi) (4) to come from; to be caused by; to derive from; (5) to come to (i.e. \"when it comes to spinach ...\"); (P);",
+				false);
+		assertTrue(e.isVerb());
+		assertFalse(e.isGodan());
+		assertFalse(e.isIchidan());
+		assertTrue(e.isKuru());
+		assertFalse(e.isSuru());
+	}
+
+	@Test
+	public void testIsSuru() {
+		EdictEntry e = new EdictEntry(
+				"為る",
+				"する",
+				"(vs-i) (1) (uk) to do; (2) to cause to become; to make (into); to turn (into); (3) to serve as; to act as; to work as; (4) to wear (clothes, a facial expression, etc.); (5) to judge as being; to view as being; to think of as; to treat as; to use as; (6) to decide on; to choose; (vs-i,vi) (7) to be sensed (of a smell, noise, etc.); (8) to be (in a state, condition, etc.); (9) to be worth; to cost; (10) to pass (of time); to elapse; (suf,vs-i) (11) verbalizing suffix (applies to nouns noted in this dictionary with the part of speech \"vs\"); (aux-v,vs-i) (12) creates a humble verb (after a noun prefixed with \"o\" or \"go\"); (13) to be just about to; to be just starting to; to try to; to attempt to; (P);",
+				false);
+		assertTrue(e.isVerb());
+		assertFalse(e.isGodan());
+		assertFalse(e.isIchidan());
+		assertFalse(e.isKuru());
+		assertTrue(e.isSuru());
 	}
 }
