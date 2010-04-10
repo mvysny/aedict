@@ -25,14 +25,12 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import sk.baka.aedict.R;
-import sk.baka.tools.concurrent.Immutable;
 
 /**
  * An EDICT entry.
  * 
  * @author Martin Vysny
  */
-@Immutable
 public final class EdictEntry extends DictEntry {
 	private static final long serialVersionUID = 1L;
 
@@ -126,7 +124,6 @@ public final class EdictEntry extends DictEntry {
 	 * 
 	 * @author Martin Vysny
 	 */
-	@Immutable
 	public static final class Marking {
 		/**
 		 * Creates new marking object.
@@ -182,6 +179,9 @@ public final class EdictEntry extends DictEntry {
 	 */
 	public List<Marking> getMarkings() {
 		final List<Marking> result = new ArrayList<Marking>();
+		if (isCommon) {
+			result.add(new Marking("P", R.string.mark_p));
+		}
 		final StringTokenizer braces = new StringTokenizer(english, "()", true);
 		boolean inBrace = false;
 		while (braces.hasMoreTokens()) {

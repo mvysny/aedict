@@ -20,9 +20,13 @@ package sk.baka.aedict;
 
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictEntry;
+import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.util.SearchUtils;
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 /**
  * Shows an EDict entry detail window which allows copy-paste and further
@@ -53,10 +57,30 @@ public class EntryDetailActivity extends AbstractActivity {
 		utils.setupCopyButton(R.id.readingCopy, R.id.readingSearchEdit);
 		utils.setupCopyButton(R.id.englishCopy, R.id.englishSearchEdit);
 		utils.setupAnalysisControls(R.id.kanjiAnalyze, R.id.kanjiSearchEdit, false);
+		if (entry instanceof EdictEntry) {
+			fillMarkings((EdictEntry) entry);
+		}
 	}
 
 	/**
 	 * The activity expects {@link DictEntry} in the intent keys.
 	 */
 	public static final String INTENTKEY_ENTRY = "entry";
+
+	private void fillMarkings(final EdictEntry entry) {
+		final TableLayout table = (TableLayout) findViewById(R.id.posMarkings);
+		for (final EdictEntry.Marking marking : entry.getMarkings()) {
+			final TableRow row = new TableRow(this);
+			table.addView(row);
+			row.addView(label(marking.mark));
+			row.addView(label(getString(marking.descriptionRes)));
+		}
+	}
+
+	private TextView label(final String caption) {
+		final TextView tv = new TextView(this);
+		tv.setText(caption);
+		tv.setPadding(6, 1, 6, 1);
+		return tv;
+	}
 }
