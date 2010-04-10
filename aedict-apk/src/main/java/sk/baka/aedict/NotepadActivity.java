@@ -20,19 +20,14 @@ package sk.baka.aedict;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictEntry;
-import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.dict.LuceneSearch;
-import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
-import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.ListBuilder;
-import sk.baka.autils.MiscUtils;
-import sk.baka.autils.Progress;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -82,7 +77,7 @@ public class NotepadActivity extends ListActivity {
 
 					public boolean onMenuItemClick(MenuItem item) {
 						final Intent intent = new Intent(NotepadActivity.this, KanjiAnalyzeActivity.class);
-						intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, modelCache.get(pos).getJapanese());
+						intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, getModel().get(pos).getJapanese());
 						startActivity(intent);
 						return true;
 					}
@@ -97,14 +92,14 @@ public class NotepadActivity extends ListActivity {
 				}));
 				menu.add(R.string.delete).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
-						modelCache.remove(pos);
+						getModel().remove(pos);
 						onModelChanged();
 						return true;
 					}
 				}));
 				menu.add(R.string.deleteAll).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
-						modelCache.clear();
+						getModel().clear();
 						onModelChanged();
 						return true;
 					}
@@ -112,7 +107,7 @@ public class NotepadActivity extends ListActivity {
 				menu.add(R.string.showSod).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
 						final Intent intent = new Intent(NotepadActivity.this, StrokeOrderActivity.class);
-						intent.putExtra(StrokeOrderActivity.INTENTKEY_KANJILIST, modelCache.get(pos).getJapanese());
+						intent.putExtra(StrokeOrderActivity.INTENTKEY_KANJILIST, getModel().get(pos).getJapanese());
 						startActivity(intent);
 						return true;
 					}
@@ -127,31 +122,34 @@ public class NotepadActivity extends ListActivity {
 		final Intent intent = getIntent();
 		if (intent.hasExtra(INTENTKEY_ADD_ENTRY)) {
 			final DictEntry e = (DictEntry) intent.getSerializableExtra(INTENTKEY_ADD_ENTRY);
-			if (modelCache == null) {
-				final Config cfg = AedictApp.getConfig();
-				final String items = cfg.getNotepadItems();
-				if (MiscUtils.isBlank(items)) {
-					cfg.setNotepadItems(e.getJapanese());
-				} else {
-					cfg.setNotepadItems(items + "," + e.getJapanese());
-				}
-			} else {
-				modelCache.add(e);
-				onModelChanged();
+			getModel().add(e);
+			onModelChanged();
+		}
+	}
+
+	private static List<DictEntry> getModel() {
+		if (modelCache == null) {
+			final Config cfg = AedictApp.getConfig();
+			final String notepadItems = cfg.getNotepadItems();
+			final StringTokenizer items = new StringTokenizer(notepadItems, "\2");
+			modelCache = new ArrayList<DictEntry>();
+			while (items.hasMoreElements()) {
+				modelCache.add(DictEntry.fromExternal(items.nextToken()));
 			}
 		}
+		return modelCache;
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		updateModel();
+		setModel();
 	}
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		final EditText edit = (EditText) findViewById(R.id.editNotepadSearch);
-		final DictEntry entry = modelCache.get(position);
+		final DictEntry entry = getModel().get(position);
 		final String text = edit.getText().toString();
 		edit.setText(text + entry.getJapanese());
 	}
@@ -161,9 +159,9 @@ public class NotepadActivity extends ListActivity {
 	 * each change.
 	 */
 	private void onModelChanged() {
-		final ListBuilder b = new ListBuilder(",");
-		for (final DictEntry entry : modelCache) {
-			b.add(entry.getJapanese());
+		final ListBuilder b = new ListBuilder("\2");
+		for (final DictEntry entry : getModel()) {
+			b.add(entry.toExternal());
 		}
 		final Config cfg = AedictApp.getConfig();
 		cfg.setNotepadItems(b.toString());
@@ -181,20 +179,12 @@ public class NotepadActivity extends ListActivity {
 		modelCache = null;
 	}
 
-	private void updateModel() {
-		if (modelCache == null) {
-			new ComputeCacheTask().execute(AedictApp.isInstrumentation, this);
-		} else {
-			setModel();
-		}
-	}
-
 	/**
 	 * Sets the ListView model. Expects valid {@link #modelCache model cache}.
 	 */
 	private void setModel() {
 		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
-		setListAdapter(new ArrayAdapter<DictEntry>(this, android.R.layout.simple_list_item_2, modelCache) {
+		setListAdapter(new ArrayAdapter<DictEntry>(this, android.R.layout.simple_list_item_2, getModel()) {
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
@@ -202,59 +192,10 @@ public class NotepadActivity extends ListActivity {
 				if (view == null) {
 					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
 				}
-				modelCache.get(position).print(view, isShowingRomaji ? romanization : null);
+				getModel().get(position).print(view, isShowingRomaji ? romanization : null);
 				return view;
 			}
 
 		});
-	}
-
-	private class ComputeCacheTask extends AbstractTask<Void, List<DictEntry>> {
-
-		@Override
-		protected void cleanupAfterError(Exception ex) {
-			// nothing to do
-		}
-
-		@Override
-		protected void onSucceeded(List<DictEntry> result) {
-			modelCache = result;
-			setModel();
-		}
-
-		@Override
-		public List<DictEntry> impl(Void... params) throws Exception {
-			final Config cfg = AedictApp.getConfig();
-			final String notepadItems = cfg.getNotepadItems();
-			final String[] items = MiscUtils.isBlank(notepadItems) ? new String[0] : notepadItems.split("\\,");
-			final List<DictEntry> result = new ArrayList<DictEntry>(items.length);
-			// always use the EDICT dictionary instead of user-selected
-			// dictionary
-			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, null);
-			try {
-				for (int i = 0; i < items.length; i++) {
-					final String item = items[i].trim();
-					publish(new Progress(null, i, items.length));
-					if (isCancelled()) {
-						return null;
-					}
-					final SearchQuery q = SearchQuery.searchForJapanese(item, true);
-					DictEntry ee = null;
-					final List<DictEntry> matches = lsEdict.search(q, 1);
-					DictEntry.removeInvalid(matches);
-					if (!matches.isEmpty()) {
-						ee = matches.get(0);
-					}
-					if (ee == null) {
-						// no luck. Just add the item
-						ee = new DictEntry(item, "", "");
-					}
-					result.add(ee);
-				}
-				return result;
-			} finally {
-				MiscUtils.closeQuietly(lsEdict);
-			}
-		}
 	}
 }

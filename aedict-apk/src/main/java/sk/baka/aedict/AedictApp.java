@@ -200,7 +200,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		/**
 		 * The preference key of the "notepad items" configuration item.
 		 */
-		public static final String KEY_NOTEPAD_ITEMS = "notepadItems";
+		public static final String KEY_NOTEPAD_ITEMS = "notepadItems2";
 
 		/**
 		 * Persisted notepad items. A mixture of Japanese kanjis, hiragana and
