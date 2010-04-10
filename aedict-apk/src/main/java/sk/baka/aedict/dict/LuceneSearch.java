@@ -34,6 +34,9 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.TopDocs;
 
+import sk.baka.aedict.AedictApp;
+import sk.baka.aedict.R;
+import sk.baka.aedict.util.IOExceptionWithCause;
 import sk.baka.autils.MiscUtils;
 
 /**
@@ -92,7 +95,7 @@ public final class LuceneSearch implements Closeable {
 	 * @throws IOException
 	 *             on I/O error.
 	 */
-	public List<DictEntry> search(final SearchQuery query, final int maxResults) throws IOException {
+	private List<DictEntry> searchInternal(final SearchQuery query, final int maxResults) throws IOException {
 		final List<DictEntry> r = new ArrayList<DictEntry>();
 		final String[] queries = dictType.getLuceneQuery(query);
 		// 5000 is just an approximate value.
@@ -129,6 +132,31 @@ public final class LuceneSearch implements Closeable {
 			}
 		}
 		return r;
+	}
+
+	/**
+	 * Performs a search.
+	 * 
+	 * @param query
+	 *            the query to search for.
+	 * @param maxResults
+	 *            the maximum number of results to list
+	 * @return a result list, never null, may be empty.
+	 * @throws IOException
+	 *             on I/O error.
+	 */
+	public List<DictEntry> search(final SearchQuery query, final int maxResults) throws IOException {
+		try {
+			return searchInternal(query, maxResults);
+		} catch (IOException ex) {
+			// catch the "read past EOF" IO exception which indicates that the
+			// dictionary files are corrupted. See
+			// http://code.google.com/p/aedict/issues/detail?id=55 for details
+			if ("read past EOF".equals(ex.getMessage())) {
+				throw new IOExceptionWithCause(AedictApp.getStr(R.string.dictFilesCorrupted) + ": " + ex.getMessage(), ex);
+			}
+			throw ex;
+		}
 	}
 
 	public void close() throws IOException {

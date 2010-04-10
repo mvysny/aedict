@@ -25,6 +25,7 @@ import java.util.List;
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
@@ -215,7 +216,7 @@ public class ResultActivity extends ListActivity {
 						return true;
 					}
 				}));
-				if (ee.isVerb()) {
+				if ((ee instanceof EdictEntry) && ((EdictEntry) ee).isVerb()) {
 					final MenuItem miShowConjugations = menu.add(Menu.NONE, 7, 7, R.string.showConjugations);
 					miShowConjugations.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
 

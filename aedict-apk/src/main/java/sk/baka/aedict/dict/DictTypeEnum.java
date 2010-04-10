@@ -96,8 +96,8 @@ public enum DictTypeEnum {
 				final int closingSquareBracket = jpPart.indexOf(']');
 				reading = jpPart.substring(openSquareBracket + 1, closingSquareBracket).trim();
 			}
-			final boolean isCommon = edictEntry.contains("(P)");
-			return new DictEntry(kanji, reading, englishPart, null, null, null, null, isCommon);
+			final boolean isCommon = englishPart.endsWith("(P)");
+			return new EdictEntry(kanji, reading, englishPart, isCommon);
 		}
 
 		@Override
@@ -249,7 +249,7 @@ public enum DictTypeEnum {
 			if (!namesReading.isEmpty()) {
 				reading.add("[" + namesReading + "]");
 			}
-			return new DictEntry(String.valueOf(kanji), reading.toString(), english.toString(), radicalNumber, strokeCount, skip, grade, null);
+			return new KanjidicEntry(String.valueOf(kanji), reading.toString(), english.toString(), radicalNumber, strokeCount, skip, grade);
 		}
 
 		@Override

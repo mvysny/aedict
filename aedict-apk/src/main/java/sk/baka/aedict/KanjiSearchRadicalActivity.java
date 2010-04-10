@@ -28,6 +28,7 @@ import java.util.Set;
 
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.Radicals;
@@ -314,7 +315,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 		}
 
 		private Integer getStrokes(final DictEntry e) {
-			return e.strokes == null ? Integer.MAX_VALUE : e.strokes;
+			return e instanceof KanjidicEntry ? ((KanjidicEntry) e).strokes : Integer.MAX_VALUE;
 		}
 	}
 }
