@@ -288,4 +288,5 @@
     <string name="iWasJustAboutToDoX">I was just about to do X.</string>
     <string name="nearlyFormExamples">Ima Sachiko ni denwa suru tokoro datta.\nI was just about to call Sachiko.\nWatashi no saifu o wasureru tokoro datta.\nI almost forgot my wallet.</string>
     <string name="inflectionWarning">Please note that the conjugation is performed automatically and may produce weird results, especially with kuru/suru. Don't believe everything you see :-)</string>
+    <string name="dictFilesCorrupted">It seems that the dictionary files became corrupted. Please try to delete them and re-download them. Also please check your sd-card for errors.</string>
 </resources>
