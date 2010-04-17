@@ -4,6 +4,23 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
+		<release version="1.1" date="17. April 2010">
+			<action dev="vyzivus" type="fix" issue="40">
+				Fixed random "NoSuchElementException" errors.
+			</action>
+			<action dev="vyzivus" type="fix" issue="54">
+				Adding an example sentence to notepad will lose the translation.
+			</action>
+			<action dev="vyzivus" type="add" issue="51">
+				Added the POS Markings to the EntryDetailActivity.
+			</action>
+			<action dev="vyzivus" type="fix" issue="50">
+				You can now use xn to force n, e.g. sonxna -&gt; そんんあ.
+			</action>
+			<action dev="vyzivus" type="update" issue="55">
+				Aedict will now report corrupted dictionary files and instructs the user what to do.
+			</action>
+		</release>
 		<release version="1.0" date="25. March 2010">
 			<action dev="vyzivus" type="add" issue="43">
 				Show a verb inflection chart.
