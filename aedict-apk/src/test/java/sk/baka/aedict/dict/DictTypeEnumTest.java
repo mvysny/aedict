@@ -118,7 +118,7 @@ public class DictTypeEnumTest {
 
 	private Document doc(final String edictLine) {
 		final Document doc = new Document();
-		doc.add(new Field("contents", CompressionTools.compressString(edictLine), Field.Store.YES));
+		doc.add(new Field("contents", edictLine, Field.Store.YES, Field.Index.ANALYZED));
 		return doc;
 	}
 

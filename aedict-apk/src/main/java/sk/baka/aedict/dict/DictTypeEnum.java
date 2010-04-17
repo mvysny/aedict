@@ -23,7 +23,9 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.zip.DataFormatException;
 
+import org.apache.lucene.document.CompressionTools;
 import org.apache.lucene.document.Document;
 
 import sk.baka.aedict.kanji.KanjiUtils;
@@ -200,7 +202,15 @@ public enum DictTypeEnum {
 		public DictEntry getEntry(Document doc) {
 			// the entry is described at
 			// http://www.csse.monash.edu.au/~jwb/kanjidic.html
-			final String kanjidicEntry = doc.get("contents");
+			String kanjidicEntry = doc.get("contents");
+			if (kanjidicEntry == null) {
+				// reading Lucene >=2.9.0 data file...
+				try {
+					kanjidicEntry = CompressionTools.decompressString(doc.getBinaryValue("contents"));
+				} catch (DataFormatException ex) {
+					throw new RuntimeException(ex);
+				}
+			}
 			final char kanji = kanjidicEntry.charAt(0);
 			if (kanjidicEntry.charAt(1) != ' ') {
 				throw new IllegalArgumentException("Invalid kanjidic entry: " + kanjidicEntry);
@@ -392,7 +402,7 @@ public enum DictTypeEnum {
 			return getEntry(doc);
 		} catch (Exception ex) {
 			Log.e(DictTypeEnum.class.getSimpleName(), "Failed to parse a dictionary line", ex);
-			return DictEntry.newErrorMsg(ex.getMessage());
+			return DictEntry.newErrorMsg(ex);
 		}
 	}
 
