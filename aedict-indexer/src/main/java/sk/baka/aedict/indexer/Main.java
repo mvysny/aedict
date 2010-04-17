@@ -28,6 +28,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -44,6 +46,9 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.commons.cli.Options;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
 
 /**
  * Downloads the EDict file, indexes it with Lucene then zips it.
@@ -183,22 +188,36 @@ public class Main {
         final BufferedReader edict = new BufferedReader(new InputStreamReader(
                 readEdict(), encoding));
         try {
-            final IndexWriter luceneWriter = new IndexWriter(LUCENE_INDEX,
-                    new StandardAnalyzer(), true,
-                    IndexWriter.MaxFieldLength.UNLIMITED);
+            final Directory directory = FSDirectory.open(new File(LUCENE_INDEX));
             try {
-                final IDictParser parser = fileType.newParser();
-                indexWithLucene(edict, luceneWriter, parser);
-                parser.onFinish();
-                System.out.println("Optimizing Lucene index");
-                luceneWriter.optimize();
+                final IndexWriter luceneWriter = new IndexWriter(directory,
+                        new StandardAnalyzer(Version.LUCENE_24), true,
+                        IndexWriter.MaxFieldLength.UNLIMITED);
+                try {
+                    final IDictParser parser = fileType.newParser();
+                    indexWithLucene(edict, luceneWriter, parser);
+                    parser.onFinish();
+                    System.out.println("Optimizing Lucene index");
+                    luceneWriter.optimize();
+                } finally {
+                    luceneWriter.close();
+                }
             } finally {
-                luceneWriter.close();
+                closeQuietly(directory);
             }
         } finally {
             IOUtils.closeQuietly(edict);
         }
         System.out.println("Finished Lucene indexing");
+    }
+    private static final Logger log = Logger.getLogger(Main.class.getName());
+
+    private static void closeQuietly(final Directory d) {
+        try {
+            d.close();
+        } catch (Exception ex) {
+            log.log(Level.WARNING, "Failed to close a Directory object", ex);
+        }
     }
 
     private static void indexWithLucene(BufferedReader edict,

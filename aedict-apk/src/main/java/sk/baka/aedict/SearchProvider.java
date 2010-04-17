@@ -77,7 +77,7 @@ public class SearchProvider extends ContentProvider {
 			}
 		} catch (Exception ex) {
 			Log.e(SearchProvider.class.getSimpleName(), ex.getMessage(), ex);
-			entries.add(DictEntry.newErrorMsg(ex.toString()));
+			entries.add(DictEntry.newErrorMsg(ex));
 		}
 		Collections.sort(entries);
 		for (final DictEntry entry : entries) {

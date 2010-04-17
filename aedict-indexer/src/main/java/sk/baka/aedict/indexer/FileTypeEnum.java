@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.StringTokenizer;
 import org.apache.commons.io.IOUtils;
+import org.apache.lucene.document.CompressionTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 
@@ -84,7 +85,7 @@ public enum FileTypeEnum {
                 private final char[] commonality = new char[1000];
 
                 public boolean addLine(String line, Document doc) {
-                    doc.add(new Field("contents", line, Field.Store.COMPRESS, Field.Index.NO));
+                    doc.add(new Field("contents", CompressionTools.compressString(line), Field.Store.YES));
                     // the kanji itself
                     doc.add(new Field("kanji", getKanji(line), Field.Store.YES, Field.Index.NOT_ANALYZED));
                     // may contain several stroke numbers, separated by spaces. First one is the correct stroke number,

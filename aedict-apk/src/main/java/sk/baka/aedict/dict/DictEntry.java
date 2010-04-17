@@ -104,6 +104,17 @@ public class DictEntry implements Comparable<DictEntry>, Serializable {
 	/**
 	 * Constructs an invalid entry with given error message.
 	 * 
+	 * @param t
+	 *            the error cause
+	 * @return invalid edict entry.
+	 */
+	public static DictEntry newErrorMsg(final Throwable t) {
+		return newErrorMsg(t.toString());
+	}
+
+	/**
+	 * Constructs an invalid entry with given error message.
+	 * 
 	 * @param errorMsg
 	 *            the error message
 	 * @return invalid edict entry.

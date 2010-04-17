@@ -5,7 +5,7 @@
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/lucene/lucene-core/2.4.1/lucene-core-2.4.1-android.jar" sourcepath="/M2_REPO/org/apache/lucene/lucene-core/2.4.1/lucene-core-2.4.1-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/lucene/lucene-core/3.0.1-vyzivus0/lucene-core-3.0.1-vyzivus0.jar" sourcepath="/M2_REPO/org/apache/lucene/lucene-core/3.0.1-vyzivus0/lucene-core-3.0.1-vyzivus0-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="var" path="M2_REPO/sk/baka/autils/autils/0.4/autils-0.4.jar" sourcepath="/M2_REPO/sk/baka/autils/autils/0.4/autils-0.4-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/sk/baka/tools/bakatools/0.5/bakatools-0.5.jar" sourcepath="/M2_REPO/sk/baka/tools/bakatools/0.5/bakatools-0.5-sources.jar"/>

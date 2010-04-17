@@ -19,6 +19,7 @@
 package sk.baka.aedict.dict;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,9 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
 
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.R;
@@ -45,6 +49,7 @@ import sk.baka.autils.MiscUtils;
  * @author Martin Vysny
  */
 public final class LuceneSearch implements Closeable {
+	private final Directory directory;
 	private final IndexReader reader;
 	private final Searcher searcher;
 	private final QueryParser parser;
@@ -66,9 +71,10 @@ public final class LuceneSearch implements Closeable {
 	 */
 	public LuceneSearch(final DictTypeEnum dictType, final String dictionaryPath) throws IOException {
 		this.dictType = dictType;
-		reader = IndexReader.open(dictionaryPath != null ? dictionaryPath : dictType.getDefaultDictionaryPath());
+		directory = FSDirectory.open(new File(dictionaryPath != null ? dictionaryPath : dictType.getDefaultDictionaryPath()));
+		reader = IndexReader.open(directory,true);
 		searcher = new IndexSearcher(reader);
-		parser = new QueryParser("contents", new StandardAnalyzer());
+		parser = new QueryParser(Version.LUCENE_24, "contents", new StandardAnalyzer(Version.LUCENE_24));
 	}
 
 	/**
@@ -162,6 +168,7 @@ public final class LuceneSearch implements Closeable {
 	public void close() throws IOException {
 		searcher.close();
 		reader.close();
+		directory.close();
 	}
 
 	/**
