@@ -104,7 +104,7 @@
     <string name="skip4">Please count all the strokes in the character, and then choose the first from the options listed below:</string>
     <string name="numberOfStrokes">Number of strokes:</string>
     <string name="edictDictionary">Edict dictionary</string>
-    <string name="edictDictionarySummary">Choose the Edict dictionary</string>
+    <string name="edictDictionarySummary">Use given dictionary for search and translation</string>
     <string name="analyzeWords">Analyze as words</string>
     <string name="analyzeCharacters">Analyze as characters</string>
     <string name="translate">Translate</string>
