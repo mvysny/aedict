@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sk.baka.aedict.indexer;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +30,9 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
 import org.junit.After;
 import org.junit.Before;
 import static org.junit.Assert.*;
@@ -39,6 +43,7 @@ import static org.junit.Assert.*;
  */
 public abstract class AbstractLuceneSearchTest {
 
+    private Directory directory;
     private IndexReader reader;
     private Searcher searcher;
     private QueryParser parser;
@@ -47,15 +52,17 @@ public abstract class AbstractLuceneSearchTest {
 
     @Before
     public void initializeLucene() throws IOException {
-        reader = IndexReader.open(Main.LUCENE_INDEX);
+        directory = FSDirectory.open(new File(Main.LUCENE_INDEX));
+        reader = IndexReader.open(directory, true);
         searcher = new IndexSearcher(reader);
-        parser = new QueryParser(getDefaultFieldName(), new StandardAnalyzer());
+        parser = new QueryParser(Version.LUCENE_24, getDefaultFieldName(), new StandardAnalyzer(Version.LUCENE_24));
     }
 
     @After
     public void closeLucene() throws IOException {
         searcher.close();
         reader.close();
+        directory.close();
     }
 
     protected final List<String> search(final String fieldName, final String query) throws IOException, org.apache.lucene.queryParser.ParseException {
