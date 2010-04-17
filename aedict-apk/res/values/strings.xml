@@ -128,7 +128,7 @@
     <string name="resetIntroductions">Reset introductions</string>
     <string name="resetIntroductionsSummary">All introduction dialogs will be shown again</string>
     <string name="whatsNew">What\'s New in %s</string>
-    <string name="whatsNewText">For full changelog please see http://baka.sk/aedict/changes-report.html\n\n- Added support for verb inflection (long-click on a verb in the results browser)\n- Integrated with Android Search (Android 1.6 and higher only)\n- Better sorting of results\n- Fixed broken search from the detail screen, automatic Tanaka dictionary download, Radicals overflowing on Archos5\n- The config dialog looks more Android-like</string>
+    <string name="whatsNewText">For full changelog please see http://baka.sk/aedict/changes-report.html\n\n- Aedict now handles corrupted dictionary files better\n- You can now use xn to force n, e.g. sonxna -> そんんあ\n- Fixed random "NoSuchElementException" errors.\n- Added the POS Markings to the EntryDetailActivity.\n- Fixed: Adding an example sentence to notepad will lose the translation.</string>
     <string name="searchInEdict">Search in the Edict dictionary</string>
     <string name="showConjugations">Show verb conjugations</string>
     <string name="iDoSomething">I do something.</string>
