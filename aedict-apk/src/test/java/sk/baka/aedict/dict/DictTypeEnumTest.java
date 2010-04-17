@@ -22,6 +22,7 @@ import static org.junit.Assert.*;
 import static sk.baka.tools.test.Assert.*;
 import java.text.ParseException;
 
+import org.apache.lucene.document.CompressionTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.junit.Test;
@@ -117,7 +118,7 @@ public class DictTypeEnumTest {
 
 	private Document doc(final String edictLine) {
 		final Document doc = new Document();
-		doc.add(new Field("contents", edictLine, Field.Store.COMPRESS, Field.Index.NO));
+		doc.add(new Field("contents", CompressionTools.compressString(edictLine), Field.Store.YES));
 		return doc;
 	}
 

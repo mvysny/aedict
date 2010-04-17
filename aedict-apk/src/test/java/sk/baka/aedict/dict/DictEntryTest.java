@@ -42,10 +42,10 @@ public class DictEntryTest {
 	@Test
 	public void testExternalize() {
 		checkExternalize(new DictEntry("kanji", "reading", "english"));
-		checkExternalize(new DictEntry("", "reading", ""));
-		checkExternalize(new DictEntry("", "", ""));
-		checkExternalize(new DictEntry("kanji", "", ""));
-		checkExternalize(new DictEntry("foo", "", "bar"));
+		checkExternalize(new DictEntry(null, "reading", "e"));
+		checkExternalize(new DictEntry(null, null, "e"));
+		checkExternalize(new DictEntry("kanji", null, "foo"));
+		checkExternalize(new DictEntry("foo", null, "bar"));
 	}
 
 	private void checkExternalize(final DictEntry entry) {
