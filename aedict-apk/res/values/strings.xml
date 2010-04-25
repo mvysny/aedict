@@ -388,4 +388,9 @@
     <string name="mark_vulg">vulgar expression or word</string>
     <string name="mark_p">common</string>
     <string name="posMarkings">POS Markings</string>
+    <string name="preference_application">Application</string>
+    <string name="preference_dictionaries">Dictionaries</string>
+    <string name="preference_expert">Expert settings</string>
+    <string name="sort">Sort results</string>
+    <string name="sort_summary">If disabled, the results will be sorted based on the Lucene Boost function</string>
 </resources>

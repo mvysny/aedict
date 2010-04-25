@@ -101,7 +101,6 @@ public class SkipActivity extends Activity {
 			final List<DictEntry> result = LuceneSearch.singleSearch(query, null);
 			// no need to sort on the number of strokes as all results will have
 			// the same amount of strokes
-			Collections.sort(result);
 			final Intent intent = new Intent(activity, KanjiAnalyzeActivity.class);
 			intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_ENTRYLIST, (Serializable) result);
 			activity.startActivity(intent);

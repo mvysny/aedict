@@ -324,7 +324,6 @@ public class ResultActivity extends ListActivity {
 		@Override
 		public List<DictEntry> impl(SearchQuery... params) throws Exception {
 			final List<DictEntry> result = LuceneSearch.singleSearch(query, query.dictType == DictTypeEnum.Edict ? AedictApp.getConfig().getDictionaryLoc() : null);
-			Collections.sort(result);
 			return result;
 		}
 

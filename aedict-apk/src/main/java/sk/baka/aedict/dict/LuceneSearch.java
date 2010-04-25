@@ -22,6 +22,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -40,6 +41,7 @@ import org.apache.lucene.util.Version;
 
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.R;
+import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.util.IOExceptionWithCause;
 import sk.baka.autils.MiscUtils;
 
@@ -82,7 +84,7 @@ public final class LuceneSearch implements Closeable {
 	 * 
 	 * @param query
 	 *            the query to search for.
-	 * @return a result list, never null, may be empty.
+	 * @return a result list, never null, may be empty. The list is sorted depending on the value of {@link Config#isSorted()} configuration option.
 	 * @throws IOException
 	 *             on I/O error.
 	 */
@@ -97,7 +99,7 @@ public final class LuceneSearch implements Closeable {
 	 *            the query to search for.
 	 * @param maxResults
 	 *            the maximum number of results to list
-	 * @return a result list, never null, may be empty.
+	 * @return a result list, never null, may be empty. The list is sorted depending on the value of {@link Config#isSorted()} configuration option.
 	 * @throws IOException
 	 *             on I/O error.
 	 */
@@ -137,6 +139,9 @@ public final class LuceneSearch implements Closeable {
 				break;
 			}
 		}
+		if (AedictApp.getConfig().isSorted()) {
+			Collections.sort(r);
+		}
 		return r;
 	}
 
@@ -147,7 +152,7 @@ public final class LuceneSearch implements Closeable {
 	 *            the query to search for.
 	 * @param maxResults
 	 *            the maximum number of results to list
-	 * @return a result list, never null, may be empty.
+	 * @return a result list, never null, may be empty. The list is sorted depending on the value of {@link Config#isSorted()} configuration option.
 	 * @throws IOException
 	 *             on I/O error.
 	 */
@@ -180,7 +185,7 @@ public final class LuceneSearch implements Closeable {
 	 * @param dictionaryPath
 	 *            overrides default dictionary location if non-null. An absolute
 	 *            os-specific path, e.g. /sdcard/aedict/index.
-	 * @return a list of matched lines, never null.
+	 * @return a result list, never null, may be empty. The list is sorted depending on the value of {@link Config#isSorted()} configuration option.
 	 * @throws IOException
 	 *             on I/O error.
 	 */
