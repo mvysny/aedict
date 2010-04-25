@@ -104,7 +104,7 @@
     <string name="skip4">Please count all the strokes in the character, and then choose the first from the options listed below:</string>
     <string name="numberOfStrokes">Number of strokes:</string>
     <string name="edictDictionary">Edict dictionary</string>
-    <string name="edictDictionarySummary">Choose the Edict dictionary</string>
+    <string name="edictDictionarySummary">Use given dictionary for search and translation</string>
     <string name="analyzeWords">Analyze as words</string>
     <string name="analyzeCharacters">Analyze as characters</string>
     <string name="translate">Translate</string>
@@ -388,4 +388,9 @@
     <string name="mark_vulg">vulgar expression or word</string>
     <string name="mark_p">common</string>
     <string name="posMarkings">POS Markings</string>
+    <string name="preference_application">Application</string>
+    <string name="preference_dictionaries">Dictionaries</string>
+    <string name="preference_expert">Expert settings</string>
+    <string name="sort">Sort results</string>
+    <string name="sort_summary">If disabled, the results will be sorted based on the Lucene Boost function</string>
 </resources>

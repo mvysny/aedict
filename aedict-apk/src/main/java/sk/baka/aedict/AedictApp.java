@@ -180,11 +180,13 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * If true then Romaji will be used instead of katakana/hiragana
 		 * throughout the application.
 		 * 
-		 * @param useRomaji true if Romaji will be displayed.
+		 * @param useRomaji
+		 *            true if Romaji will be displayed.
 		 */
 		public void setUseRomaji(boolean useRomaji) {
 			prefs.edit().putBoolean(ConfigActivity.KEY_USE_ROMAJI, useRomaji).commit();
 		}
+
 		/**
 		 * The dictionary name to use. If null then the default one should be
 		 * used. Applies to EDICT dictionaries only.
@@ -221,6 +223,33 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 */
 		public void setNotepadItems(final String notepadItems) {
 			prefs.edit().putString(KEY_NOTEPAD_ITEMS, notepadItems).commit();
+		}
+
+		/**
+		 * True if the results should be sorted (the default), false otherwise.
+		 * See http://code.google.com/p/aedict/issues/detail?id=56 for details.
+		 */
+		public static final String KEY_SORT = "sort";
+
+		/**
+		 * True if the results should be sorted (the default), false otherwise.
+		 * See http://code.google.com/p/aedict/issues/detail?id=56 for details.
+		 * 
+		 * @param sorted
+		 *            sort
+		 */
+		public void setSorted(final boolean sorted) {
+			prefs.edit().putBoolean(KEY_SORT, sorted).commit();
+		}
+
+		/**
+		 * True if the results should be sorted (the default), false otherwise.
+		 * See http://code.google.com/p/aedict/issues/detail?id=56 for details.
+		 * 
+		 * @return sort
+		 */
+		public boolean isSorted() {
+			return prefs.getBoolean(KEY_SORT, true);
 		}
 
 		/**

@@ -308,7 +308,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		 *            the word to analyze
 		 * @return longest word found or an entry consisting of the first
 		 *         character if we were unable to find nothing
-		 * @throws IOException
+		 * @throws IOException on i/o error
 		 */
 		private MatchedWord findLongestWord(final String word, final LuceneSearch edict) throws IOException {
 			String w = word;
@@ -319,7 +319,6 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			while (w.length() > 0) {
 				final List<DictEntry> result = edict.search(SearchQuery.searchForJapanese(w, true), 1);
 				DictEntry.removeInvalid(result);
-				Collections.sort(result);
 				if (!result.isEmpty()) {
 					for (final DictEntry e : result) {
 						return new MatchedWord(e, w.length());

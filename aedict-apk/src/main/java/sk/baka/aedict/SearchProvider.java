@@ -79,7 +79,9 @@ public class SearchProvider extends ContentProvider {
 			Log.e(SearchProvider.class.getSimpleName(), ex.getMessage(), ex);
 			entries.add(DictEntry.newErrorMsg(ex));
 		}
-		Collections.sort(entries);
+		if (AedictApp.getConfig().isSorted()) {
+			Collections.sort(entries);
+		}
 		for (final DictEntry entry : entries) {
 			Object[] rowObject = new Object[] { searchString, entry.formatJapanese(romanize), entry.english, entry.toExternal() };
 			cursor.addRow(rowObject);
