@@ -83,11 +83,17 @@ public enum FileTypeEnum {
             return new IDictParser() {
 
                 private final char[] commonality = new char[1000];
+                private int lowestKanjiCodePoint = Integer.MAX_VALUE;
+                private int highestKanjiCodePoint = 0;
 
                 public boolean addLine(String line, Document doc) {
                     doc.add(new Field("contents", CompressionTools.compressString(line), Field.Store.YES));
+                    final String kanji = getKanji(line);
+                    final int kanjiCodePoint = kanji.codePointAt(0);
+                    lowestKanjiCodePoint = Math.min(kanjiCodePoint, lowestKanjiCodePoint);
+                    highestKanjiCodePoint = Math.max(kanjiCodePoint, highestKanjiCodePoint);
                     // the kanji itself
-                    doc.add(new Field("kanji", getKanji(line), Field.Store.YES, Field.Index.NOT_ANALYZED));
+                    doc.add(new Field("kanji", kanji, Field.Store.YES, Field.Index.NOT_ANALYZED));
                     // may contain several stroke numbers, separated by spaces. First one is the correct stroke number,
                     // following numbers are common mistakes.
                     doc.add(new Field("strokes", getFields(line, 'S', false), Field.Store.YES, Field.Index.ANALYZED));
@@ -99,7 +105,7 @@ public enum FileTypeEnum {
                     if (unparsedRank.trim().length() > 0) {
                         final int rank = Integer.valueOf(getFields(line, 'F', true));
                         if (rank <= commonality.length) {
-                            commonality[rank - 1] = getKanji(line).charAt(0);
+                            commonality[rank - 1] = kanji.charAt(0);
                         }
                     }
                     return true;
@@ -119,6 +125,7 @@ public enum FileTypeEnum {
                     } finally {
                         IOUtils.closeQuietly(out);
                     }
+                    System.out.println("Kanji Unicode codepoints spans over an inclusive range of " + lowestKanjiCodePoint + ".." + highestKanjiCodePoint);
                 }
             };
         }
