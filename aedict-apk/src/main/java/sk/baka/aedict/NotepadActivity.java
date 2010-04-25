@@ -20,17 +20,19 @@ package sk.baka.aedict;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictEntry;
+import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.ListBuilder;
+import sk.baka.autils.MiscUtils;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,7 +55,7 @@ public class NotepadActivity extends ListActivity {
 	 * The cached model (a list of edict entries as only the japanese text is
 	 * persisted).
 	 */
-	private static List<DictEntry> modelCache = null;
+	private List<DictEntry> modelCache = null;
 	/**
 	 * true if romaji is shown instead of katakana/hiragana.
 	 */
@@ -127,14 +129,20 @@ public class NotepadActivity extends ListActivity {
 		}
 	}
 
-	private static List<DictEntry> getModel() {
+	private List<DictEntry> getModel() {
 		if (modelCache == null) {
 			final Config cfg = AedictApp.getConfig();
 			final String notepadItems = cfg.getNotepadItems();
-			final StringTokenizer items = new StringTokenizer(notepadItems, "\2");
+			final String items[] = notepadItems.split("@@@@");
 			modelCache = new ArrayList<DictEntry>();
-			while (items.hasMoreElements()) {
-				modelCache.add(DictEntry.fromExternal(items.nextToken()));
+			try {
+				for (final String item : items) {
+					if (!MiscUtils.isBlank(item)) {
+						modelCache.add(DictEntry.fromExternal(item));
+					}
+				}
+			} catch (Exception ex) {
+				Log.e(NotepadActivity.class.getSimpleName(), "Notepad model parsing failed", ex);
 			}
 		}
 		return modelCache;
@@ -159,7 +167,7 @@ public class NotepadActivity extends ListActivity {
 	 * each change.
 	 */
 	private void onModelChanged() {
-		final ListBuilder b = new ListBuilder("\2");
+		final ListBuilder b = new ListBuilder("@@@@");
 		for (final DictEntry entry : getModel()) {
 			b.add(entry.toExternal());
 		}
@@ -173,14 +181,7 @@ public class NotepadActivity extends ListActivity {
 	}
 
 	/**
-	 * Used for testing purposes only.
-	 */
-	static void invalidateCache() {
-		modelCache = null;
-	}
-
-	/**
-	 * Sets the ListView model. Expects valid {@link #modelCache model cache}.
+	 * Sets the ListView model.
 	 */
 	private void setModel() {
 		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
@@ -192,7 +193,7 @@ public class NotepadActivity extends ListActivity {
 				if (view == null) {
 					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
 				}
-				getModel().get(position).print(view, isShowingRomaji ? romanization : null);
+				Edict.print(getModel().get(position), view, isShowingRomaji ? romanization : null);
 				return view;
 			}
 
