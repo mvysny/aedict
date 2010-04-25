@@ -8,6 +8,7 @@
 	<classpathentry kind="var" path="M2_REPO/org/apache/lucene/lucene-core/3.0.1-vyzivus0/lucene-core-3.0.1-vyzivus0.jar" sourcepath="/M2_REPO/org/apache/lucene/lucene-core/3.0.1-vyzivus0/lucene-core-3.0.1-vyzivus0-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="var" path="M2_REPO/sk/baka/autils/autils/0.4/autils-0.4.jar" sourcepath="/M2_REPO/sk/baka/autils/autils/0.4/autils-0.4-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/sk/baka/aedict/aedict-common/1.2-SNAPSHOT/aedict-common-1.2-SNAPSHOT.jar" sourcepath="/M2_REPO/sk/baka/aedict/aedict-common/1.2-SNAPSHOT/aedict-common-1.2-SNAPSHOT-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/sk/baka/tools/bakatools/0.5/bakatools-0.5.jar" sourcepath="/M2_REPO/sk/baka/tools/bakatools/0.5/bakatools-0.5-sources.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

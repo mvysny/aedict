@@ -43,6 +43,11 @@
                     <artifactId>commons-cli</artifactId>
                     <version>1.2</version>
                 </dependency>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>aedict-common</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
 	</dependencies>
     <build>
         <plugins>
