@@ -21,6 +21,7 @@ package sk.baka.aedict;
 import java.util.Arrays;
 
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.RomanizationEnum;
@@ -45,7 +46,7 @@ public class MainActivityTest extends AbstractAedictTest<MainActivity> {
 		tester.setText(R.id.jpSearchEdit, "haha");
 		tester.click(R.id.jpSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
-		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
+		final SearchQuery q = Edict.fromIntent(getStartedActivityIntent());
 		assertEquals(RomanizationEnum.Hepburn.toHiragana("haha"), q.query[1]);
 		assertEquals(RomanizationEnum.Hepburn.toKatakana("haha"), q.query[0]);
 		assertEquals(2, q.query.length);
@@ -63,7 +64,7 @@ public class MainActivityTest extends AbstractAedictTest<MainActivity> {
 		tester.click(R.id.engExactMatch);
 		tester.click(R.id.engSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
-		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
+		final SearchQuery q = Edict.fromIntent(getStartedActivityIntent());
 		assertEquals("mother", q.query[0]);
 		assertEquals(1, q.query.length);
 		assertFalse(q.isJapanese);
@@ -79,7 +80,7 @@ public class MainActivityTest extends AbstractAedictTest<MainActivity> {
 		tester.setText(R.id.engSearchEdit, "mother");
 		tester.click(R.id.engSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
-		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
+		final SearchQuery q = Edict.fromIntent(getStartedActivityIntent());
 		assertEquals(MatcherEnum.Substring, q.matcher);
 		assertEquals("mother", q.query[0]);
 		assertEquals(1, q.query.length);
@@ -98,7 +99,7 @@ public class MainActivityTest extends AbstractAedictTest<MainActivity> {
 		tester.assertChecked(false, R.id.engExactMatch);
 		tester.click(R.id.engSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
-		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
+		final SearchQuery q = Edict.fromIntent(getStartedActivityIntent());
 		assertEquals("mother", q.query[0]);
 		assertEquals(1, q.query.length);
 		assertFalse(q.isJapanese);
@@ -113,7 +114,7 @@ public class MainActivityTest extends AbstractAedictTest<MainActivity> {
 		tester.assertChecked(true, R.id.jpExactMatch);
 		tester.click(R.id.jpSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
-		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
+		final SearchQuery q = Edict.fromIntent(getStartedActivityIntent());
 		Arrays.sort(q.query);
 		assertEquals("あう", q.query[0]);
 		assertEquals("あえる", q.query[1]);
