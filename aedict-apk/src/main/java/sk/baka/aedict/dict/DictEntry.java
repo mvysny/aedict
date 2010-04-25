@@ -291,7 +291,7 @@ public class DictEntry implements Comparable<DictEntry>, Serializable {
 	 * @return the external form, parsable by {@link #fromExternal(String)}.
 	 */
 	public final String toExternal() {
-		return toEmpty(kanji) + "\1" + toEmpty(reading) + "\1" + toEmpty(english);
+		return toEmpty(kanji) + "####" + toEmpty(reading) + "####" + toEmpty(english);
 	}
 
 	private static String toEmpty(final String s) {
@@ -310,19 +310,11 @@ public class DictEntry implements Comparable<DictEntry>, Serializable {
 	 * @return the entry instance.
 	 */
 	public static DictEntry fromExternal(final String external) {
-		final String[] contents = new String[3];
-		final int first = external.indexOf(1);
-		if (first < 0) {
+		final String[] contents = external.split("####");
+		if (contents.length < 3) {
 			throw new IllegalArgumentException("Invalid external format: \"" + external + "\"");
 		}
-		contents[0] = toNull(external.substring(0, first));
-		final int second = external.indexOf(1, first + 1);
-		if (second < 0) {
-			throw new IllegalArgumentException("Invalid external format: \"" + external + "\"");
-		}
-		contents[1] = toNull(external.substring(first + 1, second));
-		contents[2] = toNull(external.substring(second + 1));
-		return new DictEntry(contents[0], contents[1], contents[2]);
+		return new DictEntry(toNull(contents[0]), toNull(contents[1]), toNull(contents[2]));
 	}
 
 	@Override
