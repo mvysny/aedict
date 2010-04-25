@@ -25,6 +25,7 @@ import java.util.List;
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
@@ -115,7 +116,7 @@ public class ResultActivity extends ListActivity {
 				result.query = new String[] { searchFor };
 			}
 		} else {
-			result = SearchQuery.fromIntent(getIntent());
+			result = Edict.fromIntent(getIntent());
 			isSimeji = it.getBooleanExtra(INTENTKEY_SIMEJI, false);
 		}
 		return result.toLowerCase();
@@ -201,7 +202,7 @@ public class ResultActivity extends ListActivity {
 						// filtered out.
 						q.matcher = MatcherEnum.Any;
 						final Intent intent = new Intent(ResultActivity.this, ResultActivity.class);
-						q.putTo(intent);
+						Edict.putTo(q, intent);
 						startActivity(intent);
 						return true;
 					}
@@ -245,7 +246,7 @@ public class ResultActivity extends ListActivity {
 				if (view == null) {
 					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
 				}
-				model.get(position).print(view, isShowingRomaji ? romanization : null);
+				Edict.print(model.get(position), view, isShowingRomaji ? romanization : null);
 				return view;
 			}
 
@@ -323,7 +324,7 @@ public class ResultActivity extends ListActivity {
 
 		@Override
 		public List<DictEntry> impl(SearchQuery... params) throws Exception {
-			final List<DictEntry> result = LuceneSearch.singleSearch(query, query.dictType == DictTypeEnum.Edict ? AedictApp.getConfig().getDictionaryLoc() : null);
+			final List<DictEntry> result = LuceneSearch.singleSearch(query, query.dictType == DictTypeEnum.Edict ? AedictApp.getConfig().getDictionaryLoc() : null, AedictApp.getConfig().isSorted());
 			return result;
 		}
 

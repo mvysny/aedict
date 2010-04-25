@@ -254,7 +254,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 			final Set<Character> matches = Radicals.getKanjisWithRadicals(((String) params[0]).toCharArray());
 			final List<DictEntry> entries = new ArrayList<DictEntry>();
 			// filter the matches based on stroke count
-			final LuceneSearch ls = new LuceneSearch(DictTypeEnum.Kanjidic, null);
+			final LuceneSearch ls = new LuceneSearch(DictTypeEnum.Kanjidic, null, AedictApp.getConfig().isSorted());
 			try {
 				for (final Iterator<Character> kanjis = matches.iterator(); kanjis.hasNext();) {
 					final char kanji = kanjis.next();

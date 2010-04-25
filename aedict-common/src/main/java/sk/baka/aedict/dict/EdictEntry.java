@@ -20,6 +20,7 @@ package sk.baka.aedict.dict;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import sk.baka.autils.MiscUtils;
 
 /**
  * An EDICT entry.
@@ -124,7 +125,9 @@ public final class EdictEntry extends DictEntry {
             final String[] markings = token.split(",");
             for (final String marking : markings) {
                 final String m = marking.trim();
-                result.add(m);
+                if (!MiscUtils.isBlank(m) && !m.matches("\\d+")) {
+                    result.add(m);
+                }
             }
         }
         return result;

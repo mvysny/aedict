@@ -20,7 +20,6 @@ package sk.baka.aedict;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import sk.baka.aedict.dict.AbstractDownloadTask;
@@ -261,7 +260,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 
 		private List<DictEntry> analyzeByWords(final String sentence) throws IOException {
 			final List<DictEntry> result = new ArrayList<DictEntry>();
-			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getConfig().getDictionaryLoc());
+			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getConfig().getDictionaryLoc(), AedictApp.getConfig().isSorted());
 			try {
 				final String[] words = getWords(sentence);
 				final int progressMax = getNumberOfCharacters(words);
@@ -308,7 +307,8 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		 *            the word to analyze
 		 * @return longest word found or an entry consisting of the first
 		 *         character if we were unable to find nothing
-		 * @throws IOException on i/o error
+		 * @throws IOException
+		 *             on i/o error
 		 */
 		private MatchedWord findLongestWord(final String word, final LuceneSearch edict) throws IOException {
 			String w = word;
@@ -332,11 +332,11 @@ public class KanjiAnalyzeActivity extends ListActivity {
 
 		private List<DictEntry> analyzeByCharacters(final String word) throws IOException {
 			final List<DictEntry> result = new ArrayList<DictEntry>(word.length());
-			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getConfig().getDictionaryLoc());
+			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getConfig().getDictionaryLoc(), AedictApp.getConfig().isSorted());
 			try {
 				LuceneSearch lsKanjidic = null;
 				if (AbstractDownloadTask.isComplete(DictTypeEnum.Kanjidic)) {
-					lsKanjidic = new LuceneSearch(DictTypeEnum.Kanjidic, null);
+					lsKanjidic = new LuceneSearch(DictTypeEnum.Kanjidic, null, AedictApp.getConfig().isSorted());
 				}
 				try {
 					final String w = MiscUtils.removeWhitespaces(word);

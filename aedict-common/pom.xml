@@ -38,6 +38,12 @@
             <artifactId>autils</artifactId>
             <version>0.4</version>
         </dependency>
+        <dependency>
+            <groupId>sk.baka.tools</groupId>
+            <artifactId>bakatools</artifactId>
+            <version>0.5</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
 

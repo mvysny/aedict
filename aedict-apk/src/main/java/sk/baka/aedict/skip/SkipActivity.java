@@ -20,14 +20,14 @@ package sk.baka.aedict.skip;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 
 import sk.baka.aedict.AbstractActivity;
+import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
-import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DictEntry;
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.util.SearchUtils;
@@ -98,7 +98,7 @@ public class SkipActivity extends Activity {
 		final SearchQuery query = new SearchQuery(DictTypeEnum.Kanjidic);
 		query.skip = skip;
 		try {
-			final List<DictEntry> result = LuceneSearch.singleSearch(query, null);
+			final List<DictEntry> result = LuceneSearch.singleSearch(query, null, AedictApp.getConfig().isSorted());
 			// no need to sort on the number of strokes as all results will have
 			// the same amount of strokes
 			final Intent intent = new Intent(activity, KanjiAnalyzeActivity.class);

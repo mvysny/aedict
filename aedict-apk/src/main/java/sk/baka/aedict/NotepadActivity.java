@@ -23,6 +23,7 @@ import java.util.List;
 
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictEntry;
+import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.autils.AndroidUtils;
@@ -192,7 +193,7 @@ public class NotepadActivity extends ListActivity {
 				if (view == null) {
 					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
 				}
-				getModel().get(position).print(view, isShowingRomaji ? romanization : null);
+				Edict.print(getModel().get(position), view, isShowingRomaji ? romanization : null);
 				return view;
 			}
 
