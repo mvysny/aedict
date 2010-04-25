@@ -42,7 +42,6 @@ public class NotepadActivityTest extends AbstractAedictTest<NotepadActivity> {
 		// set the configuration to a known state
 		final Config cfg = AedictApp.getConfig();
 		cfg.setNotepadItems(new DictEntry("母は留守です。", "はははです", "Mother is.").toExternal());
-		NotepadActivity.invalidateCache();
 	}
 
 	public void testSimpleStart() {
@@ -85,6 +84,6 @@ public class NotepadActivityTest extends AbstractAedictTest<NotepadActivity> {
 		e = (DictEntry) getActivity().getListAdapter().getItem(1);
 		assertEquals(new DictEntry("母", "はは", "mother"), e);
 		assertEquals(2, getActivity().getListAdapter().getCount());
-		assertEquals(new DictEntry("母は留守です。", "はははです", "Mother is.").toExternal() + "\2" + new DictEntry("母", "はは", "mother").toExternal(), AedictApp.getConfig().getNotepadItems());
+		assertEquals(new DictEntry("母は留守です。", "はははです", "Mother is.").toExternal() + "@@@@" + new DictEntry("母", "はは", "mother").toExternal(), AedictApp.getConfig().getNotepadItems());
 	}
 }

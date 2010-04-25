@@ -40,11 +40,11 @@
 			<artifactId>android</artifactId>
 			<version>${android.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-core</artifactId>
-			<version>3.0.1-vyzivus0</version>
-		</dependency>
+       <dependency>
+           <groupId>${project.groupId}</groupId>
+           <artifactId>aedict-common</artifactId>
+           <version>${project.version}</version>
+       </dependency>
 		<dependency>
 			<groupId>sk.baka.autils</groupId>
 			<artifactId>autils</artifactId>

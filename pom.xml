@@ -95,6 +95,7 @@
    
    <modules>
    	<module>aedict-apk</module>
+   	<module>aedict-common</module>
    	<module>aedict-indexer</module>
    </modules>
    

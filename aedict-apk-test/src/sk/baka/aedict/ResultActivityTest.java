@@ -20,6 +20,7 @@ package sk.baka.aedict;
 
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DictEntry;
+import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.RomanizationEnum;
@@ -45,7 +46,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		q.matcher = MatcherEnum.Exact;
 		q.query = new String[] { "mother" };
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
-		q.putTo(i);
+		Edict.putTo(q,i);
 		tester.startActivity(i);
 		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Default"));
 		final ListView lv = getActivity().getListView();
@@ -62,7 +63,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		q.matcher = MatcherEnum.Exact;
 		q.query = new String[] { RomanizationEnum.Hepburn.toHiragana("haha") };
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
-		q.putTo(i);
+		Edict.putTo(q,i);
 		tester.startActivity(i);
 		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Default"));
 		final ListView lv = getActivity().getListView();
@@ -78,7 +79,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		q.matcher = MatcherEnum.Substring;
 		q.query = new String[] { RomanizationEnum.Hepburn.toHiragana("haha"), RomanizationEnum.Hepburn.toKatakana("haha") };
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
-		q.putTo(i);
+		Edict.putTo(q,i);
 		tester.startActivity(i);
 		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Default"));
 		final ListView lv = getActivity().getListView();
@@ -99,7 +100,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		q.matcher = MatcherEnum.Exact;
 		q.query = new String[] { RomanizationEnum.Hepburn.toHiragana("kyou") };
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
-		q.putTo(i);
+		Edict.putTo(q,i);
 		tester.startActivity(i);
 		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Default"));
 		final ListView lv = getActivity().getListView();
@@ -187,7 +188,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		q.matcher = MatcherEnum.Substring;
 		q.query = new String[] { "mother" };
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
-		q.putTo(i);
+		Edict.putTo(q,i);
 		tester.startActivity(i);
 		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Tanaka"));
 		final ListView lv = getActivity().getListView();
@@ -204,7 +205,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		q.matcher = MatcherEnum.Any;
 		q.query = new String[] { "母", "はは" };
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
-		q.putTo(i);
+		Edict.putTo(q,i);
 		tester.startActivity(i);
 		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Tanaka"));
 		final ListView lv = getActivity().getListView();
@@ -219,7 +220,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		testSimpleJapaneseSearch();
 		tester.contextMenu(getActivity().getListView(), 5, 0);
 		tester.assertRequestedActivity(ResultActivity.class);
-		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
+		final SearchQuery q = Edict.fromIntent(getStartedActivityIntent());
 		assertEquals("母", q.query[0]);
 		assertEquals("はは", q.query[1]);
 		assertEquals(2, q.query.length);

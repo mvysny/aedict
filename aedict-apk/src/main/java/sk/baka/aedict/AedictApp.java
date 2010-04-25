@@ -33,6 +33,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -184,7 +185,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 *            true if Romaji will be displayed.
 		 */
 		public void setUseRomaji(boolean useRomaji) {
-			prefs.edit().putBoolean(ConfigActivity.KEY_USE_ROMAJI, useRomaji).commit();
+			commit(prefs.edit().putBoolean(ConfigActivity.KEY_USE_ROMAJI, useRomaji));
 		}
 
 		/**
@@ -222,9 +223,15 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 *            the new notepad items, never null.
 		 */
 		public void setNotepadItems(final String notepadItems) {
-			prefs.edit().putString(KEY_NOTEPAD_ITEMS, notepadItems).commit();
+			commit(prefs.edit().putString(KEY_NOTEPAD_ITEMS, notepadItems));
 		}
 
+		private void commit(final Editor ed) {
+			if(!ed.commit()){
+				throw new IllegalStateException("Failed to commit new SharedPreferences value");
+			}
+		}
+		
 		/**
 		 * True if the results should be sorted (the default), false otherwise.
 		 * See http://code.google.com/p/aedict/issues/detail?id=56 for details.
@@ -239,7 +246,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 *            sort
 		 */
 		public void setSorted(final boolean sorted) {
-			prefs.edit().putBoolean(KEY_SORT, sorted).commit();
+			commit(prefs.edit().putBoolean(KEY_SORT, sorted));
 		}
 
 		/**

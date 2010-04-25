@@ -20,6 +20,7 @@ package sk.baka.aedict;
 
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictEntry;
+import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.util.SearchUtils;
 import android.os.Bundle;
@@ -69,7 +70,7 @@ public class EntryDetailActivity extends AbstractActivity {
 
 	private void fillMarkings(final EdictEntry entry) {
 		final TableLayout table = (TableLayout) findViewById(R.id.posMarkings);
-		for (final EdictEntry.Marking marking : entry.getMarkings()) {
+		for (final Edict.Marking marking : Edict.getMarkings(entry.getMarkings())) {
 			final TableRow row = new TableRow(this);
 			table.addView(row);
 			row.addView(label(marking.mark));

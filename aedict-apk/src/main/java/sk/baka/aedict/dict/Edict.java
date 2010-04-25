@@ -15,85 +15,27 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package sk.baka.aedict.dict;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import sk.baka.aedict.R;
+import sk.baka.aedict.kanji.RomanizationEnum;
+import android.content.Intent;
+import android.widget.TextView;
+import android.widget.TwoLineListItem;
 
 /**
- * An EDICT entry.
+ * Contains various utilities for working with the Edict.
  * 
  * @author Martin Vysny
  */
-public final class EdictEntry extends DictEntry {
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * Creates new entry instance.
-	 * 
-	 * @param kanji
-	 *            the kanji expression, may be null if the entry does not
-	 *            contain any kanji
-	 * @param reading
-	 *            the reading, in hiragana or katakana.
-	 * @param english
-	 *            the English translation
-	 * @param isCommon
-	 *            if true then this word is a common one.
-	 */
-	public EdictEntry(final String kanji, final String reading, final String english, final boolean isCommon) {
-		super(kanji, reading, english, isCommon);
-	}
-
-	/**
-	 * Checks if this entry is a ichidan verb.
-	 * 
-	 * @return true if this entry is a ichidan verb, false otherwise.
-	 */
-	public boolean isIchidan() {
-		return isValid() && english.contains("v1");
-	}
-
-	/**
-	 * Checks if this entry is a godan verb.
-	 * 
-	 * @return true if this entry is a godan verb, false otherwise.
-	 */
-	public boolean isGodan() {
-		return isValid() && english.contains("v5");
-	}
-
-	/**
-	 * Checks if this entry contains a verb.
-	 * 
-	 * @return true if this entry is a verb, false otherwise.
-	 */
-	public boolean isVerb() {
-		return isIchidan() || isGodan() || isSuru() || isKuru();
-	}
-
-	/**
-	 * Checks if this entry is a "suru" entry.
-	 * 
-	 * @return true if this entry describes the "suru" irregular verb.
-	 */
-	public boolean isSuru() {
-		return english.contains("vs-i") || english.contains("vs-s");
-	}
-
-	/**
-	 * Checks if this entry is a "kuru" entry.
-	 * 
-	 * @return true if this entry describes the "kuru" irregular verb.
-	 */
-	public boolean isKuru() {
-		return english.contains("vk");
+public final class Edict {
+	private Edict() {
+		throw new AssertionError();
 	}
 
 	private static final Object[] MARKING_LIST = new Object[] { "adj-i", R.string.mark_adj_i, "adj-na", R.string.mark_adj_na, "adj-no", R.string.mark_adj_no, "adj-pn", R.string.mark_adj_pn, "adj-t",
@@ -110,7 +52,8 @@ public final class EdictEntry extends DictEntry {
 			"derog", R.string.mark_derog, "eK", R.string.mark_eK, "ek", R.string.mark_ek, "fam", R.string.mark_fam, "fem", R.string.mark_fem, "gikun", R.string.mark_gikun, "hon", R.string.mark_hon,
 			"hum", R.string.mark_hum, "iK", R.string.mark_iK, "id", R.string.mark_id, "io", R.string.mark_io, "m-sl", R.string.mark_m_sl, "male", R.string.mark_male, "male-sl", R.string.mark_male_sl,
 			"ng", R.string.mark_ng, "oK", R.string.mark_oK, "obs", R.string.mark_obs, "obsc", R.string.mark_obsc, "ok", R.string.mark_ok, "on-mim", R.string.mark_on_mim, "poet", R.string.mark_poet,
-			"pol", R.string.mark_pol, "rare", R.string.mark_rare, "sens", R.string.mark_sens, "sl", R.string.mark_sl, "uK", R.string.mark_uK, "uk", R.string.mark_uk, "vulg", R.string.mark_vulg };
+			"pol", R.string.mark_pol, "rare", R.string.mark_rare, "sens", R.string.mark_sens, "sl", R.string.mark_sl, "uK", R.string.mark_uK, "uk", R.string.mark_uk, "vulg", R.string.mark_vulg, "P",
+			R.string.mark_p };
 	private static final Map<String, Integer> MARKINGS = new HashMap<String, Integer>();
 	static {
 		for (int i = 0; i < MARKING_LIST.length / 2; i++) {
@@ -175,41 +118,71 @@ public final class EdictEntry extends DictEntry {
 	 * Returns a list of POS or other markings which this entry is annotated
 	 * with.
 	 * 
+	 * @param markings
+	 *            a list of string marking identifiers.
 	 * @return a list of markings, never null, may be empty.
 	 */
-	public List<Marking> getMarkings() {
+	public static List<Marking> getMarkings(final List<String> markings) {
 		final List<Marking> result = new ArrayList<Marking>();
-		if (isCommon) {
-			result.add(new Marking("P", R.string.mark_p));
-		}
-		final StringTokenizer braces = new StringTokenizer(english, "()", true);
-		boolean inBrace = false;
-		while (braces.hasMoreTokens()) {
-			final String token = braces.nextToken().trim();
-			if (token.startsWith("(")) {
-				inBrace = true;
-				continue;
-			}
-			if (token.startsWith(")")) {
-				inBrace = false;
-				continue;
-			}
-			// found a translated text. no more markings will be found, bail
-			// out.
-			if (!inBrace && token.length() != 0) {
-				break;
-			}
-			// there may be multiple markings in a single brace, check them all
-			final String[] markings = token.split(",");
-			for (final String marking : markings) {
-				final String m = marking.trim();
-				final Integer res = MARKINGS.get(m);
-				if (res != null) {
-					final Marking mark = new Marking(m, res);
-					result.add(mark);
-				}
+		for (final String m : markings) {
+			final Integer res = MARKINGS.get(m);
+			if (res != null) {
+				final Marking mark = new Marking(m, res);
+				result.add(mark);
 			}
 		}
 		return result;
 	}
-}
+
+	/**
+	 * Prints itself to a ListView item.
+	 * 
+	 * @param item
+	 *            the item.
+	 * @param romanize
+	 *            if non-null then katakana/hiragana will be shown as romaji
+	 */
+	public static void print(final DictEntry e, final TwoLineListItem item, final RomanizationEnum romanize) {
+		print(e, item.getText1(), item.getText2(), romanize);
+	}
+
+	/**
+	 * Prints itself to a ListView item.
+	 * 
+	 * @param text1
+	 *            first, larger textview.
+	 * @param text2
+	 *            second, smaller textview.
+	 * @param romanize
+	 *            if non-null then katakana/hiragana will be shown as romaji
+	 */
+	public static void print(final DictEntry e, final TextView text1, final TextView text2, final RomanizationEnum romanize) {
+		text1.setText(e.formatJapanese(romanize));
+		text2.setText(e.english);
+	}
+
+		/**
+		 * Retrieves values for the query from given intent.
+		 * 
+		 * @param intent
+		 *            the intent to parse
+		 * @return query instance.
+		 */
+		public static SearchQuery fromIntent(final Intent intent) {
+			return (SearchQuery) intent.getSerializableExtra(INTENTKEY_SEARCH_QUERY);
+		}
+	
+		private static final String INTENTKEY_SEARCH_QUERY = "QUERY";
+	
+		/**
+		 * Puts values from this bean to given intent. The object can be
+		 * reconstructed later by using {@link #fromIntent(Intent)}.
+		 * 
+		 * @param intent
+		 *            store the values here.
+		 */
+		public static void putTo(final SearchQuery sq,Intent intent) {
+			intent.putExtra(INTENTKEY_SEARCH_QUERY, sq);
+		}
+	
+	}

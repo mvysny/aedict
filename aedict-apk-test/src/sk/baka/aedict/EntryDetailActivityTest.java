@@ -21,6 +21,7 @@ package sk.baka.aedict;
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import android.content.Intent;
@@ -52,7 +53,7 @@ public class EntryDetailActivityTest extends AbstractAedictTest<EntryDetailActiv
 		tester.click(R.id.englishExactMatch);
 		tester.click(R.id.englishSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
-		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
+		final SearchQuery q = Edict.fromIntent(getStartedActivityIntent());
 		assertEquals("mother", q.query[0]);
 		assertEquals(1, q.query.length);
 		assertFalse(q.isJapanese);
@@ -65,7 +66,7 @@ public class EntryDetailActivityTest extends AbstractAedictTest<EntryDetailActiv
 		tester.click(R.id.kanjiExactMatch);
 		tester.click(R.id.kanjiSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
-		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
+		final SearchQuery q = Edict.fromIntent(getStartedActivityIntent());
 		// the jp search is intended primarily for searching for romaji.
 		// therefore the default functionality always tries to produce two
 		// search terms, both in hiragana and katakana
@@ -82,7 +83,7 @@ public class EntryDetailActivityTest extends AbstractAedictTest<EntryDetailActiv
 		tester.click(R.id.readingExactMatch);
 		tester.click(R.id.readingSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
-		final SearchQuery q = SearchQuery.fromIntent(getStartedActivityIntent());
+		final SearchQuery q = Edict.fromIntent(getStartedActivityIntent());
 		// the jp search is intended primarily for searching for romaji.
 		// therefore the default functionality always tries to produce two
 		// search terms, both in hiragana and katakana

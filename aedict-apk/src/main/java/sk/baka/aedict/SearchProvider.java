@@ -68,7 +68,7 @@ public class SearchProvider extends ContentProvider {
 		final MatrixCursor cursor = new MatrixCursor(COLUMN_NAMES);
 		final List<DictEntry> entries = new ArrayList<DictEntry>();
 		try {
-			final LuceneSearch lucene = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getConfig().getDictionaryLoc());
+			final LuceneSearch lucene = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getConfig().getDictionaryLoc(), AedictApp.getConfig().isSorted());
 			try {
 				entries.addAll(lucene.search(SearchQuery.searchForRomaji(searchString, AedictApp.getConfig().getRomanization(), true, true)));
 				entries.addAll(lucene.search(SearchQuery.searchForEnglish(searchString, true)));
