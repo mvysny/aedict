@@ -22,7 +22,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.zip.DataFormatException;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.CompressionTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryParser.QueryParser;
@@ -65,13 +67,16 @@ public abstract class AbstractLuceneSearchTest {
         directory.close();
     }
 
-    protected final List<String> search(final String fieldName, final String query) throws IOException, org.apache.lucene.queryParser.ParseException {
+    protected final List<String> search(final String fieldName, final String query) throws IOException, org.apache.lucene.queryParser.ParseException, DataFormatException {
         final TopDocs docs = searcher.search(parser.parse(query), null, 10000);
         final List<String> result = new ArrayList<String>();
         for (final ScoreDoc sd : docs.scoreDocs) {
             final Document doc = searcher.doc(sd.doc);
-            final String contents = doc.get(fieldName == null ? getDefaultFieldName() : fieldName);
-            assertNotNull(contents, "Column " + contents + " has null value. Make sure that it is present.");
+            String contents = doc.get(fieldName == null ? getDefaultFieldName() : fieldName);
+            if (contents == null) {
+                contents = CompressionTools.decompressString(doc.getBinaryValue(fieldName == null ? getDefaultFieldName() : fieldName));
+            }
+            assertNotNull("Column " + contents + " has null value. Make sure that it is present.", contents);
             result.add(contents);
         }
         Collections.sort(result);

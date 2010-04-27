@@ -119,11 +119,12 @@ public class TanakaParser implements IDictParser {
             try {
                 kana.append(word.toKana());
             } catch (Exception ex) {
+//                System.out.println(ex.getMessage());
                 // untranslatable word. just keep the original one
                 kana.append(word.getInSentence());
             }
         }
-        doc.add(new Field("kana", CompressionTools.compressString(wordList.toString()), Field.Store.YES));
+        doc.add(new Field("kana", CompressionTools.compressString(kana.toString()), Field.Store.YES));
         return true;
     }
 
@@ -224,32 +225,37 @@ public class TanakaParser implements IDictParser {
                 }
             }
             // ow, tough. We need to try to somehow match it with the deinflected form.
-            String hiragana = edict.get(dictionaryForm);
+            String hiragana = containsKanji(dictionaryForm) ? edict.get(dictionaryForm) : dictionaryForm;
             if (hiragana == null) {
                 throw new RuntimeException(dictionaryForm + " is not in EDICT. Nothing to do.");
             }
             if (wordInSentence == null) {
+                // the word is present in the sentence in the dictionary form. Just return the hiragana translation.
                 return hiragana;
             }
             final String kanjiSubstring = getShortestPrefixWithAllKanjis(dictionaryForm);
+            if (!postprocess(wordInSentence).startsWith(kanjiSubstring)) {
+                throw new RuntimeException("Cannot deinflect: " + wordInSentence + " does not start with " + kanjiSubstring);
+            }
             final String suffix = dictionaryForm.substring(kanjiSubstring.length());
             if (!hiragana.endsWith(suffix)) {
                 throw new RuntimeException("Something's weird: is really " + hiragana + " reading of " + dictionaryForm + "?");
             }
             final String kanaSubstring = hiragana.substring(0, hiragana.length() - suffix.length());
-            if (!wordInSentence.startsWith(kanjiSubstring)) {
-                throw new RuntimeException("Cannot deinflect: " + wordInSentence + " does not start with " + kanjiSubstring);
-            }
             return kanaSubstring + wordInSentence.substring(kanjiSubstring.length());
+        }
+
+        private String postprocess(String wordInSentence) {
+            return wordInSentence.replaceAll("１か月", "一ヶ月").replaceAll("１カ所","一か所").replaceAll("10|１０", "十").replaceAll("２４", "二十").replaceAll("１４", "十四").replaceAll("1|１", "一").replaceAll("2|２", "二").replaceAll("3|３", "三").replaceAll("4|４", "四").replace('5', '五');
         }
 
         private String getShortestPrefixWithAllKanjis(final String jp) {
             for (int i = jp.length() - 1; i >= 0; i--) {
-                if (KanjiUtils.isKanji(jp.charAt(i))) {
+                if (KanjiUtils.isKanji(jp.charAt(i))||(jp.charAt(i)=='々')) {
                     return jp.substring(0, i + 1);
                 }
             }
-            throw new RuntimeException(jp + " does not contain any kanji");
+            throw new RuntimeException(jp + " does not contain any kanji (it appears as "+wordInSentence+" in sentence)");
         }
     }
 }
