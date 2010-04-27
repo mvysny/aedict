@@ -20,9 +20,6 @@ package sk.baka.aedict.indexer;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.StringTokenizer;
 import org.apache.commons.io.IOUtils;
 import org.apache.lucene.document.CompressionTools;
 import org.apache.lucene.document.Document;
@@ -51,6 +48,9 @@ public enum FileTypeEnum {
             return new IDictParser() {
 
                 public boolean addLine(String line, Document doc) {
+                    if (line.startsWith("　？？？")) {
+                        return true;
+                    }
                     doc.add(new Field("contents", line, Field.Store.YES, Field.Index.ANALYZED));
                     return true;
                 }
@@ -163,41 +163,7 @@ public enum FileTypeEnum {
     Tanaka {
 
         public IDictParser newParser() {
-            return new IDictParser() {
-
-                public boolean addLine(String line, Document doc) {
-                    if (line.startsWith("A: ")) {
-                        final ArrayList<Object> parsed = Collections.list(new StringTokenizer(line.substring(3), "\t#"));
-                        final String japanese = (String) parsed.get(0);
-                        final String english = (String) parsed.get(1);
-                        doc.add(new Field("japanese", japanese, Field.Store.YES, Field.Index.ANALYZED));
-                        doc.add(new Field("english", english, Field.Store.YES, Field.Index.ANALYZED));
-                        return false;
-                    }
-                    if (!line.startsWith("B: ")) {
-                        throw new IllegalArgumentException("The TanakaCorpus file has unexpected format: line " + line);
-                    }
-                    // gather all inflected japanese words. Search for tokens in a form of xxx{yyy} and store xxx only.
-                    final ArrayList<Object> words = Collections.list(new StringTokenizer(line.substring(3)));
-                    final StringBuilder wordList = new StringBuilder();
-                    for (final Object w : words) {
-                        final String word = (String) w;
-                        int curlyBraceIndex = word.indexOf('{');
-                        if (curlyBraceIndex < 0) {
-                            continue;
-                        }
-                        // the word is inflected. Retrieve the xxx part and add it
-                        final String base = new StringTokenizer(word, "{}[]()~").nextToken();
-                        wordList.append(base).append(' ');
-                    }
-                    doc.add(new Field("jp-deinflected", wordList.toString(), Field.Store.NO, Field.Index.ANALYZED));
-                    return true;
-                }
-
-                public void onFinish() {
-                    // do nothing
-                }
-            };
+            return new TanakaParser();
         }
 
         public String getTargetFileName() {
