@@ -22,6 +22,8 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
 
 import org.apache.lucene.document.CompressionTools;
@@ -316,7 +318,13 @@ public enum DictTypeEnum {
         public DictEntry getEntry(Document doc) {
             final String japanese = doc.get("japanese");
             final String english = doc.get("english");
-            return new DictEntry(japanese, null, english);
+            final byte[] b = doc.getBinaryValue("kana");
+            try {
+                final String reading = b == null ? null : CompressionTools.decompressString(b);
+                return new DictEntry(japanese, reading, english);
+            } catch (DataFormatException ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         @Override

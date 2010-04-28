@@ -393,4 +393,6 @@
     <string name="preference_expert">Expert settings</string>
     <string name="sort">Sort results</string>
     <string name="sort_summary">If disabled, the results will be sorted based on the Lucene Boost function</string>
+    <string name="tanakaMissingReading">If the Tanaka example dictionary is missing the kana reading, please try deleting the dictionaries and download them anew. Also please note that
+    the kana reading may be inaccurate.</string>
 </resources>
