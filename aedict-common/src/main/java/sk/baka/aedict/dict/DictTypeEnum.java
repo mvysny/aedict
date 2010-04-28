@@ -309,7 +309,7 @@ public enum DictTypeEnum {
 
         @Override
         public long luceneFileSize() {
-            return 20742500;
+            return 37683923;
         }
 
         @Override
