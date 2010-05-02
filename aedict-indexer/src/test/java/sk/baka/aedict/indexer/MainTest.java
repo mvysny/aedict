@@ -41,14 +41,14 @@ public class MainTest extends AbstractLuceneSearchTest {
     }
 
     @Test
-    public void findMother() throws IOException, org.apache.lucene.queryParser.ParseException {
+    public void findMother() throws Exception {
         final List<String> result = search(null, "mother");
         assertEquals("お母 [おふくろ] /(iK) (n) (col) one's mother/", result.get(0));
         assertEquals(129, result.size());
     }
 
     @Test
-    public void findHaha() throws IOException, org.apache.lucene.queryParser.ParseException {
+    public void findHaha() throws Exception {
         final List<String> result = search(null, "はは");
         assertEquals("あはは /(int) a-ha-ha (laughing loudly)/", result.get(0));
         assertEquals(33, result.size());
@@ -60,7 +60,7 @@ public class MainTest extends AbstractLuceneSearchTest {
      * @throws org.apache.lucene.queryParser.ParseException
      */
     @Test
-    public void findKyou() throws IOException, org.apache.lucene.queryParser.ParseException {
+    public void findKyou() throws Exception {
         final List<String> result = search(null, "きょう");
         assertTrue(result.contains("今日 [きょう] /(n-t) today/this day/(P)/"));
         assertEquals("いい度胸 [いいどきょう] /(n,vs) some nerve (as in 'you must have some nerve to ...')/", result.get(0));

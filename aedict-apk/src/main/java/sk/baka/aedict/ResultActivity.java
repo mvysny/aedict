@@ -31,9 +31,11 @@ import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.RomanizationEnum;
+import sk.baka.aedict.util.Constants;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
+import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -127,6 +129,9 @@ public class ResultActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.searchresult);
 		query = fromIntent().trim();
+		if(query.dictType==DictTypeEnum.Tanaka){
+			new DialogUtils(this).showInfoOnce(Constants.INFOONCE_TANAKA_MISSING_READING, -1, R.string.tanakaMissingReading);
+		}
 		setTitle(AedictApp.format(R.string.searchResultsFor, query.prettyPrintQuery()));
 		if (MiscUtils.isBlank(query.query)) {
 			// nothing to search for

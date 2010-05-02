@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
@@ -88,9 +89,12 @@ public class TanakaParser implements IDictParser {
         }
         return false;
     }
+    private String lastLine = null;
 
     public boolean addLine(String line, Document doc) {
         if (line.startsWith("A: ")) {
+            lastLine = line.substring(3);
+            lastLine = lastLine.substring(0, lastLine.indexOf('\t'));
             final ArrayList<Object> parsed = Collections.list(new StringTokenizer(line.substring(3), "\t#"));
             final String japanese = (String) parsed.get(0);
             final String english = (String) parsed.get(1);
@@ -102,11 +106,10 @@ public class TanakaParser implements IDictParser {
             throw new IllegalArgumentException("The TanakaCorpus file has unexpected format: line " + line);
         }
         // gather all words in their dictionary form.
-        final ArrayList<Object> words = Collections.list(new StringTokenizer(line.substring(3)));
+        final List<BWord> words = parseWords(line);
         final StringBuilder wordList = new StringBuilder();
-        for (final Object w : words) {
-            final BWord word = new BWord((String) w);
-            if (word.wordInSentence != null) {
+        for (final BWord word : words) {
+            if (word.isInflected()) {
                 // the word is inflected. Retrieve the xxx part and add it
                 wordList.append(word.dictionaryForm).append(' ');
             }
@@ -114,17 +117,36 @@ public class TanakaParser implements IDictParser {
         doc.add(new Field("jp-deinflected", wordList.toString(), Field.Store.NO, Field.Index.ANALYZED));
         // prepare the kana form of the sentence.
         final StringBuilder kana = new StringBuilder();
-        for (final Object w : words) {
-            final BWord word = new BWord((String) w);
+        String l = lastLine;
+        for (final BWord word : words) {
+            final int wordIndex = l.indexOf(word.getInSentence());
+            if (wordIndex < 0) {
+                //throw new IllegalArgumentException("Line " + lastLine + " does not contain word " + word);
+                // this seems to be quite a common case. Just skip the word
+                continue;
+            }
+            kana.append(l.substring(0, wordIndex));
             try {
                 kana.append(word.toKana());
             } catch (Exception ex) {
+//                System.out.println(ex.getMessage());
                 // untranslatable word. just keep the original one
                 kana.append(word.getInSentence());
             }
+            l = l.substring(wordIndex + word.getInSentence().length());
         }
-        doc.add(new Field("kana", CompressionTools.compressString(wordList.toString()), Field.Store.YES));
+        kana.append(l);
+        doc.add(new Field("kana", CompressionTools.compressString(kana.toString()), Field.Store.YES));
         return true;
+    }
+
+    private List<BWord> parseWords(final String bLine) {
+        final List<BWord> result = new ArrayList<BWord>();
+        final ArrayList<Object> words = Collections.list(new StringTokenizer(bLine.substring(3)));
+        for (final Object w : words) {
+            result.add(new BWord((String) w));
+        }
+        return result;
     }
 
     public void onFinish() {
@@ -224,32 +246,46 @@ public class TanakaParser implements IDictParser {
                 }
             }
             // ow, tough. We need to try to somehow match it with the deinflected form.
-            String hiragana = edict.get(dictionaryForm);
+            String hiragana = containsKanji(dictionaryForm) ? edict.get(dictionaryForm) : dictionaryForm;
             if (hiragana == null) {
                 throw new RuntimeException(dictionaryForm + " is not in EDICT. Nothing to do.");
             }
             if (wordInSentence == null) {
+                // the word is present in the sentence in the dictionary form. Just return the hiragana translation.
                 return hiragana;
             }
             final String kanjiSubstring = getShortestPrefixWithAllKanjis(dictionaryForm);
+            if (!postprocess(wordInSentence).startsWith(kanjiSubstring)) {
+                throw new RuntimeException("Cannot deinflect: " + wordInSentence + " does not start with " + kanjiSubstring);
+            }
             final String suffix = dictionaryForm.substring(kanjiSubstring.length());
             if (!hiragana.endsWith(suffix)) {
                 throw new RuntimeException("Something's weird: is really " + hiragana + " reading of " + dictionaryForm + "?");
             }
             final String kanaSubstring = hiragana.substring(0, hiragana.length() - suffix.length());
-            if (!wordInSentence.startsWith(kanjiSubstring)) {
-                throw new RuntimeException("Cannot deinflect: " + wordInSentence + " does not start with " + kanjiSubstring);
-            }
             return kanaSubstring + wordInSentence.substring(kanjiSubstring.length());
+        }
+
+        private String postprocess(String wordInSentence) {
+            return wordInSentence.replaceAll("１か月", "一ヶ月").replaceAll("１カ所", "一か所").replaceAll("10|１０", "十").replaceAll("２４", "二十").replaceAll("１４", "十四").replaceAll("1|１", "一").replaceAll("2|２", "二").replaceAll("3|３", "三").replaceAll("4|４", "四").replace('5', '五');
         }
 
         private String getShortestPrefixWithAllKanjis(final String jp) {
             for (int i = jp.length() - 1; i >= 0; i--) {
-                if (KanjiUtils.isKanji(jp.charAt(i))) {
+                if (KanjiUtils.isKanji(jp.charAt(i)) || (jp.charAt(i) == '々')) {
                     return jp.substring(0, i + 1);
                 }
             }
-            throw new RuntimeException(jp + " does not contain any kanji");
+            throw new RuntimeException(jp + " does not contain any kanji (it appears as " + wordInSentence + " in sentence)");
+        }
+
+        public boolean isInflected() {
+            return wordInSentence != null;
+        }
+
+        @Override
+        public String toString() {
+            return getInSentence();
         }
     }
 }

@@ -32,4 +32,8 @@ public final class Constants {
 	 * A show-once info dialog ID, which shows KanjiDraw warning.
 	 */
 	public static final String INFOONCE_KANJIDRAWWARNING = "kanjidrawwarning";
+	/**
+	 * A show-once info dialog ID, which shows warning about reading possibly missing from the Tanaka dictionary.
+	 */
+	public static final String INFOONCE_TANAKA_MISSING_READING = "tanakamissingreading";
 }
