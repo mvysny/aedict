@@ -19,28 +19,32 @@ package sk.baka.aedict;
 
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.EdictEntry;
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
-import android.os.Bundle;
 
 /**
- * Handles the search requests from the Android Search functionality and
- * redirects it to the {@link EntryDetailActivity} activity. Note that the
- * {@link EntryDetailActivity} activity cannot be used directly as EntryDetail's
- * label must not be displayed in the Quick Search Box.
+ * Tests the {@link GlobalSearchHandler} class.
  * 
  * @author Martin Vysny
  */
-public class GlobalSearchHandler extends Activity {
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		final Intent intent = getIntent();
-		final Intent targetIntent = new Intent(this, EntryDetailActivity.class);
-		final DictEntry entry = DictEntry.fromExternal(intent.getStringExtra(SearchManager.EXTRA_DATA_KEY));
-		targetIntent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, new EdictEntry(entry.kanji, entry.reading, entry.english, entry.english.endsWith("(P)")));
-		startActivity(targetIntent);
-		finish();
+public class GlobalSearchHandlerTest extends AbstractAedictTest<GlobalSearchHandler> {
+
+	public GlobalSearchHandlerTest() {
+		super(GlobalSearchHandler.class);
+	}
+
+	/**
+	 * Tests http://code.google.com/p/aedict/issues/detail?id=59
+	 */
+	public void testHandlerProvidesEdictEntry() {
+		final Intent i = new Intent(getInstrumentation().getTargetContext(), EntryDetailActivity.class);
+		i.putExtra(SearchManager.EXTRA_DATA_KEY, new DictEntry("Kanji", "Reading", "English (P)").toExternal());
+		tester.startActivity(i);
+		tester.assertRequestedActivity(EntryDetailActivity.class);
+		final EdictEntry ee = (EdictEntry) getStartedActivityIntent().getSerializableExtra(EntryDetailActivity.INTENTKEY_ENTRY);
+		assertEquals("Kanji", ee.kanji);
+		assertEquals("Reading", ee.reading);
+		assertEquals("English (P)", ee.english);
+		assertTrue(ee.isCommon);
 	}
 }

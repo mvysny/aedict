@@ -125,8 +125,8 @@ public class DictTypeEnumTest {
         final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
         q.query = new String[]{"foo", "bar"};
         q.isJapanese = true;
-        assertArrayEquals(new String[]{"japanese:foo OR jp-deinflected:foo OR japanese:bar OR jp-deinflected:bar"}, DictTypeEnum.Tanaka.getLuceneQuery(q));
+        assertArrayEquals(new String[]{"japanese:\"foo\" OR jp-deinflected:\"foo\" OR japanese:\"bar\" OR jp-deinflected:\"bar\""}, DictTypeEnum.Tanaka.getLuceneQuery(q));
         q.isJapanese = false;
-        assertArrayEquals(new String[]{"english:foo OR english:bar"}, DictTypeEnum.Tanaka.getLuceneQuery(q));
+        assertArrayEquals(new String[]{"english:\"foo\" OR english:\"bar\""}, DictTypeEnum.Tanaka.getLuceneQuery(q));
     }
 }
