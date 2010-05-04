@@ -52,9 +52,13 @@ public class TanakaParser implements IDictParser {
     private final Map<String, Boolean> entryIsCommon = new HashMap<String, Boolean>();
 
     public TanakaParser() {
+        String location = System.getProperty("edict.gz");
+        if (location == null) {
+            location = "";
+        }
         // quickly parse the EDICT dictionary, we are going to need it when constructing the kana reading of the example sentence.
         try {
-            final BufferedReader in = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("edict.gz")), "EUC_JP"));
+            final BufferedReader in = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(location + "edict.gz")), "EUC_JP"));
             try {
                 for (String line = in.readLine(); line != null; line = in.readLine()) {
                     if (line.startsWith("#") || MiscUtils.isBlank(line) || line.startsWith("　？？？")) {
@@ -77,7 +81,7 @@ public class TanakaParser implements IDictParser {
                 IOUtils.closeQuietly(in);
             }
         } catch (Exception ex) {
-            throw new RuntimeException("Tanaka parser requires edict.gz to be available at " + new File("").getAbsolutePath(), ex);
+            throw new RuntimeException("Tanaka parser requires edict.gz to be available at " + new File(location).getAbsolutePath(), ex);
         }
     }
 
