@@ -319,7 +319,7 @@ public class ResultActivity extends ListActivity {
 		@Override
 		protected void cleanupAfterError(final Exception ex) {
 			if (ex == null) {
-				// cancelled. set an empty model
+				// canceled. set an empty model
 				model = Collections.emptyList();
 			} else {
 				model = Collections.singletonList(DictEntry.newErrorMsg(AedictApp.format(R.string.searchFailed, ex.toString())));

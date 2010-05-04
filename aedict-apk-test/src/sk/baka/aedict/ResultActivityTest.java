@@ -199,6 +199,23 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		assertEquals(100, lv.getCount());
 	}
 
+	public void testMultiwordEnglishSearchInTanaka() {
+		final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
+		q.isJapanese = false;
+		q.matcher = MatcherEnum.Substring;
+		q.query = new String[] { "mother tongue" };
+		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
+		Edict.putTo(q,i);
+		tester.startActivity(i);
+		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Tanaka"));
+		final ListView lv = getActivity().getListView();
+		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
+		assertEquals("My mother tongue.", entry.english);
+		assertEquals("私の母国語。", entry.getJapanese());
+		assertEquals("わたしのぼこくご。", entry.reading);
+		assertEquals(15, lv.getCount());
+	}
+
 	public void testComplexJapaneseSearchInTanaka() {
 		final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
 		q.isJapanese = true;
