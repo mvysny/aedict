@@ -129,7 +129,7 @@ public class ResultActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.searchresult);
 		query = fromIntent().trim();
-		if(query.dictType==DictTypeEnum.Tanaka){
+		if (query.dictType == DictTypeEnum.Tanaka) {
 			new DialogUtils(this).showInfoOnce(Constants.INFOONCE_TANAKA_MISSING_READING, -1, R.string.tanakaMissingReading);
 		}
 		setTitle(AedictApp.format(R.string.searchResultsFor, query.prettyPrintQuery()));
