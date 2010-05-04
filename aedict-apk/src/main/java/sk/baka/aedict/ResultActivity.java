@@ -129,7 +129,7 @@ public class ResultActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.searchresult);
 		query = fromIntent().trim();
-		if(query.dictType==DictTypeEnum.Tanaka){
+		if (query.dictType == DictTypeEnum.Tanaka && !AedictApp.isInstrumentation) {
 			new DialogUtils(this).showInfoOnce(Constants.INFOONCE_TANAKA_MISSING_READING, -1, R.string.tanakaMissingReading);
 		}
 		setTitle(AedictApp.format(R.string.searchResultsFor, query.prettyPrintQuery()));
@@ -319,7 +319,7 @@ public class ResultActivity extends ListActivity {
 		@Override
 		protected void cleanupAfterError(final Exception ex) {
 			if (ex == null) {
-				// cancelled. set an empty model
+				// canceled. set an empty model
 				model = Collections.emptyList();
 			} else {
 				model = Collections.singletonList(DictEntry.newErrorMsg(AedictApp.format(R.string.searchFailed, ex.toString())));

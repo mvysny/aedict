@@ -22,8 +22,6 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
 
 import org.apache.lucene.document.CompressionTools;
@@ -48,7 +46,7 @@ public enum DictTypeEnum {
         public String[] getLuceneQuery(SearchQuery query) {
             final ListBuilder sb = new ListBuilder(" OR ");
             for (final String q : query.query) {
-                sb.add(q.trim());
+                sb.add("\"" + q.trim() + "\"");
             }
             // first the common words are returned, then return all the rest
             // fixes http://code.google.com/p/aedict/issues/detail?id=47
@@ -160,7 +158,7 @@ public enum DictTypeEnum {
                 if (q.query.length != 1) {
                     throw new IllegalStateException("Kanjidic search requires a single kanji character search");
                 }
-                qb.add("kanji:" + q.query[0].trim());
+                qb.add("kanji:\"" + q.query[0].trim() + "\"");
             }
             if (q.strokeCount != null) {
                 final ListBuilder sb = new ListBuilder(" OR ");
@@ -284,12 +282,12 @@ public enum DictTypeEnum {
         @Override
         public String[] getLuceneQuery(SearchQuery query) {
             final ListBuilder result = new ListBuilder(" OR ");
-            for (final String q : query.query) {
+            for (final String q : query.trim().query) {
                 if (query.isJapanese) {
-                    result.add("japanese:" + q);
-                    result.add("jp-deinflected:" + q);
+                    result.add("japanese:\"" + q + "\"");
+                    result.add("jp-deinflected:\"" + q + "\"");
                 } else {
-                    result.add("english:" + q);
+                    result.add("english:\"" + q + "\"");
                 }
             }
             return new String[]{result.toString()};
