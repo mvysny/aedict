@@ -17,7 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sk.baka.aedict.dict;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import sk.baka.aedict.kanji.KanjiUtils;
+import sk.baka.autils.MiscUtils;
 
 /**
  * A KANJIDIC entry, containing more information for the entry. For details on the KANJIDIC dictionary please see http://www.csse.monash.edu.au/~jwb/kanjidic.html
@@ -89,5 +93,64 @@ public class KanjidicEntry extends DictEntry {
 
     public char getKanji() {
         return kanji.charAt(0);
+    }
+
+    public List<String> getOnyomi() {
+        final List<String> result = new ArrayList<String>();
+        for (final String o : reading.split("[,\\w]")) {
+            if (!KanjiUtils.isKatakana(o.charAt(0))) {
+                break;
+            }
+            result.add(o);
+        }
+        return result;
+    }
+
+    public List<String> getKunyomi() {
+        final List<String> result = new ArrayList<String>();
+        for (final String e : reading.split("[,\\s]")) {
+            if (MiscUtils.isBlank(e)) {
+                continue;
+            }
+            if (KanjiUtils.isKatakana(e.charAt(0))) {
+                continue;
+            }
+            if (e.charAt(0) == '[') {
+                break;
+            }
+            result.add(e);
+        }
+        return result;
+    }
+
+    public List<String> getNamae() {
+        final String[] namae = reading.split("\\[");
+        if (namae.length <= 1) {
+            return Collections.emptyList();
+        }
+        final List<String> result = new ArrayList<String>();
+        for (final String e : namae[1].split("[,\\s\\]]")) {
+            if (MiscUtils.isBlank(e)) {
+                continue;
+            }
+            result.add(e);
+        }
+        return result;
+
+    }
+
+    public List<String> getEnglish() {
+        final List<String> result = new ArrayList<String>();
+        for (final String e : english.split("[,\\s]")) {
+            if (MiscUtils.isBlank(e)) {
+                continue;
+            }
+            result.add(e.trim());
+        }
+        return result;
+    }
+
+    public String removeSplits(final String str) {
+        return str.replace("-", "").replace(".", "");
     }
 }

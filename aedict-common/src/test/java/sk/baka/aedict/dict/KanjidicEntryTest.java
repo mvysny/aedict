@@ -17,8 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sk.baka.aedict.dict;
 
+import java.util.Arrays;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static sk.baka.tools.test.Assert.*;
 
 /**
  * Tests the {@link KanjidicEntry} class.
@@ -41,6 +43,30 @@ public class KanjidicEntryTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithInvalidKanji() {
-        final KanjidicEntry k = new KanjidicEntry("KAAAAA", "Reading", "English", 1, 2, "3-4-5", 4);
+        new KanjidicEntry("KAAAAA", "Reading", "English", 1, 2, "3-4-5", 4);
+    }
+
+    private KanjidicEntry test1() {
+        return new KanjidicEntry("愛", "アイ, いと.しい, かな.しい, め.でる, お.しむ, まな, [あ, あし, え, かな, なる, めぐ, めぐみ, よし, ちか]", "love, affection, favourite", 1, 2, "3-4-5", 6);
+    }
+
+    @Test
+    public void testEnglish() {
+        assertArrayEquals(test1().getEnglish(), Arrays.asList("love", "affection", "favourite"));
+    }
+
+    @Test
+    public void testOnyomi() {
+        assertArrayEquals(test1().getOnyomi(), Arrays.asList("アイ"));
+    }
+
+    @Test
+    public void testKunyomi() {
+        assertArrayEquals(test1().getKunyomi(), Arrays.asList("いと.しい", "かな.しい", "め.でる", "お.しむ", "まな"));
+    }
+
+    @Test
+    public void testNamae() {
+        assertArrayEquals(test1().getNamae(), Arrays.asList("あ", "あし", "え", "かな", "なる", "めぐ", "めぐみ", "よし", "ちか"));
     }
 }
