@@ -75,7 +75,7 @@
     <string name="strokes">Strokes: %d</string>
     <string name="plusMinusBetween0And2">The +- number must be 0..2</string>
     <string name="skipLookup">Skip Lookup</string>
-    <string name="skip">Please select the visual style of the kanji. Look at the kanji in question and decide if it can visually be divided as (choose the first that applies):</string>
+    <string name="skipLookupHint">Please select the visual style of the kanji. Look at the kanji in question and decide if it can visually be divided as (choose the first that applies):</string>
     <string name="skip11">1 八</string>
     <string name="skip11explanation">into <b>left</b> and right sides, such as: 行 引 相 時 八 噛</string>
     <string name="skip12">2 二</string>
@@ -395,4 +395,9 @@
     <string name="sort_summary">If disabled, the results will be sorted based on the Lucene Boost function</string>
     <string name="tanakaMissingReading">If the Tanaka example dictionary is missing the kana reading, please try deleting the dictionaries and download them anew. Also please note that
     the kana reading may be inaccurate.</string>
+	<string name="stroke">Stroke:</string>
+	<string name="grade">Grade:</string>
+	<string name="jlptLevel">JLPT Level:</string>
+	<string name="skip">SKIP:</string>
+	<string name="strokeOrder">Stroke order</string>
 </resources>

@@ -142,13 +142,13 @@ public class KanjiAnalyzeActivity extends ListActivity {
 
 	private ArrayAdapter<DictEntry> newAdapter() {
 		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
-		return new ArrayAdapter<DictEntry>(this, R.layout.kanjidetail, model) {
+		return new ArrayAdapter<DictEntry>(this, R.layout.kanjidic_list_item, model) {
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
 				View v = convertView;
 				if (v == null) {
-					v = getLayoutInflater().inflate(R.layout.kanjidetail, getListView(), false);
+					v = getLayoutInflater().inflate(R.layout.kanjidic_list_item, getListView(), false);
 				}
 				final DictEntry e = model.get(position);
 				((TextView) v.findViewById(android.R.id.text1)).setText(isShowingRomaji ? romanization.toRomaji(e.reading) : e.reading);
