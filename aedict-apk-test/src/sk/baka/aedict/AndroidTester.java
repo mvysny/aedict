@@ -211,7 +211,7 @@ public class AndroidTester<T extends Activity> {
 	 *            the button id
 	 */
 	public void click(final int buttonId) {
-		((Button) test.getActivity().findViewById(buttonId)).performClick();
+		test.getActivity().findViewById(buttonId).performClick();
 	}
 
 	/**

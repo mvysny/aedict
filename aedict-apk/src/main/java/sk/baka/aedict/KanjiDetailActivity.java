@@ -36,7 +36,7 @@ import android.widget.TextView;
  * @author Martin Vysny
  */
 public class KanjiDetailActivity extends Activity {
-	private static final String INTENTKEY_KANJIDIC_ENTRY = "entry";
+	static final String INTENTKEY_KANJIDIC_ENTRY = "entry";
 
 	public static void launch(final Context activity, final KanjidicEntry entry) {
 		final Intent intent = new Intent(activity, KanjiDetailActivity.class);
