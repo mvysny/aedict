@@ -30,6 +30,7 @@ import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -64,7 +65,13 @@ public class NotepadActivity extends ListActivity {
 	/**
 	 * Expects {@link DictEntry} as a value. Adds given entry to the model list.
 	 */
-	public static final String INTENTKEY_ADD_ENTRY = "addEntry";
+	private static final String INTENTKEY_ADD_ENTRY = "addEntry";
+
+	public static void addAndLaunch(final Context activity, DictEntry entry) {
+		final Intent intent = new Intent(activity, NotepadActivity.class);
+		intent.putExtra(INTENTKEY_ADD_ENTRY, entry);
+		activity.startActivity(intent);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -108,9 +115,7 @@ public class NotepadActivity extends ListActivity {
 				}));
 				menu.add(R.string.showSod).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
-						final Intent intent = new Intent(NotepadActivity.this, StrokeOrderActivity.class);
-						intent.putExtra(StrokeOrderActivity.INTENTKEY_KANJILIST, getModel().get(pos).getJapanese());
-						startActivity(intent);
+						StrokeOrderActivity.launch(NotepadActivity.this, getModel().get(pos).getJapanese());
 						return true;
 					}
 				}));

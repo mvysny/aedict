@@ -160,29 +160,4 @@ public final class Edict {
 		text1.setText(e.formatJapanese(romanize));
 		text2.setText(e.english);
 	}
-
-		/**
-		 * Retrieves values for the query from given intent.
-		 * 
-		 * @param intent
-		 *            the intent to parse
-		 * @return query instance.
-		 */
-		public static SearchQuery fromIntent(final Intent intent) {
-			return (SearchQuery) intent.getSerializableExtra(INTENTKEY_SEARCH_QUERY);
-		}
-	
-		private static final String INTENTKEY_SEARCH_QUERY = "QUERY";
-	
-		/**
-		 * Puts values from this bean to given intent. The object can be
-		 * reconstructed later by using {@link #fromIntent(Intent)}.
-		 * 
-		 * @param intent
-		 *            store the values here.
-		 */
-		public static void putTo(final SearchQuery sq,Intent intent) {
-			intent.putExtra(INTENTKEY_SEARCH_QUERY, sq);
-		}
-	
-	}
+}

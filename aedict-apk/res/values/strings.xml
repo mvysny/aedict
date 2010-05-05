@@ -400,4 +400,5 @@
 	<string name="jlptLevel">JLPT Level:</string>
 	<string name="skip">SKIP:</string>
 	<string name="strokeOrder">Stroke order</string>
+	<string name="kanjiDetail">Kanji Detail</string>
 </resources>

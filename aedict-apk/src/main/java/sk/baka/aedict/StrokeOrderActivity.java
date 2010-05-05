@@ -26,6 +26,8 @@ import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.SodLoader;
 import sk.baka.autils.AndroidUtils;
 import android.app.ListActivity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -44,7 +46,14 @@ public class StrokeOrderActivity extends ListActivity {
 	/**
 	 * An intent string value: the list of kanji characters.
 	 */
-	public static final String INTENTKEY_KANJILIST = "kanjiList";
+	private static final String INTENTKEY_KANJILIST = "kanjiList";
+
+	public static void launch(final Context activity, final String kanjiList) {
+		final Intent intent = new Intent(activity, StrokeOrderActivity.class);
+		intent.putExtra(INTENTKEY_KANJILIST, kanjiList);
+		activity.startActivity(intent);
+	}
+
 	/**
 	 * Shows a list of matched entries. May contain an error message if the
 	 * search failed.

@@ -28,7 +28,6 @@ import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.AbstractDownloadTask;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DownloadDictTask;
-import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.autils.AndroidUtils;
@@ -112,9 +111,7 @@ public final class SearchUtils {
 			// nothing.
 			return;
 		}
-		final Intent intent = new Intent(activity, ResultActivity.class);
-		Edict.putTo(query, intent);
-		activity.startActivity(intent);
+		ResultActivity.launch(activity, query);
 	}
 
 	/**
