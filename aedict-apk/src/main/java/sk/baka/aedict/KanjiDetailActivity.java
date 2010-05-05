@@ -17,16 +17,21 @@
  */
 package sk.baka.aedict;
 
+import java.util.List;
+
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.kanji.KanjiUtils;
+import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -71,6 +76,28 @@ public class KanjiDetailActivity extends Activity {
 				NotepadActivity.addAndLaunch(KanjiDetailActivity.this, entry);
 			}
 		});
+		// compute ONYOMI, KUNYOMI, NAMAE and ENGLISH
+		addTextViews(R.id.onyomi, entry.getOnyomi(), true, 20);
+		addTextViews(R.id.kunyomi, entry.getKunyomi(), true, 20);
+		addTextViews(R.id.namae, entry.getNamae(), true, 20);
+		addTextViews(R.id.english, entry.getEnglish(), false, 15);
+	}
+
+	private void addTextViews(final int parent, final List<String> items, final boolean isJapanese, float textSize) {
+		final ViewGroup p = (ViewGroup) findViewById(parent);
+		if (items.isEmpty()) {
+			p.setVisibility(View.GONE);
+			return;
+		}
+		for (int i = 0; i < items.size(); i++) {
+			final String item = items.get(i);
+			final TextView tv = new TextView(p.getContext());
+			tv.setText(item + (i == items.size() - 1 ? "" : ", "));
+			final String query = KanjiUtils.isKatakana(item.charAt(0)) ? RomanizationEnum.NihonShiki.toHiragana(RomanizationEnum.NihonShiki.toRomaji(item)) : item;
+			tv.setOnClickListener(new SearchClickListener(query, isJapanese));
+			tv.setTextSize(textSize);
+			p.addView(tv);
+		}
 	}
 
 	public static class SearchClickListener implements View.OnClickListener {

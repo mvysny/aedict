@@ -50,23 +50,37 @@ public class KanjidicEntryTest {
         return new KanjidicEntry("愛", "アイ, いと.しい, かな.しい, め.でる, お.しむ, まな, [あ, あし, え, かな, なる, めぐ, めぐみ, よし, ちか]", "love, affection, favourite", 1, 2, "3-4-5", 6);
     }
 
+    private KanjidicEntry test2() {
+        return new KanjidicEntry("方", "ホウ, かた, -かた, -がた, [から, な, なた, ふさ, まさ, みち, も, わ]", "direction, person, alternative", 1, 2, "3-4-5", 6);
+    }
+
     @Test
     public void testEnglish() {
         assertArrayEquals(test1().getEnglish(), Arrays.asList("love", "affection", "favourite"));
+        assertArrayEquals(test2().getEnglish(), Arrays.asList("direction", "person", "alternative"));
     }
 
     @Test
     public void testOnyomi() {
         assertArrayEquals(test1().getOnyomi(), Arrays.asList("アイ"));
+        assertArrayEquals(test2().getOnyomi(), Arrays.asList("ホウ"));
     }
 
     @Test
     public void testKunyomi() {
         assertArrayEquals(test1().getKunyomi(), Arrays.asList("いと.しい", "かな.しい", "め.でる", "お.しむ", "まな"));
+        assertArrayEquals(test2().getKunyomi(), Arrays.asList("かた", "-かた", "-がた"));
     }
 
     @Test
     public void testNamae() {
         assertArrayEquals(test1().getNamae(), Arrays.asList("あ", "あし", "え", "かな", "なる", "めぐ", "めぐみ", "よし", "ちか"));
+        assertArrayEquals(test2().getNamae(), Arrays.asList("から", "な", "なた", "ふさ", "まさ", "みち", "も", "わ"));
+    }
+
+    @Test
+    public void testRemoveSplits() {
+        assertEquals("いとしい", KanjidicEntry.removeSplits("いと.しい"));
+        assertEquals("かた", KanjidicEntry.removeSplits("-かた"));
     }
 }

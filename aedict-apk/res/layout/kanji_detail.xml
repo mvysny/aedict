@@ -70,14 +70,19 @@
 				</TableRow>
 			</TableLayout>
 		</LinearLayout>
-		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/KanjiDetails"
-			android:text="コウ
-たか-い, たか, -だか, たか-まる, 
-   たか-める
-tall; high; expensive"></TextView>
-
-		<LinearLayout android:id="@+id/LinearLayout03"
+		<se.fnord.android.layout.FlowLayout android:id="@+id/onyomi" 
+			android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp">
+		</se.fnord.android.layout.FlowLayout>
+		<se.fnord.android.layout.FlowLayout android:id="@+id/kunyomi" 
+			android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp">
+		</se.fnord.android.layout.FlowLayout>
+		<se.fnord.android.layout.FlowLayout android:id="@+id/namae" 
+			android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp">
+		</se.fnord.android.layout.FlowLayout>
+		<se.fnord.android.layout.FlowLayout android:id="@+id/english" 
+			android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp">
+		</se.fnord.android.layout.FlowLayout>
+		<LinearLayout 
 			android:layout_width="wrap_content" android:layout_height="wrap_content"
 			android:orientation="horizontal" android:layout_gravity="center_horizontal"
 			android:layout_marginTop="12dp">

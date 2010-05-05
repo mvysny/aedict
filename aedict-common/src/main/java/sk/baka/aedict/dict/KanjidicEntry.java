@@ -97,7 +97,10 @@ public class KanjidicEntry extends DictEntry {
 
     public List<String> getOnyomi() {
         final List<String> result = new ArrayList<String>();
-        for (final String o : reading.split("[,\\w]")) {
+        for (final String o : reading.split("[,\\s]")) {
+            if (MiscUtils.isBlank(o)) {
+                continue;
+            }
             if (!KanjiUtils.isKatakana(o.charAt(0))) {
                 break;
             }
@@ -150,7 +153,7 @@ public class KanjidicEntry extends DictEntry {
         return result;
     }
 
-    public String removeSplits(final String str) {
+    public static String removeSplits(final String str) {
         return str.replace("-", "").replace(".", "");
     }
 }
