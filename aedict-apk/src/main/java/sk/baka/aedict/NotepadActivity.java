@@ -65,7 +65,7 @@ public class NotepadActivity extends ListActivity {
 	/**
 	 * Expects {@link DictEntry} as a value. Adds given entry to the model list.
 	 */
-	private static final String INTENTKEY_ADD_ENTRY = "addEntry";
+	static final String INTENTKEY_ADD_ENTRY = "addEntry";
 
 	public static void addAndLaunch(final Context activity, DictEntry entry) {
 		final Intent intent = new Intent(activity, NotepadActivity.class);

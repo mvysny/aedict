@@ -79,7 +79,7 @@ public class KanjiAnalyzeActivityTest extends AbstractAedictTest<KanjiAnalyzeAct
 		startActivity("母上");
 		tester.contextMenu(getActivity().getListView(), 10001, 0);
 		tester.assertRequestedActivity(NotepadActivity.class);
-		assertEquals("母", ((DictEntry) getStartedActivityIntent().getExtras().get(NotepadActivity.INTENTKEY_ADD_ENTRY)).getJapanese());
+		assertEquals("母", ((DictEntry)getStartedActivityIntent().getSerializableExtra(NotepadActivity.INTENTKEY_ADD_ENTRY)).getJapanese());
 	}
 
 	/**

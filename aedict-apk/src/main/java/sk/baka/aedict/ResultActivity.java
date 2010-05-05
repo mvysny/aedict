@@ -82,7 +82,7 @@ public class ResultActivity extends ListActivity {
 		return isShowingRomaji;
 	}
 
-	private static final String INTENTKEY_SEARCH_QUERY = "QUERY";
+	static final String INTENTKEY_SEARCH_QUERY = "QUERY";
 
 	public static void launch(final Context activity, final SearchQuery query) {
 		final Intent intent = new Intent(activity, ResultActivity.class);

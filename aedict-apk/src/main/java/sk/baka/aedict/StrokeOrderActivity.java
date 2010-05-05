@@ -46,7 +46,7 @@ public class StrokeOrderActivity extends ListActivity {
 	/**
 	 * An intent string value: the list of kanji characters.
 	 */
-	private static final String INTENTKEY_KANJILIST = "kanjiList";
+	static final String INTENTKEY_KANJILIST = "kanjiList";
 
 	public static void launch(final Context activity, final String kanjiList) {
 		final Intent intent = new Intent(activity, StrokeOrderActivity.class);

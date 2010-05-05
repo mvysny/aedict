@@ -24,7 +24,6 @@ import java.util.Map;
 
 import sk.baka.aedict.R;
 import sk.baka.aedict.kanji.RomanizationEnum;
-import android.content.Intent;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
 

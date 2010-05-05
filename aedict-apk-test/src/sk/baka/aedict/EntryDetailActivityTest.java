@@ -53,7 +53,7 @@ public class EntryDetailActivityTest extends AbstractAedictTest<EntryDetailActiv
 		tester.click(R.id.englishExactMatch);
 		tester.click(R.id.englishSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
-		final SearchQuery q = Edict.fromIntent(getStartedActivityIntent());
+		final SearchQuery q = (SearchQuery) getStartedActivityIntent().getSerializableExtra(ResultActivity.INTENTKEY_SEARCH_QUERY);
 		assertEquals("mother", q.query[0]);
 		assertEquals(1, q.query.length);
 		assertFalse(q.isJapanese);
@@ -66,7 +66,7 @@ public class EntryDetailActivityTest extends AbstractAedictTest<EntryDetailActiv
 		tester.click(R.id.kanjiExactMatch);
 		tester.click(R.id.kanjiSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
-		final SearchQuery q = Edict.fromIntent(getStartedActivityIntent());
+		final SearchQuery q = (SearchQuery) getStartedActivityIntent().getSerializableExtra(ResultActivity.INTENTKEY_SEARCH_QUERY);
 		// the jp search is intended primarily for searching for romaji.
 		// therefore the default functionality always tries to produce two
 		// search terms, both in hiragana and katakana
@@ -83,7 +83,7 @@ public class EntryDetailActivityTest extends AbstractAedictTest<EntryDetailActiv
 		tester.click(R.id.readingExactMatch);
 		tester.click(R.id.readingSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
-		final SearchQuery q = Edict.fromIntent(getStartedActivityIntent());
+		final SearchQuery q = (SearchQuery) getStartedActivityIntent().getSerializableExtra(ResultActivity.INTENTKEY_SEARCH_QUERY);
 		// the jp search is intended primarily for searching for romaji.
 		// therefore the default functionality always tries to produce two
 		// search terms, both in hiragana and katakana
