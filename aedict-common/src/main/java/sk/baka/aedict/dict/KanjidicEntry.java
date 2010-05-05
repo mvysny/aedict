@@ -17,8 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sk.baka.aedict.dict;
 
+import sk.baka.aedict.kanji.KanjiUtils;
+
 /**
- * A KANJIDIC entry, containing more information for the entry.
+ * A KANJIDIC entry, containing more information for the entry. For details on the KANJIDIC dictionary please see http://www.csse.monash.edu.au/~jwb/kanjidic.html
  * 
  * @author Martin Vysny
  */
@@ -38,7 +40,7 @@ public class KanjidicEntry extends DictEntry {
      */
     public final String skip;
     /**
-     * The "grade" of the kanji, 2 means it is a Jouyou (general use) kanji
+     * The "grade" of the kanji. For example, 2 means it is a Jouyou (general use) kanji
      * taught in the second year of elementary schooling in Japan. May be null if not known.
      */
     public final Integer grade;
@@ -68,9 +70,24 @@ public class KanjidicEntry extends DictEntry {
      */
     public KanjidicEntry(final String kanji, final String reading, final String english, final int radical, final int strokes, final String skip, final Integer grade) {
         super(kanji, reading, english);
+        if (kanji.length() != 1) {
+            throw new IllegalArgumentException("A single kanji expected but got \"" + kanji + "\"");
+        }
         this.radical = radical;
         this.strokes = strokes;
         this.skip = skip;
         this.grade = grade;
+    }
+
+    /**
+     * Returns JLPT level of given kanji.
+     * @return JLPT level 1..6, null if the kanji is not present in all JLPT tests.
+     */
+    public Integer getJlpt() {
+        return KanjiUtils.getJlptLevel(getKanji());
+    }
+
+    public char getKanji() {
+        return kanji.charAt(0);
     }
 }
