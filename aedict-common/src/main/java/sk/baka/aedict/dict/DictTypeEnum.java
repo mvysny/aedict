@@ -232,7 +232,7 @@ public enum DictTypeEnum {
             // does
             // not start with '{' )
             for (final String field : kanjidicEntry.substring(2).split("\\ ")) {
-                final char firstChar = field.charAt(0);
+                final char firstChar = KanjidicEntry.removeSplits(field).charAt(0);
                 if (firstChar == '{') {
                     break;
                 } else if (firstChar == 'G') {
