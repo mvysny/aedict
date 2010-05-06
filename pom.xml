@@ -84,6 +84,21 @@
 		<url>http://code.google.com/p/aedict/issues/list</url>
 	</issueManagement>
 
+	<pluginRepositories>
+		<pluginRepository>
+			<id>baka.pluginRepo</id>
+			<name>Baka.sk repository</name>
+			<url>http://baka.sk/maven2</url>
+		</pluginRepository>
+	</pluginRepositories>
+	<repositories>
+		<repository>
+			<id>baka.repo</id>
+			<name>Baka.sk repository</name>
+			<url>http://baka.sk/maven2</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
