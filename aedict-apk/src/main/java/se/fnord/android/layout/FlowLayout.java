@@ -59,9 +59,18 @@ public class FlowLayout extends ViewGroup {
             final View child = getChildAt(i);
             if (child.getVisibility() != GONE) {
                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                child.measure(
-                        MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST),
-                        MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
+
+                int childHeightMeasureSpec;
+                if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.AT_MOST) {
+                    childHeightMeasureSpec =
+                        MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST);
+                }
+                else {
+                    childHeightMeasureSpec = 
+                        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);            
+                }
+                child.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), 
+                	    childHeightMeasureSpec);
 
                 final int childw = child.getMeasuredWidth();
                 line_height = Math.max(line_height, child.getMeasuredHeight() + lp.vertical_spacing);

@@ -58,7 +58,10 @@ public class KanjiDetailActivity extends Activity {
 		final KanjidicEntry entry = (KanjidicEntry) getIntent().getSerializableExtra(INTENTKEY_KANJIDIC_ENTRY);
 		final TextView kanji = (TextView) findViewById(R.id.kanji);
 		kanji.setText(entry.kanji);
-		kanji.setOnClickListener(new SearchClickListener(entry.kanji, true));
+		final SearchClickListener l = new SearchClickListener(entry.kanji, true);
+		kanji.setOnClickListener(l);
+		kanji.setFocusable(true);
+		kanji.setOnFocusChangeListener(l);
 		((TextView) findViewById(R.id.stroke)).setText(Integer.toString(entry.strokes));
 		((TextView) findViewById(R.id.grade)).setText(entry.grade == null ? "-" : entry.grade.toString());
 		((TextView) findViewById(R.id.skip)).setText(entry.skip);
@@ -101,20 +104,16 @@ public class KanjiDetailActivity extends Activity {
 			final TextView tv = new TextView(p.getContext());
 			tv.setText(item + (i == items.size() - 1 ? "" : ", "));
 			final String query = KanjiUtils.isKatakana(sitem.charAt(0)) ? RomanizationEnum.NihonShiki.toHiragana(RomanizationEnum.NihonShiki.toRomaji(sitem)) : sitem;
-			tv.setOnClickListener(new SearchClickListener(query, isJapanese));
+			final SearchClickListener l = new SearchClickListener(query, isJapanese);
+			tv.setOnClickListener(l);
 			tv.setTextSize(textSize);
 			tv.setFocusable(true);
-			tv.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-				public void onFocusChange(View v, boolean hasFocus) {
-					v.setBackgroundColor(hasFocus ? 0xCFFF8c00 : 0);
-				}
-			});
+			tv.setOnFocusChangeListener(l);
 			p.addView(tv);
 		}
 	}
 
-	public static class SearchClickListener implements View.OnClickListener {
+	public static class SearchClickListener implements View.OnClickListener, View.OnFocusChangeListener {
 		private final boolean isJapanese;
 		private final String searchFor;
 
@@ -129,6 +128,10 @@ public class KanjiDetailActivity extends Activity {
 			q.query = new String[] { searchFor };
 			q.matcher = MatcherEnum.Substring;
 			ResultActivity.launch(v.getContext(), q);
+		}
+
+		public void onFocusChange(View v, boolean hasFocus) {
+			v.setBackgroundColor(hasFocus ? 0xCFFF8c00 : 0);
 		}
 	}
 }
