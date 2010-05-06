@@ -103,6 +103,13 @@ public class KanjiDetailActivity extends Activity {
 			final String query = KanjiUtils.isKatakana(sitem.charAt(0)) ? RomanizationEnum.NihonShiki.toHiragana(RomanizationEnum.NihonShiki.toRomaji(sitem)) : sitem;
 			tv.setOnClickListener(new SearchClickListener(query, isJapanese));
 			tv.setTextSize(textSize);
+			tv.setFocusable(true);
+			tv.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+				public void onFocusChange(View v, boolean hasFocus) {
+					v.setBackgroundColor(hasFocus ? 0xCFFF8c00 : 0);
+				}
+			});
 			p.addView(tv);
 		}
 	}
