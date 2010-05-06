@@ -38,6 +38,7 @@ import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -81,6 +82,14 @@ public class ResultActivity extends ListActivity {
 		return isShowingRomaji;
 	}
 
+	static final String INTENTKEY_SEARCH_QUERY = "QUERY";
+
+	public static void launch(final Context activity, final SearchQuery query) {
+		final Intent intent = new Intent(activity, ResultActivity.class);
+		intent.putExtra(INTENTKEY_SEARCH_QUERY, query);
+		activity.startActivity(intent);
+	}
+
 	/**
 	 * The query.
 	 */
@@ -118,7 +127,7 @@ public class ResultActivity extends ListActivity {
 				result.query = new String[] { searchFor };
 			}
 		} else {
-			result = Edict.fromIntent(getIntent());
+			result = (SearchQuery) getIntent().getSerializableExtra(INTENTKEY_SEARCH_QUERY);
 			isSimeji = it.getBooleanExtra(INTENTKEY_SIMEJI, false);
 		}
 		return result.toLowerCase();
@@ -164,9 +173,7 @@ public class ResultActivity extends ListActivity {
 				miAddToNotepad.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
 
 					public boolean onMenuItemClick(MenuItem item) {
-						final Intent intent = new Intent(ResultActivity.this, NotepadActivity.class);
-						intent.putExtra(NotepadActivity.INTENTKEY_ADD_ENTRY, ee);
-						startActivity(intent);
+						NotepadActivity.addAndLaunch(ResultActivity.this, ee);
 						return true;
 					}
 				}));
@@ -206,9 +213,7 @@ public class ResultActivity extends ListActivity {
 						// word may be inflected and the entry would get
 						// filtered out.
 						q.matcher = MatcherEnum.Any;
-						final Intent intent = new Intent(ResultActivity.this, ResultActivity.class);
-						Edict.putTo(q, intent);
-						startActivity(intent);
+						launch(ResultActivity.this, q);
 						return true;
 					}
 				}));
@@ -216,9 +221,7 @@ public class ResultActivity extends ListActivity {
 				miShowSOD.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
 
 					public boolean onMenuItemClick(MenuItem item) {
-						final Intent intent = new Intent(ResultActivity.this, StrokeOrderActivity.class);
-						intent.putExtra(StrokeOrderActivity.INTENTKEY_KANJILIST, ee.getJapanese());
-						startActivity(intent);
+						StrokeOrderActivity.launch(ResultActivity.this, ee.getJapanese());
 						return true;
 					}
 				}));

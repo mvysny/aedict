@@ -17,8 +17,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sk.baka.aedict.dict;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import sk.baka.aedict.kanji.KanjiUtils;
+import sk.baka.autils.MiscUtils;
+
 /**
- * A KANJIDIC entry, containing more information for the entry.
+ * A KANJIDIC entry, containing more information for the entry. For details on the KANJIDIC dictionary please see http://www.csse.monash.edu.au/~jwb/kanjidic.html
  * 
  * @author Martin Vysny
  */
@@ -38,7 +44,7 @@ public class KanjidicEntry extends DictEntry {
      */
     public final String skip;
     /**
-     * The "grade" of the kanji, 2 means it is a Jouyou (general use) kanji
+     * The "grade" of the kanji. For example, 2 means it is a Jouyou (general use) kanji
      * taught in the second year of elementary schooling in Japan. May be null if not known.
      */
     public final Integer grade;
@@ -68,9 +74,86 @@ public class KanjidicEntry extends DictEntry {
      */
     public KanjidicEntry(final String kanji, final String reading, final String english, final int radical, final int strokes, final String skip, final Integer grade) {
         super(kanji, reading, english);
+        if (kanji.length() != 1) {
+            throw new IllegalArgumentException("A single kanji expected but got \"" + kanji + "\"");
+        }
         this.radical = radical;
         this.strokes = strokes;
         this.skip = skip;
         this.grade = grade;
+    }
+
+    /**
+     * Returns JLPT level of given kanji.
+     * @return JLPT level 1..6, null if the kanji is not present in all JLPT tests.
+     */
+    public Integer getJlpt() {
+        return KanjiUtils.getJlptLevel(getKanji());
+    }
+
+    public char getKanji() {
+        return kanji.charAt(0);
+    }
+
+    public List<String> getOnyomi() {
+        final List<String> result = new ArrayList<String>();
+        for (final String o : reading.split("[,\\s]")) {
+            if (MiscUtils.isBlank(o)) {
+                continue;
+            }
+            if (!KanjiUtils.isKatakana(o.charAt(0))) {
+                break;
+            }
+            result.add(o);
+        }
+        return result;
+    }
+
+    public List<String> getKunyomi() {
+        final List<String> result = new ArrayList<String>();
+        for (final String e : reading.split("[,\\s]")) {
+            if (MiscUtils.isBlank(e)) {
+                continue;
+            }
+            if (KanjiUtils.isKatakana(e.charAt(0))) {
+                continue;
+            }
+            if (e.charAt(0) == '[') {
+                break;
+            }
+            result.add(e);
+        }
+        return result;
+    }
+
+    public List<String> getNamae() {
+        final String[] namae = reading.split("\\[");
+        if (namae.length <= 1) {
+            return Collections.emptyList();
+        }
+        final List<String> result = new ArrayList<String>();
+        for (final String e : namae[1].split("[,\\s\\]]")) {
+            if (MiscUtils.isBlank(e)) {
+                continue;
+            }
+            result.add(e);
+        }
+        return result;
+
+    }
+
+    public List<String> getEnglish() {
+        final List<String> result = new ArrayList<String>();
+        for (final String e : english.split("[,\\s]")) {
+            if (MiscUtils.isBlank(e)) {
+                continue;
+            }
+            result.add(e.trim());
+        }
+        return result;
+    }
+
+    public static String removeSplits(final String str) {
+        return str.replace("-", "").replace(".", "");
     }
 }

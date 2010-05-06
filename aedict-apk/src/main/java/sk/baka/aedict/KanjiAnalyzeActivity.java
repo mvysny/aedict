@@ -122,17 +122,13 @@ public class KanjiAnalyzeActivity extends ListActivity {
 				menu.add(R.string.addToNotepad).setOnMenuItemClickListener(AndroidUtils.safe(KanjiAnalyzeActivity.this, new MenuItem.OnMenuItemClickListener() {
 
 					public boolean onMenuItemClick(MenuItem item) {
-						final Intent intent = new Intent(KanjiAnalyzeActivity.this, NotepadActivity.class);
-						intent.putExtra(NotepadActivity.INTENTKEY_ADD_ENTRY, ee);
-						startActivity(intent);
+						NotepadActivity.addAndLaunch(KanjiAnalyzeActivity.this, ee);
 						return true;
 					}
 				}));
 				menu.add(R.string.showSod).setOnMenuItemClickListener(AndroidUtils.safe(KanjiAnalyzeActivity.this, new MenuItem.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
-						final Intent intent = new Intent(KanjiAnalyzeActivity.this, StrokeOrderActivity.class);
-						intent.putExtra(StrokeOrderActivity.INTENTKEY_KANJILIST, ee.getJapanese());
-						startActivity(intent);
+						StrokeOrderActivity.launch(KanjiAnalyzeActivity.this, ee.getJapanese());
 						return true;
 					}
 				}));
@@ -142,20 +138,19 @@ public class KanjiAnalyzeActivity extends ListActivity {
 
 	private ArrayAdapter<DictEntry> newAdapter() {
 		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
-		return new ArrayAdapter<DictEntry>(this, R.layout.kanjidetail, model) {
+		return new ArrayAdapter<DictEntry>(this, R.layout.kanjidic_list_item, model) {
 
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
 				View v = convertView;
 				if (v == null) {
-					v = getLayoutInflater().inflate(R.layout.kanjidetail, getListView(), false);
+					v = getLayoutInflater().inflate(R.layout.kanjidic_list_item, getListView(), false);
 				}
 				final DictEntry e = model.get(position);
 				((TextView) v.findViewById(android.R.id.text1)).setText(isShowingRomaji ? romanization.toRomaji(e.reading) : e.reading);
 				final StringBuilder sb = new StringBuilder();
 				if (e instanceof KanjidicEntry) {
 					final KanjidicEntry ee = (KanjidicEntry) e;
-					// TODO mvy: show radicals as images when available?
 					sb.append(' ').append(Radicals.getRadicals(ee.kanji.charAt(0)));
 					sb.append(" Strokes:").append(ee.strokes);
 					sb.append(" SKIP:").append(ee.skip);
@@ -198,9 +193,13 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		if (!e.isValid()) {
 			return;
 		}
-		final Intent intent = new Intent(this, EntryDetailActivity.class);
-		intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, e);
-		startActivity(intent);
+		if (e instanceof KanjidicEntry) {
+			KanjiDetailActivity.launch(this, (KanjidicEntry) e);
+		} else {
+			final Intent intent = new Intent(this, EntryDetailActivity.class);
+			intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, e);
+			startActivity(intent);
+		}
 	}
 
 	@Override
