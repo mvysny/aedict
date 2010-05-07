@@ -154,7 +154,6 @@ public abstract class AbstractActivity extends Activity {
 		addActivityLauncher(activity, menu, R.string.showkanaTable, R.drawable.kanamenuitem, KanaTableActivity.class);
 		final MenuItem item = menu.add(R.string.kanjiSearch);
 		item.setIcon(android.R.drawable.ic_menu_search);
-		item.setTitle(R.string.kanjiSearchMethod);
 		item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
 			public boolean onMenuItemClick(MenuItem item) {
@@ -167,6 +166,7 @@ public abstract class AbstractActivity extends Activity {
 						activity.startActivity(i);
 					}
 				});
+				builder.setTitle(R.string.kanjiSearchMethod);
 				builder.create().show();
 				return true;
 			}
