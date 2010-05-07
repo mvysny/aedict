@@ -21,6 +21,8 @@ package sk.baka.aedict;
 import sk.baka.aedict.skip.SkipActivity;
 import sk.baka.autils.AndroidUtils;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -150,9 +152,25 @@ public abstract class AbstractActivity extends Activity {
 	 */
 	public static void addMenuItems(final Activity activity, final Menu menu) {
 		addActivityLauncher(activity, menu, R.string.showkanaTable, R.drawable.kanamenuitem, KanaTableActivity.class);
-		addActivityLauncher(activity, menu, R.string.kanjiDrawLookup, R.drawable.ic_menu_compose, KanjiDrawActivity.class);
-		addActivityLauncher(activity, menu, R.string.kanjiRadicalLookup, android.R.drawable.ic_menu_search, KanjiSearchRadicalActivity.class);
-		addActivityLauncher(activity, menu, R.string.skipLookup, R.drawable.skipmenuitem, SkipActivity.class);
+		final MenuItem item = menu.add(R.string.kanjiSearch);
+		item.setIcon(android.R.drawable.ic_menu_search);
+		item.setTitle(R.string.kanjiSearchMethod);
+		item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+			public boolean onMenuItemClick(MenuItem item) {
+				final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+				builder.setItems(R.array.kanjiSearchMethod, new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog, int which) {
+						final Class<? extends Activity> launch = which == 0 ? KanjiSearchRadicalActivity.class : which == 1 ? KanjiDrawActivity.class : SkipActivity.class;
+						final Intent i = new Intent(activity, launch);
+						activity.startActivity(i);
+					}
+				});
+				builder.create().show();
+				return true;
+			}
+		});
 		addActivityLauncher(activity, menu, R.string.notepad, android.R.drawable.ic_menu_agenda, NotepadActivity.class);
 		addActivityLauncher(activity, menu, R.string.configuration, android.R.drawable.ic_menu_preferences, ConfigActivity.class);
 	}

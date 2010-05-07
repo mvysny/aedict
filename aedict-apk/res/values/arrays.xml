@@ -30,4 +30,9 @@
         <item>Hepburn</item>
         <item>NihonShiki</item>
     </string-array>
+    <string-array name="kanjiSearchMethod">
+    	<item>By radical</item>
+    	<item>By drawing recognition</item>
+    	<item>By layout (SKIP)</item>
+    </string-array>
 </resources>

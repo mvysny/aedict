@@ -403,4 +403,6 @@
 	<string name="kanjiDetail">Kanji Detail</string>
 	<string name="note">Note</string>
 	<string name="clickableNote">You can search further by clicking on the kanji, or the onyomi/kunyomi reading, or the english translation</string>
+	<string name="kanjiSearch">Kanji Search</string>
+	<string name="kanjiSearchMethod">Kanji search method</string>
 </resources>
