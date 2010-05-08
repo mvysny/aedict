@@ -27,10 +27,12 @@ import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.Constants;
 import sk.baka.aedict.util.SearchUtils;
+import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.DialogUtils;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -50,11 +52,21 @@ public class KanjiDetailActivity extends AbstractActivity {
 		activity.startActivity(intent);
 	}
 
+	private ShowRomaji showRomaji;
+	private KanjidicEntry entry;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.kanji_detail);
-		final KanjidicEntry entry = (KanjidicEntry) getIntent().getSerializableExtra(INTENTKEY_KANJIDIC_ENTRY);
+		showRomaji = new ShowRomaji(this) {
+
+			@Override
+			protected void show(boolean romaji) {
+				updateContent();
+			}
+		};
+		entry = (KanjidicEntry) getIntent().getSerializableExtra(INTENTKEY_KANJIDIC_ENTRY);
 		final TextView kanji = (TextView) findViewById(R.id.kanji);
 		kanji.setText(entry.kanji);
 		final SearchClickListener l = new SearchClickListener(entry.kanji, true);
@@ -80,19 +92,25 @@ public class KanjiDetailActivity extends AbstractActivity {
 				NotepadActivity.addAndLaunch(KanjiDetailActivity.this, entry);
 			}
 		});
-		// compute ONYOMI, KUNYOMI, NAMAE and ENGLISH
-		addTextViews(R.id.onyomi, entry.getOnyomi(), true, 20);
-		addTextViews(R.id.kunyomi, entry.getKunyomi(), true, 20);
-		addTextViews(R.id.namae, entry.getNamae(), true, 20);
 		addTextViews(R.id.english, entry.getEnglish(), false, 15);
+		updateContent();
 		// display hint
 		if (!AedictApp.isInstrumentation) {
 			new DialogUtils(this).showInfoOnce(Constants.INFOONCE_CLICKABLE_NOTE, R.string.note, R.string.clickableNote);
 		}
 	}
 
+	private void updateContent() {
+		// compute ONYOMI, KUNYOMI, NAMAE and ENGLISH
+		addTextViews(R.id.onyomi, entry.getOnyomi(), true, 20);
+		addTextViews(R.id.kunyomi, entry.getKunyomi(), true, 20);
+		addTextViews(R.id.namae, entry.getNamae(), true, 20);
+	}
+
 	private void addTextViews(final int parent, final List<String> items, final boolean isJapanese, float textSize) {
+		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
 		final ViewGroup p = (ViewGroup) findViewById(parent);
+		p.removeAllViews();
 		if (items.isEmpty()) {
 			p.setVisibility(View.GONE);
 			return;
@@ -101,7 +119,11 @@ public class KanjiDetailActivity extends AbstractActivity {
 			final String item = items.get(i);
 			final String sitem = KanjidicEntry.removeSplits(item);
 			final TextView tv = new TextView(p.getContext());
-			tv.setText(item + (i == items.size() - 1 ? "" : ", "));
+			String text = item + (i == items.size() - 1 ? "" : ", ");
+			if (isJapanese && showRomaji.isShowingRomaji()) {
+				text = romanization.toRomaji(text);
+			}
+			tv.setText(text);
 			final String query = KanjiUtils.isKatakana(sitem.charAt(0)) ? RomanizationEnum.NihonShiki.toHiragana(RomanizationEnum.NihonShiki.toRomaji(sitem)) : sitem;
 			final SearchClickListener l = new SearchClickListener(query, isJapanese);
 			tv.setOnClickListener(l);
@@ -132,5 +154,18 @@ public class KanjiDetailActivity extends AbstractActivity {
 		public void onFocusChange(View v, boolean hasFocus) {
 			v.setBackgroundColor(hasFocus ? 0xCFFF8c00 : 0);
 		}
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		showRomaji.register(menu);
+		return true;
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		showRomaji.onResume();
 	}
 }
