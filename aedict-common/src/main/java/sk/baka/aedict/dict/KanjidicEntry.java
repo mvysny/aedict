@@ -97,31 +97,33 @@ public class KanjidicEntry extends DictEntry {
 
     public List<String> getOnyomi() {
         final List<String> result = new ArrayList<String>();
-        for (final String o : reading.split("[,\\s]")) {
-            if (MiscUtils.isBlank(o)) {
+        for (final String o : reading.split(",")) {
+            final String oo = o.trim();
+            if (oo.length() == 0) {
                 continue;
             }
-            if (!KanjiUtils.isKatakana(o.charAt(0))) {
+            if (!KanjiUtils.isKatakana(oo.charAt(0))) {
                 break;
             }
-            result.add(o);
+            result.add(oo);
         }
         return result;
     }
 
     public List<String> getKunyomi() {
         final List<String> result = new ArrayList<String>();
-        for (final String e : reading.split("[,\\s]")) {
-            if (MiscUtils.isBlank(e)) {
+        for (final String e : reading.split(",")) {
+            final String ee = e.trim();
+            if (ee.length() == 0) {
                 continue;
             }
-            if (KanjiUtils.isKatakana(e.charAt(0))) {
+            if (KanjiUtils.isKatakana(ee.charAt(0))) {
                 continue;
             }
-            if (e.charAt(0) == '[') {
+            if (ee.charAt(0) == '[') {
                 break;
             }
-            result.add(e);
+            result.add(ee);
         }
         return result;
     }
@@ -132,11 +134,12 @@ public class KanjidicEntry extends DictEntry {
             return Collections.emptyList();
         }
         final List<String> result = new ArrayList<String>();
-        for (final String e : namae[1].split("[,\\s\\]]")) {
-            if (MiscUtils.isBlank(e)) {
+        for (final String e : namae[1].split("[,\\]]")) {
+            final String ee = e.trim();
+            if (ee.length() == 0) {
                 continue;
             }
-            result.add(e);
+            result.add(ee);
         }
         return result;
 
@@ -144,11 +147,12 @@ public class KanjidicEntry extends DictEntry {
 
     public List<String> getEnglish() {
         final List<String> result = new ArrayList<String>();
-        for (final String e : english.split("[,\\s]")) {
-            if (MiscUtils.isBlank(e)) {
+        for (final String e : english.split(",")) {
+            final String ee = e.trim();
+            if (ee.length() == 0) {
                 continue;
             }
-            result.add(e.trim());
+            result.add(ee);
         }
         return result;
     }

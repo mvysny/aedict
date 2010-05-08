@@ -33,6 +33,7 @@ import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.Constants;
 import sk.baka.aedict.util.SearchUtils;
+import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
@@ -68,19 +69,6 @@ public class ResultActivity extends ListActivity {
 	 * true if the activity was invoked from the Simeji keyboard application.
 	 */
 	private boolean isSimeji = false;
-	/**
-	 * true if romaji is shown instead of katakana/hiragana.
-	 */
-	private boolean isShowingRomaji;
-
-	/**
-	 * True if the activity shows entries in romaji.
-	 * 
-	 * @return true if romaji is shown instead of katakana/hiragana.
-	 */
-	boolean isShowingRomaji() {
-		return isShowingRomaji;
-	}
 
 	static final String INTENTKEY_SEARCH_QUERY = "QUERY";
 
@@ -133,10 +121,19 @@ public class ResultActivity extends ListActivity {
 		return result.toLowerCase();
 	}
 
+	ShowRomaji showRomaji=null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.searchresult);
+		showRomaji = new ShowRomaji(this) {
+
+			@Override
+			protected void show(boolean romaji) {
+				((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
+			}
+		};
 		query = fromIntent().trim();
 		if (query.dictType == DictTypeEnum.Tanaka && !AedictApp.isInstrumentation) {
 			new DialogUtils(this).showInfoOnce(Constants.INFOONCE_TANAKA_MISSING_READING, -1, R.string.tanakaMissingReading);
@@ -153,22 +150,11 @@ public class ResultActivity extends ListActivity {
 		final Config cfg = AedictApp.getConfig();
 		final String dictName = query.dictType == DictTypeEnum.Tanaka ? DictTypeEnum.Tanaka.name() : cfg.getDictionaryName();
 		((TextView) findViewById(R.id.textSelectedDictionary)).setText(AedictApp.format(R.string.searchingInDictionary, dictName));
-		isShowingRomaji = cfg.isUseRomaji();
 		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 				final int position = ((AdapterContextMenuInfo) menuInfo).position;
 				final DictEntry ee = model.get(position);
-				final MenuItem miShowRomaji = menu.add(Menu.NONE, 0, 0, isShowingRomaji ? R.string.show_kana : R.string.show_romaji);
-				miShowRomaji.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-					public boolean onMenuItemClick(MenuItem item) {
-						isShowingRomaji = !isShowingRomaji;
-						((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
-						return true;
-					}
-
-				}));
 				final MenuItem miAddToNotepad = menu.add(Menu.NONE, 1, 1, R.string.addToNotepad);
 				miAddToNotepad.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
 
@@ -254,7 +240,7 @@ public class ResultActivity extends ListActivity {
 				if (view == null) {
 					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
 				}
-				Edict.print(model.get(position), view, isShowingRomaji ? romanization : null);
+				Edict.print(model.get(position), view, showRomaji.isShowingRomaji() ? romanization : null);
 				return view;
 			}
 
@@ -312,9 +298,17 @@ public class ResultActivity extends ListActivity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
 		AbstractActivity.addMenuItems(this, menu);
+		showRomaji.register(menu);
 		return true;
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		showRomaji.onResume();
 	}
 
 	private class SearchTask extends AbstractTask<SearchQuery, List<DictEntry>> {
