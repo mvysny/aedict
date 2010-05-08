@@ -18,9 +18,8 @@
 
 package sk.baka.aedict;
 
-import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DictEntry;
-import sk.baka.aedict.dict.Edict;
+import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.RomanizationEnum;
