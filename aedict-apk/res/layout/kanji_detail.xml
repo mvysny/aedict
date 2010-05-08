@@ -14,11 +14,14 @@
 	-->
 <ScrollView 
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:paddingRight="?android:attr/scrollbarSize" android:paddingLeft="?android:attr/scrollbarSize">
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<LinearLayout 
+		android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical" >
+	<LinearLayout 
+		android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingRight="?android:attr/scrollbarSize" android:paddingLeft="?android:attr/scrollbarSize" >
 	<LinearLayout 
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:orientation="vertical">
+		android:orientation="vertical" >
 		<LinearLayout 
 			android:layout_height="wrap_content" android:orientation="horizontal"
 			android:layout_width="fill_parent">
@@ -98,4 +101,10 @@
 		</LinearLayout>
 
 	</LinearLayout>
+	</LinearLayout>
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text="@string/exampleSentences" android:textColor="#FFF" android:background="#666"/>
+		<ListView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:id="@android:id/list" />
+		</LinearLayout>
 </ScrollView>

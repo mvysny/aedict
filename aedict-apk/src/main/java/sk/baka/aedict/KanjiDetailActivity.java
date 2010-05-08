@@ -17,10 +17,14 @@
  */
 package sk.baka.aedict;
 
+import java.util.Collections;
 import java.util.List;
 
+import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.KanjidicEntry;
+import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
@@ -29,21 +33,29 @@ import sk.baka.aedict.util.Constants;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.DialogUtils;
+import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.TwoLineListItem;
 
 /**
  * Shows a detail of a single Kanji character.
  * 
  * @author Martin Vysny
  */
-public class KanjiDetailActivity extends AbstractActivity {
+public class KanjiDetailActivity extends ListActivity {
 	static final String INTENTKEY_KANJIDIC_ENTRY = "entry";
 
 	public static void launch(final Context activity, final KanjidicEntry entry) {
@@ -58,12 +70,14 @@ public class KanjiDetailActivity extends AbstractActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.kanji_detail);
 		showRomaji = new ShowRomaji(this) {
 
 			@Override
 			protected void show(boolean romaji) {
 				updateContent();
+				tanakaSearchTask.updateModel();
 			}
 		};
 		entry = (KanjidicEntry) getIntent().getSerializableExtra(INTENTKEY_KANJIDIC_ENTRY);
@@ -156,16 +170,93 @@ public class KanjiDetailActivity extends AbstractActivity {
 		}
 	}
 
+	public static class TanakaSearchTask extends AsyncTask<String, Void, List<DictEntry>> {
+		private final ListView listView;
+		private final Activity activity;
+		private List<DictEntry> exampleSentences;
+		private final ShowRomaji showRomaji;
+
+		public TanakaSearchTask(final Activity activity, final ListView listView, final ShowRomaji showRomaji) {
+			this.activity = activity;
+			this.listView = listView;
+			this.showRomaji = showRomaji;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			activity.setProgressBarIndeterminate(true);
+			activity.setProgressBarIndeterminateVisibility(true);
+			listView.setAdapter(new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, new String[] { activity.getString(R.string.searching) }));
+		}
+
+		@Override
+		protected List<DictEntry> doInBackground(String... params) {
+			final SearchQuery query = new SearchQuery(DictTypeEnum.Tanaka);
+			query.isJapanese = true;
+			query.matcher = MatcherEnum.Substring;
+			query.query = new String[] { params[0] };
+			try {
+				return LuceneSearch.singleSearch(query, null, true);
+			} catch (Exception e) {
+				Log.e(TanakaSearchTask.class.getSimpleName(), "Failed to search in Tanaka", e);
+				return Collections.singletonList(DictEntry.newErrorMsg(e));
+			}
+		}
+
+		@Override
+		protected void onPostExecute(List<DictEntry> result) {
+			activity.setProgressBarIndeterminateVisibility(false);
+			final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
+			exampleSentences = result;
+			if (exampleSentences.isEmpty()) {
+				exampleSentences = Collections.singletonList(DictEntry.newErrorMsg(activity.getString(R.string.no_results)));
+			}
+			listView.setAdapter(new ArrayAdapter<DictEntry>(activity, android.R.layout.simple_list_item_2, exampleSentences) {
+
+				@Override
+				public View getView(int position, View convertView, ViewGroup parent) {
+					TwoLineListItem view = (TwoLineListItem) convertView;
+					if (view == null) {
+						view = (TwoLineListItem) activity.getLayoutInflater().inflate(android.R.layout.simple_list_item_2, listView, false);
+					}
+					Edict.print(exampleSentences.get(position), view, showRomaji.isShowingRomaji() ? romanization : null);
+					return view;
+				}
+
+			});
+		}
+
+		public void updateModel() {
+			((ArrayAdapter<?>) listView.getAdapter()).notifyDataSetChanged();
+		}
+	}
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		super.onPrepareOptionsMenu(menu);
+		menu.clear();
+		AbstractActivity.addMenuItems(this, menu);
 		showRomaji.register(menu);
 		return true;
 	}
+
+	private TanakaSearchTask tanakaSearchTask;
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		showRomaji.onResume();
+		if (tanakaSearchTask == null) {
+			tanakaSearchTask = new TanakaSearchTask(this, getListView(), showRomaji);
+			tanakaSearchTask.execute(entry.kanji);
+		}
 	}
+
+	@Override
+	protected void onStop() {
+		if (tanakaSearchTask.cancel(true)) {
+			tanakaSearchTask = null;
+		}
+		super.onStop();
+	}
+
 }
