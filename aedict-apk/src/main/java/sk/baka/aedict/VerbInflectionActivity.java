@@ -27,15 +27,13 @@ import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.kanji.VerbInflection;
 import sk.baka.aedict.kanji.VerbInflection.Form;
+import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
 import android.app.ExpandableListActivity;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.SimpleExpandableListAdapter;
 
 /**
@@ -49,10 +47,7 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 	 */
 	public static final String INTENTKEY_ENTRY = "entry";
 	private EdictEntry entry;
-	/**
-	 * true if romaji is shown instead of katakana/hiragana.
-	 */
-	private boolean isShowingRomaji;
+	private ShowRomaji showRomaji;
 	/**
 	 * true if we are showing only {@link Form#basic} forms.
 	 */
@@ -61,30 +56,21 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		isShowingRomaji = AedictApp.getConfig().isUseRomaji();
+		showRomaji = new ShowRomaji(this) {
+
+			@Override
+			protected void show(boolean romaji) {
+				buildAndSetAdapter();
+			}
+		};
 		entry = (EdictEntry) getIntent().getSerializableExtra(INTENTKEY_ENTRY);
 		buildAndSetAdapter();
-		getExpandableListView().setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-
-			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-				final MenuItem miShowRomaji = menu.add(Menu.NONE, 0, 0, isShowingRomaji ? R.string.show_kana : R.string.show_romaji);
-				miShowRomaji.setOnMenuItemClickListener(AndroidUtils.safe(VerbInflectionActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-					public boolean onMenuItemClick(MenuItem item) {
-						isShowingRomaji = !isShowingRomaji;
-						buildAndSetAdapter();
-						return true;
-					}
-
-				}));
-			}
-		});
 		new DialogUtils(this).showInfoOnce(getClass().getName(), R.string.info, R.string.inflectionWarning);
 	}
 
 	private String convertInflectionProduct(final String romaji) {
 		final String kana = RomanizationEnum.NihonShiki.toHiragana(romaji);
-		return isShowingRomaji ? AedictApp.getConfig().getRomanization().toRomaji(kana) : kana;
+		return showRomaji.isShowingRomaji() ? AedictApp.getConfig().getRomanization().toRomaji(kana) : kana;
 	}
 
 	private static final String KEY_JP = "jp";
@@ -92,7 +78,7 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 
 	private void buildAndSetAdapter() {
 		final boolean isIchidan = entry.isIchidan();
-		final RomanizationEnum romanization = !isShowingRomaji ? null : AedictApp.getConfig().getRomanization();
+		final RomanizationEnum romanization = !showRomaji.isShowingRomaji() ? null : AedictApp.getConfig().getRomanization();
 		final List<Map<String, String>> groupData = new ArrayList<Map<String, String>>();
 		final List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();
 		// first, add all Base-x inflections
@@ -130,13 +116,12 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 			childData.add(childDataItem);
 		}
 		// set the adapter
-		setListAdapter(new SimpleExpandableListAdapter(this, groupData, R.layout.simple_expandable_list_item_2, new String[] { KEY_JP, KEY_EN }, new int[] { android.R.id.text1, android.R.id.text2 },
-				childData, R.layout.simple_expandable_list_item_2, new String[] { KEY_JP, KEY_EN }, new int[] { android.R.id.text1, android.R.id.text2 }));
+		setListAdapter(new SimpleExpandableListAdapter(this, groupData, R.layout.simple_expandable_list_item_2, new String[] { KEY_JP, KEY_EN }, new int[] { android.R.id.text1, android.R.id.text2 }, childData, R.layout.simple_expandable_list_item_2, new String[] { KEY_JP, KEY_EN }, new int[] { android.R.id.text1, android.R.id.text2 }));
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.removeGroup(0);
+		menu.clear();
 		final MenuItem item2 = menu.add(0, 0, 0, isShowingBasicOnly ? R.string.showAdvanced : R.string.showBasic);
 		item2.setIcon(android.R.drawable.ic_menu_add);
 		item2.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
@@ -147,6 +132,14 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 				return true;
 			}
 		}));
+		showRomaji.register(menu);
 		return true;
 	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		showRomaji.onResume();
+	}
+
 }

@@ -18,9 +18,6 @@
 
 package sk.baka.aedict;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictEntry;
 import android.content.Intent;
@@ -57,19 +54,19 @@ public class NotepadActivityTest extends AbstractAedictTest<NotepadActivity> {
 
 	public void testDelete() {
 		tester.startActivity();
-		tester.contextMenu(getActivity().getListView(), 10002, 0);
+		tester.contextMenu(getActivity().getListView(), 10001, 0);
 		assertEquals(0, getActivity().getListAdapter().getCount());
 	}
 
 	public void testDeleteAll() {
 		tester.startActivity();
-		tester.contextMenu(getActivity().getListView(), 10003, 0);
+		tester.optionMenu(10000);
 		assertEquals(0, getActivity().getListAdapter().getCount());
 	}
 
 	public void testShowSod() {
 		tester.startActivity();
-		tester.contextMenu(getActivity().getListView(), 10004, 0);
+		tester.contextMenu(getActivity().getListView(), 10002, 0);
 		tester.assertRequestedActivity(StrokeOrderActivity.class);
 		final String q = getStartedActivityIntent().getStringExtra(StrokeOrderActivity.INTENTKEY_KANJILIST);
 		assertEquals("母は留守です。", q);

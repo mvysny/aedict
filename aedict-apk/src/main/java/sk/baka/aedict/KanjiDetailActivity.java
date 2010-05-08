@@ -28,7 +28,6 @@ import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.Constants;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.autils.DialogUtils;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -42,7 +41,7 @@ import android.widget.TextView;
  * 
  * @author Martin Vysny
  */
-public class KanjiDetailActivity extends Activity {
+public class KanjiDetailActivity extends AbstractActivity {
 	static final String INTENTKEY_KANJIDIC_ENTRY = "entry";
 
 	public static void launch(final Context activity, final KanjidicEntry entry) {
