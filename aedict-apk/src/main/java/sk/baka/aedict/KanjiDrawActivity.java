@@ -27,7 +27,6 @@ import sk.baka.aedict.util.Constants;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -67,9 +66,7 @@ public class KanjiDrawActivity extends AbstractActivity {
 			public void onClick(View v) {
 				try {
 					final String kanjis = recognizer.analyzeKanji();
-					final Intent i = new Intent(KanjiDrawActivity.this, KanjiAnalyzeActivity.class);
-					i.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, kanjis);
-					startActivity(i);
+					KanjiAnalyzeActivity.launch(KanjiDrawActivity.this, kanjis, false);
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}

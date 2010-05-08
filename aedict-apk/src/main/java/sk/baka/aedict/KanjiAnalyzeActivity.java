@@ -19,6 +19,7 @@
 package sk.baka.aedict;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,7 @@ import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
 import sk.baka.autils.Progress;
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -70,6 +72,21 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	 * true on a per-word basis.
 	 */
 	public static final String INTENTKEY_WORD_ANALYSIS = "wordAnalysis";
+
+	public static void launch(final Activity activity, final String word, final boolean isWordAnalysis) {
+		final Intent i = new Intent(activity, KanjiAnalyzeActivity.class);
+		i.putExtra(INTENTKEY_WORD, word);
+		i.putExtra(INTENTKEY_WORD_ANALYSIS, isWordAnalysis);
+		activity.startActivity(i);
+	}
+
+	public static void launch(final Activity activity, final List<? extends DictEntry> entries, final boolean isWordAnalysis) {
+		final Intent i = new Intent(activity, KanjiAnalyzeActivity.class);
+		i.putExtra(INTENTKEY_ENTRYLIST, (Serializable) entries);
+		i.putExtra(INTENTKEY_WORD_ANALYSIS, isWordAnalysis);
+		activity.startActivity(i);
+	}
+
 	private List<DictEntry> model = null;
 	/**
 	 * The word to analyze. If null then we were simply given a list of
@@ -86,8 +103,8 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		showRomaji=new ShowRomaji(this) {
-			
+		showRomaji = new ShowRomaji(this) {
+
 			@Override
 			protected void show(boolean romaji) {
 				((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
