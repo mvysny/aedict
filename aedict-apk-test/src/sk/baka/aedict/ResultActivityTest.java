@@ -55,12 +55,12 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		assertEquals("はは", entry.reading);
 	}
 
-	private void launch(final SearchQuery q){
+	private void launch(final SearchQuery q) {
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
 		i.putExtra(ResultActivity.INTENTKEY_SEARCH_QUERY, q);
 		tester.startActivity(i);
 	}
-	
+
 	public void testSimpleJapaneseSearch() {
 		final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
 		q.isJapanese = true;
@@ -113,9 +113,8 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 
 	public void testSwitchToRomaji() {
 		testSimpleEnglishSearch();
-		final ListView lv = getActivity().getListView();
-		tester.contextMenu(lv, 0, 0);
-		assertTrue(getActivity().isShowingRomaji());
+		tester.optionMenu(10004);
+		assertTrue(getActivity().showRomaji.isShowingRomaji());
 	}
 
 	public void testShowEntryDetail() {

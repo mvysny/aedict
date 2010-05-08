@@ -18,17 +18,23 @@
 
 package sk.baka.aedict;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertSame;
+import static junit.framework.Assert.assertTrue;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.test.ActivityUnitTestCase;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.MenuItem.OnMenuItemClickListener;
@@ -40,7 +46,6 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import static junit.framework.Assert.*;
 
 /**
  * Provides additional methods to aid testing of the android activity.
@@ -403,5 +408,25 @@ public class AndroidTester<T extends Activity> {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Activates i-th option menu item.
+	 * 
+	 * @param menuId
+	 *            the menu item ID which is to be activated. If the ID was not
+	 *            assigned then the automatic ID generation is employed,
+	 *            starting at 10000.
+	 */
+	public void optionMenu(int menuId) {
+		final ContextMenuHandler handler = new ContextMenuHandler();
+		final Menu menu = (Menu) Proxy.newProxyInstance(test.getActivity().getClassLoader(), new Class<?>[] { Menu.class }, handler);
+		if (!test.getActivity().onCreateOptionsMenu(menu)) {
+			throw new AssertionError("onCreateOptionsMenu returned false -> it requested the menu not to be shown");
+		}
+		if (!test.getActivity().onPrepareOptionsMenu(menu)) {
+			throw new AssertionError("onPrepareOptionsMenu returned false -> it requested the menu not to be shown");
+		}
+		handler.click(menuId);
 	}
 }

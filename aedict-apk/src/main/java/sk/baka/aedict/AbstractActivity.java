@@ -137,7 +137,8 @@ public abstract class AbstractActivity extends Activity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
 		addMenuItems(this, menu);
 		return true;
 	}
@@ -152,7 +153,7 @@ public abstract class AbstractActivity extends Activity {
 	 */
 	public static void addMenuItems(final Activity activity, final Menu menu) {
 		addActivityLauncher(activity, menu, R.string.showkanaTable, R.drawable.kanamenuitem, KanaTableActivity.class);
-		final MenuItem item = menu.add(R.string.kanjiSearch);
+		MenuItem item = menu.add(R.string.kanjiSearch);
 		item.setIcon(android.R.drawable.ic_menu_search);
 		item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
