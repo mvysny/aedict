@@ -204,13 +204,22 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		if (word == null) {
 			return false;
 		}
+		final MenuItem item;
 		if (!isAnalysisPerCharacter) {
-			final MenuItem item = menu.add(0, ANALYZE_CHARACTERS, Menu.NONE, R.string.analyzeCharacters);
+			item = menu.add(R.string.analyzeCharacters);
 			item.setIcon(android.R.drawable.ic_menu_zoom);
 		} else {
-			final MenuItem item = menu.add(0, ANALYZE_WORDS, Menu.NONE, R.string.analyzeWords);
+			item = menu.add(R.string.analyzeWords);
 			item.setIcon(android.R.drawable.ic_menu_search);
 		}
+		item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+			public boolean onMenuItemClick(MenuItem item) {
+				isAnalysisPerCharacter = !isAnalysisPerCharacter;
+				recomputeModel();
+				return true;
+			}
+		});
 		showRomaji.register(menu);
 		return true;
 	}
@@ -219,16 +228,6 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		showRomaji.onResume();
-	}
-
-	private static final int ANALYZE_CHARACTERS = 0;
-	private static final int ANALYZE_WORDS = 1;
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		isAnalysisPerCharacter = item.getItemId() == ANALYZE_CHARACTERS;
-		recomputeModel();
-		return true;
 	}
 
 	private void recomputeModel() {
