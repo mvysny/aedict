@@ -35,7 +35,6 @@ import sk.baka.autils.DialogUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.StatFs;
 import android.text.ClipboardManager;
 import android.view.KeyEvent;
@@ -288,10 +287,7 @@ public final class SearchUtils {
 		analyze.setOnClickListener(AndroidUtils.safe(activity, new View.OnClickListener() {
 
 			public void onClick(View v) {
-				final Intent intent = new Intent(activity, KanjiAnalyzeActivity.class);
-				intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, text.getText().toString().trim());
-				intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD_ANALYSIS, startWordAnalysis);
-				activity.startActivity(intent);
+				KanjiAnalyzeActivity.launch(activity, text.getText().toString().trim(), startWordAnalysis);
 			}
 		}));
 	}

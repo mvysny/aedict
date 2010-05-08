@@ -168,7 +168,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 		}
 	}
 
-	public static class TanakaSearchTask extends AsyncTask<String, Void, List<DictEntry>> {
+	public static class TanakaSearchTask extends AsyncTask<String, Void, List<DictEntry>> implements View.OnFocusChangeListener {
 		private final ViewGroup vg;
 		private final Activity activity;
 		private List<DictEntry> exampleSentences = new ArrayList<DictEntry>();
@@ -221,7 +221,19 @@ public class KanjiDetailActivity extends AbstractActivity {
 				final TwoLineListItem view = (TwoLineListItem) activity.getLayoutInflater().inflate(android.R.layout.simple_list_item_2, vg, false);
 				Edict.print(de, view, showRomaji.isShowingRomaji() ? romanization : null);
 				vg.addView(view);
+				view.setOnClickListener(new View.OnClickListener() {
+
+					public void onClick(View v) {
+						KanjiAnalyzeActivity.launch(activity, de.kanji, false);
+					}
+				});
+				view.setFocusable(true);
+				view.setOnFocusChangeListener(this);
 			}
+		}
+
+		public void onFocusChange(View v, boolean hasFocus) {
+			v.setBackgroundColor(hasFocus ? 0xCFFF8c00 : 0);
 		}
 	}
 

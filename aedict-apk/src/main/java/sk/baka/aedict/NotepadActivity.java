@@ -90,9 +90,7 @@ public class NotepadActivity extends ListActivity {
 				menu.add(R.string.analyze).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
 
 					public boolean onMenuItemClick(MenuItem item) {
-						final Intent intent = new Intent(NotepadActivity.this, KanjiAnalyzeActivity.class);
-						intent.putExtra(KanjiAnalyzeActivity.INTENTKEY_WORD, getModel().get(pos).getJapanese());
-						startActivity(intent);
+						KanjiAnalyzeActivity.launch(NotepadActivity.this, getModel().get(pos).getJapanese(), false);
 						return true;
 					}
 				}));
