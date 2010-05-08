@@ -32,6 +32,7 @@ import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.Radicals;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
+import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
@@ -80,15 +81,18 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	 * per-word basis.
 	 */
 	private boolean isAnalysisPerCharacter = true;
-	/**
-	 * true if romaji is shown instead of katakana/hiragana.
-	 */
-	private boolean isShowingRomaji;
+	private ShowRomaji showRomaji;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		isShowingRomaji = AedictApp.getConfig().isUseRomaji();
+		showRomaji=new ShowRomaji(this) {
+			
+			@Override
+			protected void show(boolean romaji) {
+				((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
+			}
+		};
 		word = getIntent().getStringExtra(INTENTKEY_WORD);
 		model = (List<DictEntry>) getIntent().getSerializableExtra(INTENTKEY_ENTRYLIST);
 		isAnalysisPerCharacter = !getIntent().getBooleanExtra(INTENTKEY_WORD_ANALYSIS, false);
@@ -111,14 +115,6 @@ public class KanjiAnalyzeActivity extends ListActivity {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 				final DictEntry ee = model.get(((AdapterContextMenuInfo) menuInfo).position);
-				menu.add(isShowingRomaji ? R.string.show_kana : R.string.show_romaji).setOnMenuItemClickListener(AndroidUtils.safe(KanjiAnalyzeActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-					public boolean onMenuItemClick(MenuItem item) {
-						isShowingRomaji = !isShowingRomaji;
-						((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
-						return true;
-					}
-				}));
 				menu.add(R.string.addToNotepad).setOnMenuItemClickListener(AndroidUtils.safe(KanjiAnalyzeActivity.this, new MenuItem.OnMenuItemClickListener() {
 
 					public boolean onMenuItemClick(MenuItem item) {
@@ -147,7 +143,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 					v = getLayoutInflater().inflate(R.layout.kanjidic_list_item, getListView(), false);
 				}
 				final DictEntry e = model.get(position);
-				((TextView) v.findViewById(android.R.id.text1)).setText(isShowingRomaji ? romanization.toRomaji(e.reading) : e.reading);
+				((TextView) v.findViewById(android.R.id.text1)).setText(showRomaji.isShowingRomaji() ? romanization.toRomaji(e.reading) : e.reading);
 				final StringBuilder sb = new StringBuilder();
 				if (e instanceof KanjidicEntry) {
 					final KanjidicEntry ee = (KanjidicEntry) e;
@@ -204,7 +200,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.removeGroup(0);
+		menu.clear();
 		if (word == null) {
 			return false;
 		}
@@ -215,7 +211,14 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			final MenuItem item = menu.add(0, ANALYZE_WORDS, Menu.NONE, R.string.analyzeWords);
 			item.setIcon(android.R.drawable.ic_menu_search);
 		}
+		showRomaji.register(menu);
 		return true;
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		showRomaji.onResume();
 	}
 
 	private static final int ANALYZE_CHARACTERS = 0;

@@ -52,7 +52,7 @@ public class KanjiAnalyzeActivityTest extends AbstractAedictTest<KanjiAnalyzeAct
 		assertEquals("mama, mother", get(0).english);
 		assertEquals("上", get(1).getJapanese());
 		assertEquals("above, up", get(1).english);
-		tester.activateOptionsMenu(1);
+		tester.optionMenu(1);
 		assertEquals(1, getActivity().getListAdapter().getCount());
 		assertEquals("母上", get(0).getJapanese());
 	}
@@ -77,7 +77,7 @@ public class KanjiAnalyzeActivityTest extends AbstractAedictTest<KanjiAnalyzeAct
 
 	public void testAddToNotepad() {
 		startActivity("母上");
-		tester.contextMenu(getActivity().getListView(), 10001, 0);
+		tester.contextMenu(getActivity().getListView(), 10000, 0);
 		tester.assertRequestedActivity(NotepadActivity.class);
 		assertEquals("母", ((DictEntry)getStartedActivityIntent().getSerializableExtra(NotepadActivity.INTENTKEY_ADD_ENTRY)).getJapanese());
 	}
@@ -106,7 +106,7 @@ public class KanjiAnalyzeActivityTest extends AbstractAedictTest<KanjiAnalyzeAct
 	 */
 	public void testShowSod() {
 		startActivity("今週のおすすめﾊﾞｰｹﾞﾝTVｹﾞｰﾑ", false);
-		tester.contextMenu(getActivity().getListView(), 10002, 0);
+		tester.contextMenu(getActivity().getListView(), 10001, 0);
 		tester.assertRequestedActivity(StrokeOrderActivity.class);
 		final String q = getStartedActivityIntent().getStringExtra(StrokeOrderActivity.INTENTKEY_KANJILIST);
 		assertEquals("今", q);

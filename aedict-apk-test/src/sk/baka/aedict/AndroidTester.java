@@ -232,26 +232,6 @@ public class AndroidTester<T extends Activity> {
 	}
 
 	/**
-	 * Activates an option menu.
-	 * 
-	 * @param itemId
-	 *            the menu item ID.
-	 */
-	public void activateOptionsMenu(final int itemId) {
-		final MenuItem item = (MenuItem) Proxy.newProxyInstance(test.getActivity().getClassLoader(), new Class<?>[] { MenuItem.class }, new InvocationHandler() {
-
-			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-				if (!method.getName().equals("getItemId")) {
-					throw new IllegalArgumentException("Unexpected method call: " + method);
-				}
-				return itemId;
-			}
-
-		});
-		assertTrue("The handler did not handled the item. Nothing happened.", test.getActivity().onOptionsItemSelected(item));
-	}
-
-	/**
 	 * Sets focus on given view.
 	 * 
 	 * @param view
