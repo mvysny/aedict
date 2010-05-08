@@ -62,16 +62,16 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	/**
 	 * The string word to analyze.
 	 */
-	private static final String INTENTKEY_WORD = "word";
+	public static final String INTENTKEY_WORD = "word";
 	/**
 	 * A list of {@link KanjidicEntry}.
 	 */
-	private static final String INTENTKEY_ENTRYLIST = "entrylist";
+	public static final String INTENTKEY_ENTRYLIST = "entrylist";
 	/**
 	 * Boolean value: False if we parsed given word on a per-character basis,
 	 * true on a per-word basis.
 	 */
-	private static final String INTENTKEY_WORD_ANALYSIS = "wordAnalysis";
+	public static final String INTENTKEY_WORD_ANALYSIS = "wordAnalysis";
 
 	public static void launch(final Activity activity, final String word, final boolean isWordAnalysis) {
 		final Intent i = new Intent(activity, KanjiAnalyzeActivity.class);
