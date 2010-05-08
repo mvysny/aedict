@@ -18,7 +18,6 @@
 
 package sk.baka.aedict;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,7 +37,6 @@ import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
 import sk.baka.autils.Progress;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -291,9 +289,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 			// we have the kanji list. first, sort the result list
 			Collections.sort(result, new KanjipadComparator());
 			// launch the analyze activity
-			final Intent i = new Intent(KanjiSearchRadicalActivity.this, KanjiAnalyzeActivity.class);
-			i.putExtra(KanjiAnalyzeActivity.INTENTKEY_ENTRYLIST, (Serializable) result);
-			startActivity(i);
+			KanjiAnalyzeActivity.launch(KanjiSearchRadicalActivity.this, result,false);
 		}
 	}
 
