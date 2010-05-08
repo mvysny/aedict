@@ -26,6 +26,7 @@ public abstract class ShowRomaji {
 				return true;
 			}
 		});
+		item.setIcon(isShowingRomaji ? R.drawable.showkana : R.drawable.showromaji);
 	}
 
 	public boolean isShowingRomaji() {
