@@ -127,7 +127,7 @@ public class ResultActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.searchresult);
-		showRomaji = new ShowRomaji() {
+		showRomaji = new ShowRomaji(this) {
 
 			@Override
 			protected void show(boolean romaji) {

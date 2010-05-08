@@ -56,7 +56,7 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		showRomaji = new ShowRomaji() {
+		showRomaji = new ShowRomaji(this) {
 
 			@Override
 			protected void show(boolean romaji) {

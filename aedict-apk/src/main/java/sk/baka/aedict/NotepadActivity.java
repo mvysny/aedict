@@ -26,6 +26,7 @@ import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
+import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
@@ -35,6 +36,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,10 +59,7 @@ public class NotepadActivity extends ListActivity {
 	 * persisted).
 	 */
 	private List<DictEntry> modelCache = null;
-	/**
-	 * true if romaji is shown instead of katakana/hiragana.
-	 */
-	private boolean isShowingRomaji;
+	private ShowRomaji showRomaji;
 
 	/**
 	 * Expects {@link DictEntry} as a value. Adds given entry to the model list.
@@ -77,7 +76,13 @@ public class NotepadActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.notepad);
-		isShowingRomaji = AedictApp.getConfig().isUseRomaji();
+		showRomaji=new ShowRomaji(this) {
+			
+			@Override
+			protected void show(boolean romaji) {
+				((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
+			}
+		};
 		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, final ContextMenuInfo menuInfo) {
@@ -91,24 +96,9 @@ public class NotepadActivity extends ListActivity {
 						return true;
 					}
 				}));
-				menu.add(isShowingRomaji ? R.string.show_kana : R.string.show_romaji).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-					public boolean onMenuItemClick(MenuItem item) {
-						isShowingRomaji = !isShowingRomaji;
-						((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
-						return true;
-					}
-				}));
 				menu.add(R.string.delete).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
 						getModel().remove(pos);
-						onModelChanged();
-						return true;
-					}
-				}));
-				menu.add(R.string.deleteAll).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
-					public boolean onMenuItemClick(MenuItem item) {
-						getModel().clear();
 						onModelChanged();
 						return true;
 					}
@@ -157,6 +147,7 @@ public class NotepadActivity extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		setModel();
+		showRomaji.onResume();
 	}
 
 	@Override
@@ -198,10 +189,27 @@ public class NotepadActivity extends ListActivity {
 				if (view == null) {
 					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
 				}
-				Edict.print(getModel().get(position), view, isShowingRomaji ? romanization : null);
+				Edict.print(getModel().get(position), view, showRomaji.isShowingRomaji() ? romanization : null);
 				return view;
 			}
 
 		});
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		final MenuItem item=menu.add(R.string.deleteAll);
+		item.setIcon(android.R.drawable.ic_menu_delete);
+		item.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
+			
+			public boolean onMenuItemClick(MenuItem item) {
+				getModel().clear();
+				onModelChanged();
+				return true;
+			}
+		}));
+		showRomaji.register(menu);
+		return true;
 	}
 }
