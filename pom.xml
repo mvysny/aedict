@@ -289,17 +289,6 @@ org.eclipse.jdt.core.compiler.source=1.5
     <reporting>
         <plugins>
             <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <links>
-                        <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-                        <link>http://developer.android.com/reference</link>
-                    </links>
-                    <show>package</show>
-                    <quiet>true</quiet>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jxr-maven-plugin</artifactId>
             </plugin>
