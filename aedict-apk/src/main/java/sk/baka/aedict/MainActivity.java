@@ -19,6 +19,7 @@
 package sk.baka.aedict;
 
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.jlptquiz.QuizLaunchActivity;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.autils.DialogUtils;
 import android.content.Intent;
@@ -43,6 +44,7 @@ public class MainActivity extends AbstractActivity {
 		utils.registerSearch(R.id.engExactMatch, null, R.id.engSearchExamples, R.id.engSearchEdit, false, R.id.engSearch, false);
 		utils.setupAnalysisControls(R.id.btnJpTranslate, R.id.txtJpTranslate, true);
 		setButtonActivityLauncher(R.id.btnAbout, AboutActivity.class);
+		setButtonActivityLauncher(R.id.quiz, QuizLaunchActivity.class);
 		// check for dictionary file and download it if it is missing.
 		utils.checkDic(DictTypeEnum.Edict);
 		final Button btnDonate = (Button) findViewById(R.id.btnDonate);
