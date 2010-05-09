@@ -12,3 +12,5 @@ Releasing:
 
 5. Increase the version in AndroidManifest.xml: both android:versionCode and android:versionName
 
+6. Fix the aedict-common dependency in the aedict-apk/.classpath file
+
