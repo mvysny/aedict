@@ -267,4 +267,11 @@ public final class KanjiUtils {
     public static Integer getJlptLevel(final Character kanji) {
         return JLPT_LEVEL.get(kanji);
     }
+
+    public static String getJlptKanjis(final int level) {
+        if (level < 1 || level > 6) {
+            throw new IllegalArgumentException("JLPT level must be 1..6: " + level);
+        }
+        return JLPT_TABLE.get(level);
+    }
 }
