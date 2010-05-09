@@ -128,7 +128,7 @@
     <string name="resetIntroductions">Reset introductions</string>
     <string name="resetIntroductionsSummary">All introduction dialogs will be shown again</string>
     <string name="whatsNew">What\'s New in %s</string>
-    <string name="whatsNewText">For full changelog please see http://baka.sk/aedict/changes-report.html\n\n- Aedict now handles corrupted dictionary files better\n- You can now use xn to force n, e.g. sonxna -&gt; そんんあ\n- Fixed random "NoSuchElementException" errors.\n- Added the POS Markings to the EntryDetailActivity.\n- Fixed: Adding an example sentence to notepad will lose the translation.</string>
+    <string name="whatsNewText">For full changelog please see http://baka.sk/aedict/changes-report.html\n\n- Added a simple quiz.\n- Fixed: Notepad now preserves its items\n- Tanaka Example sentences kana reading is now displayed as well\n- Initial work done on the new GUI</string>
     <string name="searchInEdict">Search in the Edict dictionary</string>
     <string name="showConjugations">Show verb conjugations</string>
     <string name="iDoSomething">I do something.</string>

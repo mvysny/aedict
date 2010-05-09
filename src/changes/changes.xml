@@ -4,6 +4,29 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
+		<release version="1.2" date="9. May 2010">
+			<action dev="vyzivus" type="add" issue="53">
+				Added a simple quiz.
+			</action>
+			<action dev="vyzivus" type="add" issue="52">
+				The KanjiDetail activity was implemented as part of a new GUI design.
+			</action>
+			<action dev="vyzivus" type="fix" issue="60">
+				English example search did not handle multi-word queries.
+			</action>
+			<action dev="vyzivus" type="fix" issue="59">
+				POS Markings were not shown when performing search from Android search.
+			</action>
+			<action dev="vyzivus" type="fix" issue="45">
+				Tanaka Example sentences kana reading is now displayed as well.
+			</action>
+			<action dev="vyzivus" type="fix" issue="57">
+				Notepad items were not preserved randomly, mostly on device reboot.
+			</action>
+			<action dev="vyzivus" type="add" issue="56">
+				Expert: The result sorting is now configurable. See Issue 56 for details.
+			</action>
+		</release>
 		<release version="1.1" date="17. April 2010">
 			<action dev="vyzivus" type="fix" issue="40">
 				Fixed random "NoSuchElementException" errors.
