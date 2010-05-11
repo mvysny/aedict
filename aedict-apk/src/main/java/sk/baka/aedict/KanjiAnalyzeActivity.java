@@ -73,6 +73,16 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	 */
 	public static final String INTENTKEY_WORD_ANALYSIS = "wordAnalysis";
 
+	/**
+	 * Longest kana word from the dictionary has 33 characters: ニューモノウルトラマイクロスコーピックシリコヴォルケーノコニオシス
+	 */
+	private static final int MAX_KANA_WORD_LENGTH=10;
+	/**
+	 * Longest kanji word from the dictionary has 37 characters: プログラム制御式及びキーボード制御式のアドレス指定可能な記憶域をもつ計算器
+	 * However this would slow the word analysis to a crawl. Let's expect that the longest word may take at most 10 characters.
+	 */
+	private static final int MAX_KANJI_WORD_LENGTH=10;
+	
 	public static void launch(final Activity activity, final String word, final boolean isWordAnalysis) {
 		final Intent i = new Intent(activity, KanjiAnalyzeActivity.class);
 		i.putExtra(INTENTKEY_WORD, word);
@@ -330,9 +340,10 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		 */
 		private MatchedWord findLongestWord(final String word, final LuceneSearch edict) throws IOException {
 			String w = word;
-			if (w.length() > 10) {
+			final int maxLength = KanjiUtils.isKanji(word.charAt(0)) ? MAX_KANJI_WORD_LENGTH : MAX_KANA_WORD_LENGTH;
+			if (w.length() > maxLength) {
 				// optimization to avoid quadratic search complexity
-				w = w.substring(0, 10);
+				w = w.substring(0, maxLength);
 			}
 			while (w.length() > 0) {
 				final List<DictEntry> result = edict.search(SearchQuery.searchForJapanese(w, true), 1);
