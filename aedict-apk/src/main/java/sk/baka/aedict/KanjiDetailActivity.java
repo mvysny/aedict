@@ -33,6 +33,7 @@ import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.Constants;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
+import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
 import android.app.Activity;
 import android.content.Context;
@@ -172,6 +173,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 		private final ViewGroup vg;
 		private final Activity activity;
 		private List<DictEntry> exampleSentences = new ArrayList<DictEntry>();
+		private final List<TwoLineListItem> views = new ArrayList<TwoLineListItem>();
 		private final ShowRomaji showRomaji;
 
 		public TanakaSearchTask(final Activity activity, final ViewGroup vg, final ShowRomaji showRomaji) {
@@ -211,24 +213,39 @@ public class KanjiDetailActivity extends AbstractActivity {
 			if (exampleSentences.isEmpty()) {
 				exampleSentences = Collections.singletonList(DictEntry.newErrorMsg(activity.getString(R.string.no_results)));
 			}
+			vg.removeAllViews();
 			updateModel();
 		}
 
 		public void updateModel() {
 			final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
-			vg.removeAllViews();
+			int i = 0;
 			for (final DictEntry de : exampleSentences) {
-				final TwoLineListItem view = (TwoLineListItem) activity.getLayoutInflater().inflate(android.R.layout.simple_list_item_2, vg, false);
+				TwoLineListItem view;
+				if (views.size() <= i) {
+					view = (TwoLineListItem) activity.getLayoutInflater().inflate(android.R.layout.simple_list_item_2, vg, false);
+					views.add(view);
+					vg.addView(view);
+				} else {
+					view = views.get(i);
+				}
+				i++;
 				Edict.print(de, view, showRomaji.isShowingRomaji() ? romanization : null);
-				vg.addView(view);
-				view.setOnClickListener(new View.OnClickListener() {
+				if (de.isValid()) {
+					view.setOnClickListener(AndroidUtils.safe(activity, new View.OnClickListener() {
 
-					public void onClick(View v) {
-						KanjiAnalyzeActivity.launch(activity, de.kanji, false);
-					}
-				});
+						public void onClick(View v) {
+							KanjiAnalyzeActivity.launch(activity, de.kanji, false);
+						}
+					}));
+				} else {
+					view.setOnClickListener(null);
+				}
 				view.setFocusable(true);
 				view.setOnFocusChangeListener(this);
+			}
+			while (views.size() > i) {
+				vg.removeView(views.remove(i));
 			}
 		}
 
