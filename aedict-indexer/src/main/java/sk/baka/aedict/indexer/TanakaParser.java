@@ -46,6 +46,11 @@ public class TanakaParser implements IDictParser {
      * is only used to get the kana transcription of Tanaka entries.
      */
     private final Map<String, String> edict = new HashMap<String, String>();
+
+    private int maxKanjiWordLength=0;
+    private String longestKanjiWord;
+    private int maxKanaWordLength=0;
+    private String longestKanaWord;
     /**
      * Check if the {@link #edict} entry is common or not. Incommon entries may get overwritten.
      */
@@ -67,7 +72,19 @@ public class TanakaParser implements IDictParser {
                     }
                     final String[] tokens = line.split("\\[|\\]|\\/");
                     final String kanji = tokens[0].trim();
-                    if (!containsKanji(kanji)) {
+                    final boolean containsKanji=containsKanji(kanji);
+                    if (containsKanji) {
+                        if (kanji.length() > maxKanjiWordLength) {
+                            maxKanjiWordLength = kanji.length();
+                            longestKanjiWord=kanji;
+                        }
+                    } else {
+                        if (kanji.length() > maxKanaWordLength) {
+                            maxKanaWordLength = kanji.length();
+                            longestKanaWord=kanji;
+                        }
+                    }
+                    if (!containsKanji) {
                         continue;
                     }
                     final String reading = tokens[1].trim();
@@ -154,7 +171,8 @@ public class TanakaParser implements IDictParser {
     }
 
     public void onFinish() {
-        // do nothing
+        System.out.println("EDICT Statistics: longest word containing kanji: " + maxKanjiWordLength + ": " + longestKanjiWord);
+        System.out.println("Longest word composed purely of kana characters: " + maxKanaWordLength + ": " + longestKanaWord);
     }
 
     /**
