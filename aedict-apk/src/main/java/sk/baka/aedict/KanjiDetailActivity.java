@@ -23,7 +23,6 @@ import java.util.List;
 
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
@@ -33,13 +32,17 @@ import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.Constants;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
+import sk.baka.aedict.util.SpanStringBuilder;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
+import sk.baka.autils.MiscUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -47,7 +50,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.TwoLineListItem;
 
 /**
  * Shows a detail of a single Kanji character.
@@ -173,13 +175,15 @@ public class KanjiDetailActivity extends AbstractActivity {
 		private final ViewGroup vg;
 		private final Activity activity;
 		private List<DictEntry> exampleSentences = new ArrayList<DictEntry>();
-		private final List<TwoLineListItem> views = new ArrayList<TwoLineListItem>();
+		private final List<ViewGroup> views = new ArrayList<ViewGroup>();
 		private final ShowRomaji showRomaji;
+		private final String highlightTerm;
 
-		public TanakaSearchTask(final Activity activity, final ViewGroup vg, final ShowRomaji showRomaji) {
+		public TanakaSearchTask(final Activity activity, final ViewGroup vg, final ShowRomaji showRomaji, final String highlightTerm) {
 			this.activity = activity;
 			this.vg = vg;
 			this.showRomaji = showRomaji;
+			this.highlightTerm = highlightTerm;
 		}
 
 		@Override
@@ -221,16 +225,16 @@ public class KanjiDetailActivity extends AbstractActivity {
 			final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
 			int i = 0;
 			for (final DictEntry de : exampleSentences) {
-				TwoLineListItem view;
+				ViewGroup view;
 				if (views.size() <= i) {
-					view = (TwoLineListItem) activity.getLayoutInflater().inflate(android.R.layout.simple_list_item_2, vg, false);
+					view = (ViewGroup) activity.getLayoutInflater().inflate(R.layout.tanakaexample_list_item, vg, false);
 					views.add(view);
 					vg.addView(view);
 				} else {
 					view = views.get(i);
 				}
 				i++;
-				Edict.print(de, view, showRomaji.isShowingRomaji() ? romanization : null);
+				print(i, de, view, showRomaji.isShowingRomaji() ? romanization : null);
 				if (de.isValid()) {
 					view.setOnClickListener(AndroidUtils.safe(activity, new View.OnClickListener() {
 
@@ -247,6 +251,41 @@ public class KanjiDetailActivity extends AbstractActivity {
 			while (views.size() > i) {
 				vg.removeView(views.remove(i));
 			}
+		}
+
+		private void print(final int num, DictEntry de, ViewGroup view, RomanizationEnum romanizationEnum) {
+			final String kanjis = getKanjis(highlightTerm);
+			TextView tv = (TextView) view.findViewById(R.id.kanji);
+			final SpanStringBuilder sb = new SpanStringBuilder();
+			sb.append(sb.newForeground(0xFF777777), "(" + num + ") ");
+			final SpannableString str = new SpannableString(de.kanji);
+			for (int i = de.kanji.indexOf(kanjis); i >= 0; i = de.kanji.indexOf(kanjis, i + 1)) {
+				str.setSpan(sb.newForeground(0xFF7da5e7), i, i + kanjis.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			}
+			sb.append(str);
+			tv.setText(sb);
+			tv = (TextView) view.findViewById(R.id.romaji);
+			if (MiscUtils.isBlank(de.reading)) {
+				tv.setVisibility(View.GONE);
+			} else {
+				tv.setVisibility(View.VISIBLE);
+				tv.setText(de.reading);
+			}
+			tv = (TextView) view.findViewById(R.id.english);
+			tv.setText(de.english);
+		}
+
+		private String getKanjis(final String jp) {
+			int start = 0;
+			for (; start < jp.length() && !KanjiUtils.isKanji(jp.charAt(start)); start++) {
+			}
+			int end = jp.length() - 1;
+			for (; end >= 0 && !KanjiUtils.isKanji(jp.charAt(end)); end--) {
+			}
+			if (start <= end) {
+				return jp.substring(start, end + 1);
+			}
+			return jp;
 		}
 
 		public void onFocusChange(View v, boolean hasFocus) {
@@ -268,7 +307,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 		super.onResume();
 		showRomaji.onResume();
 		if (tanakaSearchTask == null) {
-			tanakaSearchTask = new TanakaSearchTask(this, (ViewGroup) findViewById(R.id.tanakaExamples), showRomaji);
+			tanakaSearchTask = new TanakaSearchTask(this, (ViewGroup) findViewById(R.id.tanakaExamples), showRomaji, entry.kanji);
 			tanakaSearchTask.execute(entry.kanji);
 		}
 	}
