@@ -89,7 +89,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 		entry = (KanjidicEntry) getIntent().getSerializableExtra(INTENTKEY_KANJIDIC_ENTRY);
 		final TextView kanji = (TextView) findViewById(R.id.kanji);
 		kanji.setText(entry.kanji);
-		new SearchClickListener(this,entry.kanji, true).registerTo(kanji);
+		new SearchClickListener(this, entry.kanji, true).registerTo(kanji);
 		((TextView) findViewById(R.id.stroke)).setText(Integer.toString(entry.strokes));
 		((TextView) findViewById(R.id.grade)).setText(entry.grade == null ? "-" : entry.grade.toString());
 		((TextView) findViewById(R.id.skip)).setText(entry.skip);
@@ -147,7 +147,19 @@ public class KanjiDetailActivity extends AbstractActivity {
 		}
 	}
 
-	public static class SearchClickListener implements View.OnClickListener, View.OnFocusChangeListener, View.OnCreateContextMenuListener {
+	public static class FocusVisual implements View.OnFocusChangeListener {
+		public FocusVisual registerTo(final View view) {
+			view.setFocusable(true);
+			view.setOnFocusChangeListener(this);
+			return this;
+		}
+
+		public void onFocusChange(View v, boolean hasFocus) {
+			v.setBackgroundColor(hasFocus ? 0xCFFF8c00 : 0);
+		}
+	}
+
+	public static class SearchClickListener implements View.OnClickListener, View.OnCreateContextMenuListener {
 		private final boolean isJapanese;
 		private final String searchFor;
 		private final Activity activity;
@@ -160,22 +172,17 @@ public class KanjiDetailActivity extends AbstractActivity {
 
 		public SearchClickListener registerTo(final View view) {
 			view.setOnClickListener(this);
-			view.setFocusable(true);
-			view.setOnFocusChangeListener(this);
+			new FocusVisual().registerTo(view);
 			view.setOnCreateContextMenuListener(this);
 			return this;
 		}
-		
+
 		public void onClick(View v) {
 			final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
 			q.isJapanese = isJapanese;
 			q.query = new String[] { searchFor };
 			q.matcher = MatcherEnum.Substring;
 			ResultActivity.launch(v.getContext(), q);
-		}
-
-		public void onFocusChange(View v, boolean hasFocus) {
-			v.setBackgroundColor(hasFocus ? 0xCFFF8c00 : 0);
 		}
 
 		public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -190,7 +197,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 					return true;
 				}
 			});
-			
+
 		}
 	}
 
