@@ -253,7 +253,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 			}
 		}
 
-		private void print(final int num, DictEntry de, ViewGroup view, RomanizationEnum romanizationEnum) {
+		private void print(final int num, DictEntry de, ViewGroup view, RomanizationEnum r) {
 			final String kanjis = getKanjis(highlightTerm);
 			TextView tv = (TextView) view.findViewById(R.id.kanji);
 			final SpanStringBuilder sb = new SpanStringBuilder();
@@ -269,7 +269,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 				tv.setVisibility(View.GONE);
 			} else {
 				tv.setVisibility(View.VISIBLE);
-				tv.setText(de.reading);
+				tv.setText(RomanizationEnum.toRomaji(de.reading, r));
 			}
 			tv = (TextView) view.findViewById(R.id.english);
 			tv.setText(de.english);

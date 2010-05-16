@@ -208,10 +208,23 @@ public enum RomanizationEnum {
     }
 
     /**
+     * Performs romanization only if given romanization is non null.
+     * @param kana the kana string, not null
+     * @param r romanization. If null, no romanization is performed.
+     * @return kana or romanized string.
+     */
+    public static String toRomaji(final String kana, final RomanizationEnum r) {
+        if (r == null) {
+            return kana;
+        }
+        return r.toRomaji(kana);
+    }
+
+    /**
      * Converts a text in hiragana or katakana to romaji. Does not handle kanji.
      *
      * @param hiraganaOrKatakana
-     *            text in hiragana or katakana.
+     *            text in hiragana or katakana, not null
      * @return romaji text
      */
     public String toRomaji(final String hiraganaOrKatakana) {
