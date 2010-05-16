@@ -125,7 +125,6 @@ public class KanjiDetailActivity extends AbstractActivity {
 	}
 
 	private void addTextViews(final int parent, final List<String> items, final boolean isJapanese, float textSize) {
-		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
 		final ViewGroup p = (ViewGroup) findViewById(parent);
 		p.removeAllViews();
 		if (items.isEmpty()) {
@@ -137,8 +136,8 @@ public class KanjiDetailActivity extends AbstractActivity {
 			final String sitem = KanjidicEntry.removeSplits(item);
 			final TextView tv = new TextView(p.getContext());
 			String text = item + (i == items.size() - 1 ? "" : ", ");
-			if (isJapanese && showRomaji.isShowingRomaji()) {
-				text = romanization.toRomaji(text);
+			if (isJapanese) {
+				text = showRomaji.romanize(text);
 			}
 			tv.setText(text);
 			final String query = KanjiUtils.isKatakana(sitem.charAt(0)) ? RomanizationEnum.NihonShiki.toHiragana(RomanizationEnum.NihonShiki.toRomaji(sitem)) : sitem;
@@ -246,7 +245,6 @@ public class KanjiDetailActivity extends AbstractActivity {
 		}
 
 		public void updateModel() {
-			final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
 			int i = 0;
 			for (final DictEntry de : exampleSentences) {
 				ViewGroup view;
@@ -258,7 +256,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 					view = views.get(i);
 				}
 				i++;
-				print(i, de, view, showRomaji.isShowingRomaji() ? romanization : null);
+				print(i, de, view);
 				if (de.isValid()) {
 					view.setOnClickListener(AndroidUtils.safe(activity, new View.OnClickListener() {
 
@@ -277,7 +275,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 			}
 		}
 
-		private void print(final int num, DictEntry de, ViewGroup view, RomanizationEnum r) {
+		private void print(final int num, DictEntry de, ViewGroup view) {
 			final String kanjis = getKanjis(highlightTerm);
 			TextView tv = (TextView) view.findViewById(R.id.kanji);
 			final SpanStringBuilder sb = new SpanStringBuilder();
@@ -293,7 +291,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 				tv.setVisibility(View.GONE);
 			} else {
 				tv.setVisibility(View.VISIBLE);
-				tv.setText(RomanizationEnum.toRomaji(de.reading, r));
+				tv.setText(showRomaji.romanize(de.reading));
 			}
 			tv = (TextView) view.findViewById(R.id.english);
 			tv.setText(de.english);

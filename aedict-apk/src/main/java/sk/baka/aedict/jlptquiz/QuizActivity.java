@@ -34,7 +34,6 @@ import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
-import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
@@ -183,14 +182,9 @@ public class QuizActivity extends Activity {
 	}
 
 	private String cs(final Collection<String> strings, final boolean isJapanese) {
-		final RomanizationEnum r = AedictApp.getConfig().getRomanization();
 		final ListBuilder b = new ListBuilder(", ");
 		for (final String s : strings) {
-			String str = s;
-			if (isJapanese && showRomaji.isShowingRomaji()) {
-				str = r.toRomaji(str);
-			}
-			b.add(str);
+			b.add(showRomaji.romanize(s));
 		}
 		return b.toString();
 	}

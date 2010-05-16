@@ -1,22 +1,43 @@
 /**
- * 
+ *     Aedict - an EDICT browser for Android
+ Copyright (C) 2009 Martin Vysny
+ 
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package sk.baka.aedict.util;
 
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.R;
+import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.AndroidUtils;
 import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuItem;
-
+/**
+ * Helps with the romanization process.
+ * @author Martin Vysny
+ */
 public abstract class ShowRomaji {
 	private boolean isShowingRomaji;
+	private RomanizationEnum romanization;
 	private final Activity activity;
 
 	public ShowRomaji(final Activity activity) {
 		this.activity = activity;
 		isShowingRomaji = AedictApp.getConfig().isUseRomaji();
+		romanization = AedictApp.getConfig().getRomanization();
 	}
 
 	public void register(final Menu menu) {
@@ -43,9 +64,19 @@ public abstract class ShowRomaji {
 	 * changed the SHOW_ROMAJI flag and reacts accordingly.
 	 */
 	public void onResume() {
-		if (isShowingRomaji != AedictApp.getConfig().isUseRomaji()) {
-			isShowingRomaji = !isShowingRomaji;
+		final RomanizationEnum newR = AedictApp.getConfig().getRomanization();
+		final boolean newS = AedictApp.getConfig().isUseRomaji();
+		if (isShowingRomaji != newS || newR != romanization) {
+			isShowingRomaji = newS;
+			romanization = newR;
 			show(isShowingRomaji);
 		}
+	}
+
+	public String romanize(final String kana) {
+		if (isShowingRomaji) {
+			return (romanization == null ? RomanizationEnum.Hepburn : romanization).toRomaji(kana);
+		}
+		return kana;
 	}
 }

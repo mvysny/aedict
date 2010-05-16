@@ -160,7 +160,6 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	}
 
 	private ArrayAdapter<DictEntry> newAdapter() {
-		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
 		return new ArrayAdapter<DictEntry>(this, R.layout.kanjidic_list_item, model) {
 
 			@Override
@@ -170,7 +169,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 					v = getLayoutInflater().inflate(R.layout.kanjidic_list_item, getListView(), false);
 				}
 				final DictEntry e = model.get(position);
-				((TextView) v.findViewById(android.R.id.text1)).setText(showRomaji.isShowingRomaji() ? romanization.toRomaji(e.reading) : e.reading);
+				((TextView) v.findViewById(android.R.id.text1)).setText(showRomaji.romanize(e.reading));
 				final StringBuilder sb = new StringBuilder();
 				if (e instanceof KanjidicEntry) {
 					final KanjidicEntry ee = (KanjidicEntry) e;
