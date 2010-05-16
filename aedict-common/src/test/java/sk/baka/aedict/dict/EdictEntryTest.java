@@ -43,6 +43,16 @@ public class EdictEntryTest {
         assertEquals(9, result);
     }
 
+    @Test
+    public void testMarkings2() {
+        EdictEntry e = new EdictEntry("翫ぶ", "もてあそぶ", "(n) father and mother;parents", false);
+        assertArrayEquals(e.getMarkings(), markings("n"));
+        final List<String> markings = new ArrayList<String>();
+        final int result = EdictEntry.findMarkings("(n) father and mother;parents", markings);
+        assertArrayEquals(markings, markings("n"));
+        assertEquals(3, result);
+    }
+
     private static List<String> markings(final String... markings) {
         return Arrays.asList(markings);
     }
@@ -138,5 +148,14 @@ public class EdictEntryTest {
         assertEquals("to appreciate", senses.get(3).get(0));
         assertEquals(1, senses.get(3).size());
         assertEquals(4, senses.size());
+    }
+
+    @Test
+    public void getSenses2() {
+        EdictEntry e = new EdictEntry("翫ぶ", "もてあそぶ", "(n) father and mother;parents", false);
+        final List<List<String>> senses = e.getSenses();
+        assertEquals("father and mother", senses.get(0).get(0));
+        assertEquals("parents", senses.get(0).get(1));
+        assertEquals(1, senses.size());
     }
 }

@@ -108,6 +108,7 @@ public final class EdictEntry extends DictEntry {
     public List<String> getMarkings() {
         return getMarkings(english);
     }
+
     /**
      * Returns a list of POS or other markings which this entry is annotated
      * with.
@@ -179,7 +180,9 @@ public final class EdictEntry extends DictEntry {
     public List<List<String>> getSenses() {
         final List<List<String>> result = new ArrayList<List<String>>();
         int currentSense = 1;
-        for (final StringTokenizer senses = new StringTokenizer(english, ";"); senses.hasMoreTokens();) {
+        // remove the initial markings part
+        final String e = english.substring(findMarkings(english, new ArrayList<String>()));
+        for (final StringTokenizer senses = new StringTokenizer(e, ";"); senses.hasMoreTokens();) {
             final String sense = senses.nextToken();
             if (MiscUtils.isBlank(sense)) {
                 continue;
