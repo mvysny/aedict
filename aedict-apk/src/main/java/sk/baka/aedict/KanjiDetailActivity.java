@@ -41,15 +41,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.ClipboardManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Shows a detail of a single Kanji character.
@@ -84,10 +89,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 		entry = (KanjidicEntry) getIntent().getSerializableExtra(INTENTKEY_KANJIDIC_ENTRY);
 		final TextView kanji = (TextView) findViewById(R.id.kanji);
 		kanji.setText(entry.kanji);
-		final SearchClickListener l = new SearchClickListener(entry.kanji, true);
-		kanji.setOnClickListener(l);
-		kanji.setFocusable(true);
-		kanji.setOnFocusChangeListener(l);
+		new SearchClickListener(this,entry.kanji, true).registerTo(kanji);
 		((TextView) findViewById(R.id.stroke)).setText(Integer.toString(entry.strokes));
 		((TextView) findViewById(R.id.grade)).setText(entry.grade == null ? "-" : entry.grade.toString());
 		((TextView) findViewById(R.id.skip)).setText(entry.skip);
@@ -140,24 +142,31 @@ public class KanjiDetailActivity extends AbstractActivity {
 			}
 			tv.setText(text);
 			final String query = KanjiUtils.isKatakana(sitem.charAt(0)) ? RomanizationEnum.NihonShiki.toHiragana(RomanizationEnum.NihonShiki.toRomaji(sitem)) : sitem;
-			final SearchClickListener l = new SearchClickListener(query, isJapanese);
-			tv.setOnClickListener(l);
+			new SearchClickListener(this, query, isJapanese).registerTo(tv);
 			tv.setTextSize(textSize);
-			tv.setFocusable(true);
-			tv.setOnFocusChangeListener(l);
 			p.addView(tv);
 		}
 	}
 
-	public static class SearchClickListener implements View.OnClickListener, View.OnFocusChangeListener {
+	public static class SearchClickListener implements View.OnClickListener, View.OnFocusChangeListener, View.OnCreateContextMenuListener {
 		private final boolean isJapanese;
 		private final String searchFor;
+		private final Activity activity;
 
-		public SearchClickListener(final String searchFor, final boolean isJapanese) {
+		public SearchClickListener(final Activity activity, final String searchFor, final boolean isJapanese) {
+			this.activity = activity;
 			this.searchFor = searchFor;
 			this.isJapanese = isJapanese;
 		}
 
+		public SearchClickListener registerTo(final View view) {
+			view.setOnClickListener(this);
+			view.setFocusable(true);
+			view.setOnFocusChangeListener(this);
+			view.setOnCreateContextMenuListener(this);
+			return this;
+		}
+		
 		public void onClick(View v) {
 			final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
 			q.isJapanese = isJapanese;
@@ -168,6 +177,21 @@ public class KanjiDetailActivity extends AbstractActivity {
 
 		public void onFocusChange(View v, boolean hasFocus) {
 			v.setBackgroundColor(hasFocus ? 0xCFFF8c00 : 0);
+		}
+
+		public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+			final MenuItem miCopyToClipboard = menu.add(Menu.NONE, 1, 1, R.string.copyToClipboard);
+			miCopyToClipboard.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+				public boolean onMenuItemClick(MenuItem item) {
+					final ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+					cm.setText(searchFor);
+					final Toast toast = Toast.makeText(activity, AedictApp.format(R.string.copied, searchFor), Toast.LENGTH_SHORT);
+					toast.show();
+					return true;
+				}
+			});
+			
 		}
 	}
 
