@@ -34,7 +34,9 @@ import android.widget.TextView;
  * searches.
  * 
  * @author Martin Vysny
+ * @deprecated replaced by EdictEntryDetailActivity
  */
+@Deprecated
 public class EntryDetailActivity extends AbstractActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
