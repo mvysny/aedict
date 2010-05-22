@@ -173,36 +173,6 @@ public class ResultActivity extends ListActivity {
 					menu.add(Menu.NONE, 3, 3, AedictApp.format(R.string.return_, ee.reading)).setOnMenuItemClickListener(new SimejiReturn(ee.reading));
 					menu.add(Menu.NONE, 4, 4, AedictApp.format(R.string.return_, ee.english)).setOnMenuItemClickListener(new SimejiReturn(ee.english));
 				}
-				final MenuItem miSearchInExamples = menu.add(Menu.NONE, 5, 5, R.string.searchInExamples);
-				miSearchInExamples.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-					public boolean onMenuItemClick(MenuItem item) {
-						if (!new SearchUtils(ResultActivity.this).checkDic(DictTypeEnum.Tanaka)) {
-							// the dictionary is not yet available. An activity
-							// was popped up,
-							// which offers dictionary download. Nothing to do
-							// here, just do
-							// nothing.
-							return true;
-						}
-						final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
-						q.isJapanese = true;
-						final List<String> query = new ArrayList<String>();
-						if (ee.kanji != null) {
-							query.add(ee.kanji);
-						}
-						if (ee.reading != null) {
-							query.add(ee.reading);
-						}
-						q.query = query.toArray(new String[0]);
-						// we must not use the Substring search - the Japanese
-						// word may be inflected and the entry would get
-						// filtered out.
-						q.matcher = MatcherEnum.Any;
-						launch(ResultActivity.this, q);
-						return true;
-					}
-				}));
 				final MenuItem miShowSOD = menu.add(Menu.NONE, 6, 6, R.string.showSod);
 				miShowSOD.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
 
