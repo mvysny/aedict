@@ -283,24 +283,26 @@ public class KanjiDetailActivity extends AbstractActivity {
 		}
 
 		private void print(final int num, DictEntry de, ViewGroup view) {
-			final String kanjis = getKanjis(highlightTerm);
-			TextView tv = (TextView) view.findViewById(R.id.kanji);
-			final SpanStringBuilder sb = new SpanStringBuilder();
-			sb.append(sb.newForeground(0xFF777777), "(" + num + ") ");
-			final SpannableString str = new SpannableString(de.kanji);
-			for (int i = de.kanji.indexOf(kanjis); i >= 0; i = de.kanji.indexOf(kanjis, i + 1)) {
-				str.setSpan(sb.newForeground(0xFF7da5e7), i, i + kanjis.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			if (de.isValid()) {
+				final String kanjis = getKanjis(highlightTerm);
+				TextView tv = (TextView) view.findViewById(R.id.kanji);
+				final SpanStringBuilder sb = new SpanStringBuilder();
+				sb.append(sb.newForeground(0xFF777777), "(" + num + ") ");
+				final SpannableString str = new SpannableString(de.getJapanese());
+				for (int i = de.getJapanese().indexOf(kanjis); i >= 0; i = de.getJapanese().indexOf(kanjis, i + 1)) {
+					str.setSpan(sb.newForeground(0xFF7da5e7), i, i + kanjis.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+				}
+				sb.append(str);
+				tv.setText(sb);
+				tv = (TextView) view.findViewById(R.id.romaji);
+				if (MiscUtils.isBlank(de.reading) || MiscUtils.isBlank(de.kanji)) {
+					tv.setVisibility(View.GONE);
+				} else {
+					tv.setVisibility(View.VISIBLE);
+					tv.setText(showRomaji.romanize(de.reading));
+				}
 			}
-			sb.append(str);
-			tv.setText(sb);
-			tv = (TextView) view.findViewById(R.id.romaji);
-			if (MiscUtils.isBlank(de.reading)) {
-				tv.setVisibility(View.GONE);
-			} else {
-				tv.setVisibility(View.VISIBLE);
-				tv.setText(showRomaji.romanize(de.reading));
-			}
-			tv = (TextView) view.findViewById(R.id.english);
+			TextView tv = (TextView) view.findViewById(R.id.english);
 			tv.setText(de.english);
 		}
 

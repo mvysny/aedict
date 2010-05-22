@@ -291,9 +291,7 @@ public class ResultActivity extends ListActivity {
 		if (isSimeji) {
 			returnToSimeji(query.isJapanese ? e.english : e.getJapanese());
 		} else {
-			final Intent intent = new Intent(this, EntryDetailActivity.class);
-			intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, e);
-			startActivity(intent);
+			EdictEntryDetailActivity.launch(this, (EdictEntry)e);
 		}
 	}
 

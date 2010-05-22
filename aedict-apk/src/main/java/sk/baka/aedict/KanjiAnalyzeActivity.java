@@ -26,12 +26,12 @@ import java.util.List;
 import sk.baka.aedict.dict.AbstractDownloadTask;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.Radicals;
-import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AbstractTask;
@@ -218,9 +218,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		if (e instanceof KanjidicEntry) {
 			KanjiDetailActivity.launch(this, (KanjidicEntry) e);
 		} else {
-			final Intent intent = new Intent(this, EntryDetailActivity.class);
-			intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, e);
-			startActivity(intent);
+			EdictEntryDetailActivity.launch(this, (EdictEntry)e);
 		}
 	}
 

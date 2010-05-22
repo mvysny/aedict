@@ -153,9 +153,14 @@ public class EdictEntryTest {
     @Test
     public void getSenses2() {
         EdictEntry e = new EdictEntry("翫ぶ", "もてあそぶ", "(n) father and mother;parents", false);
-        final List<List<String>> senses = e.getSenses();
+        List<List<String>> senses = e.getSenses();
         assertEquals("father and mother", senses.get(0).get(0));
         assertEquals("parents", senses.get(0).get(1));
+        assertEquals(1, senses.size());
+        e = new EdictEntry("母", "はは", "(n) (hum) mother/(P)/", true);
+        senses = e.getSenses();
+        assertEquals("mother", senses.get(0).get(0));
+        assertEquals(1, senses.get(0).size());
         assertEquals(1, senses.size());
     }
 
@@ -165,15 +170,21 @@ public class EdictEntryTest {
         final List<List<String>> senses = e.getSenses();
         assertEquals("direction", senses.get(0).get(0));
         assertEquals("way", senses.get(0).get(1));
+        assertEquals(2, senses.get(0).size());
         assertEquals("(hon) person", senses.get(1).get(0));
         assertEquals("lady", senses.get(1).get(1));
         assertEquals("gentleman", senses.get(1).get(2));
+        assertEquals(3, senses.get(1).size());
         assertEquals("method of", senses.get(2).get(0));
         assertEquals("manner of", senses.get(2).get(1));
         assertEquals("way of", senses.get(2).get(2));
+        assertEquals(3, senses.get(2).size());
         assertEquals("care of ..", senses.get(3).get(0));
+        assertEquals(1, senses.get(3).size());
         assertEquals("person in charge of ..", senses.get(4).get(0));
+        assertEquals(1, senses.get(4).size());
         assertEquals("side (e.g. \"on my mother's side\")", senses.get(5).get(0));
+        assertEquals(1, senses.get(5).size());
         assertEquals(6, senses.size());
     }
 }

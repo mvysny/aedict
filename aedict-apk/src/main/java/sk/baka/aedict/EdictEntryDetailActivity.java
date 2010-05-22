@@ -22,9 +22,12 @@ import java.util.Collection;
 import java.util.List;
 
 import se.fnord.android.layout.FlowLayout;
+import sk.baka.aedict.KanjiDetailActivity.TanakaSearchTask;
+import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
+import sk.baka.autils.DialogUtils;
 import sk.baka.autils.ListBuilder;
 import android.app.Activity;
 import android.content.Intent;
@@ -62,9 +65,11 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 			@Override
 			protected void show(boolean romaji) {
 				displayEntry();
+				tanakaSearchTask.updateModel();
 			}
 		};
 		((TextView) findViewById(R.id.kanji)).setText(entry.kanji);
+		new KanjiDetailActivity.SearchClickListener(this, entry.kanji, true).registerTo(findViewById(R.id.kanji));
 		displayEntry();
 		new SearchUtils(this).setupCopyButton(R.id.copy, R.id.kanji);
 		findViewById(R.id.analyze).setOnClickListener(new View.OnClickListener() {
@@ -83,6 +88,7 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 
 	private void displayEntry() {
 		((TextView) findViewById(R.id.kana)).setText(showRomaji.romanize(entry.reading));
+		new KanjiDetailActivity.SearchClickListener(this, entry.reading, true).registerTo(findViewById(R.id.kana));
 		// display the markings
 		final List<String> markings = entry.getMarkings();
 		final ViewGroup senseGroup = (ViewGroup) findViewById(R.id.entryDetails);
@@ -90,9 +96,19 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 		final TextView marking = new TextView(this);
 		marking.setTextColor(0xFFFFFFFF);
 		marking.setText(csv(markings));
+		marking.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 		new KanjiDetailActivity.FocusVisual().registerTo(marking);
 		senseGroup.addView(marking);
-		// TODO click on markings should display explanation
+		senseGroup.setOnClickListener(new View.OnClickListener() {
+
+			public void onClick(View v) {
+				final ListBuilder sb = new ListBuilder("\n");
+				for (final Edict.Marking m : Edict.getMarkings(markings)) {
+					sb.add(m.mark + '\t' + getString(m.descriptionRes));
+				}
+				new DialogUtils(EdictEntryDetailActivity.this).showInfoDialog(null, sb.toString());
+			}
+		});
 		// display the senses
 		final List<List<String>> senses = entry.getSenses();
 		for (int i = 0; i < senses.size(); i++) {
@@ -101,12 +117,15 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 			TextView tv = new TextView(this);
 			tv.setText("(" + (i + 1) + ") ");
 			layout.addView(tv);
-			for (final String sense : senses.get(i)) {
+			for (int j = 0; j < senses.get(i).size(); j++) {
+				final String sense = senses.get(i).get(j);
 				tv = new TextView(this);
 				tv.setTextColor(0xFFFFFFFF);
 				new KanjiDetailActivity.SearchClickListener(this, sense, false).registerTo(tv);
 				layout.addView(tv);
+				tv.setText(sense + (j == senses.get(i).size() - 1 ? "" : ", "));
 			}
+			senseGroup.addView(layout);
 		}
 	}
 
@@ -129,6 +148,19 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 	protected void onResume() {
 		super.onResume();
 		showRomaji.onResume();
+		if (tanakaSearchTask == null) {
+			tanakaSearchTask = new TanakaSearchTask(this, (ViewGroup) findViewById(R.id.tanakaExamples), showRomaji, entry.kanji);
+			tanakaSearchTask.execute(entry.kanji);
+		}
 	}
 
+	private TanakaSearchTask tanakaSearchTask;
+
+	@Override
+	protected void onStop() {
+		if (tanakaSearchTask.cancel(true)) {
+			tanakaSearchTask = null;
+		}
+		super.onStop();
+	}
 }
