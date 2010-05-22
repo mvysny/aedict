@@ -194,6 +194,10 @@ public final class EdictEntry extends DictEntry {
             while (result.size() < currentSense) {
                 result.add(new ArrayList<String>());
             }
+            if ("(P)".equalsIgnoreCase(sense)) {
+                // skip the trailing (P) mark
+                continue;
+            }
             result.get(currentSense - 1).add(newCurrentSense != null ? sense.substring(newCurrentSense[1]).trim() : sense.trim());
         }
         return result;
