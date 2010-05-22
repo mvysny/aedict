@@ -182,7 +182,7 @@ public final class EdictEntry extends DictEntry {
         int currentSense = 1;
         // remove the initial markings part
         final String e = english.substring(findMarkings(english, new ArrayList<String>()));
-        for (final StringTokenizer senses = new StringTokenizer(e, ";"); senses.hasMoreTokens();) {
+        for (final StringTokenizer senses = new StringTokenizer(e, ";/"); senses.hasMoreTokens();) {
             final String sense = senses.nextToken();
             if (MiscUtils.isBlank(sense)) {
                 continue;

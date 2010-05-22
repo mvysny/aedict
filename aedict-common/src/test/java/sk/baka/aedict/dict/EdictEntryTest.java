@@ -158,4 +158,22 @@ public class EdictEntryTest {
         assertEquals("parents", senses.get(0).get(1));
         assertEquals(1, senses.size());
     }
+
+    @Test
+    public void getSenses3() {
+        EdictEntry e = new EdictEntry("方", "かた", "(n) (1) direction/way/(2) (hon) person/lady/gentleman/(n,n-suf) (3) method of/manner of/way of/(n-suf) (4) care of ../(n-suf) (5) person in charge of ../(n-suf) (6) side (e.g. \"on my mother's side\")/(P)/", true);
+        final List<List<String>> senses = e.getSenses();
+        assertEquals("direction", senses.get(0).get(0));
+        assertEquals("way", senses.get(0).get(1));
+        assertEquals("(hon) person", senses.get(1).get(0));
+        assertEquals("lady", senses.get(1).get(1));
+        assertEquals("gentleman", senses.get(1).get(2));
+        assertEquals("method of", senses.get(2).get(0));
+        assertEquals("manner of", senses.get(2).get(1));
+        assertEquals("way of", senses.get(2).get(2));
+        assertEquals("care of ..", senses.get(3).get(0));
+        assertEquals("person in charge of ..", senses.get(4).get(0));
+        assertEquals("side (e.g. \"on my mother's side\")", senses.get(5).get(0));
+        assertEquals(6, senses.size());
+    }
 }
