@@ -26,12 +26,12 @@ import java.util.List;
 import sk.baka.aedict.dict.AbstractDownloadTask;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.Radicals;
-import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AbstractTask;
@@ -160,7 +160,6 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	}
 
 	private ArrayAdapter<DictEntry> newAdapter() {
-		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
 		return new ArrayAdapter<DictEntry>(this, R.layout.kanjidic_list_item, model) {
 
 			@Override
@@ -170,7 +169,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 					v = getLayoutInflater().inflate(R.layout.kanjidic_list_item, getListView(), false);
 				}
 				final DictEntry e = model.get(position);
-				((TextView) v.findViewById(android.R.id.text1)).setText(showRomaji.isShowingRomaji() ? romanization.toRomaji(e.reading) : e.reading);
+				((TextView) v.findViewById(android.R.id.text1)).setText(showRomaji.romanize(e.reading));
 				final StringBuilder sb = new StringBuilder();
 				if (e instanceof KanjidicEntry) {
 					final KanjidicEntry ee = (KanjidicEntry) e;
@@ -219,9 +218,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		if (e instanceof KanjidicEntry) {
 			KanjiDetailActivity.launch(this, (KanjidicEntry) e);
 		} else {
-			final Intent intent = new Intent(this, EntryDetailActivity.class);
-			intent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, e);
-			startActivity(intent);
+			EdictEntryDetailActivity.launch(this, (EdictEntry)e);
 		}
 	}
 
@@ -375,8 +372,8 @@ public class KanjiAnalyzeActivity extends ListActivity {
 							return null;
 						}
 						final char c = w.charAt(i);
-						final boolean isKana = KanjiUtils.isKana(c);
-						if (isKana) {
+						final boolean isKanji = KanjiUtils.isKanji(c);
+						if (!isKanji) {
 							result.add(new DictEntry(String.valueOf(c), String.valueOf(c), ""));
 						} else {
 							// it is probably a kanji. search for it in the

@@ -37,10 +37,8 @@ public class GlobalSearchHandler extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		final Intent intent = getIntent();
-		final Intent targetIntent = new Intent(this, EntryDetailActivity.class);
 		final DictEntry entry = DictEntry.fromExternal(intent.getStringExtra(SearchManager.EXTRA_DATA_KEY));
-		targetIntent.putExtra(EntryDetailActivity.INTENTKEY_ENTRY, new EdictEntry(entry.kanji, entry.reading, entry.english, entry.english.endsWith("(P)")));
-		startActivity(targetIntent);
+		EdictEntryDetailActivity.launch(this, new EdictEntry(entry.kanji, entry.reading, entry.english, entry.english.contains("(P)")));
 		finish();
 	}
 }

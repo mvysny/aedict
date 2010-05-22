@@ -23,7 +23,6 @@ import java.util.List;
 
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
@@ -33,21 +32,29 @@ import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.Constants;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
+import sk.baka.aedict.util.SpanStringBuilder;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
+import sk.baka.autils.MiscUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.ClipboardManager;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.TwoLineListItem;
+import android.widget.Toast;
 
 /**
  * Shows a detail of a single Kanji character.
@@ -82,10 +89,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 		entry = (KanjidicEntry) getIntent().getSerializableExtra(INTENTKEY_KANJIDIC_ENTRY);
 		final TextView kanji = (TextView) findViewById(R.id.kanji);
 		kanji.setText(entry.kanji);
-		final SearchClickListener l = new SearchClickListener(entry.kanji, true);
-		kanji.setOnClickListener(l);
-		kanji.setFocusable(true);
-		kanji.setOnFocusChangeListener(l);
+		new SearchClickListener(this, entry.kanji, true).registerTo(kanji);
 		((TextView) findViewById(R.id.stroke)).setText(Integer.toString(entry.strokes));
 		((TextView) findViewById(R.id.grade)).setText(entry.grade == null ? "-" : entry.grade.toString());
 		((TextView) findViewById(R.id.skip)).setText(entry.skip);
@@ -121,7 +125,6 @@ public class KanjiDetailActivity extends AbstractActivity {
 	}
 
 	private void addTextViews(final int parent, final List<String> items, final boolean isJapanese, float textSize) {
-		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
 		final ViewGroup p = (ViewGroup) findViewById(parent);
 		p.removeAllViews();
 		if (items.isEmpty()) {
@@ -133,27 +136,45 @@ public class KanjiDetailActivity extends AbstractActivity {
 			final String sitem = KanjidicEntry.removeSplits(item);
 			final TextView tv = new TextView(p.getContext());
 			String text = item + (i == items.size() - 1 ? "" : ", ");
-			if (isJapanese && showRomaji.isShowingRomaji()) {
-				text = romanization.toRomaji(text);
+			if (isJapanese) {
+				text = showRomaji.romanize(text);
 			}
 			tv.setText(text);
 			final String query = KanjiUtils.isKatakana(sitem.charAt(0)) ? RomanizationEnum.NihonShiki.toHiragana(RomanizationEnum.NihonShiki.toRomaji(sitem)) : sitem;
-			final SearchClickListener l = new SearchClickListener(query, isJapanese);
-			tv.setOnClickListener(l);
+			new SearchClickListener(this, query, isJapanese).registerTo(tv);
 			tv.setTextSize(textSize);
-			tv.setFocusable(true);
-			tv.setOnFocusChangeListener(l);
 			p.addView(tv);
 		}
 	}
 
-	public static class SearchClickListener implements View.OnClickListener, View.OnFocusChangeListener {
+	public static class FocusVisual implements View.OnFocusChangeListener {
+		public FocusVisual registerTo(final View view) {
+			view.setFocusable(true);
+			view.setOnFocusChangeListener(this);
+			return this;
+		}
+
+		public void onFocusChange(View v, boolean hasFocus) {
+			v.setBackgroundColor(hasFocus ? 0xCFFF8c00 : 0);
+		}
+	}
+
+	public static class SearchClickListener implements View.OnClickListener, View.OnCreateContextMenuListener {
 		private final boolean isJapanese;
 		private final String searchFor;
+		private final Activity activity;
 
-		public SearchClickListener(final String searchFor, final boolean isJapanese) {
+		public SearchClickListener(final Activity activity, final String searchFor, final boolean isJapanese) {
+			this.activity = activity;
 			this.searchFor = searchFor;
 			this.isJapanese = isJapanese;
+		}
+
+		public SearchClickListener registerTo(final View view) {
+			view.setOnClickListener(this);
+			new FocusVisual().registerTo(view);
+			view.setOnCreateContextMenuListener(this);
+			return this;
 		}
 
 		public void onClick(View v) {
@@ -164,8 +185,19 @@ public class KanjiDetailActivity extends AbstractActivity {
 			ResultActivity.launch(v.getContext(), q);
 		}
 
-		public void onFocusChange(View v, boolean hasFocus) {
-			v.setBackgroundColor(hasFocus ? 0xCFFF8c00 : 0);
+		public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+			final MenuItem miCopyToClipboard = menu.add(Menu.NONE, 1, 1, R.string.copyToClipboard);
+			miCopyToClipboard.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+				public boolean onMenuItemClick(MenuItem item) {
+					final ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+					cm.setText(searchFor);
+					final Toast toast = Toast.makeText(activity, AedictApp.format(R.string.copied, searchFor), Toast.LENGTH_SHORT);
+					toast.show();
+					return true;
+				}
+			});
+
 		}
 	}
 
@@ -173,13 +205,15 @@ public class KanjiDetailActivity extends AbstractActivity {
 		private final ViewGroup vg;
 		private final Activity activity;
 		private List<DictEntry> exampleSentences = new ArrayList<DictEntry>();
-		private final List<TwoLineListItem> views = new ArrayList<TwoLineListItem>();
+		private final List<ViewGroup> views = new ArrayList<ViewGroup>();
 		private final ShowRomaji showRomaji;
+		private final String highlightTerm;
 
-		public TanakaSearchTask(final Activity activity, final ViewGroup vg, final ShowRomaji showRomaji) {
+		public TanakaSearchTask(final Activity activity, final ViewGroup vg, final ShowRomaji showRomaji, final String highlightTerm) {
 			this.activity = activity;
 			this.vg = vg;
 			this.showRomaji = showRomaji;
+			this.highlightTerm = highlightTerm;
 		}
 
 		@Override
@@ -218,19 +252,18 @@ public class KanjiDetailActivity extends AbstractActivity {
 		}
 
 		public void updateModel() {
-			final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
 			int i = 0;
 			for (final DictEntry de : exampleSentences) {
-				TwoLineListItem view;
+				ViewGroup view;
 				if (views.size() <= i) {
-					view = (TwoLineListItem) activity.getLayoutInflater().inflate(android.R.layout.simple_list_item_2, vg, false);
+					view = (ViewGroup) activity.getLayoutInflater().inflate(R.layout.tanakaexample_list_item, vg, false);
 					views.add(view);
 					vg.addView(view);
 				} else {
 					view = views.get(i);
 				}
 				i++;
-				Edict.print(de, view, showRomaji.isShowingRomaji() ? romanization : null);
+				print(i, de, view);
 				if (de.isValid()) {
 					view.setOnClickListener(AndroidUtils.safe(activity, new View.OnClickListener() {
 
@@ -241,12 +274,74 @@ public class KanjiDetailActivity extends AbstractActivity {
 				} else {
 					view.setOnClickListener(null);
 				}
-				view.setFocusable(true);
-				view.setOnFocusChangeListener(this);
+				view.setFocusable(de.isValid());
+				view.setOnFocusChangeListener(de.isValid() ? this : null);
+				if (de.isValid()) {
+					view.setOnCreateContextMenuListener(AndroidUtils.safe(activity, new View.OnCreateContextMenuListener() {
+
+						public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+							final MenuItem miAddToNotepad = menu.add(Menu.NONE, 1, 1, R.string.addToNotepad);
+							miAddToNotepad.setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
+
+								public boolean onMenuItemClick(MenuItem item) {
+									NotepadActivity.addAndLaunch(activity, de);
+									return true;
+								}
+							}));
+							final MenuItem miShowSOD = menu.add(Menu.NONE, 6, 6, R.string.showSod);
+							miShowSOD.setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
+
+								public boolean onMenuItemClick(MenuItem item) {
+									StrokeOrderActivity.launch(activity, de.getJapanese());
+									return true;
+								}
+							}));
+						}
+					}));
+				} else {
+					view.setOnCreateContextMenuListener(null);
+				}
 			}
 			while (views.size() > i) {
 				vg.removeView(views.remove(i));
 			}
+		}
+
+		private void print(final int num, DictEntry de, ViewGroup view) {
+			if (de.isValid()) {
+				final String kanjis = getKanjis(highlightTerm);
+				TextView tv = (TextView) view.findViewById(R.id.kanji);
+				final SpanStringBuilder sb = new SpanStringBuilder();
+				sb.append(sb.newForeground(0xFF777777), "(" + num + ") ");
+				final SpannableString str = new SpannableString(de.getJapanese());
+				for (int i = de.getJapanese().indexOf(kanjis); i >= 0; i = de.getJapanese().indexOf(kanjis, i + 1)) {
+					str.setSpan(sb.newForeground(0xFF7da5e7), i, i + kanjis.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+				}
+				sb.append(str);
+				tv.setText(sb);
+				tv = (TextView) view.findViewById(R.id.romaji);
+				if (MiscUtils.isBlank(de.reading) || MiscUtils.isBlank(de.kanji)) {
+					tv.setVisibility(View.GONE);
+				} else {
+					tv.setVisibility(View.VISIBLE);
+					tv.setText(showRomaji.romanize(de.reading));
+				}
+			}
+			TextView tv = (TextView) view.findViewById(R.id.english);
+			tv.setText(de.english);
+		}
+
+		private String getKanjis(final String jp) {
+			int start = 0;
+			for (; start < jp.length() && !KanjiUtils.isKanji(jp.charAt(start)); start++) {
+			}
+			int end = jp.length() - 1;
+			for (; end >= 0 && !KanjiUtils.isKanji(jp.charAt(end)); end--) {
+			}
+			if (start <= end) {
+				return jp.substring(start, end + 1);
+			}
+			return jp;
 		}
 
 		public void onFocusChange(View v, boolean hasFocus) {
@@ -268,7 +363,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 		super.onResume();
 		showRomaji.onResume();
 		if (tanakaSearchTask == null) {
-			tanakaSearchTask = new TanakaSearchTask(this, (ViewGroup) findViewById(R.id.tanakaExamples), showRomaji);
+			tanakaSearchTask = new TanakaSearchTask(this, (ViewGroup) findViewById(R.id.tanakaExamples), showRomaji, entry.kanji);
 			tanakaSearchTask.execute(entry.kanji);
 		}
 	}

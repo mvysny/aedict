@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sk.baka.aedict.dict;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import static sk.baka.tools.test.Assert.*;
 import static org.junit.Assert.*;
@@ -35,7 +36,21 @@ public class EdictEntryTest {
     @Test
     public void testMarkings() {
         final EdictEntry e = new EdictEntry("喰らう", "くらう", "(v5u,vt) (1) (vulg) to eat; to drink; (2) to receive (e.g. a blow);", false);
-        assertArrayEquals(e.getMarkings(), markings("v5u", "vt", "vulg"));
+        assertArrayEquals(e.getMarkings(), markings("v5u", "vt"));
+        final List<String> markings = new ArrayList<String>();
+        final int result = EdictEntry.findMarkings("(v5u,vt) (1) (vulg) to eat; to drink; (2) to receive (e.g. a blow);", markings);
+        assertArrayEquals(markings, markings("v5u", "vt"));
+        assertEquals(9, result);
+    }
+
+    @Test
+    public void testMarkings2() {
+        EdictEntry e = new EdictEntry("翫ぶ", "もてあそぶ", "(n) father and mother;parents", false);
+        assertArrayEquals(e.getMarkings(), markings("n"));
+        final List<String> markings = new ArrayList<String>();
+        final int result = EdictEntry.findMarkings("(n) father and mother;parents", markings);
+        assertArrayEquals(markings, markings("n"));
+        assertEquals(3, result);
     }
 
     private static List<String> markings(final String... markings) {
@@ -102,5 +117,74 @@ public class EdictEntryTest {
         assertFalse(e.isIchidan());
         assertFalse(e.isKuru());
         assertTrue(e.isSuru());
+    }
+
+    @Test
+    public void testFindSenseNumber() {
+        assertNull(EdictEntry.findSenseNumber("foo"));
+        assertEquals(4, EdictEntry.findSenseNumber("foo (4) kraa")[0]);
+        assertEquals(7, EdictEntry.findSenseNumber("foo (4) kraa")[1]);
+        assertNull(EdictEntry.findSenseNumber("foo (4a) kraa"));
+        assertEquals(3, EdictEntry.findSenseNumber("(3)")[0]);
+        assertEquals(3, EdictEntry.findSenseNumber("(3)")[1]);
+    }
+
+    @Test
+    public void getSenses() {
+        EdictEntry e = new EdictEntry(
+                "翫ぶ",
+                "もてあそぶ",
+                "(v5b,vt) (1) (uk) to play with (a toy, one's hair, etc.); to fiddle with; (2) to toy with (one's emotions, etc.); to trifle with; (3) to do with something as one pleases; (4) to appreciate;",
+                false);
+        final List<List<String>> senses = e.getSenses();
+        assertEquals("(uk) to play with (a toy, one's hair, etc.)", senses.get(0).get(0));
+        assertEquals("to fiddle with", senses.get(0).get(1));
+        assertEquals(2, senses.get(0).size());
+        assertEquals("to toy with (one's emotions, etc.)", senses.get(1).get(0));
+        assertEquals("to trifle with", senses.get(1).get(1));
+        assertEquals(2, senses.get(1).size());
+        assertEquals("to do with something as one pleases", senses.get(2).get(0));
+        assertEquals(1, senses.get(2).size());
+        assertEquals("to appreciate", senses.get(3).get(0));
+        assertEquals(1, senses.get(3).size());
+        assertEquals(4, senses.size());
+    }
+
+    @Test
+    public void getSenses2() {
+        EdictEntry e = new EdictEntry("翫ぶ", "もてあそぶ", "(n) father and mother;parents", false);
+        List<List<String>> senses = e.getSenses();
+        assertEquals("father and mother", senses.get(0).get(0));
+        assertEquals("parents", senses.get(0).get(1));
+        assertEquals(1, senses.size());
+        e = new EdictEntry("母", "はは", "(n) (hum) mother/(P)/", true);
+        senses = e.getSenses();
+        assertEquals("mother", senses.get(0).get(0));
+        assertEquals(1, senses.get(0).size());
+        assertEquals(1, senses.size());
+    }
+
+    @Test
+    public void getSenses3() {
+        EdictEntry e = new EdictEntry("方", "かた", "(n) (1) direction/way/(2) (hon) person/lady/gentleman/(n,n-suf) (3) method of/manner of/way of/(n-suf) (4) care of ../(n-suf) (5) person in charge of ../(n-suf) (6) side (e.g. \"on my mother's side\")/(P)/", true);
+        final List<List<String>> senses = e.getSenses();
+        assertEquals("direction", senses.get(0).get(0));
+        assertEquals("way", senses.get(0).get(1));
+        assertEquals(2, senses.get(0).size());
+        assertEquals("(hon) person", senses.get(1).get(0));
+        assertEquals("lady", senses.get(1).get(1));
+        assertEquals("gentleman", senses.get(1).get(2));
+        assertEquals(3, senses.get(1).size());
+        assertEquals("method of", senses.get(2).get(0));
+        assertEquals("manner of", senses.get(2).get(1));
+        assertEquals("way of", senses.get(2).get(2));
+        assertEquals(3, senses.get(2).size());
+        assertEquals("care of ..", senses.get(3).get(0));
+        assertEquals(1, senses.get(3).size());
+        assertEquals("person in charge of ..", senses.get(4).get(0));
+        assertEquals(1, senses.get(4).size());
+        assertEquals("side (e.g. \"on my mother's side\")", senses.get(5).get(0));
+        assertEquals(1, senses.get(5).size());
+        assertEquals(6, senses.size());
     }
 }

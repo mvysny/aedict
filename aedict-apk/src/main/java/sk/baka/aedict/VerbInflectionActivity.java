@@ -70,7 +70,7 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 
 	private String convertInflectionProduct(final String romaji) {
 		final String kana = RomanizationEnum.NihonShiki.toHiragana(romaji);
-		return showRomaji.isShowingRomaji() ? AedictApp.getConfig().getRomanization().toRomaji(kana) : kana;
+		return showRomaji.romanize(kana);
 	}
 
 	private static final String KEY_JP = "jp";
