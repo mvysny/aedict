@@ -274,8 +274,33 @@ public class KanjiDetailActivity extends AbstractActivity {
 				} else {
 					view.setOnClickListener(null);
 				}
-				view.setFocusable(true);
-				view.setOnFocusChangeListener(this);
+				view.setFocusable(de.isValid());
+				view.setOnFocusChangeListener(de.isValid() ? this : null);
+				if (de.isValid()) {
+					view.setOnCreateContextMenuListener(AndroidUtils.safe(activity, new View.OnCreateContextMenuListener() {
+
+						public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+							final MenuItem miAddToNotepad = menu.add(Menu.NONE, 1, 1, R.string.addToNotepad);
+							miAddToNotepad.setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
+
+								public boolean onMenuItemClick(MenuItem item) {
+									NotepadActivity.addAndLaunch(activity, de);
+									return true;
+								}
+							}));
+							final MenuItem miShowSOD = menu.add(Menu.NONE, 6, 6, R.string.showSod);
+							miShowSOD.setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
+
+								public boolean onMenuItemClick(MenuItem item) {
+									StrokeOrderActivity.launch(activity, de.getJapanese());
+									return true;
+								}
+							}));
+						}
+					}));
+				} else {
+					view.setOnCreateContextMenuListener(null);
+				}
 			}
 			while (views.size() > i) {
 				vg.removeView(views.remove(i));
