@@ -120,8 +120,8 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		testSimpleEnglishSearch();
 		final ListView lv = getActivity().getListView();
 		lv.performItemClick(null, 0, 0);
-		tester.assertRequestedActivity(EntryDetailActivity.class);
-		final DictEntry entry = (DictEntry) getStartedActivityIntent().getSerializableExtra(EntryDetailActivity.INTENTKEY_ENTRY);
+		tester.assertRequestedActivity(EdictEntryDetailActivity.class);
+		final DictEntry entry = (DictEntry) getStartedActivityIntent().getSerializableExtra(EdictEntryDetailActivity.INTENTKEY_ENTRY);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
 		assertEquals("はは", entry.reading);

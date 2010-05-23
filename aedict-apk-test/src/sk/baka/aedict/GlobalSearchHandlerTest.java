@@ -37,11 +37,11 @@ public class GlobalSearchHandlerTest extends AbstractAedictTest<GlobalSearchHand
 	 * Tests http://code.google.com/p/aedict/issues/detail?id=59
 	 */
 	public void testHandlerProvidesEdictEntry() {
-		final Intent i = new Intent(getInstrumentation().getTargetContext(), EntryDetailActivity.class);
+		final Intent i = new Intent(getInstrumentation().getTargetContext(), EdictEntryDetailActivity.class);
 		i.putExtra(SearchManager.EXTRA_DATA_KEY, new DictEntry("Kanji", "Reading", "English (P)").toExternal());
 		tester.startActivity(i);
-		tester.assertRequestedActivity(EntryDetailActivity.class);
-		final EdictEntry ee = (EdictEntry) getStartedActivityIntent().getSerializableExtra(EntryDetailActivity.INTENTKEY_ENTRY);
+		tester.assertRequestedActivity(EdictEntryDetailActivity.class);
+		final EdictEntry ee = (EdictEntry) getStartedActivityIntent().getSerializableExtra(EdictEntryDetailActivity.INTENTKEY_ENTRY);
 		assertEquals("Kanji", ee.kanji);
 		assertEquals("Reading", ee.reading);
 		assertEquals("English (P)", ee.english);
