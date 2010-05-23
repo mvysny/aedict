@@ -17,11 +17,12 @@
  */
 package sk.baka.aedict.util;
 
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
+import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.view.View;
 
 /**
  * Provides additional utility methods.
@@ -51,10 +52,31 @@ public class SpanStringBuilder extends SpannableStringBuilder {
 	 * Sets the foreground color.
 	 * 
 	 * @param color
-	 *            0xAARRGGBB. Don't forget to set alpha to FF if you do not want transparency.
+	 *            0xAARRGGBB. Don't forget to set alpha to FF if you do not want
+	 *            transparency.
 	 * @return span
 	 */
 	public ForegroundColorSpan newForeground(int color) {
 		return new ForegroundColorSpan(color);
+	}
+
+	/**
+	 * Note that you have to call
+	 * <code>TextView.setMovementMethod(new LinkMovementMethod())</code> to
+	 * enable the clickables. The TextView should automatically become
+	 * focusable.
+	 * 
+	 * @param handler
+	 *            handles click events
+	 * @return new span
+	 */
+	public ClickableSpan newClickable(final View.OnClickListener handler) {
+		return new ClickableSpan() {
+
+			@Override
+			public void onClick(View widget) {
+				handler.onClick(widget);
+			}
+		};
 	}
 }
