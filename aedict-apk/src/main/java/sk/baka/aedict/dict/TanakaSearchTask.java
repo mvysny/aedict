@@ -27,6 +27,7 @@ import sk.baka.aedict.NotepadActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.StrokeOrderActivity;
 import sk.baka.aedict.kanji.KanjiUtils;
+import sk.baka.aedict.util.Check;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.aedict.util.SpanStringBuilder;
@@ -73,12 +74,13 @@ public class TanakaSearchTask extends AsyncTask<String, Void, List<DictEntry>> i
 	 *            null.
 	 */
 	public TanakaSearchTask(final Activity activity, final ViewGroup vg, final ShowRomaji showRomaji, final String highlightTerm) {
+		Check.checkNotNull("activity", activity);
+		Check.checkNotNull("vg", vg);
+		Check.checkNotNull("showRomaji", showRomaji);
+		Check.checkNotNull("highlightTerm", highlightTerm);
 		this.activity = activity;
 		this.vg = vg;
 		this.showRomaji = showRomaji;
-		if (highlightTerm == null) {
-			throw new NullPointerException("higlightTerm");
-		}
 		this.highlightTerm = highlightTerm;
 	}
 
@@ -118,7 +120,8 @@ public class TanakaSearchTask extends AsyncTask<String, Void, List<DictEntry>> i
 	}
 
 	/**
-	 * Invoke this to update the Views values. Invoke after the romaji display has been set or cleared.
+	 * Invoke this to update the Views values. Invoke after the romaji display
+	 * has been set or cleared.
 	 */
 	public void updateModel() {
 		int i = 0;

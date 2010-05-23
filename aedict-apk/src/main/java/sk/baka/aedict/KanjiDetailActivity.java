@@ -19,32 +19,25 @@ package sk.baka.aedict;
 
 import java.util.List;
 
-import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.KanjidicEntry;
-import sk.baka.aedict.dict.MatcherEnum;
-import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.dict.TanakaSearchTask;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
+import sk.baka.aedict.util.Check;
 import sk.baka.aedict.util.Constants;
+import sk.baka.aedict.util.SearchClickListener;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.DialogUtils;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.ClipboardManager;
-import android.view.ContextMenu;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Shows a detail of a single Kanji character.
@@ -54,7 +47,17 @@ import android.widget.Toast;
 public class KanjiDetailActivity extends AbstractActivity {
 	static final String INTENTKEY_KANJIDIC_ENTRY = "entry";
 
+	/**
+	 * Launches this activity.
+	 * 
+	 * @param activity
+	 *            caller activity, not null.
+	 * @param entry
+	 *            show this entry, not null.
+	 */
 	public static void launch(final Context activity, final KanjidicEntry entry) {
+		Check.checkNotNull("activity", activity);
+		Check.checkNotNull("entry", entry);
 		final Intent intent = new Intent(activity, KanjiDetailActivity.class);
 		intent.putExtra(INTENTKEY_KANJIDIC_ENTRY, entry);
 		activity.startActivity(intent);
@@ -134,60 +137,6 @@ public class KanjiDetailActivity extends AbstractActivity {
 			new SearchClickListener(this, query, isJapanese).registerTo(tv);
 			tv.setTextSize(textSize);
 			p.addView(tv);
-		}
-	}
-
-	public static class FocusVisual implements View.OnFocusChangeListener {
-		public FocusVisual registerTo(final View view) {
-			view.setFocusable(true);
-			view.setOnFocusChangeListener(this);
-			return this;
-		}
-
-		public void onFocusChange(View v, boolean hasFocus) {
-			v.setBackgroundColor(hasFocus ? 0xCFFF8c00 : 0);
-		}
-	}
-
-	public static class SearchClickListener implements View.OnClickListener, View.OnCreateContextMenuListener {
-		private final boolean isJapanese;
-		private final String searchFor;
-		private final Activity activity;
-
-		public SearchClickListener(final Activity activity, final String searchFor, final boolean isJapanese) {
-			this.activity = activity;
-			this.searchFor = searchFor;
-			this.isJapanese = isJapanese;
-		}
-
-		public SearchClickListener registerTo(final View view) {
-			view.setOnClickListener(this);
-			new FocusVisual().registerTo(view);
-			view.setOnCreateContextMenuListener(this);
-			return this;
-		}
-
-		public void onClick(View v) {
-			final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
-			q.isJapanese = isJapanese;
-			q.query = new String[] { searchFor };
-			q.matcher = MatcherEnum.Substring;
-			ResultActivity.launch(v.getContext(), q);
-		}
-
-		public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-			final MenuItem miCopyToClipboard = menu.add(Menu.NONE, 1, 1, R.string.copyToClipboard);
-			miCopyToClipboard.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-
-				public boolean onMenuItemClick(MenuItem item) {
-					final ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-					cm.setText(searchFor);
-					final Toast toast = Toast.makeText(activity, AedictApp.format(R.string.copied, searchFor), Toast.LENGTH_SHORT);
-					toast.show();
-					return true;
-				}
-			});
-
 		}
 	}
 
