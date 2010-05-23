@@ -30,7 +30,7 @@
 					android:layout_width="wrap_content" android:text="kana"
 					android:textColor="#777" android:layout_gravity="center"/>
 			</LinearLayout>
-			<TextView android:id="@+id/entryMarkings"
+			<TextView android:id="@+id/entryMarkings" android:textStyle="italic"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
 				android:textColor="#FFF" android:textColorLink="#FFF"/>
 			<TextView android:id="@+id/entrySenses"
