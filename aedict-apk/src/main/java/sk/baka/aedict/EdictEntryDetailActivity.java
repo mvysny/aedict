@@ -148,9 +148,9 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 	protected void onResume() {
 		super.onResume();
 		showRomaji.onResume();
-		if (tanakaSearchTask == null) {
-			tanakaSearchTask = new TanakaSearchTask(this, (ViewGroup) findViewById(R.id.tanakaExamples), showRomaji, entry.kanji);
-			tanakaSearchTask.execute(entry.kanji);
+		if (tanakaSearchTask == null && entry.isValid()) {
+			tanakaSearchTask = new TanakaSearchTask(this, (ViewGroup) findViewById(R.id.tanakaExamples), showRomaji, entry.getJapanese());
+			tanakaSearchTask.execute(entry.getJapanese());
 		}
 	}
 
