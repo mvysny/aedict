@@ -28,10 +28,12 @@ import sk.baka.aedict.util.Constants;
 import sk.baka.aedict.util.SearchClickListener;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
+import sk.baka.aedict.util.SpanStringBuilder;
 import sk.baka.autils.DialogUtils;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,7 +104,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 				NotepadActivity.addAndLaunch(KanjiDetailActivity.this, entry);
 			}
 		});
-		addTextViews(R.id.english, entry.getEnglish(), false, 15);
+		addTextViews(R.id.english, entry.getEnglish(), false);
 		updateContent();
 		// display hint
 		if (!AedictApp.isInstrumentation) {
@@ -112,32 +114,30 @@ public class KanjiDetailActivity extends AbstractActivity {
 
 	private void updateContent() {
 		// compute ONYOMI, KUNYOMI, NAMAE and ENGLISH
-		addTextViews(R.id.onyomi, entry.getOnyomi(), true, 20);
-		addTextViews(R.id.kunyomi, entry.getKunyomi(), true, 20);
-		addTextViews(R.id.namae, entry.getNamae(), true, 20);
+		addTextViews(R.id.onyomi, entry.getOnyomi(), true);
+		addTextViews(R.id.kunyomi, entry.getKunyomi(), true);
+		addTextViews(R.id.namae, entry.getNamae(), true);
 	}
 
-	private void addTextViews(final int parent, final List<String> items, final boolean isJapanese, float textSize) {
-		final ViewGroup p = (ViewGroup) findViewById(parent);
-		p.removeAllViews();
-		if (items.isEmpty()) {
-			p.setVisibility(View.GONE);
-			return;
-		}
+	private void addTextViews(final int parent, final List<String> items, final boolean isJapanese) {
+		final TextView p = (TextView) findViewById(parent);
+		p.setVisibility(items.isEmpty() ? View.GONE : View.VISIBLE);
+		p.setMovementMethod(new LinkMovementMethod());
+		final SpanStringBuilder sb = new SpanStringBuilder();
 		for (int i = 0; i < items.size(); i++) {
-			final String item = items.get(i);
+			String item = items.get(i);
 			final String sitem = KanjidicEntry.removeSplits(item);
-			final TextView tv = new TextView(p.getContext());
-			String text = item + (i == items.size() - 1 ? "" : ", ");
 			if (isJapanese) {
-				text = showRomaji.romanize(text);
+				item = showRomaji.romanize(item);
 			}
-			tv.setText(text);
 			final String query = KanjiUtils.isKatakana(sitem.charAt(0)) ? RomanizationEnum.NihonShiki.toHiragana(RomanizationEnum.NihonShiki.toRomaji(sitem)) : sitem;
-			new SearchClickListener(this, query, isJapanese).registerTo(tv);
-			tv.setTextSize(textSize);
-			p.addView(tv);
+			final Object span = sb.newClickable(new SearchClickListener(this, query, isJapanese));
+			sb.append(span, item);
+			if (i < items.size() - 1) {
+				sb.append(", ");
+			}
 		}
+		p.setText(sb);
 	}
 
 	@Override
