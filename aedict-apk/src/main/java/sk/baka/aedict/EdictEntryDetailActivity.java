@@ -22,9 +22,9 @@ import java.util.Collection;
 import java.util.List;
 
 import se.fnord.android.layout.FlowLayout;
-import sk.baka.aedict.KanjiDetailActivity.TanakaSearchTask;
 import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.aedict.dict.TanakaSearchTask;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.DialogUtils;
