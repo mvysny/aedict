@@ -32,7 +32,6 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".AboutActivity" android:label="@string/aboutCaption" />
-		<activity android:name=".EntryDetailActivity" android:label="@string/entryDetail" />
 		<activity android:name=".KanaTableActivity" android:label="@string/kanaTable" />
 		<activity android:name=".ConfigActivity" android:label="@string/configuration" />
 		<activity android:name=".KanjiAnalyzeActivity" android:label="@string/kanjiAnalysisOf" />
