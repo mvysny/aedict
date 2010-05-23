@@ -32,4 +32,10 @@ public class Check {
 			throw new NullPointerException("Parameter " + name + " is null");
 		}
 	}
+
+	public static void checkTrue(String string, boolean valid) {
+		if (!valid) {
+			throw new IllegalArgumentException(string);
+		}
+	}
 }
