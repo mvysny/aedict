@@ -73,18 +73,14 @@
 				</TableRow>
 			</TableLayout>
 		</LinearLayout>
-		<se.fnord.android.layout.FlowLayout android:id="@+id/onyomi" 
-			android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp">
-		</se.fnord.android.layout.FlowLayout>
-		<se.fnord.android.layout.FlowLayout android:id="@+id/kunyomi" 
-			android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp">
-		</se.fnord.android.layout.FlowLayout>
-		<se.fnord.android.layout.FlowLayout android:id="@+id/namae" 
-			android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp">
-		</se.fnord.android.layout.FlowLayout>
-		<se.fnord.android.layout.FlowLayout android:id="@+id/english" 
-			android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp">
-		</se.fnord.android.layout.FlowLayout>
+		<TextView android:id="@+id/onyomi" android:textSize="20sp"
+			android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp"/>
+		<TextView android:id="@+id/kunyomi" android:textSize="20sp" 
+			android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp"/>
+		<TextView android:id="@+id/namae"  android:textSize="20sp"
+			android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp"/>
+		<TextView android:id="@+id/english"  android:textSize="15sp"
+			android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp"/>
 		<LinearLayout 
 			android:layout_width="wrap_content" android:layout_height="wrap_content"
 			android:orientation="horizontal" android:layout_gravity="center_horizontal"
