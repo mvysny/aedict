@@ -213,6 +213,9 @@ public class KanjiDetailActivity extends AbstractActivity {
 			this.activity = activity;
 			this.vg = vg;
 			this.showRomaji = showRomaji;
+			if (highlightTerm == null) {
+				throw new NullPointerException("higlightTerm");
+			}
 			this.highlightTerm = highlightTerm;
 		}
 
@@ -362,9 +365,9 @@ public class KanjiDetailActivity extends AbstractActivity {
 	protected void onResume() {
 		super.onResume();
 		showRomaji.onResume();
-		if (tanakaSearchTask == null) {
-			tanakaSearchTask = new TanakaSearchTask(this, (ViewGroup) findViewById(R.id.tanakaExamples), showRomaji, entry.kanji);
-			tanakaSearchTask.execute(entry.kanji);
+		if (tanakaSearchTask == null && entry.isValid()) {
+			tanakaSearchTask = new TanakaSearchTask(this, (ViewGroup) findViewById(R.id.tanakaExamples), showRomaji, entry.getJapanese());
+			tanakaSearchTask.execute(entry.getJapanese());
 		}
 	}
 
