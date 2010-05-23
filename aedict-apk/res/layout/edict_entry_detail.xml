@@ -19,7 +19,7 @@
 		android:layout_height="wrap_content" android:orientation="vertical"
 		android:paddingRight="?android:attr/scrollbarSize"
 		android:paddingLeft="?android:attr/scrollbarSize">
-		<LinearLayout android:layout_width="wrap_content"
+		<LinearLayout android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:orientation="vertical">
 			<LinearLayout android:layout_width="wrap_content"
 				android:layout_height="wrap_content" android:orientation="horizontal">
@@ -30,9 +30,12 @@
 					android:layout_width="wrap_content" android:text="kana"
 					android:textColor="#777" android:layout_gravity="center"/>
 			</LinearLayout>
-			<LinearLayout android:id="@+id/entryDetails"
+			<TextView android:id="@+id/entryMarkings"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"
-				android:orientation="vertical" />
+				android:textColor="#FFF" android:textColorLink="#FFF"/>
+			<TextView android:id="@+id/entrySenses"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:textColor="#777" android:textColorLink="#FFF"/>
 			<LinearLayout
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				android:orientation="horizontal" android:layout_gravity="center_horizontal"

@@ -30,11 +30,14 @@ import sk.baka.aedict.util.FocusVisual;
 import sk.baka.aedict.util.SearchClickListener;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
+import sk.baka.aedict.util.SpanStringBuilder;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.ListBuilder;
+import sk.baka.autils.MiscUtils;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +63,7 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 	public static void launch(final Activity a, final EdictEntry entry) {
 		Check.checkNotNull("a", a);
 		Check.checkNotNull("entry", entry);
+		Check.checkTrue("entry is not valid", entry.isValid());
 		final Intent i = new Intent(a, EdictEntryDetailActivity.class);
 		i.putExtra(INTENTKEY_ENTRY, entry);
 		a.startActivity(i);
@@ -81,8 +85,6 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 				tanakaSearchTask.updateModel();
 			}
 		};
-		((TextView) findViewById(R.id.kanji)).setText(entry.kanji);
-		new SearchClickListener(this, entry.kanji, true).registerTo(findViewById(R.id.kanji));
 		displayEntry();
 		new SearchUtils(this).setupCopyButton(R.id.copy, R.id.kanji);
 		findViewById(R.id.analyze).setOnClickListener(new View.OnClickListener() {
@@ -100,19 +102,22 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 	}
 
 	private void displayEntry() {
-		((TextView) findViewById(R.id.kana)).setText(showRomaji.romanize(entry.reading));
-		new SearchClickListener(this, entry.reading, true).registerTo(findViewById(R.id.kana));
+		final TextView kanji = ((TextView) findViewById(R.id.kanji));
+		kanji.setText(showRomaji.getJapanese(entry));
+		new SearchClickListener(this, entry.getJapanese(), true).registerTo(kanji);
+		final TextView kana = ((TextView) findViewById(R.id.kana));
+		if (MiscUtils.isBlank(entry.kanji)) {
+			kana.setVisibility(View.GONE);
+		} else {
+			kana.setText(showRomaji.romanize(entry.reading));
+			new SearchClickListener(this, entry.reading, true).registerTo(kana);
+		}
 		// display the markings
 		final List<String> markings = entry.getMarkings();
-		final ViewGroup senseGroup = (ViewGroup) findViewById(R.id.entryDetails);
-		senseGroup.removeAllViews();
-		final TextView marking = new TextView(this);
-		marking.setTextColor(0xFFFFFFFF);
+		final TextView marking = (TextView) findViewById(R.id.entryMarkings);
 		marking.setText(csv(markings));
-		marking.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 		new FocusVisual().registerTo(marking);
-		senseGroup.addView(marking);
-		senseGroup.setOnClickListener(new View.OnClickListener() {
+		marking.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
 				final ListBuilder sb = new ListBuilder("\n");
@@ -125,20 +130,19 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 		// display the senses
 		final List<List<String>> senses = entry.getSenses();
 		for (int i = 0; i < senses.size(); i++) {
-			final FlowLayout layout = new FlowLayout(this);
-			layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-			TextView tv = new TextView(this);
-			tv.setText("(" + (i + 1) + ") ");
-			layout.addView(tv);
+			final SpanStringBuilder sb = new SpanStringBuilder();
+			sb.append(sb.newForeground(0xFF777777), "(" + (i + 1) + ") ");
 			for (int j = 0; j < senses.get(i).size(); j++) {
 				final String sense = senses.get(i).get(j);
-				tv = new TextView(this);
-				tv.setTextColor(0xFFFFFFFF);
-				new SearchClickListener(this, sense, false).registerTo(tv);
-				layout.addView(tv);
-				tv.setText(sense + (j == senses.get(i).size() - 1 ? "" : ", "));
+				final Object span = sb.newClickable(new SearchClickListener(this, sense, false));
+				sb.append(span, sense);
+				if (j < senses.get(i).size() - 1) {
+					sb.append(", ");
+				}
 			}
-			senseGroup.addView(layout);
+			final TextView s = (TextView) findViewById(R.id.entrySenses);
+			s.setMovementMethod(new LinkMovementMethod());
+			s.setText(sb);
 		}
 	}
 

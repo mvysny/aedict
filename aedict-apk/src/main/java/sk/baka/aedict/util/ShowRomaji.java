@@ -20,13 +20,17 @@ package sk.baka.aedict.util;
 
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.R;
+import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.AndroidUtils;
+import sk.baka.autils.MiscUtils;
 import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuItem;
+
 /**
  * Helps with the romanization process.
+ * 
  * @author Martin Vysny
  */
 public abstract class ShowRomaji {
@@ -78,5 +82,13 @@ public abstract class ShowRomaji {
 			return (romanization == null ? RomanizationEnum.Hepburn : romanization).toRomaji(kana);
 		}
 		return kana;
+	}
+
+	public String getJapanese(final DictEntry e) {
+		Check.checkTrue("entry not valid", e.isValid());
+		if (MiscUtils.isBlank(e.kanji)) {
+			return romanize(e.reading);
+		}
+		return e.kanji;
 	}
 }
