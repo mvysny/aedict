@@ -25,6 +25,7 @@ import se.fnord.android.layout.FlowLayout;
 import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.TanakaSearchTask;
+import sk.baka.aedict.util.Check;
 import sk.baka.aedict.util.FocusVisual;
 import sk.baka.aedict.util.SearchClickListener;
 import sk.baka.aedict.util.SearchUtils;
@@ -46,9 +47,19 @@ import android.widget.TextView;
  */
 public class EdictEntryDetailActivity extends AbstractActivity {
 
-	public static final String INTENTKEY_ENTRY = "entry";
+	static final String INTENTKEY_ENTRY = "entry";
 
+	/**
+	 * Launches this activity.
+	 * 
+	 * @param a
+	 *            callee activity, not null.
+	 * @param entry
+	 *            show this entry, not null.
+	 */
 	public static void launch(final Activity a, final EdictEntry entry) {
+		Check.checkNotNull("a", a);
+		Check.checkNotNull("entry", entry);
 		final Intent i = new Intent(a, EdictEntryDetailActivity.class);
 		i.putExtra(INTENTKEY_ENTRY, entry);
 		a.startActivity(i);

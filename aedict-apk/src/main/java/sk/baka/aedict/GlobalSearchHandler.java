@@ -26,8 +26,8 @@ import android.os.Bundle;
 
 /**
  * Handles the search requests from the Android Search functionality and
- * redirects it to the {@link EntryDetailActivity} activity. Note that the
- * {@link EntryDetailActivity} activity cannot be used directly as EntryDetail's
+ * redirects it to the {@link EdictEntryDetailActivity} activity. Note that the
+ * {@link EdictEntryDetailActivity} activity cannot be used directly as EntryDetail's
  * label must not be displayed in the Quick Search Box.
  * 
  * @author Martin Vysny
