@@ -162,6 +162,11 @@ public class EdictEntryTest {
         assertEquals("mother", senses.get(0).get(0));
         assertEquals(1, senses.get(0).size());
         assertEquals(1, senses.size());
+        e = new EdictEntry("波々迦", "ははか", "(n) (arch) Japanese bird cherry (Prunus grayana)/", false);
+        senses = e.getSenses();
+        assertEquals("Japanese bird cherry (Prunus grayana)", senses.get(0).get(0));
+        assertEquals(1, senses.get(0).size());
+        assertEquals(1, senses.size());
     }
 
     @Test
