@@ -25,6 +25,8 @@ import se.fnord.android.layout.FlowLayout;
 import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.TanakaSearchTask;
+import sk.baka.aedict.util.FocusVisual;
+import sk.baka.aedict.util.SearchClickListener;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.DialogUtils;
@@ -69,7 +71,7 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 			}
 		};
 		((TextView) findViewById(R.id.kanji)).setText(entry.kanji);
-		new KanjiDetailActivity.SearchClickListener(this, entry.kanji, true).registerTo(findViewById(R.id.kanji));
+		new SearchClickListener(this, entry.kanji, true).registerTo(findViewById(R.id.kanji));
 		displayEntry();
 		new SearchUtils(this).setupCopyButton(R.id.copy, R.id.kanji);
 		findViewById(R.id.analyze).setOnClickListener(new View.OnClickListener() {
@@ -88,7 +90,7 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 
 	private void displayEntry() {
 		((TextView) findViewById(R.id.kana)).setText(showRomaji.romanize(entry.reading));
-		new KanjiDetailActivity.SearchClickListener(this, entry.reading, true).registerTo(findViewById(R.id.kana));
+		new SearchClickListener(this, entry.reading, true).registerTo(findViewById(R.id.kana));
 		// display the markings
 		final List<String> markings = entry.getMarkings();
 		final ViewGroup senseGroup = (ViewGroup) findViewById(R.id.entryDetails);
@@ -97,7 +99,7 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 		marking.setTextColor(0xFFFFFFFF);
 		marking.setText(csv(markings));
 		marking.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-		new KanjiDetailActivity.FocusVisual().registerTo(marking);
+		new FocusVisual().registerTo(marking);
 		senseGroup.addView(marking);
 		senseGroup.setOnClickListener(new View.OnClickListener() {
 
@@ -121,7 +123,7 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 				final String sense = senses.get(i).get(j);
 				tv = new TextView(this);
 				tv.setTextColor(0xFFFFFFFF);
-				new KanjiDetailActivity.SearchClickListener(this, sense, false).registerTo(tv);
+				new SearchClickListener(this, sense, false).registerTo(tv);
 				layout.addView(tv);
 				tv.setText(sense + (j == senses.get(i).size() - 1 ? "" : ", "));
 			}
