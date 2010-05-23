@@ -73,13 +73,13 @@
 				</TableRow>
 			</TableLayout>
 		</LinearLayout>
-		<TextView android:id="@+id/onyomi" android:textSize="20sp"
+		<TextView android:id="@+id/onyomi" android:textSize="20sp" android:textColor="#777" android:textColorLink="#FFF"
 			android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp"/>
-		<TextView android:id="@+id/kunyomi" android:textSize="20sp" 
+		<TextView android:id="@+id/kunyomi" android:textSize="20sp" android:textColor="#777" android:textColorLink="#FFF"
 			android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp"/>
-		<TextView android:id="@+id/namae"  android:textSize="20sp"
+		<TextView android:id="@+id/namae"  android:textSize="20sp" android:textColor="#777" android:textColorLink="#FFF"
 			android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp"/>
-		<TextView android:id="@+id/english"  android:textSize="15sp"
+		<TextView android:id="@+id/english"  android:textSize="15sp" android:textColor="#777" android:textColorLink="#FFF"
 			android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp"/>
 		<LinearLayout 
 			android:layout_width="wrap_content" android:layout_height="wrap_content"
