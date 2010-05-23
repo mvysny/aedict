@@ -223,19 +223,6 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		assertEquals(100, lv.getCount());
 	}
 
-	public void testJapaneseSearchInTanaka() {
-		testSimpleJapaneseSearch();
-		tester.contextMenu(getActivity().getListView(), 5, 0);
-		tester.assertRequestedActivity(ResultActivity.class);
-		final SearchQuery q = (SearchQuery) getStartedActivityIntent().getSerializableExtra(ResultActivity.INTENTKEY_SEARCH_QUERY);
-		assertEquals("母", q.query[0]);
-		assertEquals("はは", q.query[1]);
-		assertEquals(2, q.query.length);
-		assertTrue(q.isJapanese);
-		assertEquals(DictTypeEnum.Tanaka, q.dictType);
-		assertEquals(MatcherEnum.Any, q.matcher);
-	}
-
 	public void testSodAnalysis() {
 		testSimpleJapaneseSearch();
 		tester.contextMenu(getActivity().getListView(), 6, 0);
