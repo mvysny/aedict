@@ -136,6 +136,8 @@ public final class Edict {
 	/**
 	 * Prints itself to a ListView item.
 	 * 
+	 * @param e
+	 *            the entry to print, not null.
 	 * @param item
 	 *            the item.
 	 * @param romanize
@@ -148,6 +150,8 @@ public final class Edict {
 	/**
 	 * Prints itself to a ListView item.
 	 * 
+	 * @param e
+	 *            the entry to print, not null.
 	 * @param text1
 	 *            first, larger textview.
 	 * @param text2
