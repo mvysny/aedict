@@ -69,12 +69,6 @@
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/jlptQuiz"
 			android:id="@+id/quiz"/>
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/aboutCaption"
-			android:id="@+id/btnAbout"/>
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/donate"
-			android:id="@+id/btnDonate"/>
 	</LinearLayout>
 </LinearLayout>
 </ScrollView>

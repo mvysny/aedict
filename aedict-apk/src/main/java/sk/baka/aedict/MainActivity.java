@@ -27,12 +27,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 
 /**
  * Provides means to search the edict dictionary file.
@@ -48,7 +44,6 @@ public class MainActivity extends AbstractActivity {
 		utils.registerSearch(R.id.jpExactMatch, R.id.jpDeinflectVerbs, null, R.id.jpSearchEdit, false, R.id.jpSearch, true);
 		utils.registerSearch(R.id.engExactMatch, null, R.id.engSearchExamples, R.id.engSearchEdit, false, R.id.engSearch, false);
 		utils.setupAnalysisControls(R.id.btnJpTranslate, R.id.txtJpTranslate, true);
-		setButtonActivityLauncher(R.id.btnAbout, AboutActivity.class);
 		setButtonActivityLauncher(R.id.quiz, QuizLaunchActivity.class);
 		// check for dictionary file and download it if it is missing.
 		bindService(new Intent(this, DownloaderService.class), new ServiceConnection() {
@@ -59,14 +54,6 @@ public class MainActivity extends AbstractActivity {
 			public void onServiceDisconnected(ComponentName className) {
 			}
 		}, Context.BIND_AUTO_CREATE);
-		final Button btnDonate = (Button) findViewById(R.id.btnDonate);
-		btnDonate.setOnClickListener(new OnClickListener() {
-
-			public void onClick(View v) {
-				final Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://code.google.com/p/aedict/#Donate"));
-				startActivity(i);
-			}
-		});
 		if (!AedictApp.isInstrumentation) {
 			new DialogUtils(this).showInfoOnce(AedictApp.getVersion(), AedictApp.format(R.string.whatsNew, AedictApp.getVersion()), getString(R.string.whatsNewText));
 		}
