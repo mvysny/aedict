@@ -112,6 +112,10 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if (!AedictApp.getDownloader().checkDic(this, DictTypeEnum.Kanjidic)) {
+			finish();
+			return;
+		}
 		showRomaji = new ShowRomaji(this) {
 
 			@Override
@@ -136,7 +140,6 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			setListAdapter(newAdapter());
 		}
 		// check that the KANJIDIC dictionary file is available
-		AedictApp.getDownloader().checkDic(this, DictTypeEnum.Kanjidic);
 		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -360,7 +363,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getConfig().getDictionaryLoc(), AedictApp.getConfig().isSorted());
 			try {
 				LuceneSearch lsKanjidic = null;
-				if (DownloaderService.isComplete(DictTypeEnum.Kanjidic)) {
+				if (AedictApp.getDownloader().isComplete(DictTypeEnum.Kanjidic)) {
 					lsKanjidic = new LuceneSearch(DictTypeEnum.Kanjidic, null, AedictApp.getConfig().isSorted());
 				}
 				try {

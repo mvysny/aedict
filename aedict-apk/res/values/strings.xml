@@ -413,4 +413,9 @@
 	<string name="showDetailed">Show detailed</string>
 	<string name="youScored">You scored %d out of %d questions</string>
 	<string name="results">Results</string>
+	<string name="downloadAll">Download all dictionaries</string>
+	<string name="noActiveDownload">No active download</string>
+	<string name="queuedForDownload">Queued for download: %s</string>
+	<string name="downloadManager">Download manager</string>
+	<string name="cancelDownload">Cancel download</string>
 </resources>
