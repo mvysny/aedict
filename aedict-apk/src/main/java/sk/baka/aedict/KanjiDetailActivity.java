@@ -82,6 +82,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 			}
 		};
 		entry = (KanjidicEntry) getIntent().getSerializableExtra(INTENTKEY_KANJIDIC_ENTRY);
+		MainActivity.recentlyViewed(entry);
 		final TextView kanji = (TextView) findViewById(R.id.kanji);
 		kanji.setText(entry.kanji);
 		new SearchClickListener(this, entry.kanji, true).registerTo(kanji);

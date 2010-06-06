@@ -30,7 +30,9 @@ import sk.baka.aedict.kanji.VerbInflection.Form;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
+import android.app.Activity;
 import android.app.ExpandableListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -142,4 +144,9 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 		showRomaji.onResume();
 	}
 
+	public static void launch(Activity activity, EdictEntry entry) {
+		final Intent intent = new Intent(activity, VerbInflectionActivity.class);
+		intent.putExtra(VerbInflectionActivity.INTENTKEY_ENTRY, entry);
+		activity.startActivity(intent);
+	}
 }
