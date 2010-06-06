@@ -186,9 +186,7 @@ public class ResultActivity extends ListActivity {
 					miShowConjugations.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
 
 						public boolean onMenuItemClick(MenuItem item) {
-							final Intent intent = new Intent(ResultActivity.this, VerbInflectionActivity.class);
-							intent.putExtra(VerbInflectionActivity.INTENTKEY_ENTRY, ee);
-							startActivity(intent);
+							VerbInflectionActivity.launch(ResultActivity.this, (EdictEntry)ee);
 							return true;
 						}
 					}));

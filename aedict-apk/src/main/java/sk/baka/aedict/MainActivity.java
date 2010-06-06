@@ -24,9 +24,11 @@ import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DownloaderService;
 import sk.baka.aedict.dict.Edict;
+import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
+import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
 import android.app.ListActivity;
 import android.content.ComponentName;
@@ -35,12 +37,17 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 /**
  * Provides means to search the edict dictionary file.
@@ -84,9 +91,40 @@ public class MainActivity extends ListActivity {
 		if (!AedictApp.isInstrumentation) {
 			new DialogUtils(this).showInfoOnce(AedictApp.getVersion(), AedictApp.format(R.string.whatsNew, AedictApp.getVersion()), getString(R.string.whatsNewText));
 		}
-		findViewById(R.id.intro).setVisibility(getModel().isEmpty() ? View.VISIBLE : View.GONE);
-		findViewById(R.id.recentlyViewed).setVisibility(getModel().isEmpty() ? View.GONE : View.VISIBLE);
 		((TextView) findViewById(R.id.aedict)).setText("Aedict " + AedictApp.getVersion());
+		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
+
+			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+				final int position = ((AdapterContextMenuInfo) menuInfo).position;
+				final DictEntry ee = getModel().get(position);
+				final MenuItem miAddToNotepad = menu.add(Menu.NONE, 1, 1, R.string.addToNotepad);
+				miAddToNotepad.setOnMenuItemClickListener(AndroidUtils.safe(MainActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+					public boolean onMenuItemClick(MenuItem item) {
+						NotepadActivity.addAndLaunch(MainActivity.this, ee);
+						return true;
+					}
+				}));
+				final MenuItem miShowSOD = menu.add(Menu.NONE, 6, 6, R.string.showSod);
+				miShowSOD.setOnMenuItemClickListener(AndroidUtils.safe(MainActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+					public boolean onMenuItemClick(MenuItem item) {
+						StrokeOrderActivity.launch(MainActivity.this, ee.getJapanese());
+						return true;
+					}
+				}));
+				if (toEdict(ee).isVerb()) {
+					final MenuItem miShowConjugations = menu.add(Menu.NONE, 7, 7, R.string.showConjugations);
+					miShowConjugations.setOnMenuItemClickListener(AndroidUtils.safe(MainActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+						public boolean onMenuItemClick(MenuItem item) {
+							VerbInflectionActivity.launch(MainActivity.this, toEdict(ee));
+							return true;
+						}
+					}));
+				}
+			}
+		}));
 	}
 
 	@Override
@@ -103,6 +141,9 @@ public class MainActivity extends ListActivity {
 		modelCache = null;
 		setModel();
 		showRomaji.onResume();
+		findViewById(R.id.intro).setVisibility(getModel().isEmpty() ? View.VISIBLE : View.GONE);
+		findViewById(R.id.recentlyViewed).setVisibility(getModel().isEmpty() ? View.GONE : View.VISIBLE);
+		findViewById(R.id.advancedPanel).setVisibility(View.GONE);
 	}
 
 	private List<DictEntry> modelCache = null;
@@ -142,5 +183,21 @@ public class MainActivity extends ListActivity {
 			}
 
 		});
+	}
+
+	public static EdictEntry toEdict(final DictEntry e) {
+		if (e instanceof EdictEntry) {
+			return (EdictEntry) e;
+		}
+		return new EdictEntry(e.kanji, e.reading, e.english, e.english.contains("(P)"));
+	}
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		final DictEntry e = getModel().get(position);
+		if (!e.isValid()) {
+			return;
+		}
+		EdictEntryDetailActivity.launch(this, toEdict(e));
 	}
 }
