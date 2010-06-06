@@ -20,7 +20,6 @@ package sk.baka.aedict;
 
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DownloaderService;
-import sk.baka.aedict.jlptquiz.QuizLaunchActivity;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.autils.DialogUtils;
 import android.content.ComponentName;
@@ -30,6 +29,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
+import android.widget.TextView;
 
 /**
  * Provides means to search the edict dictionary file.
@@ -64,5 +64,7 @@ public class MainActivity extends AbstractActivity {
 		if (!AedictApp.isInstrumentation) {
 			new DialogUtils(this).showInfoOnce(AedictApp.getVersion(), AedictApp.format(R.string.whatsNew, AedictApp.getVersion()), getString(R.string.whatsNewText));
 		}
+		findViewById(R.id.intro).setVisibility(true ? View.VISIBLE : View.GONE);
+		((TextView) findViewById(R.id.aedict)).setText("Aedict " + AedictApp.getVersion());
 	}
 }
