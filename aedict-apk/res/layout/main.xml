@@ -17,7 +17,7 @@
 <LinearLayout
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-	<EditText android:layout_height="wrap_content" android:id="@+id/jpSearchEdit"
+	<EditText android:layout_height="wrap_content" android:id="@+id/searchEdit"
 		android:layout_width="fill_parent" android:hint="@string/enterKanaRomajiEnglish"
 		android:inputType="text"/>
 	<LinearLayout android:layout_width="fill_parent"
@@ -34,7 +34,7 @@
 		</LinearLayout>
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:orientation="horizontal">
-		<CheckBox android:layout_height="wrap_content" android:id="@+id/jpExactMatch"
+		<CheckBox android:layout_height="wrap_content" android:id="@+id/exactMatch"
 			android:text="@string/exactMatch" android:layout_width="wrap_content"
 			android:layout_weight="1"/>
 		<CheckBox android:layout_height="wrap_content" android:id="@+id/jpDeinflectVerbs"
@@ -44,21 +44,6 @@
 			android:layout_width="wrap_content" android:layout_weight="1"
 			android:layout_height="wrap_content" android:text="@string/searchInExamples"/>
 	</LinearLayout>
-	<LinearLayout android:layout_width="fill_parent"
-		android:layout_height="wrap_content">
-		<CheckBox android:id="@+id/engExactMatch"
-			android:layout_width="wrap_content" android:layout_weight="1"
-			android:layout_height="wrap_content" android:text="@string/exactMatch"></CheckBox>
-		<CheckBox android:id="@+id/engSearchExamples"
-			android:layout_width="wrap_content" android:layout_weight="1"
-			android:layout_height="wrap_content" android:text="@string/searchInExamples"></CheckBox>
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/search"
-			android:id="@+id/engSearch"/>
-	</LinearLayout>
-	<EditText android:layout_height="wrap_content" android:id="@+id/engSearchEdit"
-		android:layout_width="fill_parent" android:hint="@string/enterWordOrExpression"
-		android:inputType="text" android:imeOptions="actionDone"></EditText>
 	<TextView android:layout_width="fill_parent" android:textColor="#FFF" android:background="#666"
 		android:layout_height="wrap_content" android:text="@string/jpTranslate"/>
 	<LinearLayout android:layout_width="fill_parent"
