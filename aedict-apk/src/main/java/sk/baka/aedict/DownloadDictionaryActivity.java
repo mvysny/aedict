@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.dict.DownloadDictTask;
+import sk.baka.aedict.dict.DownloaderService;
 import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
@@ -151,7 +151,7 @@ public class DownloadDictionaryActivity extends ListActivity {
 				MiscUtils.closeQuietly(reader);
 			}
 			// remove all dictionaries which are already downloaded
-			result.keySet().removeAll(DownloadDictTask.listEdictDictionaries().keySet());
+			result.keySet().removeAll(DownloaderService.listEdictDictionaries().keySet());
 			final List<DownloadableDictionaryInfo> items = new ArrayList<DownloadableDictionaryInfo>(result.values());
 			Collections.sort(items);
 			return items;
@@ -174,13 +174,6 @@ public class DownloadDictionaryActivity extends ListActivity {
 	}
 
 	private void downloadDictionary(final DownloadableDictionaryInfo e) {
-		new DownloadDictTask(e.url, DictTypeEnum.BASE_DIR + "/index-" + e.name, e.name, e.zippedSize) {
-
-			@Override
-			public void onSucceeded(Void result) {
-				new DownloadDictionaryListTask().execute(DownloadDictionaryActivity.this);
-			}
-
-		}.execute(this);
+		AedictApp.getDownloader().downloadDict(e.url, DictTypeEnum.BASE_DIR + "/index-" + e.name, e.name, e.zippedSize);
 	}
 }

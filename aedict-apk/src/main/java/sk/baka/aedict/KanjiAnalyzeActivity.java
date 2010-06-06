@@ -23,16 +23,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import sk.baka.aedict.dict.AbstractDownloadTask;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.DownloaderService;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.Radicals;
-import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
@@ -137,7 +136,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			setListAdapter(newAdapter());
 		}
 		// check that the KANJIDIC dictionary file is available
-		new SearchUtils(this).checkDic(DictTypeEnum.Kanjidic);
+		AedictApp.getDownloader().checkDic(this, DictTypeEnum.Kanjidic);
 		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -361,7 +360,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			final LuceneSearch lsEdict = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getConfig().getDictionaryLoc(), AedictApp.getConfig().isSorted());
 			try {
 				LuceneSearch lsKanjidic = null;
-				if (AbstractDownloadTask.isComplete(DictTypeEnum.Kanjidic)) {
+				if (DownloaderService.isComplete(DictTypeEnum.Kanjidic)) {
 					lsKanjidic = new LuceneSearch(DictTypeEnum.Kanjidic, null, AedictApp.getConfig().isSorted());
 				}
 				try {

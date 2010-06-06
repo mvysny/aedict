@@ -26,7 +26,6 @@ import java.util.Set;
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.R;
 import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.util.SearchUtils;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -75,6 +74,6 @@ public class QuizLaunchActivity extends Activity {
 				QuizActivity.launch(QuizLaunchActivity.this, jlpt);
 			}
 		});
-		new SearchUtils(this).checkDic(DictTypeEnum.Kanjidic);
+		AedictApp.getDownloader().checkDic(this, DictTypeEnum.Kanjidic);
 	}
 }

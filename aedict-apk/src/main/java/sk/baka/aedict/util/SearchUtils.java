@@ -18,24 +18,17 @@
 
 package sk.baka.aedict.util;
 
-import java.net.URL;
-
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.ResultActivity;
 import sk.baka.aedict.AedictApp.Config;
-import sk.baka.aedict.dict.AbstractDownloadTask;
 import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.dict.DownloadDictTask;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.autils.AndroidUtils;
-import sk.baka.autils.DialogUtils;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.os.StatFs;
 import android.text.ClipboardManager;
 import android.view.KeyEvent;
 import android.view.View;
@@ -104,7 +97,7 @@ public final class SearchUtils {
 	}
 
 	private void performSearch(final SearchQuery query) {
-		if (!checkDic(query.dictType)) {
+		if (!AedictApp.getDownloader().checkDic(activity, query.dictType)) {
 			// the dictionary is not yet available. An activity was popped up,
 			// which offers dictionary download. Nothing to do here, just do
 			// nothing.
@@ -137,7 +130,8 @@ public final class SearchUtils {
 	 * @param isJapanSearch
 	 *            if true then we are searching for japanese text (in romaji).
 	 */
-	public void registerSearch(final Integer isExactCheckBox, final Integer deinflectCheckBox, final Integer searchInExamplesCheckBox, final int searchEditText, final boolean handleSelections, final int searchButton, final boolean isJapanSearch) {
+	public void registerSearch(final Integer isExactCheckBox, final Integer deinflectCheckBox, final Integer searchInExamplesCheckBox, final int searchEditText, final boolean handleSelections,
+			final int searchButton, final boolean isJapanSearch) {
 		final EditText searchEdit = (EditText) activity.findViewById(searchEditText);
 		final Button searchBtn = (Button) activity.findViewById(searchButton);
 		final SearchText handler = new SearchText(isExactCheckBox, deinflectCheckBox, searchInExamplesCheckBox, searchEditText, handleSelections, isJapanSearch);
@@ -187,7 +181,8 @@ public final class SearchUtils {
 		 *            if true then we are searching for japanese text (in
 		 *            romaji).
 		 */
-		public SearchText(final Integer isExactCheckBox, final Integer deinflectCheckBox, final Integer searchInExamplesCheckBox, final int searchEditText, final boolean handleSelections, final boolean isJapanSearch) {
+		public SearchText(final Integer isExactCheckBox, final Integer deinflectCheckBox, final Integer searchInExamplesCheckBox, final int searchEditText, final boolean handleSelections,
+				final boolean isJapanSearch) {
 			if (deinflectCheckBox != null && searchInExamplesCheckBox != null) {
 				throw new IllegalArgumentException("deinflectCheckBox and searchInExamplesCheckBox cannot both be non-null");
 			}
@@ -290,96 +285,5 @@ public final class SearchUtils {
 				KanjiAnalyzeActivity.launch(activity, text.getText().toString().trim(), startWordAnalysis);
 			}
 		}));
-	}
-
-	/**
-	 * Checks if given dictionary file exists. If not, user is prompted for a
-	 * download and the files are downloaded if requested.
-	 * 
-	 * @param source
-	 *            download the dictionary here. A Lucene zipped index file is
-	 *            expected.
-	 * @param targetDir
-	 *            unpack the files here.
-	 * @param expectedSize
-	 *            the expected size of the Lucene dictionary files.
-	 * @param dictName
-	 *            the name of the dictionary, EDict or KanjiDic
-	 * @param factory
-	 *            produces the downloader.
-	 * @return true if the files are available, false otherwise.
-	 */
-	public boolean checkDictionaryFile(final URL source, final String targetDir, final long expectedSize, final String dictName, final DownloaderFactory factory) {
-		if (!AbstractDownloadTask.isComplete(targetDir)) {
-			final StatFs stats = new StatFs("/sdcard");
-			final long free = ((long) stats.getBlockSize()) * stats.getAvailableBlocks();
-			final StringBuilder msg = new StringBuilder(activity.getString(R.string.dictionary_missing_download, dictName));
-			if (free < expectedSize) {
-				msg.append('\n');
-				msg.append(AedictApp.format(R.string.warning_less_than_x_mb_free, expectedSize / 1024, free / 1024));
-			}
-			new DialogUtils(activity).showYesNoDialog(msg.toString(), new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-					factory.produce(source, targetDir, dictName, expectedSize).execute(activity);
-				}
-			});
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Checks if given dictionary exists. If not, user is prompted for a
-	 * download and the files are downloaded if requested.
-	 * 
-	 * @param dict
-	 *            the dictionary type.
-	 * @return true if the files are available, false otherwise.
-	 */
-	public boolean checkDic(final DictTypeEnum dict) {
-		return checkDictionaryFile(dict.getDownloadSite(), dict.getDefaultDictionaryPath(), dict.luceneFileSize(), dict.name(), new DownloaderFactory() {
-			
-			public AbstractDownloadTask produce(URL source, String targetDir, String dictName, long expectedSize) {
-				return new DownloadDictTask(source, targetDir, dictName, expectedSize);
-			}
-		});
-	}
-
-	/**
-	 * Checks if the SOD images exists. If not, user is prompted for a download
-	 * and the files are downloaded if requested.
-	 * 
-	 * @return true if the files are available, false otherwise.
-	 */
-	public boolean checkSod() {
-		return checkDictionaryFile(SodLoader.DOWNLOAD_URL, SodLoader.SDCARD_LOCATION.getParent(), 4584605L, SodLoader.SDCARD_LOCATION.getName(), new DownloaderFactory() {
-			
-			public AbstractDownloadTask produce(URL source, String targetDir, String dictName, long expectedSize) {
-				return new SodDownloadTask(source, targetDir, dictName, expectedSize);
-			}
-		});
-	}
-
-	/**
-	 * Produces the downloader.
-	 * 
-	 * @author Martin Vysny
-	 */
-	public static interface DownloaderFactory {
-		/**
-		 * Creates new dictionary downloader.
-		 * 
-		 * @param source
-		 *            download the dictionary files from here.
-		 * @param targetDir
-		 *            unzip the files here
-		 * @param dictName
-		 *            the dictionary name.
-		 * @param expectedSize
-		 *            the expected file size of unpacked dictionary.
-		 * @return the download instance, not null.
-		 */
-		AbstractDownloadTask produce(final URL source, final String targetDir, final String dictName, final long expectedSize);
 	}
 }
