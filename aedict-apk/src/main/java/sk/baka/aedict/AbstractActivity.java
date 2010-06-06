@@ -18,6 +18,7 @@
 
 package sk.baka.aedict;
 
+import sk.baka.aedict.jlptquiz.QuizLaunchActivity;
 import sk.baka.aedict.skip.SkipActivity;
 import sk.baka.autils.AndroidUtils;
 import android.app.Activity;
@@ -173,6 +174,7 @@ public abstract class AbstractActivity extends Activity {
 			}
 		});
 		addActivityLauncher(activity, menu, R.string.notepad, android.R.drawable.ic_menu_agenda, NotepadActivity.class);
+		addActivityLauncher(activity, menu, R.string.jlptQuiz, R.drawable.ic_menu_compose, QuizLaunchActivity.class);
 		addActivityLauncher(activity, menu, R.string.configuration, android.R.drawable.ic_menu_preferences, ConfigActivity.class);
 	}
 }

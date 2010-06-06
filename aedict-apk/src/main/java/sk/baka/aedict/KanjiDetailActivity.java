@@ -142,8 +142,8 @@ public class KanjiDetailActivity extends AbstractActivity {
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		super.onPrepareOptionsMenu(menu);
 		showRomaji.register(menu);
+		AbstractActivity.addMenuItems(this, menu);
 		return true;
 	}
 

@@ -33,7 +33,7 @@
 			android:id="@+id/advanced" android:layout_weight="1"/>
 		</LinearLayout>
 	<LinearLayout android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:orientation="horizontal">
+		android:layout_height="wrap_content" android:orientation="horizontal" android:visibility="gone" android:id="@+id/advancedPanel">
 		<CheckBox android:layout_height="wrap_content" android:id="@+id/exactMatch"
 			android:text="@string/exactMatch" android:layout_width="wrap_content"
 			android:layout_weight="1"/>
@@ -54,14 +54,6 @@
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/translate"
 			android:id="@+id/btnJpTranslate"/>
-	</LinearLayout>
-	<TextView android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:text="@string/other" android:textColor="#FFF" android:background="#666"/>
-	<LinearLayout android:layout_width="fill_parent"
-		android:layout_height="wrap_content">
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/jlptQuiz"
-			android:id="@+id/quiz"/>
 	</LinearLayout>
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content">

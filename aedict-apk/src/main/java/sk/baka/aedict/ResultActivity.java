@@ -268,8 +268,8 @@ public class ResultActivity extends ListActivity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		AbstractActivity.addMenuItems(this, menu);
 		showRomaji.register(menu);
+		AbstractActivity.addMenuItems(this, menu);
 		return true;
 	}
 
