@@ -41,8 +41,8 @@ public class MainActivity extends AbstractActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		final SearchUtils utils = new SearchUtils(this);
-		utils.registerSearch(R.id.jpExactMatch, R.id.jpDeinflectVerbs, null, R.id.jpSearchEdit, false, R.id.jpSearch, true);
-		utils.registerSearch(R.id.engExactMatch, null, R.id.engSearchExamples, R.id.engSearchEdit, false, R.id.engSearch, false);
+		utils.registerSearch(R.id.exactMatch, R.id.jpDeinflectVerbs, null, R.id.searchEdit, false, R.id.jpSearch, true);
+		utils.registerSearch(R.id.exactMatch, null, R.id.searchExamples, R.id.searchEdit, false, R.id.englishSearch, false);
 		utils.setupAnalysisControls(R.id.btnJpTranslate, R.id.txtJpTranslate, true);
 		setButtonActivityLauncher(R.id.quiz, QuizLaunchActivity.class);
 		// check for dictionary file and download it if it is missing.

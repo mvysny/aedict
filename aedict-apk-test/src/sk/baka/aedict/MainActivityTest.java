@@ -43,7 +43,7 @@ public class MainActivityTest extends AbstractAedictTest<MainActivity> {
 	 */
 	public void testSimpleJapanSearch() {
 		tester.startActivity();
-		tester.setText(R.id.jpSearchEdit, "haha");
+		tester.setText(R.id.searchEdit, "haha");
 		tester.click(R.id.jpSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
 		final SearchQuery q = (SearchQuery) getStartedActivityIntent().getSerializableExtra(ResultActivity.INTENTKEY_SEARCH_QUERY);
@@ -60,9 +60,9 @@ public class MainActivityTest extends AbstractAedictTest<MainActivity> {
 	 */
 	public void testSimpleEnglishSearch() {
 		tester.startActivity();
-		tester.setText(R.id.engSearchEdit, "mother");
-		tester.click(R.id.engExactMatch);
-		tester.click(R.id.engSearch);
+		tester.setText(R.id.searchEdit, "mother");
+		tester.click(R.id.exactMatch);
+		tester.click(R.id.englishSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
 		final SearchQuery q = (SearchQuery) getStartedActivityIntent().getSerializableExtra(ResultActivity.INTENTKEY_SEARCH_QUERY);
 		assertEquals("mother", q.query[0]);
@@ -77,8 +77,8 @@ public class MainActivityTest extends AbstractAedictTest<MainActivity> {
 	 */
 	public void testNonExactEnglishSearch() {
 		tester.startActivity();
-		tester.setText(R.id.engSearchEdit, "mother");
-		tester.click(R.id.engSearch);
+		tester.setText(R.id.searchEdit, "mother");
+		tester.click(R.id.englishSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
 		final SearchQuery q = (SearchQuery) getStartedActivityIntent().getSerializableExtra(ResultActivity.INTENTKEY_SEARCH_QUERY);
 		assertEquals(MatcherEnum.Substring, q.matcher);
@@ -93,11 +93,11 @@ public class MainActivityTest extends AbstractAedictTest<MainActivity> {
 	 */
 	public void testSearchInExamples() {
 		tester.startActivity();
-		tester.setText(R.id.engSearchEdit, "mother");
-		tester.click(R.id.engExactMatch);
-		tester.click(R.id.engSearchExamples);
-		tester.assertChecked(false, R.id.engExactMatch);
-		tester.click(R.id.engSearch);
+		tester.setText(R.id.searchEdit, "mother");
+		tester.click(R.id.exactMatch);
+		tester.click(R.id.searchExamples);
+		tester.assertChecked(false, R.id.exactMatch);
+		tester.click(R.id.englishSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
 		final SearchQuery q = (SearchQuery) getStartedActivityIntent().getSerializableExtra(ResultActivity.INTENTKEY_SEARCH_QUERY);
 		assertEquals("mother", q.query[0]);
@@ -109,9 +109,9 @@ public class MainActivityTest extends AbstractAedictTest<MainActivity> {
 
 	public void testJpSearchDeinflectVerbs() {
 		tester.startActivity();
-		tester.setText(R.id.jpSearchEdit, "aenai");
+		tester.setText(R.id.searchEdit, "aenai");
 		tester.click(R.id.jpDeinflectVerbs);
-		tester.assertChecked(true, R.id.jpExactMatch);
+		tester.assertChecked(true, R.id.exactMatch);
 		tester.click(R.id.jpSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
 		final SearchQuery q = (SearchQuery) getStartedActivityIntent().getSerializableExtra(ResultActivity.INTENTKEY_SEARCH_QUERY);
