@@ -31,6 +31,7 @@ import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -73,6 +74,14 @@ public class ConfigActivity extends PreferenceActivity {
 	 * Resets the introduction dialogs - all dialogs will be shown again.
 	 */
 	public static final String KEY_RESET_INTRODUCTIONS = "resetIntroductions";
+	/**
+	 * Shows the "About" dialog.
+	 */
+	public static final String KEY_ABOUT= "about";
+	/**
+	 * Launches the "Donate" page.
+	 */
+	public static final String KEY_DONATE= "donate";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +106,14 @@ public class ConfigActivity extends PreferenceActivity {
 			final DialogUtils utils = new DialogUtils(ConfigActivity.this);
 			utils.clearInfoOccurency();
 			utils.showToast(R.string.resetIntroductionsSummary);
+			return true;
+		}
+		if (key.equals(KEY_ABOUT)) {
+			AboutActivity.launch(this);
+			return true;
+		}
+		if (key.equals(KEY_DONATE)) {
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://code.google.com/p/aedict/#Donate")));
 			return true;
 		}
 		return super.onPreferenceTreeClick(preferenceScreen, preference);

@@ -19,6 +19,7 @@
 package sk.baka.aedict;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -43,5 +44,9 @@ public final class AboutActivity extends Activity {
 		b.append(" v");
 		b.append(AedictApp.getVersion());
 		return b.toString();
+	}
+
+	public static void launch(Activity a) {
+		a.startActivity(new Intent(a, AboutActivity.class));
 	}
 }
