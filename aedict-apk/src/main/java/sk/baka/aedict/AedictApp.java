@@ -229,8 +229,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		public static final String KEY_NOTEPAD_ITEMS = "notepadItems2";
 
 		/**
-		 * Persisted notepad items. A mixture of Japanese kanjis, hiragana and
-		 * katakana, comma-separated.
+		 * Persisted notepad DictEntries. See {@link NotepadActivity#deserialize(String)} for details on the string format.
 		 * 
 		 * @return the notepad items, never null.
 		 */
@@ -239,14 +238,37 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		}
 
 		/**
-		 * Persisted notepad items. A mixture of Japanese kanjis, hiragana and
-		 * katakana, comma-separated.
+		 * Persisted notepad DictEntries. See {@link NotepadActivity#deserialize(String)} for details on the string format.
 		 * 
 		 * @param notepadItems
 		 *            the new notepad items, never null.
 		 */
 		public void setNotepadItems(final String notepadItems) {
 			commit(prefs.edit().putString(KEY_NOTEPAD_ITEMS, notepadItems));
+		}
+
+		/**
+		 * The preference key of the "notepad items" configuration item.
+		 */
+		public static final String KEY_RECENTLY_VIEWED_ITEMS = "recentlyViewed";
+
+		/**
+		 * Recently viewed DictEntries. See {@link NotepadActivity#deserialize(String)} for details on the string format.
+		 * 
+		 * @return the notepad items, never null.
+		 */
+		public String getRecentlyViewed() {
+			return prefs.getString(KEY_RECENTLY_VIEWED_ITEMS, "");
+		}
+
+		/**
+		 * Recently viewed DictEntries. See {@link NotepadActivity#deserialize(String)} for details on the string format.
+		 * 
+		 * @param notepadItems
+		 *            the new notepad items, never null.
+		 */
+		public void setRecentlyViewed(final String notepadItems) {
+			commit(prefs.edit().putString(KEY_RECENTLY_VIEWED_ITEMS, notepadItems));
 		}
 
 		private void commit(final Editor ed) {
