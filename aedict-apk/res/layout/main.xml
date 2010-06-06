@@ -17,25 +17,33 @@
 <LinearLayout
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-	<TextView android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:text="@string/jpSearch" android:textColor="#FFF" android:background="#666"/>
+	<EditText android:layout_height="wrap_content" android:id="@+id/jpSearchEdit"
+		android:layout_width="fill_parent" android:hint="@string/enterKanaRomajiEnglish"
+		android:inputType="text"/>
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:orientation="horizontal">
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/japanese"
+			android:id="@+id/jpSearch" android:layout_weight="1"/>
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/english"
+			android:id="@+id/englishSearch" android:layout_weight="1"/>
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/more"
+			android:id="@+id/advanced" android:layout_weight="1"/>
+		</LinearLayout>
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:orientation="horizontal">
 		<CheckBox android:layout_height="wrap_content" android:id="@+id/jpExactMatch"
 			android:text="@string/exactMatch" android:layout_width="wrap_content"
-			android:layout_weight="1"></CheckBox>
+			android:layout_weight="1"/>
 		<CheckBox android:layout_height="wrap_content" android:id="@+id/jpDeinflectVerbs"
 			android:text="@string/deinflectVerbs" android:layout_width="wrap_content"
-			android:layout_weight="1"></CheckBox>
-		<Button android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="@string/search"
-			android:id="@+id/jpSearch"/>
+			android:layout_weight="1"/>
+		<CheckBox android:id="@+id/searchExamples"
+			android:layout_width="wrap_content" android:layout_weight="1"
+			android:layout_height="wrap_content" android:text="@string/searchInExamples"/>
 	</LinearLayout>
-	<EditText android:layout_height="wrap_content" android:id="@+id/jpSearchEdit"
-		android:layout_width="fill_parent" android:hint="@string/enterRomajiWord"
-		android:inputType="text" android:imeOptions="actionDone"></EditText>
-	<TextView android:layout_width="fill_parent" android:textColor="#FFF" android:background="#666"
-		android:layout_height="wrap_content" android:text="@string/englishSearch"></TextView>
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content">
 		<CheckBox android:id="@+id/engExactMatch"
@@ -70,5 +78,9 @@
 			android:layout_height="wrap_content" android:text="@string/jlptQuiz"
 			android:id="@+id/quiz"/>
 	</LinearLayout>
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+		<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/intro" android:textColor="#FFF"/>
+		</LinearLayout>
 </LinearLayout>
 </ScrollView>
