@@ -122,21 +122,32 @@ public class NotepadActivity extends ListActivity {
 		}
 	}
 
+	public static List<DictEntry> deserialize(final String serialized) {
+		final String items[] = serialized.split("@@@@");
+		final List<DictEntry> result = new ArrayList<DictEntry>();
+		try {
+			for (final String item : items) {
+				if (!MiscUtils.isBlank(item)) {
+					result.add(DictEntry.fromExternal(item));
+				}
+			}
+		} catch (Exception ex) {
+			Log.e(NotepadActivity.class.getSimpleName(), "Notepad model parsing failed", ex);
+		}
+		return result;
+	}
+	
+	public static String serialize(final List<? extends DictEntry> entries){
+		final ListBuilder b = new ListBuilder("@@@@");
+		for (final DictEntry entry : entries) {
+			b.add(entry.toExternal());
+		}
+		return b.toString();
+	}
+	
 	private List<DictEntry> getModel() {
 		if (modelCache == null) {
-			final Config cfg = AedictApp.getConfig();
-			final String notepadItems = cfg.getNotepadItems();
-			final String items[] = notepadItems.split("@@@@");
-			modelCache = new ArrayList<DictEntry>();
-			try {
-				for (final String item : items) {
-					if (!MiscUtils.isBlank(item)) {
-						modelCache.add(DictEntry.fromExternal(item));
-					}
-				}
-			} catch (Exception ex) {
-				Log.e(NotepadActivity.class.getSimpleName(), "Notepad model parsing failed", ex);
-			}
+			modelCache = deserialize(AedictApp.getConfig().getNotepadItems());
 		}
 		return modelCache;
 	}
@@ -161,12 +172,8 @@ public class NotepadActivity extends ListActivity {
 	 * each change.
 	 */
 	private void onModelChanged() {
-		final ListBuilder b = new ListBuilder("@@@@");
-		for (final DictEntry entry : getModel()) {
-			b.add(entry.toExternal());
-		}
 		final Config cfg = AedictApp.getConfig();
-		cfg.setNotepadItems(b.toString());
+		cfg.setNotepadItems(serialize(getModel()));
 		if (getListAdapter() != null) {
 			// the adapter may be null if this method is invoked from onCreate()
 			// method

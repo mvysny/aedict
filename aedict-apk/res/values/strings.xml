@@ -436,4 +436,5 @@
 	<string name="japanese">Japanese</string>
 	<string name="english">English</string>
 	<string name="more">More...</string>
+	<string name="recentlyViewed">Recently viewed</string>
 </resources>

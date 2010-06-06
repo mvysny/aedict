@@ -18,29 +18,49 @@
 
 package sk.baka.aedict;
 
+import java.util.List;
+
+import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DownloaderService;
+import sk.baka.aedict.dict.Edict;
+import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
+import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.DialogUtils;
+import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.TwoLineListItem;
 
 /**
  * Provides means to search the edict dictionary file.
  * 
  * @author Martin Vysny
  */
-public class MainActivity extends AbstractActivity {
+public class MainActivity extends ListActivity {
+	private ShowRomaji showRomaji;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		showRomaji = new ShowRomaji(this) {
+
+			@Override
+			protected void show(boolean romaji) {
+				((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
+			}
+		};
 		final SearchUtils utils = new SearchUtils(this);
 		utils.registerSearch(R.id.exactMatch, R.id.jpDeinflectVerbs, null, R.id.searchEdit, false, R.id.jpSearch, true);
 		utils.registerSearch(R.id.exactMatch, null, R.id.searchExamples, R.id.searchEdit, false, R.id.englishSearch, false);
@@ -64,7 +84,63 @@ public class MainActivity extends AbstractActivity {
 		if (!AedictApp.isInstrumentation) {
 			new DialogUtils(this).showInfoOnce(AedictApp.getVersion(), AedictApp.format(R.string.whatsNew, AedictApp.getVersion()), getString(R.string.whatsNewText));
 		}
-		findViewById(R.id.intro).setVisibility(true ? View.VISIBLE : View.GONE);
+		findViewById(R.id.intro).setVisibility(getModel().isEmpty() ? View.VISIBLE : View.GONE);
+		findViewById(R.id.recentlyViewed).setVisibility(getModel().isEmpty() ? View.GONE : View.VISIBLE);
 		((TextView) findViewById(R.id.aedict)).setText("Aedict " + AedictApp.getVersion());
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		showRomaji.register(menu);
+		AbstractActivity.addMenuItems(this, menu);
+		return true;
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		modelCache = null;
+		setModel();
+		showRomaji.onResume();
+	}
+
+	private List<DictEntry> modelCache = null;
+
+	private List<DictEntry> getModel() {
+		if (modelCache == null) {
+			modelCache = NotepadActivity.deserialize(AedictApp.getConfig().getRecentlyViewed());
+		}
+		return modelCache;
+	}
+
+	public static void recentlyViewed(final DictEntry entry) {
+		final List<DictEntry> entries = NotepadActivity.deserialize(AedictApp.getConfig().getRecentlyViewed());
+		while (entries.size() > 20) {
+			entries.remove(entries.size() - 1);
+		}
+		entries.remove(entry);
+		entries.add(0, entry);
+		AedictApp.getConfig().setRecentlyViewed(NotepadActivity.serialize(entries));
+	}
+
+	/**
+	 * Sets the ListView model.
+	 */
+	private void setModel() {
+		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
+		setListAdapter(new ArrayAdapter<DictEntry>(this, android.R.layout.simple_list_item_2, getModel()) {
+
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				TwoLineListItem view = (TwoLineListItem) convertView;
+				if (view == null) {
+					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
+				}
+				Edict.print(getModel().get(position), view, showRomaji.isShowingRomaji() ? romanization : null);
+				return view;
+			}
+
+		});
 	}
 }
