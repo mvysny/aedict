@@ -53,6 +53,10 @@ public class QuizLaunchActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if(!AedictApp.getDownloader().checkDic(this, DictTypeEnum.Kanjidic)){
+			finish();
+			return;
+		}
 		setContentView(R.layout.jlpt_quiz_launch);
 		for (final Map.Entry<Integer, Integer> e : jlptMap.entrySet()) {
 			final CheckBox cb = (CheckBox) findViewById(e.getKey());
@@ -74,6 +78,5 @@ public class QuizLaunchActivity extends Activity {
 				QuizActivity.launch(QuizLaunchActivity.this, jlpt);
 			}
 		});
-		AedictApp.getDownloader().checkDic(this, DictTypeEnum.Kanjidic);
 	}
 }

@@ -45,13 +45,16 @@ public class SkipActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if(!AedictApp.getDownloader().checkDic(this, DictTypeEnum.Kanjidic)){
+			finish();
+			return;
+		}
 		setContentView(R.layout.skip1);
 		configureButtonFor123SkipWizardContinuation(R.id.skip11, 1);
 		configureButtonFor123SkipWizardContinuation(R.id.skip12, 2);
 		configureButtonFor123SkipWizardContinuation(R.id.skip13, 3);
 		AbstractActivity.setButtonActivityLauncher(this, R.id.skip14, Skip4Activity.class);
 		// check that the KANJIDIC dictionary file is available
-		AedictApp.getDownloader().checkDic(this, DictTypeEnum.Kanjidic);
 	}
 
 	private void configureButtonFor123SkipWizardContinuation(final int buttonId, final int skipType) {

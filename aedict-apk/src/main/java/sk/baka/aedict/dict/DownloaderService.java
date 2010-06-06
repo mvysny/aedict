@@ -36,12 +36,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import sk.baka.aedict.AedictApp;
+import sk.baka.aedict.DownloadActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.util.SodLoader;
 import sk.baka.autils.DialogUtils;
@@ -91,18 +93,30 @@ public class DownloaderService extends Service {
 	private final IBinder mBinder = new LocalBinder();
 
 	public static class State {
-		public State(String msg, int completeness, final boolean isError) {
+		public State(String msg, final String downloadPath, int downloaded, int total, final boolean isError) {
 			super();
 			this.msg = msg;
-			this.completeness = completeness;
+			this.downloaded = downloaded;
+			this.total = total;
 			this.isError = isError;
+			this.downloadPath = downloadPath;
 		}
 
 		public final String msg;
+		public final String downloadPath;
 		/**
-		 * 0..100%
+		 * in KB.
 		 */
-		public final int completeness;
+		public final int downloaded;
+		/**
+		 * in KB.
+		 */
+		public final int total;
+
+		public int getCompleteness() {
+			return downloaded * 100 / total;
+		}
+
 		/**
 		 * If true then this state denotes an error. In such case the error
 		 * message is stored in {@link #msg}.
@@ -139,6 +153,7 @@ public class DownloaderService extends Service {
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();
 					download(downloader);
+					activity.startActivity(new Intent(activity, DownloadActivity.class));
 				}
 			});
 			return false;
@@ -150,8 +165,15 @@ public class DownloaderService extends Service {
 	 * Checks if given dictionary exists. If not, user is prompted for a
 	 * download and the files are downloaded if requested.
 	 * 
-	 * @param dict
-	 *            the dictionary type.
+	 * @param source
+	 *            download the dictionary files from here. A zipped Lucene index
+	 *            file is expected.
+	 * @param targetDir
+	 *            unzip the files here
+	 * @param dictName
+	 *            the dictionary name.
+	 * @param expectedSize
+	 *            the expected file size of unpacked dictionary.
 	 * @return true if the files are available, false otherwise.
 	 */
 	public boolean checkDic(final Activity a, final DictTypeEnum dict) {
@@ -165,24 +187,52 @@ public class DownloaderService extends Service {
 	 * @return true if the files are available, false otherwise.
 	 */
 	public boolean checkSod(final Activity a) {
-		return checkDictionaryFile(a, new SodDownloader(SodLoader.DOWNLOAD_URL, SodLoader.SDCARD_LOCATION.getParent(), SodLoader.SDCARD_LOCATION.getName(), 4584605L));
+		return checkDictionaryFile(a, new SodDownloader());
 	}
 
 	private void download(final AbstractDownloader download) {
 		if (!new File(download.targetDir).isAbsolute()) {
 			throw new IllegalArgumentException("Not absolute: " + download.targetDir);
 		}
-		queue.put(download.dictName, new Object());
-		downloader.submit(download);
+		queueDictNames.put(download.dictName, new Object());
+		currentDownload = downloader.submit(download);
 	}
 
+	private volatile Future<?> currentDownload = null;
+
+	/**
+	 * Downloads a dictionary, no questions asked. If the dictionary is already
+	 * downloaded it will not be overwritten.
+	 * 
+	 * @param source
+	 *            download the dictionary files from here. A zipped Lucene index
+	 *            file is expected.
+	 * @param targetDir
+	 *            unzip the files here
+	 * @param dictName
+	 *            the dictionary name.
+	 * @param expectedSize
+	 *            the expected file size of unpacked dictionary.
+	 */
 	public void downloadDict(final URL source, final String targetDir, final String dictName, final long expectedSize) {
 		download(new DictDownloader(source, targetDir, dictName, expectedSize));
 	}
 
+	/**
+	 * Downloads a dictionary, no questions asked. If the dictionary is already
+	 * downloaded it will not be overwritten.
+	 */
+	public void downloadDict(final DictTypeEnum dict) {
+		downloadDict(dict.getDownloadSite(), dict.getDefaultDictionaryPath(), dict.name(), dict.luceneFileSize());
+	}
+
+	public void downloadSod() {
+		download(new SodDownloader());
+	}
+
 	private volatile boolean isDownloading = false;
 	private volatile State state = null;
-	private final ConcurrentMap<String, Object> queue = new ConcurrentHashMap<String, Object>();
+	private final ConcurrentMap<String, Object> queueDictNames = new ConcurrentHashMap<String, Object>();
 
 	/**
 	 * If true then there is a download active.
@@ -194,7 +244,7 @@ public class DownloaderService extends Service {
 	}
 
 	public Set<String> getDownloadQueue() {
-		return new HashSet<String>(queue.keySet());
+		return new HashSet<String>(queueDictNames.keySet());
 	}
 
 	private abstract class AbstractDownloader implements Runnable {
@@ -211,7 +261,8 @@ public class DownloaderService extends Service {
 		}
 
 		public void run() {
-			queue.remove(dictName);
+			queueDictNames.remove(dictName);
+			state = null;
 			if (isComplete(targetDir)) {
 				return;
 			}
@@ -225,7 +276,7 @@ public class DownloaderService extends Service {
 				}
 			} catch (Throwable t) {
 				Log.e(DownloaderService.class.getSimpleName(), "Error downloading a dictionary", t);
-				state = new State(t.getMessage(), -1, true);
+				state = new State(t.getMessage(), null, 0, 1, true);
 				deleteDirQuietly(new File(targetDir));
 			}
 		}
@@ -247,7 +298,7 @@ public class DownloaderService extends Service {
 			}
 			final InputStream in = new BufferedInputStream(conn.getInputStream());
 			try {
-				state = new State(AedictApp.format(R.string.downloading_dictionary, dictName), 0, false);
+				state = new State(AedictApp.format(R.string.downloading_dictionary, dictName), targetDir, 0, 100, false);
 				copy(in);
 			} finally {
 				MiscUtils.closeQuietly(in);
@@ -288,7 +339,7 @@ public class DownloaderService extends Service {
 			}
 			final int max = (int) (size / 1024L);
 			long downloaded = downloadedUntilNow;
-			state = new State(AedictApp.format(R.string.downloading_dictionary, dictName), (int) (downloaded / 1024L * 100L / max), false);
+			state = new State(AedictApp.format(R.string.downloading_dictionary, dictName), targetDir, (int) (downloaded / 1024L), max, false);
 			int reportCountdown = REPORT_EACH_XTH_BYTE;
 			final byte[] buf = new byte[BUFFER_SIZE];
 			int bufLen;
@@ -301,7 +352,7 @@ public class DownloaderService extends Service {
 				reportCountdown -= bufLen;
 				if (reportCountdown <= 0) {
 					final int progress = (int) (downloaded / 1024L);
-					state = new State(AedictApp.format(R.string.downloading_dictionary, dictName), (int) (progress * 100L / max), false);
+					state = new State(AedictApp.format(R.string.downloading_dictionary, dictName), targetDir, progress, max, false);
 					reportCountdown = REPORT_EACH_XTH_BYTE;
 				}
 			}
@@ -350,20 +401,9 @@ public class DownloaderService extends Service {
 
 		/**
 		 * Creates new dictionary downloader.
-		 * 
-		 * @param source
-		 *            download the dictionary files from here. A gzipped SOD
-		 *            binary file is expected. Please see {@link SodLoader} for
-		 *            details on the file format.
-		 * @param targetDir
-		 *            unzip the files here
-		 * @param dictName
-		 *            the dictionary name.
-		 * @param expectedSize
-		 *            the expected file size of unpacked dictionary.
 		 */
-		public SodDownloader(URL source, String targetDir, String dictName, long expectedSize) {
-			super(source, targetDir, dictName, expectedSize);
+		public SodDownloader() {
+			super(SodLoader.DOWNLOAD_URL, SodLoader.SDCARD_LOCATION.getParent(), SodLoader.SDCARD_LOCATION.getName(), SodLoader.UNPACKED_SIZE);
 		}
 
 		@Override
@@ -386,7 +426,7 @@ public class DownloaderService extends Service {
 	 *            the dictionary type. The default path will be checked.
 	 * @return true if everything is okay, false if not
 	 */
-	public static boolean isComplete(final DictTypeEnum dict) {
+	public boolean isComplete(final DictTypeEnum dict) {
 		return isComplete(dict.getDefaultDictionaryPath());
 	}
 
@@ -398,7 +438,7 @@ public class DownloaderService extends Service {
 	 *            located.
 	 * @return true if everything is okay, false if not
 	 */
-	public static boolean isComplete(final String indexDir) {
+	public boolean isComplete(final String indexDir) {
 		final File f = new File(indexDir);
 		if (!f.exists()) {
 			return false;
@@ -408,6 +448,11 @@ public class DownloaderService extends Service {
 			return false;
 		}
 		if (f.listFiles().length == 0) {
+			return false;
+		}
+		final State s = getState();
+		if (s != null && indexDir.equals(s.downloadPath) && !s.isError) {
+			// the dictionary is currently being downloaded.
 			return false;
 		}
 		return true;
@@ -452,5 +497,13 @@ public class DownloaderService extends Service {
 			}
 		}
 		return false;
+	}
+
+	public void cancelCurrentDownload() {
+		final Future<?> c = currentDownload;
+		if (c == null || c.isDone()) {
+			return;
+		}
+		c.cancel(true);
 	}
 }

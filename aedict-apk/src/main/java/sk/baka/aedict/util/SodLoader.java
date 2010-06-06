@@ -100,6 +100,7 @@ public class SodLoader {
 	 * The file name of the file.
 	 */
 	public static final File SDCARD_LOCATION = new File(DictTypeEnum.BASE_DIR + "/sod", "sod.dat");
+	public static final long UNPACKED_SIZE = 4584605L;
 
 	/**
 	 * Loads a SOD image for given kanji character. Returns null if there is no
