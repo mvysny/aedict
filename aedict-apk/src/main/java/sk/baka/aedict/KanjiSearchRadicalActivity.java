@@ -31,7 +31,6 @@ import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.Radicals;
-import sk.baka.aedict.util.SearchUtils;
 import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
@@ -100,7 +99,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 			}
 		}));
 		// check that KANJIDIC exists
-		new SearchUtils(this).checkDic(DictTypeEnum.Kanjidic);
+		AedictApp.getDownloader().checkDic(this, DictTypeEnum.Kanjidic);
 	}
 
 	/**

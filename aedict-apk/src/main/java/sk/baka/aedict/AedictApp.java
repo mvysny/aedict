@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.Formatter;
 
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.DownloaderService;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
@@ -30,11 +31,14 @@ import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -57,6 +61,25 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
 		PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
 		apply(new Config(this));
+		startService(new Intent(instance, DownloaderService.class));
+		bindService(new Intent(instance, DownloaderService.class), new ServiceConnection() {
+			public void onServiceConnected(ComponentName className, IBinder service) {
+				ds = ((DownloaderService.LocalBinder) service).getService();
+			}
+
+			public void onServiceDisconnected(ComponentName className) {
+				ds = null;
+			}
+		}, Context.BIND_AUTO_CREATE);
+	}
+
+	private static volatile DownloaderService ds;
+
+	public static DownloaderService getDownloader() {
+		if (ds == null) {
+			throw new IllegalStateException("Downloader is not yet started");
+		}
+		return ds;
 	}
 
 	private static AedictApp instance;
@@ -227,11 +250,11 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		}
 
 		private void commit(final Editor ed) {
-			if(!ed.commit()){
+			if (!ed.commit()) {
 				throw new IllegalStateException("Failed to commit new SharedPreferences value");
 			}
 		}
-		
+
 		/**
 		 * True if the results should be sorted (the default), false otherwise.
 		 * See http://code.google.com/p/aedict/issues/detail?id=56 for details.

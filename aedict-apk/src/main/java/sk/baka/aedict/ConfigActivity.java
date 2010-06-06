@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.dict.DownloadDictTask;
+import sk.baka.aedict.dict.DownloaderService;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
@@ -107,7 +107,7 @@ public class ConfigActivity extends PreferenceActivity {
 		super.onResume();
 		// components are now initialized in onResume phase, to refresh
 		// dictionary list when a new dictionary is downloaded
-		final List<String> dictionaries = new ArrayList<String>(DownloadDictTask.listEdictDictionaries().keySet());
+		final List<String> dictionaries = new ArrayList<String>(DownloaderService.listEdictDictionaries().keySet());
 		Collections.sort(dictionaries);
 		((ListPreference) findPreference(KEY_DICTIONARY_NAME)).setEntries(dictionaries.toArray(new CharSequence[0]));
 		((ListPreference) findPreference(KEY_DICTIONARY_NAME)).setEntryValues(dictionaries.toArray(new CharSequence[0]));

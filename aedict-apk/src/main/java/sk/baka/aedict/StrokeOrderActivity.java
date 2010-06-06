@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.SodLoader;
 import sk.baka.autils.AndroidUtils;
 import android.app.ListActivity;
@@ -67,7 +66,7 @@ public class StrokeOrderActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (new SearchUtils(this).checkSod()) {
+		if (AedictApp.getDownloader().checkSod(this)) {
 			final String kanjis = getIntent().getStringExtra(INTENTKEY_KANJILIST);
 			for (final char c : kanjis.toCharArray()) {
 				model.add(c);

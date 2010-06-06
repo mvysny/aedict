@@ -22,13 +22,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.NotepadActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.StrokeOrderActivity;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.util.Check;
-import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.aedict.util.SpanStringBuilder;
 import sk.baka.autils.AndroidUtils;
@@ -86,7 +86,7 @@ public class TanakaSearchTask extends AsyncTask<String, Void, List<DictEntry>> i
 
 	@Override
 	protected void onPreExecute() {
-		new SearchUtils(activity).checkDic(DictTypeEnum.Tanaka);
+		AedictApp.getDownloader().checkDic(activity, DictTypeEnum.Tanaka);
 		activity.setProgressBarIndeterminate(true);
 		activity.setProgressBarIndeterminateVisibility(true);
 		final TextView tv = (TextView) activity.getLayoutInflater().inflate(android.R.layout.simple_list_item_1, vg, false);

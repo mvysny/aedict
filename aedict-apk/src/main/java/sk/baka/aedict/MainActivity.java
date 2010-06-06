@@ -19,12 +19,17 @@
 package sk.baka.aedict;
 
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.DownloaderService;
 import sk.baka.aedict.jlptquiz.QuizLaunchActivity;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.autils.DialogUtils;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -46,7 +51,14 @@ public class MainActivity extends AbstractActivity {
 		setButtonActivityLauncher(R.id.btnAbout, AboutActivity.class);
 		setButtonActivityLauncher(R.id.quiz, QuizLaunchActivity.class);
 		// check for dictionary file and download it if it is missing.
-		utils.checkDic(DictTypeEnum.Edict);
+		bindService(new Intent(this, DownloaderService.class), new ServiceConnection() {
+			public void onServiceConnected(ComponentName className, IBinder service) {
+				((DownloaderService.LocalBinder) service).getService().checkDic(MainActivity.this, DictTypeEnum.Edict);
+			}
+
+			public void onServiceDisconnected(ComponentName className) {
+			}
+		}, Context.BIND_AUTO_CREATE);
 		final Button btnDonate = (Button) findViewById(R.id.btnDonate);
 		btnDonate.setOnClickListener(new OnClickListener() {
 
