@@ -76,8 +76,8 @@ public class NotepadActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.notepad);
-		showRomaji=new ShowRomaji(this) {
-			
+		showRomaji = new ShowRomaji(this) {
+
 			@Override
 			protected void show(boolean romaji) {
 				((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
@@ -197,10 +197,10 @@ public class NotepadActivity extends ListActivity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		final MenuItem item=menu.add(R.string.deleteAll);
+		final MenuItem item = menu.add(R.string.deleteAll);
 		item.setIcon(android.R.drawable.ic_menu_delete);
 		item.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
-			
+
 			public boolean onMenuItemClick(MenuItem item) {
 				getModel().clear();
 				onModelChanged();

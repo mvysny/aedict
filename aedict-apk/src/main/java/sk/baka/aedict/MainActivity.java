@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.View;
 
 /**
  * Provides means to search the edict dictionary file.
@@ -44,7 +45,13 @@ public class MainActivity extends AbstractActivity {
 		utils.registerSearch(R.id.exactMatch, R.id.jpDeinflectVerbs, null, R.id.searchEdit, false, R.id.jpSearch, true);
 		utils.registerSearch(R.id.exactMatch, null, R.id.searchExamples, R.id.searchEdit, false, R.id.englishSearch, false);
 		utils.setupAnalysisControls(R.id.btnJpTranslate, R.id.txtJpTranslate, true);
-		setButtonActivityLauncher(R.id.quiz, QuizLaunchActivity.class);
+		findViewById(R.id.advanced).setOnClickListener(new View.OnClickListener() {
+
+			public void onClick(View v) {
+				final View g = findViewById(R.id.advancedPanel);
+				g.setVisibility(g.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+			}
+		});
 		// check for dictionary file and download it if it is missing.
 		bindService(new Intent(this, DownloaderService.class), new ServiceConnection() {
 			public void onServiceConnected(ComponentName className, IBinder service) {
