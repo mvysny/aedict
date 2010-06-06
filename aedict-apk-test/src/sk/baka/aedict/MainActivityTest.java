@@ -133,10 +133,4 @@ public class MainActivityTest extends AbstractAedictTest<MainActivity> {
 		assertEquals("今週のおすすめﾊﾞｰｹﾞﾝTVｹﾞｰﾑ", i.getStringExtra(KanjiAnalyzeActivity.INTENTKEY_WORD));
 		assertTrue(i.getBooleanExtra(KanjiAnalyzeActivity.INTENTKEY_WORD_ANALYSIS, false));
 	}
-
-	public void testLaunchAboutActivity() {
-		tester.startActivity();
-		tester.click(R.id.btnAbout);
-		tester.assertRequestedActivity(AboutActivity.class);
-	}
 }
