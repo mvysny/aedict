@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sk.baka.aedict.kanji.RomanizationEnum;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -50,9 +51,9 @@ public class KanaTableActivity extends AbstractActivity {
 			// create a header
 			final TableRow row = new TableRow(this);
 			l.addView(row);
-			add(row, null, "", romanization);
+			add(row, null, "", romanization, Color.WHITE);
 			for (char c : ORDER) {
-				add(row, null, String.valueOf(c), romanization);
+				add(row, null, String.valueOf(c), romanization, Color.WHITE);
 			}
 		}
 		// create other rows
@@ -67,24 +68,27 @@ public class KanaTableActivity extends AbstractActivity {
 			} else {
 				firstKana = "";
 			}
-			add(row, null, firstKana, romanization);
+			add(row, null, firstKana, romanization, Color.WHITE);
 			row2.addView(new TextView(this));
 			for (int i = 0; i < columns; i++) {
 				String kana = table.get(r * columns + i);
 				// RomanizationEnum.NihonShiki is okay here as it is used both in the
 				// GOJUUON and in the YOUON constants
 				kana = hiragana ? RomanizationEnum.NihonShiki.toHiragana(kana) : RomanizationEnum.NihonShiki.toKatakana(kana);
-				add(row, row2, kana, romanization);
+				add(row, row2, kana, romanization, null);
 			}
 		}
 	}
 
-	private KanaTableActivity add(final TableRow row, final TableRow row2, String text, final RomanizationEnum romanization) {
+	private KanaTableActivity add(final TableRow row, final TableRow row2, String text, final RomanizationEnum romanization, final Integer color) {
 		final TextView tv = new TextView(this);
 		tv.setText(text);
 		tv.setPadding(9, 3, 9, 3);
 		tv.setGravity(Gravity.CENTER);
 		tv.setTextSize(30);
+		if (color != null) {
+			tv.setTextColor(color);
+		}
 		row.addView(tv);
 		if (row2 != null) {
 			final TextView tvReading = new TextView(this);
