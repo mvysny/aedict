@@ -21,7 +21,6 @@ package sk.baka.aedict;
 import java.util.Arrays;
 
 import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.RomanizationEnum;

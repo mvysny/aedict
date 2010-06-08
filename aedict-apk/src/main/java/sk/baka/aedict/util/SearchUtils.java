@@ -41,7 +41,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.TextView.OnEditorActionListener;
 
 /**
  * Contains utility methods for searching with Lucene.
