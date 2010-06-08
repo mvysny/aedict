@@ -27,6 +27,7 @@ import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.autils.AndroidUtils;
+import sk.baka.autils.MiscUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.text.ClipboardManager;
@@ -197,10 +198,13 @@ public final class SearchUtils {
 
 		private void performSearch() {
 			final EditText searchEdit = (EditText) activity.findViewById(searchEditText);
+			String query = searchEdit.getText().toString();
+			if (MiscUtils.isBlank(query)) {
+				return;
+			}
 			final boolean isDeinflect = deinflectCheckBox == null ? false : ((CheckBox) activity.findViewById(deinflectCheckBox)).isChecked();
 			final boolean isSearchInExamples = searchInExamplesCheckBox == null ? false : ((CheckBox) activity.findViewById(searchInExamplesCheckBox)).isChecked();
 			final boolean isExact = isDeinflect ? true : (isSearchInExamples ? false : (isExactCheckBox == null ? true : ((CheckBox) activity.findViewById(isExactCheckBox)).isChecked()));
-			String query = searchEdit.getText().toString();
 			if (handleSelections) {
 				int start = searchEdit.getSelectionStart();
 				int end = searchEdit.getSelectionEnd();
@@ -228,18 +232,21 @@ public final class SearchUtils {
 		}
 
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-			if (isChecked) {
-				final CheckBox cb = (CheckBox) activity.findViewById(isExactCheckBox);
+			final CheckBox isExact = (CheckBox) activity.findViewById(isExactCheckBox);
+			final CheckBox deinflect = deinflectCheckBox == null ? null : (CheckBox) activity.findViewById(deinflectCheckBox);
+			final CheckBox tanaka = searchInExamplesCheckBox == null ? null : (CheckBox) activity.findViewById(searchInExamplesCheckBox);
+			if (deinflectCheckBox != null && buttonView.getId() == deinflectCheckBox && isChecked) {
+				isExact.setChecked(true);
+				if (searchInExamplesCheckBox != null) {
+					tanaka.setChecked(false);
+				}
+			} else if (searchInExamplesCheckBox != null && ((CheckBox) activity.findViewById(searchInExamplesCheckBox)).isChecked()) {
+				isExact.setChecked(false);
 				if (deinflectCheckBox != null) {
-					cb.setChecked(true);
-					cb.setEnabled(false);
-				} else if (searchInExamplesCheckBox != null) {
-					cb.setChecked(false);
-					cb.setEnabled(false);
-				} else {
-					cb.setEnabled(true);
+					deinflect.setChecked(false);
 				}
 			}
+			isExact.setEnabled(!deinflect.isChecked() && !tanaka.isChecked());
 		}
 	}
 
