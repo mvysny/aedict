@@ -130,10 +130,8 @@ public final class SearchUtils {
 	 */
 	public void registerSearch(final Integer isExactCheckBox, final Integer deinflectCheckBox, final Integer searchInExamplesCheckBox, final int searchEditText, final int searchButton,
 			final boolean isJapanSearch) {
-		final EditText searchEdit = (EditText) activity.findViewById(searchEditText);
 		final Button searchBtn = (Button) activity.findViewById(searchButton);
 		final SearchText handler = new SearchText(isExactCheckBox, deinflectCheckBox, searchInExamplesCheckBox, searchEditText, isJapanSearch);
-		searchEdit.setOnEditorActionListener(AndroidUtils.safe(activity, OnEditorActionListener.class, handler));
 		searchBtn.setOnClickListener(AndroidUtils.safe(activity, OnClickListener.class, handler));
 		if (isExactCheckBox != null && deinflectCheckBox != null) {
 			final CheckBox deinflect = (CheckBox) activity.findViewById(deinflectCheckBox);

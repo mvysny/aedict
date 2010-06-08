@@ -112,7 +112,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 
 	public void testSwitchToRomaji() {
 		testSimpleEnglishSearch();
-		tester.optionMenu(10004);
+		tester.optionMenu(10000);
 		assertTrue(getActivity().showRomaji.isShowingRomaji());
 	}
 

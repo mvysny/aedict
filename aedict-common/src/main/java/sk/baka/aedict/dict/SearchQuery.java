@@ -239,6 +239,9 @@ public final class SearchQuery implements Serializable {
             final String romaji = RomanizationEnum.NihonShiki.toRomaji(romanization.toHiragana(word));
             final Set<String> deinflections = VerbDeinflection.deinflect(romaji);
             result.query = deinflections.toArray(new String[0]);
+            for (int i = 0; i < result.query.length; i++) {
+                result.query[i] = RomanizationEnum.NihonShiki.toHiragana(result.query[i]);
+            }
         } else {
             result.query = new String[]{romanization.toKatakana(conv), romanization.toHiragana(conv)};
         }
