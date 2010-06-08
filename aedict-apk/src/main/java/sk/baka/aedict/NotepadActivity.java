@@ -290,12 +290,11 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 						AedictApp.getConfig().setNotepadCategories(categories);
 					} else {
 						categories.remove(category);
-						tabContents.remove(category);
 						AedictApp.getConfig().setNotepadCategories(categories);
+						AedictApp.getConfig().setNotepadItems(category, new ArrayList<DictEntry>());
 						for (int i = category; i < categories.size(); i++) {
 							AedictApp.getConfig().setNotepadItems(i, AedictApp.getConfig().getNotepadItems(i + 1));
 						}
-						getModel(category).clear();
 						modelCache.clear();
 					}
 					updateTabs();
