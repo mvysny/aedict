@@ -440,4 +440,5 @@
 	<string name="addCategory">Add category</string>
 	<string name="deleteCategory">Delete category</string>
 	<string name="renameCategory">Rename category</string>
+	<string name="ok">Ok</string>
 </resources>
