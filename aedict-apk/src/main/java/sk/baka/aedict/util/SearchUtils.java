@@ -72,9 +72,9 @@ public final class SearchUtils {
 	 *            if true then a verb deinflection is attempted before the
 	 *            search.
 	 */
-	private void searchForJapan(final String romaji, final boolean isExact, final boolean isDeinflect) {
+	private void searchForJapan(final String romaji, final boolean isExact, final boolean isDeinflect, final boolean isSearchInExamples) {
 		final Config cfg = AedictApp.getConfig();
-		final SearchQuery q = SearchQuery.searchForRomaji(romaji, cfg.getRomanization(), isExact, isDeinflect);
+		final SearchQuery q = SearchQuery.searchForRomaji(romaji, cfg.getRomanization(), isExact, isDeinflect, isSearchInExamples);
 		performSearch(q);
 	}
 
@@ -183,9 +183,6 @@ public final class SearchUtils {
 		 */
 		public SearchText(final Integer isExactCheckBox, final Integer deinflectCheckBox, final Integer searchInExamplesCheckBox, final int searchEditText, final boolean handleSelections,
 				final boolean isJapanSearch) {
-			if (deinflectCheckBox != null && searchInExamplesCheckBox != null) {
-				throw new IllegalArgumentException("deinflectCheckBox and searchInExamplesCheckBox cannot both be non-null");
-			}
 			this.isExactCheckBox = isExactCheckBox;
 			this.deinflectCheckBox = deinflectCheckBox;
 			this.searchInExamplesCheckBox = searchInExamplesCheckBox;
@@ -219,7 +216,7 @@ public final class SearchUtils {
 				}
 			}
 			if (isJapanSearch) {
-				searchForJapan(query, isExact, isDeinflect);
+				searchForJapan(query, isExact, isDeinflect, isSearchInExamples);
 			} else {
 				searchForEnglish(query, isExact, isSearchInExamples);
 			}

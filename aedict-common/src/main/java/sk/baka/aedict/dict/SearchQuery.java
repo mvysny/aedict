@@ -229,19 +229,16 @@ public final class SearchQuery implements Serializable {
      * @param isDeinflect
      *            if true then the word is expected to be a verb which is
      *            deinflected.
+     * @param isSearchInExamples if true then the search will be performed in Tanaka examples.
      * @return search query, never null
      */
-    public static SearchQuery searchForRomaji(final String word, final RomanizationEnum romanization, final boolean exact, final boolean isDeinflect) {
-        final SearchQuery result = new SearchQuery(DictTypeEnum.Edict);
+    public static SearchQuery searchForRomaji(final String word, final RomanizationEnum romanization, final boolean exact, final boolean isDeinflect, final boolean isSearchInExamples) {
+        final SearchQuery result = new SearchQuery(isSearchInExamples ? DictTypeEnum.Tanaka : DictTypeEnum.Edict);
         String conv = KanjiUtils.halfwidthToKatakana(word);
         if (isDeinflect) {
             final String romaji = RomanizationEnum.NihonShiki.toRomaji(romanization.toHiragana(word));
             final Set<String> deinflections = VerbDeinflection.deinflect(romaji);
-            result.query = new String[deinflections.size()];
-            int i = 0;
-            for (final String deinflect : deinflections) {
-                result.query[i++] = RomanizationEnum.NihonShiki.toHiragana(deinflect);
-            }
+            result.query = deinflections.toArray(new String[0]);
         } else {
             result.query = new String[]{romanization.toKatakana(conv), romanization.toHiragana(conv)};
         }

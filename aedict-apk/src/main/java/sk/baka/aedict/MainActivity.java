@@ -44,6 +44,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
@@ -69,7 +70,7 @@ public class MainActivity extends ListActivity {
 			}
 		};
 		final SearchUtils utils = new SearchUtils(this);
-		utils.registerSearch(R.id.exactMatch, R.id.jpDeinflectVerbs, null, R.id.searchEdit, false, R.id.jpSearch, true);
+		utils.registerSearch(R.id.exactMatch, R.id.jpDeinflectVerbs, R.id.searchExamples, R.id.searchEdit, false, R.id.jpSearch, true);
 		utils.registerSearch(R.id.exactMatch, null, R.id.searchExamples, R.id.searchEdit, false, R.id.englishSearch, false);
 		utils.setupAnalysisControls(R.id.btnJpTranslate, R.id.txtJpTranslate, true);
 		findViewById(R.id.advanced).setOnClickListener(new View.OnClickListener() {
@@ -144,6 +145,9 @@ public class MainActivity extends ListActivity {
 		findViewById(R.id.intro).setVisibility(getModel().isEmpty() ? View.VISIBLE : View.GONE);
 		findViewById(R.id.recentlyViewed).setVisibility(getModel().isEmpty() ? View.GONE : View.VISIBLE);
 		findViewById(R.id.advancedPanel).setVisibility(View.GONE);
+		((CheckBox) findViewById(R.id.exactMatch)).setChecked(false);
+		((CheckBox) findViewById(R.id.jpDeinflectVerbs)).setChecked(false);
+		((CheckBox) findViewById(R.id.searchExamples)).setChecked(false);
 	}
 
 	private List<DictEntry> modelCache = null;

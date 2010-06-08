@@ -258,8 +258,8 @@ public class ResultActivity extends ListActivity {
 		}
 		if (isSimeji) {
 			returnToSimeji(query.isJapanese ? e.english : e.getJapanese());
-		} else {
-			EdictEntryDetailActivity.launch(this, (EdictEntry)e);
+		} else if (e instanceof EdictEntry) {
+			EdictEntryDetailActivity.launch(this, (EdictEntry) e);
 		}
 	}
 
