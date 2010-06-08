@@ -119,7 +119,7 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 
 	private final List<ListView> tabContents = new ArrayList<ListView>();
 
-	private ListView getListView(final int category) {
+	public ListView getListView(final int category) {
 		if (AedictApp.getConfig().getNotepadCategories().size() > 0) {
 			return tabContents.get(category);
 		}

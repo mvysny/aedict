@@ -18,6 +18,9 @@
 
 package sk.baka.aedict;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictEntry;
 import android.content.Intent;
@@ -38,7 +41,8 @@ public class NotepadActivityTest extends AbstractAedictTest<NotepadActivity> {
 		super.setUp();
 		// set the configuration to a known state
 		final Config cfg = AedictApp.getConfig();
-		cfg.setNotepadItems(new DictEntry("母は留守です。", "はははです", "Mother is.").toExternal());
+		cfg.setNotepadCategories(new ArrayList<String>());
+		cfg.setNotepadItems(0, Arrays.asList(new DictEntry("母は留守です。", "はははです", "Mother is.")));
 	}
 
 	public void testSimpleStart() {
@@ -47,26 +51,26 @@ public class NotepadActivityTest extends AbstractAedictTest<NotepadActivity> {
 
 	public void testAnalyze() {
 		tester.startActivity();
-		tester.contextMenu(getActivity().getListView(), 0, 0);
+		tester.contextMenu(getActivity().getListView(0), 0, 0);
 		tester.assertRequestedActivity(KanjiAnalyzeActivity.class);
 		assertEquals("母は留守です。", getStartedActivityIntent().getStringExtra(KanjiAnalyzeActivity.INTENTKEY_WORD));
 	}
 
 	public void testDelete() {
 		testAddEntry();
-		tester.contextMenu(getActivity().getListView(), 1, 0);
-		assertEquals(1, getActivity().getListAdapter().getCount());
+		tester.contextMenu(getActivity().getListView(0), 1, 0);
+		assertEquals(1, getActivity().getListView(0).getAdapter().getCount());
 	}
 
 	public void testDeleteAll() {
 		testAddEntry();
 		tester.optionMenu(1);
-		assertEquals(0, getActivity().getListAdapter().getCount());
+		assertEquals(0, getActivity().getListView(0).getAdapter().getCount());
 	}
 
 	public void testShowSod() {
 		tester.startActivity();
-		tester.contextMenu(getActivity().getListView(), 2, 0);
+		tester.contextMenu(getActivity().getListView(0), 2, 0);
 		tester.assertRequestedActivity(StrokeOrderActivity.class);
 		final String q = getStartedActivityIntent().getStringExtra(StrokeOrderActivity.INTENTKEY_KANJILIST);
 		assertEquals("母は留守です。", q);
@@ -76,11 +80,11 @@ public class NotepadActivityTest extends AbstractAedictTest<NotepadActivity> {
 		final Intent intent = new Intent(getInstrumentation().getTargetContext(), NotepadActivity.class);
 		intent.putExtra(NotepadActivity.INTENTKEY_ADD_ENTRY, new DictEntry("母", "はは", "mother"));
 		tester.startActivity(intent);
-		DictEntry e = (DictEntry) getActivity().getListAdapter().getItem(0);
+		DictEntry e = (DictEntry) getActivity().getListView(0).getAdapter().getItem(0);
 		assertEquals(new DictEntry("母は留守です。", "はははです", "Mother is."), e);
-		e = (DictEntry) getActivity().getListAdapter().getItem(1);
+		e = (DictEntry) getActivity().getListView(0).getAdapter().getItem(1);
 		assertEquals(new DictEntry("母", "はは", "mother"), e);
-		assertEquals(2, getActivity().getListAdapter().getCount());
-		assertEquals(new DictEntry("母は留守です。", "はははです", "Mother is.").toExternal() + "@@@@" + new DictEntry("母", "はは", "mother").toExternal(), AedictApp.getConfig().getNotepadItems());
+		assertEquals(2, getActivity().getListView(0).getAdapter().getCount());
+		assertEquals(new DictEntry("母は留守です。", "はははです", "Mother is.").toExternal() + "@@@@" + new DictEntry("母", "はは", "mother").toExternal(), DictEntry.toExternalList(AedictApp.getConfig().getNotepadItems(0)));
 	}
 }
