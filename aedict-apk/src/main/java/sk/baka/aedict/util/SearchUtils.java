@@ -123,19 +123,16 @@ public final class SearchUtils {
 	 *            regular search will be performed.
 	 * @param searchEditText
 	 *            the search query edit box
-	 * @param handleSelections
-	 *            if true then only selected portions of text will be used for
-	 *            search (if a selection exists).
 	 * @param searchButton
 	 *            the search button
 	 * @param isJapanSearch
 	 *            if true then we are searching for japanese text (in romaji).
 	 */
-	public void registerSearch(final Integer isExactCheckBox, final Integer deinflectCheckBox, final Integer searchInExamplesCheckBox, final int searchEditText, final boolean handleSelections,
-			final int searchButton, final boolean isJapanSearch) {
+	public void registerSearch(final Integer isExactCheckBox, final Integer deinflectCheckBox, final Integer searchInExamplesCheckBox, final int searchEditText, final int searchButton,
+			final boolean isJapanSearch) {
 		final EditText searchEdit = (EditText) activity.findViewById(searchEditText);
 		final Button searchBtn = (Button) activity.findViewById(searchButton);
-		final SearchText handler = new SearchText(isExactCheckBox, deinflectCheckBox, searchInExamplesCheckBox, searchEditText, handleSelections, isJapanSearch);
+		final SearchText handler = new SearchText(isExactCheckBox, deinflectCheckBox, searchInExamplesCheckBox, searchEditText, isJapanSearch);
 		searchEdit.setOnEditorActionListener(AndroidUtils.safe(activity, OnEditorActionListener.class, handler));
 		searchBtn.setOnClickListener(AndroidUtils.safe(activity, OnClickListener.class, handler));
 		if (isExactCheckBox != null && deinflectCheckBox != null) {
@@ -156,7 +153,6 @@ public final class SearchUtils {
 	private class SearchText implements TextView.OnEditorActionListener, View.OnClickListener, OnCheckedChangeListener {
 		private final Integer isExactCheckBox;
 		private final int searchEditText;
-		private final boolean handleSelections;
 		private final boolean isJapanSearch;
 		private final Integer deinflectCheckBox;
 		private final Integer searchInExamplesCheckBox;
@@ -175,20 +171,15 @@ public final class SearchUtils {
 		 *            a regular search will be performed.
 		 * @param searchEditText
 		 *            the search query edit box
-		 * @param handleSelections
-		 *            if true then only selected portions of text will be used
-		 *            for search (if a selection exists).
 		 * @param isJapanSearch
 		 *            if true then we are searching for japanese text (in
 		 *            romaji).
 		 */
-		public SearchText(final Integer isExactCheckBox, final Integer deinflectCheckBox, final Integer searchInExamplesCheckBox, final int searchEditText, final boolean handleSelections,
-				final boolean isJapanSearch) {
+		public SearchText(final Integer isExactCheckBox, final Integer deinflectCheckBox, final Integer searchInExamplesCheckBox, final int searchEditText, final boolean isJapanSearch) {
 			this.isExactCheckBox = isExactCheckBox;
 			this.deinflectCheckBox = deinflectCheckBox;
 			this.searchInExamplesCheckBox = searchInExamplesCheckBox;
 			this.searchEditText = searchEditText;
-			this.handleSelections = handleSelections;
 			this.isJapanSearch = isJapanSearch;
 		}
 
@@ -205,20 +196,6 @@ public final class SearchUtils {
 			final boolean isDeinflect = deinflectCheckBox == null ? false : ((CheckBox) activity.findViewById(deinflectCheckBox)).isChecked();
 			final boolean isSearchInExamples = searchInExamplesCheckBox == null ? false : ((CheckBox) activity.findViewById(searchInExamplesCheckBox)).isChecked();
 			final boolean isExact = isDeinflect ? true : (isSearchInExamples ? false : (isExactCheckBox == null ? true : ((CheckBox) activity.findViewById(isExactCheckBox)).isChecked()));
-			if (handleSelections) {
-				int start = searchEdit.getSelectionStart();
-				int end = searchEdit.getSelectionEnd();
-				if ((start >= 0) && (end >= 0)) {
-					if (start > end) {
-						start = searchEdit.getSelectionEnd();
-						end = searchEdit.getSelectionStart();
-					}
-					String selected = query.substring(start, end).trim();
-					if (selected.length() > 0) {
-						query = selected;
-					}
-				}
-			}
 			if (isJapanSearch) {
 				searchForJapan(query, isExact, isDeinflect, isSearchInExamples);
 			} else {
