@@ -18,8 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package sk.baka.aedict.dict;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
@@ -286,6 +288,35 @@ public class DictEntry implements Comparable<DictEntry>, Serializable {
             throw new IllegalArgumentException("Invalid external format: \"" + external + "\"");
         }
         return new DictEntry(toNull(contents[0]), toNull(contents[1]), toNull(contents[2]));
+    }
+
+    /**
+     * Converts a list of entries to an external form, parsable by {@link #fromExternalList(java.lang.String)}.
+     * @param entries the list of entries, not null
+     * @return external form.
+     */
+    public static String toExternalList(final List<? extends DictEntry> entries) {
+        final ListBuilder b = new ListBuilder("@@@@");
+        for (final DictEntry entry : entries) {
+            b.add(entry.toExternal());
+        }
+        return b.toString();
+    }
+
+    /**
+     * Converts an {@link #toExternalList(java.util.List) externalized list of entries} back to a list of entries.
+     * @param external the externalized form
+     * @return a list of entries.
+     */
+    public static List<DictEntry> fromExternalList(final String external) {
+        final String items[] = external.split("@@@@");
+        final List<DictEntry> result = new ArrayList<DictEntry>();
+        for (final String item : items) {
+            if (!MiscUtils.isBlank(item)) {
+                result.add(DictEntry.fromExternal(item));
+            }
+        }
+        return result;
     }
 
     @Override

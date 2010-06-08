@@ -166,7 +166,7 @@ public class MainActivity extends ListActivity {
 		}
 		entries.remove(entry);
 		entries.add(0, entry);
-		AedictApp.getConfig().setRecentlyViewed(NotepadActivity.serialize(entries));
+		AedictApp.getConfig().setRecentlyViewed(DictEntry.toExternalList(entries));
 	}
 
 	/**
