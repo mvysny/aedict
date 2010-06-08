@@ -50,7 +50,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
-import android.widget.TextView;
 import android.widget.TwoLineListItem;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.TabHost.TabContentFactory;
@@ -206,7 +205,8 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 			final DictEntry e = (DictEntry) intent.getSerializableExtra(INTENTKEY_ADD_ENTRY);
 			final int category = intent.getIntExtra(INTENTKEY_CATEGORY, 0);
 			getModel(category).add(e);
-			onModelChanged(category);
+			final Config cfg = AedictApp.getConfig();
+			cfg.setNotepadItems(category, getModel(category));
 		}
 	}
 
@@ -233,13 +233,8 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 	private void onModelChanged(final int category) {
 		final Config cfg = AedictApp.getConfig();
 		cfg.setNotepadItems(category, getModel(category));
-		// the adapter may be null if this method is invoked from
-		// processIntent()
-		// method
 		final ArrayAdapter<?> adapter = (ArrayAdapter<?>) getListView(category).getAdapter();
-		if (adapter != null) {
-			adapter.notifyDataSetChanged();
-		}
+		adapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -315,8 +310,8 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 					final AlertDialog.Builder builder = new AlertDialog.Builder(NotepadActivity.this);
 					final EditText tv = new EditText(NotepadActivity.this);
 					builder.setView(tv);
-					builder.setTitle(R.string.selectCategory);
-					builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+					builder.setTitle(R.string.renameCategory);
+					builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							final String newName = tv.getText().toString();
 							if (MiscUtils.isBlank(newName)) {
@@ -355,8 +350,10 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 		tabs.setVisibility(categories.isEmpty() ? View.GONE : View.VISIBLE);
 		if (categories.isEmpty()) {
 			// add a single tab to the TabHost otherwise it will throw
-			// NullPointerException later on. It is amazing how much TabHost fucking sucks.
+			// NullPointerException later on. It is amazing how much TabHost
+			// fucking sucks.
 			getTabHost().addTab(getTabHost().newTabSpec("0").setIndicator("0").setContent(this));
+			initializeListView((ListView) findViewById(android.R.id.list), 0);
 		}
 		tabContents.clear();
 		int i = 0;
