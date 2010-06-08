@@ -70,8 +70,8 @@ public class MainActivity extends ListActivity {
 			}
 		};
 		final SearchUtils utils = new SearchUtils(this);
-		utils.registerSearch(R.id.exactMatch, null, R.id.searchExamples, R.id.searchEdit, false, R.id.englishSearch, false);
-		utils.registerSearch(R.id.exactMatch, R.id.jpDeinflectVerbs, R.id.searchExamples, R.id.searchEdit, false, R.id.jpSearch, true);
+		utils.registerSearch(R.id.exactMatch, null, R.id.searchExamples, R.id.searchEdit, R.id.englishSearch, false);
+		utils.registerSearch(R.id.exactMatch, R.id.jpDeinflectVerbs, R.id.searchExamples, R.id.searchEdit, R.id.jpSearch, true);
 		utils.setupAnalysisControls(R.id.btnJpTranslate, R.id.txtJpTranslate, true);
 		findViewById(R.id.advanced).setOnClickListener(new View.OnClickListener() {
 

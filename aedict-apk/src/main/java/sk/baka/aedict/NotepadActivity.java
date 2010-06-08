@@ -113,7 +113,7 @@ public class NotepadActivity extends ListActivity implements TabContentFactory {
 				}));
 			}
 		}));
-		new SearchUtils(this).registerSearch(R.id.notepadExactMatch, R.id.notepadDeinflect, null, R.id.editNotepadSearch, false, R.id.btnNotepadSearch, true);
+		new SearchUtils(this).registerSearch(R.id.notepadExactMatch, R.id.notepadDeinflect, null, R.id.editNotepadSearch, R.id.btnNotepadSearch, true);
 		final TabHost tabs = (TabHost) findViewById(R.id.tabs);
 		tabs.setup();
 		tabs.addTab(tabs.newTabSpec("1").setIndicator("default").setContent(this));
