@@ -31,7 +31,7 @@
 		android:layout_width="fill_parent" android:inputType="text"
 		android:imeOptions="actionDone" />
 	<TabHost android:layout_height="fill_parent"
-		android:layout_width="fill_parent" android:id="@+id/tabs">
+		android:layout_width="fill_parent" android:id="@+id/tabs" android:visibility="gone">
 		<TabWidget android:id="@android:id/tabs"
 			android:layout_width="fill_parent" android:layout_height="wrap_content" />
 		<FrameLayout android:id="@android:id/tabcontent"

@@ -236,12 +236,12 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * Persisted notepad DictEntries.
 		 * 
 		 * @param category
-		 *            the category name or null for default category.
+		 *            the category, 0 is the default one.
 		 * @return the notepad items, never null.
 		 */
-		public List<DictEntry> getNotepadItems(final String category) {
+		public List<DictEntry> getNotepadItems(final int category) {
 			try {
-				return DictEntry.fromExternalList(prefs.getString(KEY_NOTEPAD_ITEMS + (category == null ? "" : "_" + category), ""));
+				return DictEntry.fromExternalList(prefs.getString(KEY_NOTEPAD_ITEMS + (category == 0 ? "" : "" + category), ""));
 			} catch (Exception ex) {
 				// this may happen: earlier aedict builds stored the notepad
 				// items
@@ -255,12 +255,12 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * Notepad DictEntries.
 		 * 
 		 * @param category
-		 *            the category name or null for default category.
+		 *            the category, 0 is the default one.
 		 * @param notepadItems
 		 *            the new notepad items, never null.
 		 */
-		public void setNotepadItems(final String category, final List<? extends DictEntry> notepadItems) {
-			commit(prefs.edit().putString(KEY_NOTEPAD_ITEMS + (category == null ? "" : "_" + category), DictEntry.toExternalList(notepadItems)));
+		public void setNotepadItems(final int category, final List<? extends DictEntry> notepadItems) {
+			commit(prefs.edit().putString(KEY_NOTEPAD_ITEMS + (category == 0 ? "" : "" + category), DictEntry.toExternalList(notepadItems)));
 		}
 
 		public static final String KEY_NOTEPAD_CATEGORIES = "notepadCategories";
@@ -270,8 +270,14 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * 
 		 * @return a list of notepad category names, not null, may be empty.
 		 */
-		public String[] getNotepadCategories() {
-			return prefs.getString(KEY_NOTEPAD_CATEGORIES, "").split("@@@@");
+		public List<String> getNotepadCategories() {
+			final List<String> result = new ArrayList<String>(4);
+			for (final String cat : prefs.getString(KEY_NOTEPAD_CATEGORIES, "").split("@@@@")) {
+				if (!MiscUtils.isBlank(cat)) {
+					result.add(cat);
+				}
+			}
+			return result;
 		}
 
 		/**
@@ -295,6 +301,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 
 		/**
 		 * Recently viewed DictEntries.
+		 * 
 		 * @return the notepad items, never null.
 		 */
 		public List<DictEntry> getRecentlyViewed() {
@@ -303,6 +310,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 
 		/**
 		 * Recently viewed DictEntries.
+		 * 
 		 * @param notepadItems
 		 *            the new notepad items, never null.
 		 */

@@ -18,7 +18,10 @@
 
 package sk.baka.aedict;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictEntry;
@@ -27,8 +30,10 @@ import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AndroidUtils;
-import android.app.ListActivity;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -38,6 +43,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -53,23 +59,107 @@ import android.widget.TabHost.TabContentFactory;
  * 
  * @author Martin Vysny
  */
-public class NotepadActivity extends ListActivity implements TabContentFactory {
+public class NotepadActivity extends Activity implements TabContentFactory {
 	/**
 	 * The cached model (a list of edict entries as only the japanese text is
 	 * persisted).
 	 */
-	private List<DictEntry> modelCache = null;
+	private final Map<Integer, List<DictEntry>> modelCache = new HashMap<Integer, List<DictEntry>>();
 	private ShowRomaji showRomaji;
 
 	/**
 	 * Expects {@link DictEntry} as a value. Adds given entry to the model list.
 	 */
 	static final String INTENTKEY_ADD_ENTRY = "addEntry";
+	static final String INTENTKEY_CATEGORY = "category";
 
-	public static void addAndLaunch(final Context activity, DictEntry entry) {
+	public static void addAndLaunch(final Context activity, final DictEntry entry, final int category) {
 		final Intent intent = new Intent(activity, NotepadActivity.class);
 		intent.putExtra(INTENTKEY_ADD_ENTRY, entry);
+		intent.putExtra(INTENTKEY_CATEGORY, category);
 		activity.startActivity(intent);
+	}
+
+	public static void addAndLaunch(final Activity activity, final DictEntry entry) {
+		final List<String> notepadCategories = AedictApp.getConfig().getNotepadCategories();
+		if (notepadCategories.size() <= 1) {
+			addAndLaunch(activity, entry, 0);
+			return;
+		}
+		final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+		builder.setItems(notepadCategories.toArray(new CharSequence[0]), new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface dialog, int which) {
+				addAndLaunch(activity, entry, which);
+			}
+		});
+		builder.setTitle(R.string.selectCategory);
+		builder.create().show();
+	}
+
+	private TabHost getTabHost() {
+		return (TabHost) findViewById(R.id.tabs);
+	}
+
+	private int getCategoryCount() {
+		if (getTabHost().getVisibility() == View.VISIBLE) {
+			return getTabHost().getTabWidget().getTabCount();
+		}
+		return 1;
+	}
+
+	private int getCurrentCategory() {
+		if (getTabHost().getVisibility() == View.VISIBLE) {
+			return getTabHost().getCurrentTab();
+		}
+		return 0;
+	}
+
+	private final List<ListView> tabContents = new ArrayList<ListView>();
+
+	private ListView getListView(final int category) {
+		if (getTabHost().getVisibility() == View.VISIBLE) {
+			return tabContents.get(category);
+		}
+		return (ListView) findViewById(android.R.id.list);
+	}
+
+	private void initializeListView(final ListView lv, final int category) {
+		lv.setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
+
+			public void onCreateContextMenu(ContextMenu menu, View v, final ContextMenuInfo menuInfo) {
+				final int pos = ((AdapterContextMenuInfo) menuInfo).position;
+				menu.add(0, 0, 0, R.string.analyze).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+					public boolean onMenuItemClick(MenuItem item) {
+						KanjiAnalyzeActivity.launch(NotepadActivity.this, getModel(category).get(pos).getJapanese(), false);
+						return true;
+					}
+				}));
+				menu.add(0, 1, 1, R.string.delete).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
+					public boolean onMenuItemClick(MenuItem item) {
+						getModel(category).remove(pos);
+						onModelChanged(category);
+						return true;
+					}
+				}));
+				menu.add(0, 2, 2, R.string.showSod).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
+					public boolean onMenuItemClick(MenuItem item) {
+						StrokeOrderActivity.launch(NotepadActivity.this, getModel(category).get(pos).getJapanese());
+						return true;
+					}
+				}));
+			}
+		}));
+		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
+				final EditText edit = (EditText) findViewById(R.id.editNotepadSearch);
+				final DictEntry entry = getModel(category).get(position);
+				final String text = edit.getText().toString();
+				edit.setText(text + entry.getJapanese());
+			}
+		});
 	}
 
 	@Override
@@ -80,39 +170,26 @@ public class NotepadActivity extends ListActivity implements TabContentFactory {
 
 			@Override
 			protected void show(boolean romaji) {
-				((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
+				for (int i = 0; i < getCategoryCount(); i++) {
+					((ArrayAdapter<?>) getListView(i).getAdapter()).notifyDataSetChanged();
+				}
 			}
 		};
-		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
-
-			public void onCreateContextMenu(ContextMenu menu, View v, final ContextMenuInfo menuInfo) {
-				final int pos = ((AdapterContextMenuInfo) menuInfo).position;
-				menu.add(0, 0, 0, R.string.analyze).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-					public boolean onMenuItemClick(MenuItem item) {
-						KanjiAnalyzeActivity.launch(NotepadActivity.this, getModel().get(pos).getJapanese(), false);
-						return true;
-					}
-				}));
-				menu.add(0, 1, 1, R.string.delete).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
-					public boolean onMenuItemClick(MenuItem item) {
-						getModel().remove(pos);
-						onModelChanged();
-						return true;
-					}
-				}));
-				menu.add(0, 2, 2, R.string.showSod).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
-					public boolean onMenuItemClick(MenuItem item) {
-						StrokeOrderActivity.launch(NotepadActivity.this, getModel().get(pos).getJapanese());
-						return true;
-					}
-				}));
-			}
-		}));
+		initializeListView(getListView(0), 0);
 		new SearchUtils(this).registerSearch(R.id.notepadExactMatch, R.id.notepadDeinflect, null, R.id.editNotepadSearch, R.id.btnNotepadSearch, true);
-		final TabHost tabs = (TabHost) findViewById(R.id.tabs);
+		final TabHost tabs = getTabHost();
 		tabs.setup();
-		tabs.addTab(tabs.newTabSpec("1").setIndicator("default").setContent(this));
+		final List<String> categories = AedictApp.getConfig().getNotepadCategories();
+		findViewById(android.R.id.list).setVisibility(categories.isEmpty() ? View.VISIBLE : View.GONE);
+		tabs.setVisibility(categories.isEmpty() ? View.GONE : View.VISIBLE);
+		if (categories.isEmpty()) {
+			// add a single tab to the TabHost otherwise it will throw
+			// NullPointerException later on
+			getTabHost().addTab(getTabHost().newTabSpec("0").setIndicator("0").setContent(this));
+		}
+		for (final String cat : categories) {
+			getTabHost().addTab(getTabHost().newTabSpec(Integer.toString(tabContents.size())).setIndicator(cat).setContent(this));
+		}
 		processIntent();
 	}
 
@@ -120,65 +197,63 @@ public class NotepadActivity extends ListActivity implements TabContentFactory {
 		final Intent intent = getIntent();
 		if (intent.hasExtra(INTENTKEY_ADD_ENTRY)) {
 			final DictEntry e = (DictEntry) intent.getSerializableExtra(INTENTKEY_ADD_ENTRY);
-			getModel().add(e);
-			onModelChanged();
+			final int category = intent.getIntExtra(INTENTKEY_CATEGORY, 0);
+			getModel(category).add(e);
+			onModelChanged(category);
 		}
 	}
 
-	private List<DictEntry> getModel() {
-		if (modelCache == null) {
-			modelCache = AedictApp.getConfig().getNotepadItems(null);
+	private List<DictEntry> getModel(final int category) {
+		List<DictEntry> model = modelCache.get(category);
+		if (model == null) {
+			model = AedictApp.getConfig().getNotepadItems(category);
+			modelCache.put(category, model);
 		}
-		return modelCache;
+		return model;
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		setModel();
+		updateListViewModels();
 		showRomaji.onResume();
-	}
-
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		final EditText edit = (EditText) findViewById(R.id.editNotepadSearch);
-		final DictEntry entry = getModel().get(position);
-		final String text = edit.getText().toString();
-		edit.setText(text + entry.getJapanese());
 	}
 
 	/**
 	 * Persists the model to the {@link Config configuration}. Invoked after
 	 * each change.
 	 */
-	private void onModelChanged() {
+	private void onModelChanged(final int category) {
 		final Config cfg = AedictApp.getConfig();
-		cfg.setNotepadItems(null, getModel());
-		if (getListAdapter() != null) {
-			// the adapter may be null if this method is invoked from onCreate()
-			// method
-			((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
+		cfg.setNotepadItems(category, getModel(category));
+		// the adapter may be null if this method is invoked from
+		// processIntent()
+		// method
+		final ArrayAdapter<?> adapter = (ArrayAdapter<?>) getListView(category).getAdapter();
+		if (adapter != null) {
+			adapter.notifyDataSetChanged();
 		}
 	}
 
-	/**
-	 * Sets the ListView model.
-	 */
-	private void setModel() {
+	private void updateListViewModels() {
 		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
-		setListAdapter(new ArrayAdapter<DictEntry>(this, android.R.layout.simple_list_item_2, getModel()) {
+		for (int i = 0; i < getCategoryCount(); i++) {
+			final int ii = i;
+			getListView(i).setAdapter(new ArrayAdapter<DictEntry>(this, android.R.layout.simple_list_item_2, getModel(i)) {
 
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) {
-				TwoLineListItem view = (TwoLineListItem) convertView;
-				if (view == null) {
-					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(), false);
+				@Override
+				public View getView(int position, View convertView, ViewGroup parent) {
+					TwoLineListItem view = (TwoLineListItem) convertView;
+					if (view == null) {
+						view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(ii), false);
+					}
+					Edict.print(getModel(ii).get(position), view, showRomaji.isShowingRomaji() ? romanization : null);
+					return view;
 				}
-				Edict.print(getModel().get(position), view, showRomaji.isShowingRomaji() ? romanization : null);
-				return view;
-			}
 
-		});
+			});
+
+		}
 	}
 
 	@Override
@@ -190,8 +265,9 @@ public class NotepadActivity extends ListActivity implements TabContentFactory {
 		item.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
 
 			public boolean onMenuItemClick(MenuItem item) {
-				getModel().clear();
-				onModelChanged();
+				final int category = getCurrentCategory();
+				getModel(category).clear();
+				onModelChanged(category);
 				return true;
 			}
 		}));
@@ -199,8 +275,11 @@ public class NotepadActivity extends ListActivity implements TabContentFactory {
 	}
 
 	public View createTabContent(String tag) {
+		final int category = Integer.parseInt(tag);
 		final ListView lv = new ListView(this);
 		lv.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+		initializeListView(lv, category);
+		tabContents.add(category, lv);
 		return lv;
 	}
 }
