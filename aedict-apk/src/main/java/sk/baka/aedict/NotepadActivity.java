@@ -204,6 +204,7 @@ public class NotepadActivity extends ListActivity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
+		showRomaji.register(menu);
 		final MenuItem item = menu.add(R.string.deleteAll);
 		item.setIcon(android.R.drawable.ic_menu_delete);
 		item.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
@@ -214,7 +215,6 @@ public class NotepadActivity extends ListActivity {
 				return true;
 			}
 		}));
-		showRomaji.register(menu);
 		return true;
 	}
 }
