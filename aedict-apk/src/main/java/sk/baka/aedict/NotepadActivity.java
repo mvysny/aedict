@@ -91,21 +91,21 @@ public class NotepadActivity extends ListActivity implements TabContentFactory {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, final ContextMenuInfo menuInfo) {
 				final int pos = ((AdapterContextMenuInfo) menuInfo).position;
-				menu.add(R.string.analyze).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
+				menu.add(0, 0, 0, R.string.analyze).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
 
 					public boolean onMenuItemClick(MenuItem item) {
 						KanjiAnalyzeActivity.launch(NotepadActivity.this, getModel().get(pos).getJapanese(), false);
 						return true;
 					}
 				}));
-				menu.add(R.string.delete).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
+				menu.add(0, 1, 1, R.string.delete).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
 						getModel().remove(pos);
 						onModelChanged();
 						return true;
 					}
 				}));
-				menu.add(R.string.showSod).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
+				menu.add(0, 2, 2, R.string.showSod).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
 						StrokeOrderActivity.launch(NotepadActivity.this, getModel().get(pos).getJapanese());
 						return true;
@@ -133,7 +133,8 @@ public class NotepadActivity extends ListActivity implements TabContentFactory {
 		try {
 			return DictEntry.fromExternalList(serialized);
 		} catch (Exception ex) {
-			// this may happen: earlier aedict builds stored the notepad items in a different format
+			// this may happen: earlier aedict builds stored the notepad items
+			// in a different format
 			Log.e(NotepadActivity.class.getSimpleName(), "Notepad model parsing failed", ex);
 			return new ArrayList<DictEntry>();
 		}
@@ -199,7 +200,7 @@ public class NotepadActivity extends ListActivity implements TabContentFactory {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
 		showRomaji.register(menu);
-		final MenuItem item = menu.add(R.string.deleteAll);
+		final MenuItem item = menu.add(0, 1, 1, R.string.deleteAll);
 		item.setIcon(android.R.drawable.ic_menu_delete);
 		item.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
 
