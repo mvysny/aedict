@@ -30,6 +30,7 @@ import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AndroidUtils;
+import sk.baka.autils.MiscUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -49,6 +50,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.TwoLineListItem;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.TabHost.TabContentFactory;
@@ -305,6 +307,33 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 					return true;
 				}
 			}));
+			final MenuItem renameCategory = menu.add(0, 4, 4, R.string.renameCategory);
+			renameCategory.setIcon(android.R.drawable.ic_menu_edit);
+			renameCategory.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
+
+				public boolean onMenuItemClick(MenuItem item) {
+					final AlertDialog.Builder builder = new AlertDialog.Builder(NotepadActivity.this);
+					final EditText tv = new EditText(NotepadActivity.this);
+					builder.setView(tv);
+					builder.setTitle(R.string.selectCategory);
+					builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							final String newName = tv.getText().toString();
+							if (MiscUtils.isBlank(newName)) {
+								return;
+							}
+							final int current = getCurrentCategory();
+							getTabHost().setCurrentTab(0);
+							final List<String> categories = AedictApp.getConfig().getNotepadCategories();
+							categories.set(current, newName);
+							AedictApp.getConfig().setNotepadCategories(categories);
+							updateTabs();
+						}
+					});
+					builder.create().show();
+					return true;
+				}
+			}));
 		}
 		return true;
 	}
@@ -326,8 +355,7 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 		tabs.setVisibility(categories.isEmpty() ? View.GONE : View.VISIBLE);
 		if (categories.isEmpty()) {
 			// add a single tab to the TabHost otherwise it will throw
-			// NullPointerException later on. Yes. TabHost is the most fucked-up
-			// component in whole fucking Android.
+			// NullPointerException later on. It is amazing how much TabHost fucking sucks.
 			getTabHost().addTab(getTabHost().newTabSpec("0").setIndicator("0").setContent(this));
 		}
 		tabContents.clear();
