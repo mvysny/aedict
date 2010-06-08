@@ -102,14 +102,15 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 	}
 
 	private int getCategoryCount() {
-		if (getTabHost().getVisibility() == View.VISIBLE) {
-			return getTabHost().getTabWidget().getTabCount();
+		final int result = AedictApp.getConfig().getNotepadCategories().size();
+		if (result > 1) {
+			return result;
 		}
 		return 1;
 	}
 
 	private int getCurrentCategory() {
-		if (getTabHost().getVisibility() == View.VISIBLE) {
+		if (AedictApp.getConfig().getNotepadCategories().size() > 0) {
 			return getTabHost().getCurrentTab();
 		}
 		return 0;
@@ -118,13 +119,27 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 	private final List<ListView> tabContents = new ArrayList<ListView>();
 
 	private ListView getListView(final int category) {
-		if (getTabHost().getVisibility() == View.VISIBLE) {
+		if (AedictApp.getConfig().getNotepadCategories().size() > 0) {
 			return tabContents.get(category);
 		}
 		return (ListView) findViewById(android.R.id.list);
 	}
 
 	private void initializeListView(final ListView lv, final int category) {
+		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
+		lv.setAdapter(new ArrayAdapter<DictEntry>(this, android.R.layout.simple_list_item_2, getModel(category)) {
+
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				TwoLineListItem view = (TwoLineListItem) convertView;
+				if (view == null) {
+					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(category), false);
+				}
+				Edict.print(getModel(category).get(position), view, showRomaji.isShowingRomaji() ? romanization : null);
+				return view;
+			}
+
+		});
 		lv.setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, final ContextMenuInfo menuInfo) {
@@ -175,21 +190,11 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 				}
 			}
 		};
-		initializeListView(getListView(0), 0);
+		initializeListView((ListView) findViewById(android.R.id.list), 0);
 		new SearchUtils(this).registerSearch(R.id.notepadExactMatch, R.id.notepadDeinflect, null, R.id.editNotepadSearch, R.id.btnNotepadSearch, true);
 		final TabHost tabs = getTabHost();
 		tabs.setup();
-		final List<String> categories = AedictApp.getConfig().getNotepadCategories();
-		findViewById(android.R.id.list).setVisibility(categories.isEmpty() ? View.VISIBLE : View.GONE);
-		tabs.setVisibility(categories.isEmpty() ? View.GONE : View.VISIBLE);
-		if (categories.isEmpty()) {
-			// add a single tab to the TabHost otherwise it will throw
-			// NullPointerException later on
-			getTabHost().addTab(getTabHost().newTabSpec("0").setIndicator("0").setContent(this));
-		}
-		for (final String cat : categories) {
-			getTabHost().addTab(getTabHost().newTabSpec(Integer.toString(tabContents.size())).setIndicator(cat).setContent(this));
-		}
+		updateTabs();
 		processIntent();
 	}
 
@@ -215,7 +220,7 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		updateListViewModels();
+		updateTabs();
 		showRomaji.onResume();
 	}
 
@@ -235,27 +240,6 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 		}
 	}
 
-	private void updateListViewModels() {
-		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
-		for (int i = 0; i < getCategoryCount(); i++) {
-			final int ii = i;
-			getListView(i).setAdapter(new ArrayAdapter<DictEntry>(this, android.R.layout.simple_list_item_2, getModel(i)) {
-
-				@Override
-				public View getView(int position, View convertView, ViewGroup parent) {
-					TwoLineListItem view = (TwoLineListItem) convertView;
-					if (view == null) {
-						view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(ii), false);
-					}
-					Edict.print(getModel(ii).get(position), view, showRomaji.isShowingRomaji() ? romanization : null);
-					return view;
-				}
-
-			});
-
-		}
-	}
-
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
@@ -271,6 +255,57 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 				return true;
 			}
 		}));
+		if (AedictApp.getConfig().getNotepadCategories().size() < Config.MAX_CATEGORIES) {
+			final MenuItem addCategory = menu.add(0, 2, 2, R.string.addCategory);
+			addCategory.setIcon(android.R.drawable.ic_menu_add);
+			addCategory.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
+
+				public boolean onMenuItemClick(MenuItem item) {
+					final List<String> categories = AedictApp.getConfig().getNotepadCategories();
+					categories.add("new");
+					AedictApp.getConfig().setNotepadCategories(categories);
+					final int category = categories.size() - 1;
+					if (category != 0) {
+						getModel(category).clear();
+					}
+					updateTabs();
+					return true;
+				}
+
+			}));
+		}
+		if (!AedictApp.getConfig().getNotepadCategories().isEmpty()) {
+			final MenuItem deleteCategory = menu.add(0, 3, 3, R.string.deleteCategory);
+			deleteCategory.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+			deleteCategory.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
+
+				public boolean onMenuItemClick(MenuItem item) {
+					final int category = getCurrentCategory();
+					// Fucking TabHost will throw NullPointerException if we
+					// dare to remove his sweet fucking current tab, thank you
+					// very much. NEVER REMOVE ALL TABS FROM THE STUPID TABHOST
+					getTabHost().setCurrentTab(0);
+					final List<String> categories = AedictApp.getConfig().getNotepadCategories();
+					if (categories.size() == 1) {
+						// a special case - delete the category but not its
+						// items
+						categories.clear();
+						AedictApp.getConfig().setNotepadCategories(categories);
+					} else {
+						categories.remove(category);
+						tabContents.remove(category);
+						AedictApp.getConfig().setNotepadCategories(categories);
+						for (int i = category; i < categories.size(); i++) {
+							AedictApp.getConfig().setNotepadItems(i, AedictApp.getConfig().getNotepadItems(i + 1));
+						}
+						getModel(category).clear();
+						modelCache.clear();
+					}
+					updateTabs();
+					return true;
+				}
+			}));
+		}
 		return true;
 	}
 
@@ -281,5 +316,25 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 		initializeListView(lv, category);
 		tabContents.add(category, lv);
 		return lv;
+	}
+
+	private void updateTabs() {
+		final TabHost tabs = getTabHost();
+		tabs.clearAllTabs();
+		final List<String> categories = AedictApp.getConfig().getNotepadCategories();
+		findViewById(android.R.id.list).setVisibility(categories.isEmpty() ? View.VISIBLE : View.GONE);
+		tabs.setVisibility(categories.isEmpty() ? View.GONE : View.VISIBLE);
+		if (categories.isEmpty()) {
+			// add a single tab to the TabHost otherwise it will throw
+			// NullPointerException later on. Yes. TabHost is the most fucked-up
+			// component in whole fucking Android.
+			getTabHost().addTab(getTabHost().newTabSpec("0").setIndicator("0").setContent(this));
+		}
+		tabContents.clear();
+		int i = 0;
+		for (final String cat : categories) {
+			final TabHost.TabSpec newTab = getTabHost().newTabSpec(Integer.toString(i++)).setIndicator(cat).setContent(this);
+			getTabHost().addTab(newTab);
+		}
 	}
 }

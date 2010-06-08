@@ -265,13 +265,15 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 
 		public static final String KEY_NOTEPAD_CATEGORIES = "notepadCategories";
 
+		public static final int MAX_CATEGORIES = 4;
+
 		/**
 		 * Returns a list of notepad categories.
 		 * 
 		 * @return a list of notepad category names, not null, may be empty.
 		 */
 		public List<String> getNotepadCategories() {
-			final List<String> result = new ArrayList<String>(4);
+			final List<String> result = new ArrayList<String>(MAX_CATEGORIES);
 			for (final String cat : prefs.getString(KEY_NOTEPAD_CATEGORIES, "").split("@@@@")) {
 				if (!MiscUtils.isBlank(cat)) {
 					result.add(cat);
