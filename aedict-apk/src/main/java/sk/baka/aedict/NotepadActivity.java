@@ -18,7 +18,6 @@
 
 package sk.baka.aedict;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import sk.baka.aedict.AedictApp.Config;
@@ -28,13 +27,10 @@ import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AndroidUtils;
-import sk.baka.autils.ListBuilder;
-import sk.baka.autils.MiscUtils;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -129,20 +125,9 @@ public class NotepadActivity extends ListActivity implements TabContentFactory {
 		}
 	}
 
-	public static List<DictEntry> deserialize(final String serialized) {
-		try {
-			return DictEntry.fromExternalList(serialized);
-		} catch (Exception ex) {
-			// this may happen: earlier aedict builds stored the notepad items
-			// in a different format
-			Log.e(NotepadActivity.class.getSimpleName(), "Notepad model parsing failed", ex);
-			return new ArrayList<DictEntry>();
-		}
-	}
-
 	private List<DictEntry> getModel() {
 		if (modelCache == null) {
-			modelCache = deserialize(AedictApp.getConfig().getNotepadItems());
+			modelCache = AedictApp.getConfig().getNotepadItems(null);
 		}
 		return modelCache;
 	}
@@ -168,7 +153,7 @@ public class NotepadActivity extends ListActivity implements TabContentFactory {
 	 */
 	private void onModelChanged() {
 		final Config cfg = AedictApp.getConfig();
-		cfg.setNotepadItems(DictEntry.toExternalList(getModel()));
+		cfg.setNotepadItems(null, getModel());
 		if (getListAdapter() != null) {
 			// the adapter may be null if this method is invoked from onCreate()
 			// method
