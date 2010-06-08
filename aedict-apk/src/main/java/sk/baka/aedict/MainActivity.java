@@ -113,12 +113,12 @@ public class MainActivity extends ListActivity {
 						return true;
 					}
 				}));
-				if (toEdict(ee).isVerb()) {
+				if (EdictEntry.fromEntry(ee).isVerb()) {
 					final MenuItem miShowConjugations = menu.add(Menu.NONE, 7, 7, R.string.showConjugations);
 					miShowConjugations.setOnMenuItemClickListener(AndroidUtils.safe(MainActivity.this, new MenuItem.OnMenuItemClickListener() {
 
 						public boolean onMenuItemClick(MenuItem item) {
-							VerbInflectionActivity.launch(MainActivity.this, toEdict(ee));
+							VerbInflectionActivity.launch(MainActivity.this, EdictEntry.fromEntry(ee));
 							return true;
 						}
 					}));
@@ -157,7 +157,7 @@ public class MainActivity extends ListActivity {
 
 	public static void recentlyViewed(final DictEntry entry) {
 		final List<DictEntry> entries = NotepadActivity.deserialize(AedictApp.getConfig().getRecentlyViewed());
-		while (entries.size() > 20) {
+		while (entries.size() > 15) {
 			entries.remove(entries.size() - 1);
 		}
 		entries.remove(entry);
@@ -185,19 +185,12 @@ public class MainActivity extends ListActivity {
 		});
 	}
 
-	public static EdictEntry toEdict(final DictEntry e) {
-		if (e instanceof EdictEntry) {
-			return (EdictEntry) e;
-		}
-		return new EdictEntry(e.kanji, e.reading, e.english, e.english.contains("(P)"));
-	}
-
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		final DictEntry e = getModel().get(position);
 		if (!e.isValid()) {
 			return;
 		}
-		EdictEntryDetailActivity.launch(this, toEdict(e));
+		EdictEntryDetailActivity.launch(this, EdictEntry.fromEntry(e));
 	}
 }

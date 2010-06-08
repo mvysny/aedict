@@ -98,8 +98,7 @@ public enum DictTypeEnum {
                 final int closingSquareBracket = jpPart.indexOf(']');
                 reading = jpPart.substring(openSquareBracket + 1, closingSquareBracket).trim();
             }
-            final boolean isCommon = englishPart.endsWith("(P)");
-            return new EdictEntry(kanji, reading, englishPart, isCommon);
+            return new EdictEntry(kanji, reading, englishPart);
         }
 
         @Override
