@@ -5,6 +5,9 @@
 	</properties>
 	<body>
 		<release version="1.3" date="13. June 2010">
+			<action dev="vyzivus" type="add" issue="67">
+				Added customizable categories to the Notepad
+			</action>
 			<action dev="vyzivus" type="update" issue="52">
 				GUI Overhaul (thanks to Mitchell Liam)
 			</action>
