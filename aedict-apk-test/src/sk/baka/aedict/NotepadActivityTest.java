@@ -55,7 +55,7 @@ public class NotepadActivityTest extends AbstractAedictTest<NotepadActivity> {
 	public void testDelete() {
 		testAddEntry();
 		tester.contextMenu(getActivity().getListView(), 1, 0);
-		assertEquals(0, getActivity().getListAdapter().getCount());
+		assertEquals(1, getActivity().getListAdapter().getCount());
 	}
 
 	public void testDeleteAll() {
