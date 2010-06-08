@@ -41,11 +41,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TabHost;
 import android.widget.TwoLineListItem;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.TabHost.TabContentFactory;
 
 /**
  * A simple notepad activity, a simple kanji persistent storage. Allows for
@@ -53,7 +57,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
  * 
  * @author Martin Vysny
  */
-public class NotepadActivity extends ListActivity {
+public class NotepadActivity extends ListActivity implements TabContentFactory {
 	/**
 	 * The cached model (a list of edict entries as only the japanese text is
 	 * persisted).
@@ -110,6 +114,9 @@ public class NotepadActivity extends ListActivity {
 			}
 		}));
 		new SearchUtils(this).registerSearch(R.id.notepadExactMatch, R.id.notepadDeinflect, null, R.id.editNotepadSearch, false, R.id.btnNotepadSearch, true);
+		final TabHost tabs = (TabHost) findViewById(R.id.tabs);
+		tabs.setup();
+		tabs.addTab(tabs.newTabSpec("1").setIndicator("default").setContent(this));
 		processIntent();
 	}
 
@@ -136,15 +143,15 @@ public class NotepadActivity extends ListActivity {
 		}
 		return result;
 	}
-	
-	public static String serialize(final List<? extends DictEntry> entries){
+
+	public static String serialize(final List<? extends DictEntry> entries) {
 		final ListBuilder b = new ListBuilder("@@@@");
 		for (final DictEntry entry : entries) {
 			b.add(entry.toExternal());
 		}
 		return b.toString();
 	}
-	
+
 	private List<DictEntry> getModel() {
 		if (modelCache == null) {
 			modelCache = deserialize(AedictApp.getConfig().getNotepadItems());
@@ -216,5 +223,11 @@ public class NotepadActivity extends ListActivity {
 			}
 		}));
 		return true;
+	}
+
+	public View createTabContent(String tag) {
+		final ListView lv = new ListView(this);
+		lv.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+		return lv;
 	}
 }

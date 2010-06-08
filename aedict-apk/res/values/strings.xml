@@ -113,7 +113,6 @@
     <string name="availableDicts">Available dictionaries (click on the name to install)</string>
     <string name="notepad">Notepad</string>
     <string name="delete">Delete</string>
-    <string name="notepadHint">To add items to the notepad just long-click on Result Browser or Analysis Window and select \"Add to notepad\"</string>
     <string name="deleteAll">Delete all</string>
     <string name="addToNotepad">Add to notepad</string>
     <string name="searchingInDictionary">Searching in the %s dictionary</string>
