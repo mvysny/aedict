@@ -154,19 +154,19 @@ public class MainActivity extends ListActivity {
 
 	private List<DictEntry> getModel() {
 		if (modelCache == null) {
-			modelCache = NotepadActivity.deserialize(AedictApp.getConfig().getRecentlyViewed());
+			modelCache = AedictApp.getConfig().getRecentlyViewed();
 		}
 		return modelCache;
 	}
 
 	public static void recentlyViewed(final DictEntry entry) {
-		final List<DictEntry> entries = NotepadActivity.deserialize(AedictApp.getConfig().getRecentlyViewed());
+		final List<DictEntry> entries = AedictApp.getConfig().getRecentlyViewed();
 		while (entries.size() > 15) {
 			entries.remove(entries.size() - 1);
 		}
 		entries.remove(entry);
 		entries.add(0, entry);
-		AedictApp.getConfig().setRecentlyViewed(DictEntry.toExternalList(entries));
+		AedictApp.getConfig().setRecentlyViewed(entries);
 	}
 
 	/**

@@ -20,12 +20,16 @@ package sk.baka.aedict;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Formatter;
+import java.util.List;
 
+import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DownloaderService;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.DialogUtils;
+import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
 import android.app.Application;
 import android.app.Notification;
@@ -229,22 +233,59 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		public static final String KEY_NOTEPAD_ITEMS = "notepadItems2";
 
 		/**
-		 * Persisted notepad DictEntries. See {@link NotepadActivity#deserialize(String)} for details on the string format.
+		 * Persisted notepad DictEntries.
 		 * 
+		 * @param category
+		 *            the category name or null for default category.
 		 * @return the notepad items, never null.
 		 */
-		public String getNotepadItems() {
-			return prefs.getString(KEY_NOTEPAD_ITEMS, "");
+		public List<DictEntry> getNotepadItems(final String category) {
+			try {
+				return DictEntry.fromExternalList(prefs.getString(KEY_NOTEPAD_ITEMS + (category == null ? "" : "_" + category), ""));
+			} catch (Exception ex) {
+				// this may happen: earlier aedict builds stored the notepad
+				// items
+				// in a different format
+				Log.e(AedictApp.class.getSimpleName(), "Notepad model parsing failed", ex);
+				return new ArrayList<DictEntry>();
+			}
 		}
 
 		/**
-		 * Persisted notepad DictEntries. See {@link NotepadActivity#deserialize(String)} for details on the string format.
+		 * Notepad DictEntries.
 		 * 
+		 * @param category
+		 *            the category name or null for default category.
 		 * @param notepadItems
 		 *            the new notepad items, never null.
 		 */
-		public void setNotepadItems(final String notepadItems) {
-			commit(prefs.edit().putString(KEY_NOTEPAD_ITEMS, notepadItems));
+		public void setNotepadItems(final String category, final List<? extends DictEntry> notepadItems) {
+			commit(prefs.edit().putString(KEY_NOTEPAD_ITEMS + (category == null ? "" : "_" + category), DictEntry.toExternalList(notepadItems)));
+		}
+
+		public static final String KEY_NOTEPAD_CATEGORIES = "notepadCategories";
+
+		/**
+		 * Returns a list of notepad categories.
+		 * 
+		 * @return a list of notepad category names, not null, may be empty.
+		 */
+		public String[] getNotepadCategories() {
+			return prefs.getString(KEY_NOTEPAD_CATEGORIES, "").split("@@@@");
+		}
+
+		/**
+		 * A list of notepad categories.
+		 * 
+		 * @param categories
+		 *            a list of notepad category names, not null, may be empty.
+		 */
+		public void setNotepadCategories(final List<String> categories) {
+			final ListBuilder b = new ListBuilder("@@@@");
+			for (final String s : categories) {
+				b.add(s);
+			}
+			commit(prefs.edit().putString(KEY_NOTEPAD_CATEGORIES, b.toString()));
 		}
 
 		/**
@@ -253,22 +294,20 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		public static final String KEY_RECENTLY_VIEWED_ITEMS = "recentlyViewed";
 
 		/**
-		 * Recently viewed DictEntries. See {@link NotepadActivity#deserialize(String)} for details on the string format.
-		 * 
+		 * Recently viewed DictEntries.
 		 * @return the notepad items, never null.
 		 */
-		public String getRecentlyViewed() {
-			return prefs.getString(KEY_RECENTLY_VIEWED_ITEMS, "");
+		public List<DictEntry> getRecentlyViewed() {
+			return DictEntry.fromExternalList(prefs.getString(KEY_RECENTLY_VIEWED_ITEMS, ""));
 		}
 
 		/**
-		 * Recently viewed DictEntries. See {@link NotepadActivity#deserialize(String)} for details on the string format.
-		 * 
+		 * Recently viewed DictEntries.
 		 * @param notepadItems
 		 *            the new notepad items, never null.
 		 */
-		public void setRecentlyViewed(final String notepadItems) {
-			commit(prefs.edit().putString(KEY_RECENTLY_VIEWED_ITEMS, notepadItems));
+		public void setRecentlyViewed(final List<? extends DictEntry> notepadItems) {
+			commit(prefs.edit().putString(KEY_RECENTLY_VIEWED_ITEMS, DictEntry.toExternalList(notepadItems)));
 		}
 
 		private void commit(final Editor ed) {
