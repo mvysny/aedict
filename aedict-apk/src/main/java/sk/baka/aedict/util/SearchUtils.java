@@ -229,10 +229,15 @@ public final class SearchUtils {
 
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			if (isChecked) {
+				final CheckBox cb = (CheckBox) activity.findViewById(isExactCheckBox);
 				if (deinflectCheckBox != null) {
-					((CheckBox) activity.findViewById(isExactCheckBox)).setChecked(true);
+					cb.setChecked(true);
+					cb.setEnabled(false);
 				} else if (searchInExamplesCheckBox != null) {
-					((CheckBox) activity.findViewById(isExactCheckBox)).setChecked(false);
+					cb.setChecked(false);
+					cb.setEnabled(false);
+				} else {
+					cb.setEnabled(true);
 				}
 			}
 		}
