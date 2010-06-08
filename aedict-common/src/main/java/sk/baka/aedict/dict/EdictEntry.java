@@ -55,6 +55,38 @@ public final class EdictEntry extends DictEntry {
     }
 
     /**
+     * Creates new entry instance.
+     *
+     * @param kanji
+     *            the kanji expression, may be null if the entry does not
+     *            contain any kanji
+     * @param reading
+     *            the reading, in hiragana or katakana.
+     * @param english
+     *            the English translation
+     */
+    public EdictEntry(final String kanji, final String reading, final String english) {
+        this(kanji, reading, english, english.contains("(P)"));
+    }
+
+    /**
+     * Creates new entry instance.
+     *
+     * @param entry
+     *            the DictEntry, must be {@link DictEntry#isValid() valid}.
+     * @return non-null EdictEntry
+     */
+    public static EdictEntry fromEntry(final DictEntry entry) {
+        if(entry instanceof EdictEntry){
+            return (EdictEntry)entry;
+        }
+        if(!entry.isValid()){
+            throw new IllegalArgumentException("Entry is invalid: "+entry);
+        }
+        return new EdictEntry(entry.kanji, entry.reading, entry.english);
+    }
+
+    /**
      * Checks if this entry is a ichidan verb.
      *
      * @return true if this entry is a ichidan verb, false otherwise.
