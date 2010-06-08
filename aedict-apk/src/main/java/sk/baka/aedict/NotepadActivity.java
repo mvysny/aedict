@@ -130,26 +130,13 @@ public class NotepadActivity extends ListActivity implements TabContentFactory {
 	}
 
 	public static List<DictEntry> deserialize(final String serialized) {
-		final String items[] = serialized.split("@@@@");
-		final List<DictEntry> result = new ArrayList<DictEntry>();
 		try {
-			for (final String item : items) {
-				if (!MiscUtils.isBlank(item)) {
-					result.add(DictEntry.fromExternal(item));
-				}
-			}
+			return DictEntry.fromExternalList(serialized);
 		} catch (Exception ex) {
+			// this may happen: earlier aedict builds stored the notepad items in a different format
 			Log.e(NotepadActivity.class.getSimpleName(), "Notepad model parsing failed", ex);
+			return new ArrayList<DictEntry>();
 		}
-		return result;
-	}
-
-	public static String serialize(final List<? extends DictEntry> entries) {
-		final ListBuilder b = new ListBuilder("@@@@");
-		for (final DictEntry entry : entries) {
-			b.add(entry.toExternal());
-		}
-		return b.toString();
 	}
 
 	private List<DictEntry> getModel() {
@@ -180,7 +167,7 @@ public class NotepadActivity extends ListActivity implements TabContentFactory {
 	 */
 	private void onModelChanged() {
 		final Config cfg = AedictApp.getConfig();
-		cfg.setNotepadItems(serialize(getModel()));
+		cfg.setNotepadItems(DictEntry.toExternalList(getModel()));
 		if (getListAdapter() != null) {
 			// the adapter may be null if this method is invoked from onCreate()
 			// method
