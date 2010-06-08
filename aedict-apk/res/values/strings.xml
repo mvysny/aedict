@@ -437,4 +437,6 @@
 	<string name="more">More...</string>
 	<string name="recentlyViewed">Recently viewed</string>
 	<string name="selectCategory">Select category</string>
+	<string name="addCategory">Add category</string>
+	<string name="deleteCategory">Delete category</string>
 </resources>
