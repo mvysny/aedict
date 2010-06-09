@@ -5,6 +5,12 @@
 	</properties>
 	<body>
 		<release version="2.0" date="13. June 2010">
+			<action dev="vyzivus" type="add" issue="64">
+				AnyCut can now create shortcuts to KanjiPad, Skip Lookup, Kana Table and JLPT Quiz.
+			</action>
+			<action dev="vyzivus" type="fix" issue="63">
+				SOD images are now enlarged on high-DPI phones.
+			</action>
 			<action dev="vyzivus" type="add" issue="67">
 				Added customizable categories to the Notepad
 			</action>
