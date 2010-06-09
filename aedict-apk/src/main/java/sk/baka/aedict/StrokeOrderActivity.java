@@ -116,7 +116,14 @@ public class StrokeOrderActivity extends ListActivity {
 			}
 
 		});
+		if (model.size() == 1) {
+			addKanjiPad(model.get(0));
+		}
 	}
-	
+
+	private void addKanjiPad(char kanji) {
+		
+	}
+
 	public static final int SOD_DPI = 120;
 }
