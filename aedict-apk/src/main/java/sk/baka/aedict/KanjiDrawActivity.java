@@ -50,15 +50,12 @@ public class KanjiDrawActivity extends AbstractActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.kanjidraw);
 		recognizer = new DrawPanel(getClassLoader());
-		updateStrokes();
-		final PainterView view = new PainterView(this, recognizer);
+		final PainterView view = new PainterView(this, recognizer, R.id.textStrokes);
 		((ViewGroup) findViewById(R.id.kanjidrawRoot)).addView(view);
 		findViewById(R.id.btnKanjiClear).setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
 
 			public void onClick(View v) {
-				recognizer.clear();
-				updateStrokes();
-				view.invalidate();
+				view.clear();
 			}
 		}));
 		findViewById(R.id.btnKanjiSearch).setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
@@ -75,23 +72,21 @@ public class KanjiDrawActivity extends AbstractActivity {
 		new DialogUtils(this).showInfoOnce(Constants.INFOONCE_KANJIDRAWWARNING, -1, R.string.kanjiDrawWarning);
 	}
 
-	private void updateStrokes() {
-		((TextView) findViewById(R.id.textStrokes)).setText(AedictApp.format(R.string.strokes, recognizer.xstrokes.size()));
-	}
-
 	/**
 	 * Uses the DrawPanel class to paint and recognize Kanjis.
 	 * 
 	 * @author Martin Vysny
 	 */
-	private class PainterView extends View implements OnTouchListener {
+	public static class PainterView extends View implements OnTouchListener {
 		private final DrawPanel recognizer;
 		private final Paint bg = new Paint();
 		private final Paint fg1 = new Paint();
 		private final Paint fg2 = new Paint();
+		private final int textViewStrokes;
 
-		public PainterView(Context context, final DrawPanel recognizer) {
+		public PainterView(Context context, final DrawPanel recognizer, final int textViewStrokes) {
 			super(context);
+			this.textViewStrokes = textViewStrokes;
 			setFocusable(true);
 			setFocusableInTouchMode(true);
 			this.setOnTouchListener(this);
@@ -103,8 +98,15 @@ public class KanjiDrawActivity extends AbstractActivity {
 			fg2.setAntiAlias(true);
 			fg2.setStrokeWidth(8f);
 			this.recognizer = recognizer;
+			updateStrokes();
 		}
 
+		public void clear() {
+			recognizer.clear();
+			updateStrokes();
+			invalidate();
+		}
+		
 		@Override
 		protected void onDraw(Canvas c) {
 			Rect r = new Rect();
@@ -145,6 +147,10 @@ public class KanjiDrawActivity extends AbstractActivity {
 			}
 			invalidate();
 			return true;
+		}
+
+		public void updateStrokes() {
+			((TextView) findViewById(textViewStrokes)).setText(AedictApp.format(R.string.strokes, recognizer.xstrokes.size()));
 		}
 
 		private void drawVec(Canvas g, Iterator<Integer> xe2, Iterator<Integer> ye2, final Paint p) {
