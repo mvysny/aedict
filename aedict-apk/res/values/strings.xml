@@ -124,7 +124,7 @@
     <string name="resetIntroductions">Reset introductions</string>
     <string name="resetIntroductionsSummary">All introduction dialogs will be shown again</string>
     <string name="whatsNew">What\'s New in %s</string>
-    <string name="whatsNewText">For full changelog please see http://baka.sk/aedict/changes-report.html\n\n- Added a simple quiz.\n- Fixed: Notepad now preserves its items\n- Tanaka Example sentences kana reading is now displayed as well\n- Initial work done on the new GUI</string>
+    <string name="whatsNewText">For full changelog please see http://baka.sk/aedict/changes-report.html\n\n- AnyCut can now create shortcuts directly to KanjiPad, Skip Lookup, Kana Table and JLPT Quiz.\n- SOD images are now enlarged on high-DPI phones.\n- Added customizable categories to the Notepad\n- GUI Overhaul (thanks to Mitchell Liam)\n- Added ability to add given example entry to a notepad\n- The dictionary downloader now runs in background</string>
     <string name="searchInEdict">Search in the Edict dictionary</string>
     <string name="showConjugations">Show verb conjugations</string>
     <string name="iDoSomething">I do something.</string>

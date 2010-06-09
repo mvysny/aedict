@@ -9,7 +9,7 @@
 				StrokeOrderActivity now allows user to try to draw the kanji if there is only one kanji shown.
 			</action>
 			<action dev="vyzivus" type="add" issue="64">
-				AnyCut can now create shortcuts to KanjiPad, Skip Lookup, Kana Table and JLPT Quiz.
+				AnyCut can now create shortcuts directly to KanjiPad, Skip Lookup, Kana Table and JLPT Quiz.
 			</action>
 			<action dev="vyzivus" type="fix" issue="63">
 				SOD images are now enlarged on high-DPI phones.
