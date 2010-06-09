@@ -44,13 +44,11 @@ import edu.arizona.cs.javadict.DrawPanel;
  * @author Martin Vysny
  */
 public class KanjiDrawActivity extends AbstractActivity {
-	private DrawPanel recognizer;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.kanjidraw);
-		recognizer = new DrawPanel(getClassLoader());
-		final PainterView view = new PainterView(this, recognizer, R.id.textStrokes);
+		final PainterView view = new PainterView(this, R.id.textStrokes);
 		((ViewGroup) findViewById(R.id.kanjidrawRoot)).addView(view);
 		findViewById(R.id.btnKanjiClear).setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
 
@@ -62,7 +60,7 @@ public class KanjiDrawActivity extends AbstractActivity {
 
 			public void onClick(View v) {
 				try {
-					final String kanjis = recognizer.analyzeKanji();
+					final String kanjis = view.analyzeKanji();
 					KanjiAnalyzeActivity.launch(KanjiDrawActivity.this, kanjis, false);
 				} catch (IOException e) {
 					throw new RuntimeException(e);
@@ -84,8 +82,9 @@ public class KanjiDrawActivity extends AbstractActivity {
 		private final Paint fg2 = new Paint();
 		private final int textViewStrokes;
 
-		public PainterView(Context context, final DrawPanel recognizer, final int textViewStrokes) {
+		public PainterView(Context context, final int textViewStrokes) {
 			super(context);
+			recognizer = new DrawPanel(context.getClassLoader());
 			this.textViewStrokes = textViewStrokes;
 			setFocusable(true);
 			setFocusableInTouchMode(true);
@@ -97,8 +96,11 @@ public class KanjiDrawActivity extends AbstractActivity {
 			fg2.setARGB(255, 160, 160, 255);
 			fg2.setAntiAlias(true);
 			fg2.setStrokeWidth(8f);
-			this.recognizer = recognizer;
 			updateStrokes();
+		}
+
+		public String analyzeKanji() throws IOException {
+			return recognizer.analyzeKanji();
 		}
 
 		public void clear() {
@@ -149,7 +151,7 @@ public class KanjiDrawActivity extends AbstractActivity {
 			return true;
 		}
 
-		public void updateStrokes() {
+		private void updateStrokes() {
 			((TextView) findViewById(textViewStrokes)).setText(AedictApp.format(R.string.strokes, recognizer.xstrokes.size()));
 		}
 
