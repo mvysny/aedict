@@ -30,10 +30,12 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -77,6 +79,8 @@ public class StrokeOrderActivity extends ListActivity {
 				throw new RuntimeException(e);
 			}
 		}
+		final DisplayMetrics dm = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		setListAdapter(new ArrayAdapter<Character>(this, R.layout.soddetail, model) {
 
 			@Override
@@ -97,6 +101,14 @@ public class StrokeOrderActivity extends ListActivity {
 				}
 				if (bd != null) {
 					image.setImageDrawable(bd);
+					int scaledWidth = bd.getIntrinsicWidth();
+					if (dm.densityDpi != SOD_DPI) {
+						scaledWidth = scaledWidth * dm.densityDpi / SOD_DPI;
+					}
+					if (scaledWidth > dm.widthPixels) {
+						scaledWidth = dm.widthPixels;
+					}
+					image.setLayoutParams(new LinearLayout.LayoutParams(scaledWidth, (int) ((long) bd.getIntrinsicHeight() * scaledWidth / bd.getIntrinsicWidth())));
 				} else {
 					image.setImageDrawable(new ColorDrawable(0));
 				}
@@ -105,4 +117,6 @@ public class StrokeOrderActivity extends ListActivity {
 
 		});
 	}
+	
+	public static final int SOD_DPI = 120;
 }
