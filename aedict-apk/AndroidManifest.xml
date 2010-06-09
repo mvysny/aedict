@@ -32,10 +32,11 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".AboutActivity" android:label="@string/aboutCaption" />
-		<activity android:name=".KanaTableActivity" android:label="@string/kanaTable" />
+		<activity android:name=".KanaTableActivity" android:label="@string/kanaTable" >
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 			</intent-filter>
+		</activity>
 		<activity android:name=".ConfigActivity" android:label="@string/configuration" />
 		<activity android:name=".KanjiAnalyzeActivity" android:label="@string/kanjiAnalysisOf" />
 		<activity android:name=".KanjiSearchRadicalActivity"
@@ -45,10 +46,11 @@
 				<action android:name="android.intent.action.MAIN" />
 			</intent-filter>
 		</activity>
-		<activity android:name=".skip.SkipActivity" android:label="@string/skipLookup" />
+		<activity android:name=".skip.SkipActivity" android:label="@string/skipLookup">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 			</intent-filter>
+		</activity>
 		<activity android:name=".skip.Skip123Activity" android:label="@string/skipLookup" />
 		<activity android:name=".skip.Skip4Activity" android:label="@string/skipLookup" />
 		<activity android:name=".DownloadDictionaryActivity"
@@ -56,10 +58,11 @@
 		<activity android:name=".NotepadActivity" android:label="@string/notepad" />
 		<activity android:name=".StrokeOrderActivity" android:label="@string/showSod" />
 		<activity android:name=".KanjiDetailActivity" android:label="@string/kanjiDetail" />
-		<activity android:name=".jlptquiz.QuizLaunchActivity" android:label="@string/jlptQuiz" />
+		<activity android:name=".jlptquiz.QuizLaunchActivity" android:label="@string/jlptQuiz">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 			</intent-filter>
+		</activity>
 		<activity android:name=".jlptquiz.QuizActivity" android:label="@string/jlptQuiz" />
 		<activity android:name=".EdictEntryDetailActivity" android:label="@string/entryDetail" />
 		<activity android:name=".DownloadActivity" android:label="@string/downloadManager" />
