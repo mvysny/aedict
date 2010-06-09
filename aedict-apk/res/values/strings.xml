@@ -441,4 +441,6 @@
 	<string name="deleteCategory">Delete category</string>
 	<string name="renameCategory">Rename category</string>
 	<string name="ok">Ok</string>
+	<string name="tryDrawingKanji">Please try drawing the kanji</string>
+	<string name="tryIt">Try!</string>
 </resources>

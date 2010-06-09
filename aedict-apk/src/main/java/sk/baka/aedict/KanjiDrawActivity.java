@@ -26,7 +26,7 @@ import java.util.List;
 import sk.baka.aedict.util.Constants;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -82,7 +82,7 @@ public class KanjiDrawActivity extends AbstractActivity {
 		private final Paint fg2 = new Paint();
 		private final int textViewStrokes;
 
-		public PainterView(Context context, final int textViewStrokes) {
+		public PainterView(Activity context, final int textViewStrokes) {
 			super(context);
 			recognizer = new DrawPanel(context.getClassLoader());
 			this.textViewStrokes = textViewStrokes;
@@ -152,7 +152,7 @@ public class KanjiDrawActivity extends AbstractActivity {
 		}
 
 		private void updateStrokes() {
-			((TextView) findViewById(textViewStrokes)).setText(AedictApp.format(R.string.strokes, recognizer.xstrokes.size()));
+			((TextView) ((Activity)getContext()).findViewById(textViewStrokes)).setText(AedictApp.format(R.string.strokes, recognizer.xstrokes.size()));
 		}
 
 		private void drawVec(Canvas g, Iterator<Integer> xe2, Iterator<Integer> ye2, final Paint p) {
