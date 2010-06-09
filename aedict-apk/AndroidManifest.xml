@@ -37,7 +37,11 @@
 		<activity android:name=".KanjiAnalyzeActivity" android:label="@string/kanjiAnalysisOf" />
 		<activity android:name=".KanjiSearchRadicalActivity"
 			android:label="@string/kanjiRadicalLookup" />
-		<activity android:name=".KanjiDrawActivity" android:label="@string/kanjiDrawLookup" />
+		<activity android:name=".KanjiDrawActivity" android:label="@string/kanjiDrawLookup" >
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+		</activity>
 		<activity android:name=".skip.SkipActivity" android:label="@string/skipLookup" />
 		<activity android:name=".skip.Skip123Activity" android:label="@string/skipLookup" />
 		<activity android:name=".skip.Skip4Activity" android:label="@string/skipLookup" />
