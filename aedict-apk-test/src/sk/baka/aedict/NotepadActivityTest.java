@@ -24,6 +24,8 @@ import java.util.Arrays;
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictEntry;
 import android.content.Intent;
+import android.view.View;
+import android.widget.TabHost;
 
 /**
  * Tests the {@link NotepadActivity} class.
@@ -85,6 +87,78 @@ public class NotepadActivityTest extends AbstractAedictTest<NotepadActivity> {
 		e = (DictEntry) getActivity().getListView(0).getAdapter().getItem(1);
 		assertEquals(new DictEntry("母", "はは", "mother"), e);
 		assertEquals(2, getActivity().getListView(0).getAdapter().getCount());
-		assertEquals(new DictEntry("母は留守です。", "はははです", "Mother is.").toExternal() + "@@@@" + new DictEntry("母", "はは", "mother").toExternal(), DictEntry.toExternalList(AedictApp.getConfig().getNotepadItems(0)));
+		assertEquals(new DictEntry("母は留守です。", "はははです", "Mother is.").toExternal() + "@@@@" + new DictEntry("母", "はは", "mother").toExternal(), DictEntry.toExternalList(AedictApp.getConfig()
+				.getNotepadItems(0)));
+	}
+
+	public void testAddCategory() {
+		tester.startActivity();
+		tester.optionMenu(2);
+		assertTrue(getActivity().findViewById(R.id.tabs).getVisibility() == View.VISIBLE);
+		DictEntry e = (DictEntry) getActivity().getListView(0).getAdapter().getItem(0);
+		assertEquals(new DictEntry("母は留守です。", "はははです", "Mother is."), e);
+		assertEquals(1, getActivity().getListView(0).getAdapter().getCount());
+	}
+
+	public void testAddThreeCategories() {
+		final Config cfg = AedictApp.getConfig();
+		tester.startActivity();
+		tester.optionMenu(2);
+		tester.optionMenu(2);
+		tester.optionMenu(2);
+		assertTrue(getActivity().findViewById(R.id.tabs).getVisibility() == View.VISIBLE);
+		((TabHost) getActivity().findViewById(R.id.tabs)).setCurrentTab(0);
+		((TabHost) getActivity().findViewById(R.id.tabs)).setCurrentTab(1);
+		((TabHost) getActivity().findViewById(R.id.tabs)).setCurrentTab(2);
+		DictEntry e = (DictEntry) getActivity().getListView(0).getAdapter().getItem(0);
+		assertEquals(new DictEntry("母は留守です。", "はははです", "Mother is."), e);
+		assertEquals(1, getActivity().getListView(0).getAdapter().getCount());
+		assertEquals(0, getActivity().getListView(1).getAdapter().getCount());
+		assertEquals(0, getActivity().getListView(2).getAdapter().getCount());
+		assertEquals(3, cfg.getNotepadCategories().size());
+	}
+
+	public void testCorrectDisplayOfStoredCategories() {
+		final Config cfg = AedictApp.getConfig();
+		cfg.setNotepadCategories(Arrays.asList("foo", "bar", "baz"));
+		cfg.setNotepadItems(1, Arrays.asList(new DictEntry("母は留守です。", "はははです", "Foo!")));
+		tester.startActivity();
+		assertTrue(getActivity().findViewById(R.id.tabs).getVisibility() == View.VISIBLE);
+		((TabHost) getActivity().findViewById(R.id.tabs)).setCurrentTab(0);
+		DictEntry e = (DictEntry) getActivity().getListView(0).getAdapter().getItem(0);
+		assertEquals(new DictEntry("母は留守です。", "はははです", "Mother is."), e);
+		((TabHost) getActivity().findViewById(R.id.tabs)).setCurrentTab(1);
+		e = (DictEntry) getActivity().getListView(1).getAdapter().getItem(0);
+		assertEquals(new DictEntry("母は留守です。", "はははです", "Foo!"), e);
+		((TabHost) getActivity().findViewById(R.id.tabs)).setCurrentTab(2);
+		assertEquals(1, getActivity().getListView(0).getAdapter().getCount());
+		assertEquals(1, getActivity().getListView(1).getAdapter().getCount());
+		assertEquals(0, getActivity().getListView(2).getAdapter().getCount());
+	}
+
+	public void testDeleteFirstCategoryOfThree() {
+		testCorrectDisplayOfStoredCategories();
+		((TabHost) getActivity().findViewById(R.id.tabs)).setCurrentTab(0);
+		tester.optionMenu(3);
+		((TabHost) getActivity().findViewById(R.id.tabs)).setCurrentTab(1);
+		DictEntry e = (DictEntry) getActivity().getListView(0).getAdapter().getItem(0);
+		assertEquals(new DictEntry("母は留守です。", "はははです", "Foo!"), e);
+		assertEquals(1, getActivity().getListView(0).getAdapter().getCount());
+		assertEquals(0, getActivity().getListView(1).getAdapter().getCount());
+		((TabHost) getActivity().findViewById(R.id.tabs)).setCurrentTab(1);
+		final Config cfg = AedictApp.getConfig();
+		assertEquals(2, cfg.getNotepadCategories().size());
+	}
+
+	public void testDeleteAllCategories() {
+		final Config cfg = AedictApp.getConfig();
+		testCorrectDisplayOfStoredCategories();
+		((TabHost) getActivity().findViewById(R.id.tabs)).setCurrentTab(0);
+		tester.optionMenu(3);
+		tester.optionMenu(3);
+		tester.optionMenu(3);
+		assertTrue(getActivity().findViewById(R.id.tabs).getVisibility() == View.GONE);
+		assertEquals(0, getActivity().getListView(0).getAdapter().getCount());
+		assertEquals(0, cfg.getNotepadCategories().size());
 	}
 }
