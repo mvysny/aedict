@@ -4,7 +4,10 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
-		<release version="2.0" date="13. June 2010">
+		<release version="2.0" date="9. June 2010">
+			<action dev="vyzivus" type="add" issue="68">
+				StrokeOrderActivity now allows user to try to draw the kanji if there is only one kanji shown.
+			</action>
 			<action dev="vyzivus" type="add" issue="64">
 				AnyCut can now create shortcuts to KanjiPad, Skip Lookup, Kana Table and JLPT Quiz.
 			</action>
