@@ -218,8 +218,12 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		}
 		if (e instanceof KanjidicEntry) {
 			KanjiDetailActivity.launch(this, (KanjidicEntry) e);
-		} else {
+		} else if (e instanceof EdictEntry){
 			EdictEntryDetailActivity.launch(this, (EdictEntry)e);
+		}else{
+			// this only happens when the word analysis is turned off and the entry shows a single kana character.
+			// just do nothing.
+			// fixes http://code.google.com/p/aedict/issues/detail?id=69
 		}
 	}
 
