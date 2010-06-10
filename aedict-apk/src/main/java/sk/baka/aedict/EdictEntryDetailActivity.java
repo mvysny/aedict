@@ -76,6 +76,9 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edict_entry_detail);
 		entry = (EdictEntry) getIntent().getSerializableExtra(INTENTKEY_ENTRY);
+		if(entry==null){
+			throw new IllegalArgumentException("The "+INTENTKEY_ENTRY+" extra is missing from the intent");
+		}
 		MainActivity.recentlyViewed(entry);
 		showRomaji = new ShowRomaji(this) {
 

@@ -32,7 +32,7 @@ public class EdictEntryDetailActivityTest extends AbstractAedictTest<EdictEntryD
 	public void testStartActivity() {
 		final Intent i=new Intent(getInstrumentation().getContext(), EdictEntryDetailActivity.class);
 		i.putExtra(EdictEntryDetailActivity.INTENTKEY_ENTRY, new EdictEntry("合う","あう","(v5u,vi) (1) to come together/to merge/to unite/to meet/(2) to fit/to match/to suit/to agree with/to be correct/(3) to be profitable/to be equitable/(suf,v5u) (4) (after the -masu stem of a verb) to do ... to each other/to do ... together/(P)/"));
-		tester.startActivity();
+		tester.startActivity(i);
 	}
 
 	/**
