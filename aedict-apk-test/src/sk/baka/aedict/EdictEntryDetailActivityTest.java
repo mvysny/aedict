@@ -40,6 +40,6 @@ public class EdictEntryDetailActivityTest extends AbstractAedictTest<EdictEntryD
 	 */
 	public void testAllSensesAreShown() {
 		testStartActivity();
-		tester.assertText(R.id.entrySenses, "(1) to come together, to merge, to unite, to meet\n(2) to fit, to match, to suit, to agree with, to be correct\n(3) to be profitable,to be equitable\n(4) (after the -masu stem of a verb) to do ... to each other, to do ... together");
+		tester.assertText(R.id.entrySenses, "(1) to come together, to merge, to unite, to meet\n(2) to fit, to match, to suit, to agree with, to be correct\n(3) to be profitable, to be equitable\n(4) (after the -masu stem of a verb) to do ... to each other, to do ... together");
 	}
 }

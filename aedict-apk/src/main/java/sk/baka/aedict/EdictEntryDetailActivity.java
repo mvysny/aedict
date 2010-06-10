@@ -132,8 +132,8 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 		});
 		// display the senses
 		final List<List<String>> senses = entry.getSenses();
+		final SpanStringBuilder sb = new SpanStringBuilder();
 		for (int i = 0; i < senses.size(); i++) {
-			final SpanStringBuilder sb = new SpanStringBuilder();
 			sb.append(sb.newForeground(0xFF777777), "(" + (i + 1) + ") ");
 			for (int j = 0; j < senses.get(i).size(); j++) {
 				final String sense = senses.get(i).get(j);
@@ -143,10 +143,13 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 					sb.append(", ");
 				}
 			}
-			final TextView s = (TextView) findViewById(R.id.entrySenses);
-			s.setMovementMethod(new LinkMovementMethod());
-			s.setText(sb);
+			if(i<senses.size()-1){
+				sb.append('\n');
+			}
 		}
+		final TextView s = (TextView) findViewById(R.id.entrySenses);
+		s.setMovementMethod(new LinkMovementMethod());
+		s.setText(sb);
 	}
 
 	public static String csv(final Collection<?> objs) {
