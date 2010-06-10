@@ -198,7 +198,7 @@ public class AndroidTester<T extends Activity> {
 	 *            the text to expect
 	 */
 	public void assertText(final int textViewId, final String text) {
-		assertEquals(text, getText(textViewId));
+		assertEquals(text, getText(textViewId).toString());
 	}
 
 	/**
