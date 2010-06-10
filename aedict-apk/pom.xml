@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+ Aedict - an EDICT browser for Android
+ Copyright (C) 2009 Martin Vysny
+ 
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses />.
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>sk.baka.aedict</groupId>
+		<artifactId>aedict</artifactId>
+		<version>2.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>aedict-apk</artifactId>
+	<packaging>android:apk</packaging>
+	<name>Aedict APK</name>
+	<description>A english-japanese dictionary which uses Jim Breen's edict data. Does not require japanese keyboard. This is the Android APK builder.</description>
+	
+	<properties>
+		<masa.version>1.1-svn81-vyzivus3</masa.version>
+		<android.version>1.6-r1</android.version>
+		<android.api>1.6</android.api>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>com.google.android</groupId>
+			<artifactId>android</artifactId>
+			<version>${android.version}</version>
+		</dependency>
+       <dependency>
+           <groupId>${project.groupId}</groupId>
+           <artifactId>aedict-common</artifactId>
+           <version>${project.version}</version>
+       </dependency>
+		<dependency>
+			<groupId>sk.baka.autils</groupId>
+			<artifactId>autils</artifactId>
+			<version>0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>sk.baka.tools</groupId>
+			<artifactId>bakatools</artifactId>
+			<version>0.5</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+   
+	<!-- Build environment -->
+	<build>
+		<!-- set the application version to the "version" file -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<configuration>
+				   <buildcommands>
+				   	<buildcommand>com.android.ide.eclipse.adt.ResourceManagerBuilder</buildcommand>
+				      <buildcommand>com.android.ide.eclipse.adt.PreCompilerBuilder</buildcommand>
+				      <buildcommand>org.eclipse.jdt.core.javabuilder</buildcommand>
+				      <buildcommand>com.android.ide.eclipse.adt.ApkBuilder</buildcommand>
+				   </buildcommands>
+				   <additionalProjectnatures>
+				      <projectnature>com.android.ide.eclipse.adt.AndroidNature</projectnature>
+				      <projectnature>org.eclipse.jdt.core.javanature</projectnature>
+				   </additionalProjectnatures>
+				   <classpathContainers>
+				   	<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
+				   </classpathContainers>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jvending.masa.plugins</groupId>
+				<artifactId>maven-aapt-plugin</artifactId>
+				<version>${masa.version}</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.jvending.masa.plugins</groupId>
+				<artifactId>maven-dx-plugin</artifactId>
+				<version>${masa.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<!-- fixes OutOfMemory errors on MacOSX while building dex. Issue http://code.google.com/p/aedict/issues/detail?id=2 -->
+					<jvmArguments><jvmArgument>-Xmx512m</jvmArgument></jvmArguments>
+				</configuration>
+			</plugin>
+			<plugin>
+			   <groupId>org.jvending.masa.plugins</groupId>
+			   <artifactId>maven-toolchains-plugin</artifactId>
+			   <version>${masa.version}</version>
+			   <configuration>
+			      <toolchains>
+			         <android>
+			            <version>${android.api}</version>
+			         </android>
+			      </toolchains>
+			   </configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+	      <id>release</id>
+	      <build>
+	         <plugins>
+	            <plugin>
+						<groupId>org.jvending.masa.plugins</groupId>
+						<artifactId>maven-jarsigner-plugin</artifactId>
+						<version>${masa.version}</version>
+						<configuration>
+							<keystore>aedict.keystore</keystore>
+							<alias>ambientcertss</alias>
+							<keypass>${cert.keypass}</keypass>
+							<storepass>${cert.storepass}</storepass>
+						</configuration>
+					</plugin>
+	         </plugins>
+	      </build>
+	   </profile>
+	</profiles>
+</project>
+
