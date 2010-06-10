@@ -43,8 +43,8 @@ import android.view.View.OnCreateContextMenuListener;
 import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
@@ -163,6 +163,21 @@ public class AndroidTester<T extends Activity> {
 	}
 
 	/**
+	 * Asserts that the current activity requested start of given activity,
+	 * using one of the {@link Activity#startActivity(Intent)} or
+	 * {@link Activity#startActivityForResult(Intent, int)} methods.
+	 * 
+	 * @param activity
+	 *            the new activity
+	 */
+	public void assertNoRequestedActivity() {
+		final Intent i = test.getStartedActivityIntent();
+		if (i != null) {
+			throw new AssertionError("The activity requested a start of another activity: "+i);
+		}
+	}
+
+	/**
 	 * Sets text of given {@link TextView}.
 	 * 
 	 * @param textViewId
@@ -211,13 +226,25 @@ public class AndroidTester<T extends Activity> {
 	}
 
 	/**
-	 * Clicks on given {@link Button}.
+	 * Clicks on given {@link View}.
 	 * 
 	 * @param buttonId
 	 *            the button id
 	 */
 	public void click(final int buttonId) {
 		test.getActivity().findViewById(buttonId).performClick();
+	}
+
+	/**
+	 * Clicks item on given {@link ListView}.
+	 * 
+	 * @param listViewId
+	 *            the ListView id
+	 *            @param position the item position.
+	 */
+	public void click(final int listViewId, final int position) {
+		final AbsListView lv=(AbsListView)test.getActivity().findViewById(listViewId);
+		lv.performItemClick(lv, position, position);
 	}
 
 	/**

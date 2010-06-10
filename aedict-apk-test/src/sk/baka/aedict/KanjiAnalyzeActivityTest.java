@@ -97,6 +97,23 @@ public class KanjiAnalyzeActivityTest extends AbstractAedictTest<KanjiAnalyzeAct
 		assertEquals(7, getActivity().getListAdapter().getCount());
 	}
 
+	public void testWordAnalysisLaunchesEdictDetailView() {
+		startActivity("今週のおすすめﾊﾞｰｹﾞﾝTVｹﾞｰﾑ", true);
+		assertEquals("おすすめ", get(2).reading);
+		tester.click(android.R.id.list, 2);
+		tester.assertRequestedActivity(EdictEntryDetailActivity.class);
+	}
+
+	/**
+	 * Tests for http://code.google.com/p/aedict/issues/detail?id=69
+	 */
+	public void testClickOnHiraganaCharacterDoesNothing() {
+		startActivity("今週のおすすめﾊﾞｰｹﾞﾝTVｹﾞｰﾑ", false);
+		assertEquals("の", get(2).reading);
+		tester.click(android.R.id.list, 2);
+		tester.assertNoRequestedActivity();
+	}
+	
 	private DictEntry get(int i) {
 		return (DictEntry) getActivity().getListAdapter().getItem(i);
 	}
