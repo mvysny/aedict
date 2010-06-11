@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+ Aedict - an EDICT browser for Android
+ Copyright (C) 2009 Martin Vysny
+ 
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses />.
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>sk.baka.aedict</groupId>
+	<artifactId>aedict</artifactId>
+	<packaging>pom</packaging>
+	<version>2.2-SNAPSHOT</version>
+	<name>Aedict</name>
+	<inceptionYear>2009</inceptionYear>
+	<description>An english-japanese dictionary which uses Jim Breen's edict data. Does not require japanese keyboard.</description>
+	<url>http://baka.sk/aedict/</url>
+	<prerequisites>
+		<maven>2.2.0</maven>
+	</prerequisites>
+	
+	<scm>
+		<connection>scm:hg:https://aedict.googlecode.com/hg/</connection>
+		<developerConnection>scm:hg:https://aedict.googlecode.com/hg/</developerConnection>
+		<url>https://aedict.googlecode.com/hg/</url>
+	</scm>
+	
+	<licenses>
+		<license>
+			<name>GNU General Public License 3</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+		</license>
+	</licenses>
+	
+	<mailingLists>
+		<mailingList>
+			<name>Users</name>
+			<subscribe>http://groups.google.com/group/aedict-users/subscribe</subscribe>
+			<unsubscribe>http://groups.google.com/group/aedict-users/subscribe</unsubscribe>
+			<post>aedict-users@googlegroups.com</post>
+			<archive>http://groups.google.com/group/aedict-users/topics</archive>
+		</mailingList>
+	</mailingLists>
+	
+	<!-- Developers -->
+	<developers>
+		<developer>
+			<id>vyzivus</id>
+			<name>Martin Vyšný</name>
+			<email>vysny@baka.sk</email>
+			<organization>baka.sk</organization>
+			<organizationUrl>http://www.baka.sk/</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>1</timezone>
+		</developer>
+	</developers>
+	
+	<distributionManagement>
+        <site>
+            <id>realtime</id>
+            <url>scp://rt.sk/home/moto/public_html/aedict/</url>
+        </site>
+        <repository>
+            <id>realtime</id>
+            <url>scp://rt.sk/home/moto/public_html/maven2</url>
+        </repository>
+	</distributionManagement>
+
+	<issueManagement>
+		<system>Google Code Tracker</system>
+		<url>http://code.google.com/p/aedict/issues/list</url>
+	</issueManagement>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>baka.pluginRepo</id>
+			<name>Baka.sk repository</name>
+			<url>http://baka.sk/maven2</url>
+		</pluginRepository>
+	</pluginRepositories>
+	<repositories>
+		<repository>
+			<id>baka.repo</id>
+			<name>Baka.sk repository</name>
+			<url>http://baka.sk/maven2</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.6</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+   
+   <modules>
+   	<module>aedict-apk</module>
+   	<module>aedict-common</module>
+   	<module>aedict-indexer</module>
+   </modules>
+   
+	<!-- Build environment -->
+	<build>
+		<defaultGoal>install</defaultGoal>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<buildOutputDirectory>eclipse-target/classes</buildOutputDirectory>
+					<additionalConfig>
+						<file>
+							<name>.settings/org.eclipse.jdt.core.prefs</name>
+							<content>
+								<![CDATA[
+eclipse.preferences.version=1
+org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.5
+org.eclipse.jdt.core.compiler.compliance=1.5
+org.eclipse.jdt.core.compiler.doc.comment.support=enabled
+org.eclipse.jdt.core.compiler.problem.annotationSuperInterface=warning
+org.eclipse.jdt.core.compiler.problem.autoboxing=ignore
+org.eclipse.jdt.core.compiler.problem.deprecation=warning
+org.eclipse.jdt.core.compiler.problem.deprecationInDeprecatedCode=disabled
+org.eclipse.jdt.core.compiler.problem.deprecationWhenOverridingDeprecatedMethod=disabled
+org.eclipse.jdt.core.compiler.problem.discouragedReference=warning
+org.eclipse.jdt.core.compiler.problem.emptyStatement=warning
+org.eclipse.jdt.core.compiler.problem.fallthroughCase=error
+org.eclipse.jdt.core.compiler.problem.fieldHiding=ignore
+org.eclipse.jdt.core.compiler.problem.finalParameterBound=warning
+org.eclipse.jdt.core.compiler.problem.finallyBlockNotCompletingNormally=warning
+org.eclipse.jdt.core.compiler.problem.forbiddenReference=error
+org.eclipse.jdt.core.compiler.problem.hiddenCatchBlock=warning
+org.eclipse.jdt.core.compiler.problem.incompatibleNonInheritedInterfaceMethod=warning
+org.eclipse.jdt.core.compiler.problem.incompleteEnumSwitch=warning
+org.eclipse.jdt.core.compiler.problem.indirectStaticAccess=warning
+org.eclipse.jdt.core.compiler.problem.invalidJavadoc=warning
+org.eclipse.jdt.core.compiler.problem.invalidJavadocTags=enabled
+org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsDeprecatedRef=enabled
+org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsNotVisibleRef=enabled
+org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsVisibility=private
+org.eclipse.jdt.core.compiler.problem.localVariableHiding=ignore
+org.eclipse.jdt.core.compiler.problem.methodWithConstructorName=warning
+org.eclipse.jdt.core.compiler.problem.missingDeprecatedAnnotation=warning
+org.eclipse.jdt.core.compiler.problem.missingJavadocComments=warning
+org.eclipse.jdt.core.compiler.problem.missingJavadocCommentsOverriding=disabled
+org.eclipse.jdt.core.compiler.problem.missingJavadocCommentsVisibility=default
+org.eclipse.jdt.core.compiler.problem.missingJavadocTags=warning
+org.eclipse.jdt.core.compiler.problem.missingJavadocTagsOverriding=disabled
+org.eclipse.jdt.core.compiler.problem.missingJavadocTagsVisibility=default
+org.eclipse.jdt.core.compiler.problem.missingOverrideAnnotation=warning
+org.eclipse.jdt.core.compiler.problem.missingSerialVersion=warning
+org.eclipse.jdt.core.compiler.problem.noEffectAssignment=warning
+org.eclipse.jdt.core.compiler.problem.noImplicitStringConversion=warning
+org.eclipse.jdt.core.compiler.problem.nonExternalizedStringLiteral=ignore
+org.eclipse.jdt.core.compiler.problem.nullReference=warning
+org.eclipse.jdt.core.compiler.problem.overridingPackageDefaultMethod=warning
+org.eclipse.jdt.core.compiler.problem.parameterAssignment=warning
+org.eclipse.jdt.core.compiler.problem.possibleAccidentalBooleanAssignment=warning
+org.eclipse.jdt.core.compiler.problem.rawTypeReference=warning
+org.eclipse.jdt.core.compiler.problem.specialParameterHidingField=disabled
+org.eclipse.jdt.core.compiler.problem.staticAccessReceiver=warning
+org.eclipse.jdt.core.compiler.problem.suppressWarnings=enabled
+org.eclipse.jdt.core.compiler.problem.syntheticAccessEmulation=ignore
+org.eclipse.jdt.core.compiler.problem.typeParameterHiding=warning
+org.eclipse.jdt.core.compiler.problem.uncheckedTypeOperation=warning
+org.eclipse.jdt.core.compiler.problem.undocumentedEmptyBlock=ignore
+org.eclipse.jdt.core.compiler.problem.unhandledWarningToken=warning
+org.eclipse.jdt.core.compiler.problem.unnecessaryElse=ignore
+org.eclipse.jdt.core.compiler.problem.unnecessaryTypeCheck=warning
+org.eclipse.jdt.core.compiler.problem.unqualifiedFieldAccess=ignore
+org.eclipse.jdt.core.compiler.problem.unusedDeclaredThrownException=warning
+org.eclipse.jdt.core.compiler.problem.unusedDeclaredThrownExceptionWhenOverriding=enabled
+org.eclipse.jdt.core.compiler.problem.unusedImport=warning
+org.eclipse.jdt.core.compiler.problem.unusedLabel=warning
+org.eclipse.jdt.core.compiler.problem.unusedLocal=warning
+org.eclipse.jdt.core.compiler.problem.unusedParameter=warning
+org.eclipse.jdt.core.compiler.problem.unusedParameterWhenImplementingAbstract=disabled
+org.eclipse.jdt.core.compiler.problem.unusedParameterWhenOverridingConcrete=disabled
+org.eclipse.jdt.core.compiler.problem.unusedPrivateMember=warning
+org.eclipse.jdt.core.compiler.problem.varargsArgumentNeedCast=warning
+org.eclipse.jdt.core.compiler.source=1.5
+]]>
+							</content>
+						</file>
+					</additionalConfig>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-site-plugin</artifactId>
+				<configuration>
+					<inputEncoding>UTF-8</inputEncoding>
+					<outputEncoding>UTF-8</outputEncoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<!-- The changes:announcement-generate goal will verify whether the changes.xml file is valid -->
+					<preparationGoals>clean install site -P release</preparationGoals>
+					<goals>clean deploy site-deploy -P release</goals>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<username>${google-code.hg.username}</username>
+					<password>${google-code.hg.password}</password>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+		 			<plugin>
+						<artifactId>maven-changes-plugin</artifactId>
+						<inherited>false</inherited>
+						<configuration>
+							<smtpHost>${smtp.host}</smtpHost>
+							<smtpPort>${smtp.port}</smtpPort>
+							<sslMode>${smtp.ssl}</sslMode>
+							<username>${smtp.username}</username>
+							<password>${smtp.password}</password>
+		 					<toAddresses><toAddress>aedict-users@googlegroups.com</toAddress></toAddresses>
+							<mailSender>
+								<name>Martin Vysny</name>
+								<email>vysny@baka.sk</email>
+							</mailSender>
+							<urlDownload>http://code.google.com/p/aedict/downloads/list</urlDownload>
+							<url>${project.url}</url>
+							<issueLinkTemplate>http://code.google.com/p/aedict/issues/detail?id=%ISSUE%</issueLinkTemplate>
+						</configuration>
+						<executions>
+							<execution>
+								<id>verify.changes.xml</id>
+								<goals><goal>announcement-generate</goal></goals>
+								<phase>install</phase>
+							</execution>
+							<execution>
+								<id>send.mail</id>
+								<goals><goal>announcement-mail</goal></goals>
+								<phase>deploy</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jxr-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>surefire-report-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>taglist-maven-plugin</artifactId>
+                <configuration>
+                    <tags>
+                        <tag>TODO</tag>
+                        <tag>FIXME</tag>
+                        <tag>@todo</tag>
+                        <tag>XXX</tag>
+                    </tags>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-changes-plugin</artifactId>
+                <configuration>
+                    <issueLinkTemplate>http://code.google.com/p/aedict/issues/detail?id=%ISSUE%</issueLinkTemplate>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <linkXref>true</linkXref>
+                    <sourceEncoding>UTF-8</sourceEncoding>
+                    <targetJdk>1.5</targetJdk>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>1.2</version>
+                <configuration>
+                    <threshold>High</threshold>
+                    <effort>Max</effort>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>project-team</report>
+                            <report>dependencies</report>
+                            <report>dependency-convergence</report>
+                            <report>license</report>
+                            <report>mailing-list</report>
+                            <report>scm</report>
+                            <report>issue-tracking</report>
+                            <report>changes-report</report>
+                            <report>index</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+</project>
+

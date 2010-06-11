@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<!--
+		Aedict - an EDICT browser for Android Copyright (C) 2009 Martin Vysny
+
+		This program is free software: you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation, either version 3 of the License, or (at
+		your option) any later version. This program is distributed in the
+		hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+		the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+		PURPOSE. See the GNU General Public License for more details. You
+		should have received a copy of the GNU General Public License along
+		with this program. If not, see <http://www.gnu.org/licenses/>.
+	-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="sk.baka.aedict" android:versionCode="220" android:versionName="2.2">
+	<application android:icon="@drawable/aedict_icon"
+		android:label="@string/app_name" android:name=".AedictApp">
+		<meta-data android:name="android.app.default_searchable"
+			android:value=".GlobalSearchHandler" />
+		<activity android:name=".MainActivity" android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".ResultActivity" android:label="@string/searchResults">
+			<intent-filter>
+				<action android:name="com.adamrocker.android.simeji.ACTION_INTERCEPT" />
+				<category android:name="com.adamrocker.android.simeji.REPLACE" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".AboutActivity" android:label="@string/aboutCaption" />
+		<activity android:name=".KanaTableActivity" android:label="@string/kanaTable" >
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".ConfigActivity" android:label="@string/configuration" />
+		<activity android:name=".KanjiAnalyzeActivity" android:label="@string/kanjiAnalysisOf" />
+		<activity android:name=".KanjiSearchRadicalActivity"
+			android:label="@string/kanjiRadicalLookup" />
+		<activity android:name=".KanjiDrawActivity" android:label="@string/kanjiDrawLookup" >
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".skip.SkipActivity" android:label="@string/skipLookup">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".skip.Skip123Activity" android:label="@string/skipLookup" />
+		<activity android:name=".skip.Skip4Activity" android:label="@string/skipLookup" />
+		<activity android:name=".DownloadDictionaryActivity"
+			android:label="@string/downloadDictionaries" />
+		<activity android:name=".NotepadActivity" android:label="@string/notepad" />
+		<activity android:name=".StrokeOrderActivity" android:label="@string/showSod" />
+		<activity android:name=".KanjiDetailActivity" android:label="@string/kanjiDetail" />
+		<activity android:name=".jlptquiz.QuizLaunchActivity" android:label="@string/jlptQuiz">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".jlptquiz.QuizActivity" android:label="@string/jlptQuiz" />
+		<activity android:name=".EdictEntryDetailActivity" android:label="@string/entryDetail" />
+		<activity android:name=".DownloadActivity" android:label="@string/downloadManager" />
+		<activity android:name=".GlobalSearchHandler" android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.SEARCH" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+			<meta-data android:name="android.app.searchable"
+				android:resource="@xml/searchable" />
+		</activity>
+		<activity android:name=".VerbInflectionActivity" android:label="@string/showConjugations" />
+		<provider android:name=".SearchProvider" android:authorities="sk.baka.aedict.search"
+			android:syncable="false" />
+	</application>
+	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<supports-screens android:smallScreens="true"
+		android:normalScreens="true" android:largeScreens="true"
+		android:anyDensity="true" />
+</manifest> 
