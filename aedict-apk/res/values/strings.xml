@@ -443,4 +443,5 @@
 	<string name="ok">Ok</string>
 	<string name="tryDrawingKanji">Please try drawing the kanji</string>
 	<string name="tryIt">Try!</string>
+	<string name="quiz">Notepad quiz</string>
 </resources>
