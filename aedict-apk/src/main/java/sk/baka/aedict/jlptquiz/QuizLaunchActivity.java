@@ -107,6 +107,9 @@ public class QuizLaunchActivity extends Activity {
 		final LuceneSearch search = new LuceneSearch(DictTypeEnum.Kanjidic, null, true);
 		try {
 			for (int i = 0; i < QUIZ_QUESTION_COUNT; i++) {
+				if (kanjiPool.length() == 0) {
+					break;
+				}
 				final int index = r.nextInt(kanjiPool.length());
 				final char kanji = kanjiPool.charAt(index);
 				kanjiPool.deleteCharAt(index);
