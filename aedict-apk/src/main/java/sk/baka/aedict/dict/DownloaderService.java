@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
+import java.io.Closeable;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -45,15 +46,13 @@ import java.util.zip.ZipInputStream;
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.DownloadActivity;
 import sk.baka.aedict.R;
+import sk.baka.aedict.util.IOExceptionWithCause;
 import sk.baka.aedict.util.SodLoader;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.Activity;
-import android.app.Service;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
 import android.os.StatFs;
 import android.util.Log;
 
@@ -62,35 +61,17 @@ import android.util.Log;
  * 
  * @author Martin Vysny
  */
-public class DownloaderService extends Service {
-	/**
-	 * Class for clients to access. Because we know this service always runs in
-	 * the same process as its clients, we don't need to deal with IPC.
-	 */
-	public class LocalBinder extends Binder {
-		public DownloaderService getService() {
-			return DownloaderService.this;
-		}
-	}
-
+public class DownloaderService implements Closeable {
 	private final ExecutorService downloader = Executors.newSingleThreadExecutor();
 
-	@Override
-	public void onDestroy() {
+	public void close() throws IOException {
 		downloader.shutdownNow();
 		try {
-			downloader.awaitTermination(1, TimeUnit.SECONDS);
+			downloader.awaitTermination(5, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			throw new IOExceptionWithCause("Interrupted while waiting for thread termination", e);
 		}
 	}
-
-	@Override
-	public IBinder onBind(Intent intent) {
-		return mBinder;
-	}
-
-	private final IBinder mBinder = new LocalBinder();
 
 	public static class State {
 		public State(String msg, final String downloadPath, int downloaded, int total, final boolean isError) {
@@ -144,7 +125,7 @@ public class DownloaderService extends Service {
 		if (!isComplete(downloader.targetDir)) {
 			final StatFs stats = new StatFs("/sdcard");
 			final long free = ((long) stats.getBlockSize()) * stats.getAvailableBlocks();
-			final StringBuilder msg = new StringBuilder(getString(R.string.dictionary_missing_download, downloader.dictName));
+			final StringBuilder msg = new StringBuilder(AedictApp.format(R.string.dictionary_missing_download, downloader.dictName));
 			if (free < downloader.expectedSize) {
 				msg.append('\n');
 				msg.append(AedictApp.format(R.string.warning_less_than_x_mb_free, downloader.expectedSize / 1024, free / 1024));

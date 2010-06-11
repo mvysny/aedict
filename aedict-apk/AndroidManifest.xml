@@ -77,7 +77,6 @@
 		<activity android:name=".VerbInflectionActivity" android:label="@string/showConjugations" />
 		<provider android:name=".SearchProvider" android:authorities="sk.baka.aedict.search"
 			android:syncable="false" />
-		<service android:name=".dict.DownloaderService"/>
 	</application>
 	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4" />
 	<uses-permission android:name="android.permission.INTERNET" />
