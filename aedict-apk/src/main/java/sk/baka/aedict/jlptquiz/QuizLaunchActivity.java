@@ -18,14 +18,26 @@
 
 package sk.baka.aedict.jlptquiz;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.R;
+import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.KanjidicEntry;
+import sk.baka.aedict.dict.LuceneSearch;
+import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.kanji.KanjiUtils;
+import sk.baka.autils.AndroidUtils;
+import sk.baka.autils.MiscUtils;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -53,7 +65,7 @@ public class QuizLaunchActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(!AedictApp.getDownloader().checkDic(this, DictTypeEnum.Kanjidic)){
+		if (!AedictApp.getDownloader().checkDic(this, DictTypeEnum.Kanjidic)) {
 			finish();
 			return;
 		}
@@ -62,7 +74,7 @@ public class QuizLaunchActivity extends Activity {
 			final CheckBox cb = (CheckBox) findViewById(e.getKey());
 			cb.setText(AedictApp.format(R.string.jlptLevelX, e.getValue()));
 		}
-		findViewById(R.id.launch).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.launch).setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
 
 			public void onClick(View v) {
 				final Set<Integer> jlpt = new HashSet<Integer>();
@@ -75,8 +87,43 @@ public class QuizLaunchActivity extends Activity {
 				if (jlpt.isEmpty()) {
 					return;
 				}
-				QuizActivity.launch(QuizLaunchActivity.this, jlpt);
+				try {
+					final List<KanjidicEntry> questions = generateQuestions(jlpt);
+					QuizActivity.launch(QuizLaunchActivity.this, questions);
+				} catch (Exception ex) {
+					throw new RuntimeException(ex);
+				}
 			}
-		});
+		}));
 	}
+
+	private List<KanjidicEntry> generateQuestions(final Set<Integer> jlpts) throws IOException {
+		final StringBuilder kanjiPool = new StringBuilder();
+		for (final Integer level : jlpts) {
+			kanjiPool.append(KanjiUtils.getJlptKanjis(level));
+		}
+		final List<KanjidicEntry> questions = new ArrayList<KanjidicEntry>();
+		final Random r = new Random();
+		final LuceneSearch search = new LuceneSearch(DictTypeEnum.Kanjidic, null, true);
+		try {
+			for (int i = 0; i < QUIZ_QUESTION_COUNT; i++) {
+				final int index = r.nextInt(kanjiPool.length());
+				final char kanji = kanjiPool.charAt(index);
+				kanjiPool.deleteCharAt(index);
+				final List<DictEntry> result = search.search(SearchQuery.kanjiSearch(kanji, null, null));
+				for (final Iterator<? extends DictEntry> it = result.iterator(); it.hasNext();) {
+					final DictEntry e = it.next();
+					if (!e.isValid()) {
+						throw new RuntimeException(e.english);
+					}
+				}
+				questions.add((KanjidicEntry) result.get(0));
+			}
+		} finally {
+			MiscUtils.closeQuietly(search);
+		}
+		return questions;
+	}
+
+	private static final int QUIZ_QUESTION_COUNT = 20;
 }

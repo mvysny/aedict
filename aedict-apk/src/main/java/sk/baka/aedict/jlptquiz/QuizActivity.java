@@ -23,13 +23,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import sk.baka.aedict.AedictApp;
+import sk.baka.aedict.EdictEntryDetailActivity;
 import sk.baka.aedict.KanjiDetailActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
@@ -54,16 +55,17 @@ import android.widget.TextView;
 public class QuizActivity extends Activity {
 
 	private static final String INTENTKEY_JLPT_SET = "jlptset";
-	private static final int QUIZ_QUESTION_COUNT = 20;
 
-	public static void launch(final Activity a, final Set<Integer> jlpt) {
+	public static void launch(final Activity a, final List<? extends DictEntry> questions) {
+		if (questions.isEmpty()) {
+			throw new IllegalArgumentException("No questions");
+		}
 		final Intent i = new Intent(a, QuizActivity.class);
-		i.putExtra(INTENTKEY_JLPT_SET, (Serializable) jlpt);
+		i.putExtra(INTENTKEY_JLPT_SET, (Serializable) questions);
 		a.startActivity(i);
 	}
 
-	private Set<Integer> jlpt;
-	private List<KanjidicEntry> questions;
+	private List<? extends DictEntry> questions;
 	private int currentQuestion = 0;
 	private boolean showsAnswer = false;
 	private int correctQuestions = 0;
@@ -100,7 +102,12 @@ public class QuizActivity extends Activity {
 		findViewById(R.id.showDetailed).setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
-				KanjiDetailActivity.launch(QuizActivity.this, questions.get(currentQuestion));
+				final DictEntry e = questions.get(currentQuestion);
+				if (e instanceof KanjidicEntry) {
+					KanjiDetailActivity.launch(QuizActivity.this, (KanjidicEntry) e);
+				} else if (e instanceof EdictEntry) {
+					EdictEntryDetailActivity.launch(QuizActivity.this, (EdictEntry) e);
+				}
 			}
 		});
 		findViewById(R.id.main).setOnClickListener(new View.OnClickListener() {
@@ -112,39 +119,11 @@ public class QuizActivity extends Activity {
 				}
 			}
 		});
-		try {
-			jlpt = (Set<Integer>) getIntent().getSerializableExtra(INTENTKEY_JLPT_SET);
-			final StringBuilder kanjiPool = new StringBuilder();
-			for (final Integer level : jlpt) {
-				kanjiPool.append(KanjiUtils.getJlptKanjis(level));
-			}
-			questions = new ArrayList<KanjidicEntry>();
-			final Random r = new Random();
-			final LuceneSearch search = new LuceneSearch(DictTypeEnum.Kanjidic, null, true);
-			try {
-				for (int i = 0; i < QUIZ_QUESTION_COUNT; i++) {
-					final int index = r.nextInt(kanjiPool.length());
-					final char kanji = kanjiPool.charAt(index);
-					kanjiPool.deleteCharAt(index);
-					final List<DictEntry> result = search.search(SearchQuery.kanjiSearch(kanji, null, null));
-					for (final Iterator<? extends DictEntry> it = result.iterator(); it.hasNext();) {
-						final DictEntry e = it.next();
-						if (!e.isValid()) {
-							throw new RuntimeException(e.english);
-						}
-					}
-					questions.add((KanjidicEntry) result.get(0));
-				}
-			} finally {
-				MiscUtils.closeQuietly(search);
-			}
-			currentQuestion = 0;
-			correctQuestions = 0;
-			showsAnswer = false;
-			updateControls();
-		} catch (Exception ex) {
-			AndroidUtils.handleError(ex, this, QuizActivity.class, null);
-		}
+		questions = (List<? extends DictEntry>) getIntent().getSerializableExtra(INTENTKEY_JLPT_SET);
+		currentQuestion = 0;
+		correctQuestions = 0;
+		showsAnswer = false;
+		updateControls();
 	}
 
 	@Override
@@ -157,27 +136,42 @@ public class QuizActivity extends Activity {
 		final boolean isFinished = currentQuestion >= questions.size();
 		if (!isFinished) {
 			final int vis = showsAnswer ? View.VISIBLE : View.INVISIBLE;
-			final KanjidicEntry ke = questions.get(currentQuestion);
-			((TextView) findViewById(R.id.kanji)).setText(ke.kanji);
-			final TextView onyomi = (TextView) findViewById(R.id.onyomi);
-			onyomi.setText(cs(ke.getOnyomi(), true));
-			onyomi.setVisibility(vis);
-			final TextView kunyomi = (TextView) findViewById(R.id.kunyomi);
-			kunyomi.setText(cs(ke.getKunyomi(), true));
-			kunyomi.setVisibility(vis);
-			final TextView namae = (TextView) findViewById(R.id.namae);
-			namae.setText(cs(ke.getNamae(), true));
-			namae.setVisibility(vis);
-			final TextView english = (TextView) findViewById(R.id.english);
-			english.setText(cs(ke.getEnglish(), false));
-			english.setVisibility(vis);
+			final DictEntry e = questions.get(currentQuestion);
+			if (e instanceof KanjidicEntry) {
+				final KanjidicEntry ke = (KanjidicEntry) e;
+				((TextView) findViewById(R.id.kanji)).setText(e.kanji);
+				final TextView onyomi = (TextView) findViewById(R.id.onyomi);
+				onyomi.setText(cs(ke.getOnyomi(), true));
+				onyomi.setVisibility(vis);
+				final TextView kunyomi = (TextView) findViewById(R.id.kunyomi);
+				kunyomi.setText(cs(ke.getKunyomi(), true));
+				kunyomi.setVisibility(vis);
+				final TextView namae = (TextView) findViewById(R.id.namae);
+				namae.setText(cs(ke.getNamae(), true));
+				namae.setVisibility(vis);
+				final TextView english = (TextView) findViewById(R.id.english);
+				english.setText(cs(ke.getEnglish(), false));
+				english.setVisibility(vis);
+			} else {
+				((TextView) findViewById(R.id.kanji)).setText(e.getJapanese());
+				final TextView onyomi = (TextView) findViewById(R.id.onyomi);
+				onyomi.setText(showRomaji.romanize(e.reading != null ? e.reading : ""));
+				onyomi.setVisibility(vis);
+				final TextView kunyomi = (TextView) findViewById(R.id.kunyomi);
+				kunyomi.setVisibility(View.INVISIBLE);
+				final TextView namae = (TextView) findViewById(R.id.namae);
+				namae.setVisibility(View.INVISIBLE);
+				final TextView english = (TextView) findViewById(R.id.english);
+				english.setText(e.english);
+				english.setVisibility(vis);
+			}
 		}
 		final int vis = !isFinished && showsAnswer ? View.VISIBLE : View.INVISIBLE;
 		findViewById(R.id.yes).setVisibility(vis);
 		findViewById(R.id.no).setVisibility(vis);
 		findViewById(R.id.showDetailed).setVisibility(vis);
 		if (isFinished) {
-			new DialogUtils(this).showInfoDialog(getString(R.string.results), AedictApp.format(R.string.youScored, correctQuestions, QUIZ_QUESTION_COUNT));
+			new DialogUtils(this).showInfoDialog(getString(R.string.results), AedictApp.format(R.string.youScored, correctQuestions, questions.size()));
 		}
 	}
 
