@@ -18,7 +18,7 @@
 				Edict Senses are now displayed correctly (all senses are now displayed, instead of just one)
 			</action>
 			<action dev="vyzivus" type="fix" issue="69">
-				clicking on kana character in kanjidetail activity crashes aedict
+				Clicking on kana character in kanjidetail activity crashes aedict
 			</action>
 			<action dev="vyzivus" type="fix" issue="72">
 				SOD provider now instructs user to re-download the dictionaries on IOException.
