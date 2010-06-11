@@ -17,11 +17,14 @@
  */
 package sk.baka.aedict.util;
 
+import android.app.Activity;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
+import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.DisplayMetrics;
 import android.view.View;
 
 /**
@@ -78,5 +81,11 @@ public class SpanStringBuilder extends SpannableStringBuilder {
 				handler.onClick(widget);
 			}
 		};
+	}
+
+	public AbsoluteSizeSpan newSize(final Activity a, final int sizeDip) {
+		final DisplayMetrics dm = new DisplayMetrics();
+		a.getWindowManager().getDefaultDisplay().getMetrics(dm);
+		return new AbsoluteSizeSpan(sizeDip * dm.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
 	}
 }
