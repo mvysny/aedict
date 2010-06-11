@@ -58,22 +58,32 @@ public class SodLoader {
 		// parse the header
 		final DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(SDCARD_LOCATION)));
 		try {
-			final int numberOfKanjis = in.readInt();
-			Character lastKanji = null;
-			for (int i = 0; i < numberOfKanjis; i++) {
-				final Character kanji = in.readChar();
-				final int offset = in.readInt();
-				startOffset.put(kanji, offset);
-				if (lastKanji != null) {
-					final int length = offset - startOffset.get(lastKanji);
-					this.length.put(lastKanji, length);
+			try {
+				final int numberOfKanjis = in.readInt();
+				Character lastKanji = null;
+				for (int i = 0; i < numberOfKanjis; i++) {
+					final Character kanji = in.readChar();
+					final int offset = in.readInt();
+					startOffset.put(kanji, offset);
+					if (lastKanji != null) {
+						final int length = offset - startOffset.get(lastKanji);
+						this.length.put(lastKanji, length);
+					}
+					lastKanji = kanji;
 				}
-				lastKanji = kanji;
+				length.put(lastKanji, (int) (SDCARD_LOCATION.length() - startOffset.get(lastKanji)));
+			} catch (IOException ex) {
+				tnio(ex);
 			}
-			length.put(lastKanji, (int) (SDCARD_LOCATION.length() - startOffset.get(lastKanji)));
 		} finally {
 			MiscUtils.closeQuietly(in);
 		}
+	}
+
+	private static void tnio(final Throwable t) throws IOExceptionWithCause {
+		throw new IOExceptionWithCause(
+				"Failed to parse the SOD images - the file is probably corrupted. Please try to check that your SD Card is not faulty. Also please try to delete the dictionaries and download them again ("
+						+ t.getMessage() + ")", t);
 	}
 
 	/**
@@ -120,10 +130,15 @@ public class SodLoader {
 		final int length = this.length.get(kanji);
 		final RandomAccessFile file = new RandomAccessFile(SDCARD_LOCATION, "r");
 		try {
-			file.seek(offset);
-			final byte[] result = new byte[length];
-			file.readFully(result);
-			return result;
+			try {
+				file.seek(offset);
+				final byte[] result = new byte[length];
+				file.readFully(result);
+				return result;
+			} catch (IOException ex) {
+				tnio(ex);
+				throw new AssertionError();
+			}
 		} finally {
 			MiscUtils.closeQuietly(file);
 		}
