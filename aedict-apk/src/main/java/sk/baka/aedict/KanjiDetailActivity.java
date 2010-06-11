@@ -105,7 +105,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 				NotepadActivity.addAndLaunch(KanjiDetailActivity.this, entry);
 			}
 		});
-		addTextViews(R.id.english, entry.getEnglish(), false);
+		addTextViews(R.id.english, null, entry.getEnglish(), false);
 		updateContent();
 		// display hint
 		if (!AedictApp.isInstrumentation) {
@@ -115,16 +115,19 @@ public class KanjiDetailActivity extends AbstractActivity {
 
 	private void updateContent() {
 		// compute ONYOMI, KUNYOMI, NAMAE and ENGLISH
-		addTextViews(R.id.onyomi, entry.getOnyomi(), true);
-		addTextViews(R.id.kunyomi, entry.getKunyomi(), true);
-		addTextViews(R.id.namae, entry.getNamae(), true);
+		addTextViews(R.id.onyomi, "Onyomi: ", entry.getOnyomi(), true);
+		addTextViews(R.id.kunyomi, "Kunyomi: ", entry.getKunyomi(), true);
+		addTextViews(R.id.namae, "Namae: ", entry.getNamae(), true);
 	}
 
-	private void addTextViews(final int parent, final List<String> items, final boolean isJapanese) {
+	private void addTextViews(final int parent, final String name, final List<String> items, final boolean isJapanese) {
 		final TextView p = (TextView) findViewById(parent);
 		p.setVisibility(items.isEmpty() ? View.GONE : View.VISIBLE);
 		p.setMovementMethod(new LinkMovementMethod());
 		final SpanStringBuilder sb = new SpanStringBuilder();
+		if (name != null) {
+			sb.append(sb.newSize(this, 15), name);
+		}
 		for (int i = 0; i < items.size(); i++) {
 			String item = items.get(i);
 			final String sitem = KanjidicEntry.removeSplits(item);

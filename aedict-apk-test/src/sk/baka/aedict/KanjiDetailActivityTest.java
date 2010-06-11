@@ -47,6 +47,14 @@ public class KanjiDetailActivityTest extends AbstractAedictTest<KanjiDetailActiv
 		tester.assertText(R.id.skip, "3-4-5");
 		tester.assertText(R.id.jlpt, "-");
 	}
+	
+	public void testOnyomiKunyomiNamae() {
+		final KanjidicEntry e = new KanjidicEntry("愛", "アイ, いと.しい, かな.しい, め.でる, お.しむ, まな, [あ, あし, え, かな, なる, めぐ, めぐみ, よし, ちか]", "love, affection, favourite", 1, 2, "3-4-5", 6);
+		launch(e);
+		tester.assertText(R.id.onyomi, "Onyomi: アイ");
+		tester.assertText(R.id.kunyomi, "Kunyomi: いと.しい, かな.しい, め.でる, お.しむ, まな");
+		tester.assertText(R.id.namae, "Namae: あ, あし, え, かな, なる, めぐ, めぐみ, よし, ちか");
+	}
 
 	public void testAddToNotepad() {
 		testSimpleActivityStart();
