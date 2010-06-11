@@ -22,7 +22,6 @@ import java.util.List;
 
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.dict.DownloaderService;
 import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.kanji.RomanizationEnum;
@@ -31,12 +30,7 @@ import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
 import android.app.ListActivity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -81,14 +75,7 @@ public class MainActivity extends ListActivity {
 			}
 		});
 		// check for dictionary file and download it if it is missing.
-		bindService(new Intent(this, DownloaderService.class), new ServiceConnection() {
-			public void onServiceConnected(ComponentName className, IBinder service) {
-				((DownloaderService.LocalBinder) service).getService().checkDic(MainActivity.this, DictTypeEnum.Edict);
-			}
-
-			public void onServiceDisconnected(ComponentName className) {
-			}
-		}, Context.BIND_AUTO_CREATE);
+		AedictApp.getDownloader().checkDic(MainActivity.this, DictTypeEnum.Edict);
 		if (!AedictApp.isInstrumentation) {
 			new DialogUtils(this).showInfoOnce(AedictApp.getVersion(), AedictApp.format(R.string.whatsNew, AedictApp.getVersion()), getString(R.string.whatsNewText));
 		}

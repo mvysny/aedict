@@ -35,14 +35,11 @@ import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -65,25 +62,19 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
 		PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
 		apply(new Config(this));
-		startService(new Intent(instance, DownloaderService.class));
-		bindService(new Intent(instance, DownloaderService.class), new ServiceConnection() {
-			public void onServiceConnected(ComponentName className, IBinder service) {
-				ds = ((DownloaderService.LocalBinder) service).getService();
-			}
-
-			public void onServiceDisconnected(ComponentName className) {
-				ds = null;
-			}
-		}, Context.BIND_AUTO_CREATE);
+		ds = new DownloaderService();
 	}
 
-	private static volatile DownloaderService ds;
+	@Override
+	public void onTerminate() {
+		MiscUtils.closeQuietly(ds);
+		super.onTerminate();
+	}
+
+	private volatile DownloaderService ds;
 
 	public static DownloaderService getDownloader() {
-		if (ds == null) {
-			throw new IllegalStateException("Downloader is not yet started");
-		}
-		return ds;
+		return getApp().ds;
 	}
 
 	private static AedictApp instance;
