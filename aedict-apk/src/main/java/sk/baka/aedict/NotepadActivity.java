@@ -19,6 +19,7 @@
 package sk.baka.aedict;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import java.util.Map;
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.Edict;
+import sk.baka.aedict.jlptquiz.QuizActivity;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
@@ -329,7 +331,29 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 				}
 			}));
 		}
+		if (!getAllEntries().isEmpty()) {
+			final MenuItem quiz = menu.add(0, 5, 5, R.string.quiz);
+			quiz.setIcon(R.drawable.ic_menu_compose);
+			quiz.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
+
+				public boolean onMenuItemClick(MenuItem item) {
+					List<DictEntry> all = getAllEntries();
+					Collections.shuffle(all);
+					all = new ArrayList<DictEntry>(all.subList(0, Math.min(20, all.size())));
+					QuizActivity.launch(NotepadActivity.this, all);
+					return true;
+				}
+			}));
+		}
 		return true;
+	}
+
+	private List<DictEntry> getAllEntries() {
+		final List<DictEntry> result = new ArrayList<DictEntry>();
+		for (int i = 0; i < getCategoryCount(); i++) {
+			result.addAll(AedictApp.getConfig().getNotepadItems(i));
+		}
+		return result;
 	}
 
 	public View createTabContent(String tag) {
@@ -342,6 +366,7 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 	}
 
 	private void updateTabs() {
+		getTabHost().setCurrentTab(0);
 		final TabHost tabs = getTabHost();
 		tabs.clearAllTabs();
 		final List<String> categories = AedictApp.getConfig().getNotepadCategories();
