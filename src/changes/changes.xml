@@ -4,6 +4,26 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
+		<release version="2.1" date="11. June 2010">
+			<action dev="vyzivus" type="add" issue="74">
+				A quiz showing the Notepad items can now be started.
+			</action>
+			<action dev="vyzivus" type="update" issue="73">
+				Onyomi/Kunyomi/Namae kanji readings are now clearly marked.
+			</action>
+			<action dev="vyzivus" type="fix" issue="70">
+				The downloader is no longer a Service. Fixed random crashes.
+			</action>
+			<action dev="vyzivus" type="fix" issue="71">
+				Edict Senses are now displayed correctly (all senses are now displayed, instead of just one)
+			</action>
+			<action dev="vyzivus" type="fix" issue="69">
+				clicking on kana character in kanjidetail activity crashes aedict
+			</action>
+			<action dev="vyzivus" type="fix" issue="72">
+				SOD provider now instructs user to re-download the dictionaries on IOException.
+			</action>
+		</release>
 		<release version="2.0" date="9. June 2010">
 			<action dev="vyzivus" type="add" issue="68">
 				StrokeOrderActivity now allows user to try to draw the kanji if there is only one kanji shown.
