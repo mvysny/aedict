@@ -93,7 +93,7 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 		findViewById(R.id.analyze).setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
-				KanjiAnalyzeActivity.launch(EdictEntryDetailActivity.this, entry.kanji, false);
+				KanjiAnalyzeActivity.launch(EdictEntryDetailActivity.this, entry.getJapanese(), false);
 			}
 		});
 		findViewById(R.id.addToNotepad).setOnClickListener(new View.OnClickListener() {
