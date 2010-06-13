@@ -82,6 +82,9 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	private static final int MAX_KANJI_WORD_LENGTH=10;
 	
 	public static void launch(final Activity activity, final String word, final boolean isWordAnalysis) {
+		if (word == null) {
+			throw new IllegalArgumentException("word is null");
+		}
 		final Intent i = new Intent(activity, KanjiAnalyzeActivity.class);
 		i.putExtra(INTENTKEY_WORD, word);
 		i.putExtra(INTENTKEY_WORD_ANALYSIS, isWordAnalysis);
@@ -89,6 +92,9 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	}
 
 	public static void launch(final Activity activity, final List<? extends DictEntry> entries, final boolean isWordAnalysis) {
+		if (entries == null) {
+			throw new IllegalArgumentException("entries is null");
+		}
 		final Intent i = new Intent(activity, KanjiAnalyzeActivity.class);
 		i.putExtra(INTENTKEY_ENTRYLIST, (Serializable) entries);
 		i.putExtra(INTENTKEY_WORD_ANALYSIS, isWordAnalysis);
