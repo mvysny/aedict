@@ -13,7 +13,7 @@
 		with this program. If not, see <http://www.gnu.org/licenses/>.
 	-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="sk.baka.aedict" android:versionCode="210" android:versionName="2.1">
+	package="sk.baka.aedict" android:versionCode="230" android:versionName="2.3">
 	<application android:icon="@drawable/aedict_icon"
 		android:label="@string/app_name" android:name=".AedictApp">
 		<meta-data android:name="android.app.default_searchable"
