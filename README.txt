@@ -1,16 +1,18 @@
 Releasing:
 
-0. update changes.xml and strings.xml/whatsNewText
+- Run all tests, both on 2.1 and 1.5.
 
-1. mvn release:prepare release:perform
+- update changes.xml and strings.xml/whatsNewText
 
-2. upload the target/checkout/aedict-apk/target/aedict-apk-*-signed.apk to the Google Downloads page: http://code.google.com/p/aedict/downloads/list
+- mvn release:prepare release:perform
 
-3. upload the target/checkout/aedict-apk/target/aedict-apk-*-signed.apk to the Android Market
+- upload the target/checkout/aedict-apk/target/aedict-apk-*-signed.apk to the Google Downloads page: http://code.google.com/p/aedict/downloads/list
 
-4. upload the target/checkout/aedict-apk/target/aedict-apk-*-signed.apk to http://appslib.com
+- upload the target/checkout/aedict-apk/target/aedict-apk-*-signed.apk to the Android Market
 
-5. Increase the version in AndroidManifest.xml: both android:versionCode and android:versionName
+- upload the target/checkout/aedict-apk/target/aedict-apk-*-signed.apk to http://appslib.com
 
-6. Fix the aedict-common dependency in the aedict-apk/.classpath file
+- Increase the version in AndroidManifest.xml: both android:versionCode and android:versionName
+
+- Fix the aedict-common dependency in the aedict-apk/.classpath file
 

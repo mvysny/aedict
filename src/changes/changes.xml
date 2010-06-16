@@ -4,6 +4,14 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
+		<release version="2.2" date="13. June 2010">
+			<action dev="vyzivus" type="fix" issue="75">
+				Fixed: kanji analysis of katakana-only entry fails.
+			</action>
+			<action dev="vyzivus" type="fix" issue="76">
+				Fixed compatibility with Android 1.5.
+			</action>
+		</release>
 		<release version="2.1" date="11. June 2010">
 			<action dev="vyzivus" type="add" issue="74">
 				A quiz showing the Notepad items can now be started.
