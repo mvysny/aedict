@@ -86,6 +86,8 @@ public class SpanStringBuilder extends SpannableStringBuilder {
 	public AbsoluteSizeSpan newSize(final Activity a, final int sizeDip) {
 		final DisplayMetrics dm = new DisplayMetrics();
 		a.getWindowManager().getDefaultDisplay().getMetrics(dm);
-		return new AbsoluteSizeSpan(sizeDip * dm.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+		// cannot use dm.densityDpi - the field is not present in Android 1.5
+		// fixes http://code.google.com/p/aedict/issues/detail?id=76 
+		return new AbsoluteSizeSpan((int)(sizeDip * dm.density));
 	}
 }

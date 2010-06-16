@@ -232,7 +232,11 @@ public class AndroidTester<T extends Activity> {
 	 *            the button id
 	 */
 	public void click(final int buttonId) {
-		test.getActivity().findViewById(buttonId).performClick();
+		final View view = test.getActivity().findViewById(buttonId);
+		if(view==null){
+			throw new IllegalArgumentException("No such view: "+buttonId);
+		}
+		view.performClick();
 	}
 
 	/**

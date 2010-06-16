@@ -103,10 +103,9 @@ public class StrokeOrderActivity extends ListActivity {
 				}
 				if (bd != null) {
 					image.setImageDrawable(bd);
-					int scaledWidth = bd.getIntrinsicWidth();
-					if (dm.densityDpi != SOD_DPI) {
-						scaledWidth = scaledWidth * dm.densityDpi / SOD_DPI;
-					}
+					// cannot use dm.densityDpi - the field is not present in Android 1.5
+					// fixes http://code.google.com/p/aedict/issues/detail?id=76 
+					int scaledWidth = (int)(bd.getIntrinsicWidth()*dm.density);
 					if (scaledWidth > dm.widthPixels) {
 						scaledWidth = dm.widthPixels;
 					}

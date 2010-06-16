@@ -42,4 +42,16 @@ public class EdictEntryDetailActivityTest extends AbstractAedictTest<EdictEntryD
 		testStartActivity();
 		tester.assertText(R.id.entrySenses, "(1) to come together, to merge, to unite, to meet\n(2) to fit, to match, to suit, to agree with, to be correct\n(3) to be profitable, to be equitable\n(4) (after the -masu stem of a verb) to do ... to each other, to do ... together");
 	}
+
+	/**
+	 * Test for http://code.google.com/p/aedict/issues/detail?id=75
+	 */
+	public void testAnalyzeEntryWithNoKanji() {
+		final Intent i=new Intent(getInstrumentation().getContext(), EdictEntryDetailActivity.class);
+		i.putExtra(EdictEntryDetailActivity.INTENTKEY_ENTRY, new EdictEntry(null,"あう","(v5u,vi) (1) to come together/to merge/to unite/to meet/(2) to fit/to match/to suit/to agree with/to be correct/(3) to be profitable/to be equitable/(suf,v5u) (4) (after the -masu stem of a verb) to do ... to each other/to do ... together/(P)/"));
+		tester.startActivity(i);
+		tester.click(R.id.analyze);
+		tester.assertRequestedActivity(KanjiAnalyzeActivity.class);
+		assertEquals("あう", getStartedActivityIntent().getStringExtra(KanjiAnalyzeActivity.INTENTKEY_WORD));
+	}
 }
