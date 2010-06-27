@@ -211,7 +211,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 	public void testComplexJapaneseSearchInTanaka() {
 		final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
 		q.isJapanese = true;
-		q.matcher = MatcherEnum.Any;
+		q.matcher = MatcherEnum.Substring;
 		q.query = new String[] { "母", "はは" };
 		launch(q);
 		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Tanaka"));

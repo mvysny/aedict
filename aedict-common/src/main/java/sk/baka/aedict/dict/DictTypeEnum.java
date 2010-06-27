@@ -150,8 +150,8 @@ public enum DictTypeEnum {
 
         @Override
         public String[] getLuceneQuery(SearchQuery q) {
-            // query can be null in case we are performing e.g. a pure SKIP
-            // lookup
+            // q.query can be null in case we are performing e.g. a pure SKIP
+            // lookup (see the SkipActivity for details)
             final ListBuilder qb = new ListBuilder(" AND ");
             if (q.query != null) {
                 if (q.query.length != 1) {
@@ -424,7 +424,7 @@ public enum DictTypeEnum {
      */
     public DictEntry tryGetEntry(final Document doc, final SearchQuery query) {
         final DictEntry entry = tryGetEntry(doc);
-        if (query.query == null || query.matcher == MatcherEnum.Any || !entry.isValid()) {
+        if (!entry.isValid()) {
             return entry;
         }
         for (final String q : query.query) {

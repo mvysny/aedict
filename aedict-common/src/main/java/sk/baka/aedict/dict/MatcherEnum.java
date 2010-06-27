@@ -25,16 +25,6 @@ package sk.baka.aedict.dict;
 public enum MatcherEnum {
 
     /**
-     * Matches anything. Useful when searching for Lucene-specific terms.
-     */
-    Any {
-
-        @Override
-        public boolean matches(String query, String line) {
-            return true;
-        }
-    },
-    /**
      * Matches when the query is a substring of given line.
      */
     Substring {
@@ -46,16 +36,40 @@ public enum MatcherEnum {
     },
     /**
      * Matches when the query matches an entire expression text for given line.
-     * This has different meanings for different dictionaries: it is ignored for
-     * Kanjidic and it is an equality match for the Tanaka dictionary. A special
-     * processing is used in case of an english Edict matching: for example, foo
-     * matches "foo", "foo;bar" but not "foo bar"
+     * A special processing should be used in case of an english Edict matching: for example, foo should
+     * match "foo", "foo;bar" but not "foo bar"
      */
     Exact {
 
         @Override
         public boolean matches(String query, String line) {
             return query.equalsIgnoreCase(line);
+        }
+    },
+    /**
+     * Matches when the line starts with the query string. Usable only for japanese search.
+     */
+    StartsWith {
+
+        @Override
+        public boolean matches(String query, String line) {
+            if (line.length() < query.length()) {
+                return false;
+            }
+            return line.substring(0, query.length()).equalsIgnoreCase(query);
+        }
+    },
+    /**
+     * Matches when the line ends with the query string. Usable only for japanese search.
+     */
+    EndsWith {
+
+        @Override
+        public boolean matches(String query, String line) {
+            if (line.length() < query.length()) {
+                return false;
+            }
+            return line.substring(line.length() - query.length()).equalsIgnoreCase(query);
         }
     };
 
