@@ -17,19 +17,13 @@
 	android:layout_height="wrap_content" android:gravity="center">
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:orientation="horizontal">
-		<CheckBox android:layout_height="wrap_content" android:id="@+id/notepadExactMatch"
-			android:text="@string/exactMatch" android:layout_width="wrap_content"
-			android:layout_weight="1" />
-		<CheckBox android:layout_height="wrap_content" android:id="@+id/notepadDeinflect"
-			android:text="@string/deinflectVerbs" android:layout_width="wrap_content"
-			android:layout_weight="1" />
+		<EditText android:layout_height="wrap_content" android:id="@+id/editNotepadSearch"
+			android:layout_width="fill_parent" android:inputType="text"
+			android:imeOptions="actionDone" android:layout_weight="1" />
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/search"
 			android:id="@+id/btnNotepadSearch" />
 	</LinearLayout>
-	<EditText android:layout_height="wrap_content" android:id="@+id/editNotepadSearch"
-		android:layout_width="fill_parent" android:inputType="text"
-		android:imeOptions="actionDone" />
 	<TabHost android:layout_height="fill_parent"
 		android:layout_width="fill_parent" android:id="@+id/tabs"
 		android:visibility="gone">
