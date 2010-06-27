@@ -28,6 +28,7 @@ import sk.baka.aedict.R;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.LuceneSearch;
+import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.autils.AndroidUtils;
 import android.app.Activity;
@@ -98,6 +99,7 @@ public class SkipActivity extends Activity {
 	public static void searchForSkip(final Activity activity, final String skip) {
 		final SearchQuery query = new SearchQuery(DictTypeEnum.Kanjidic);
 		query.skip = skip;
+		query.matcher = MatcherEnum.Exact;
 		try {
 			final List<DictEntry> result = LuceneSearch.singleSearch(query, null, AedictApp.getConfig().isSorted());
 			// no need to sort on the number of strokes as all results will have

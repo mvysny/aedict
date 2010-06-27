@@ -179,25 +179,6 @@ public final class SearchQuery implements Serializable {
     }
 
     /**
-     * Creates an EDICT query which searches for a japanese term.
-     *
-     * @param word
-     *            the word to search, in japanese language. Full-width katakana
-     *            conversion is not performed automatically.
-     * @param exact
-     *            if true then performs exact search, if false then performs a
-     *            substring search.
-     * @return search query
-     */
-    public static SearchQuery searchForJapanese(final String word, final boolean exact) {
-        final SearchQuery result = new SearchQuery(DictTypeEnum.Edict);
-        result.query = new String[]{word};
-        result.isJapanese = true;
-        result.matcher = exact ? MatcherEnum.Exact : MatcherEnum.Substring;
-        return result;
-    }
-
-    /**
      * Creates an EDICT query which searches for an English term.
      *
      * @param word
@@ -216,6 +197,69 @@ public final class SearchQuery implements Serializable {
     }
 
     /**
+     * Creates an EDICT query which searches for a japanese term. Automatically performs a verb deinflection.
+     *
+     * @param verb
+     *            the word to search, in japanese language. Must contain only katakana, hiragana and kanji. Not null.
+     * @param matcher
+     *              the matcher to use
+     * @return search query, never null
+     */
+    public static SearchQuery searchJpEdict(final String text, final MatcherEnum matcher) {
+        final SearchQuery result = new SearchQuery(DictTypeEnum.Edict);
+        final String conv = KanjiUtils.halfwidthToKatakana(text);
+        result.query = new String[]{conv};
+        result.isJapanese = true;
+        result.matcher = matcher;
+        return result;
+    }
+
+    /**
+     * Creates an EDICT query which searches for a japanese term. Automatically performs a verb deinflection.
+     *
+     * @param verb
+     *            the word to search, in japanese language, may contain romaji.
+     *            Full-width katakana conversion is performed automatically. Not
+     *            null
+     * @param romanization
+     *            the romanization system to use, not null.
+     * @return search query, never null
+     */
+    public static SearchQuery searchJpDeinflected(final String verb, final RomanizationEnum romanization) {
+        final SearchQuery result = new SearchQuery(DictTypeEnum.Edict);
+        final String conv = KanjiUtils.halfwidthToKatakana(verb);
+        final String romaji = RomanizationEnum.NihonShiki.toRomaji(romanization.toHiragana(conv));
+        final Set<String> deinflections = VerbDeinflection.deinflect(romaji);
+        result.query = deinflections.toArray(new String[0]);
+        for (int i = 0; i < result.query.length; i++) {
+            result.query[i] = RomanizationEnum.NihonShiki.toHiragana(result.query[i]);
+        }
+        result.isJapanese = true;
+        result.matcher = MatcherEnum.Exact;
+        return result;
+    }
+
+    /**
+     * Creates an EDICT query which searches for a japanese term in the Tanaka example dictionary.
+     *
+     * @param word
+     *            the word to search, in japanese language, may contain romaji.
+     *            Full-width katakana conversion is performed automatically. Not
+     *            null
+     * @param romanization
+     *            the romanization system to use, not null.
+     * @return search query, never null
+     */
+    public static SearchQuery searchJpTanaka(final String word, final RomanizationEnum romanization) {
+        final SearchQuery result = new SearchQuery(DictTypeEnum.Tanaka);
+        String conv = KanjiUtils.halfwidthToKatakana(word);
+        result.query = new String[]{romanization.toKatakana(conv), romanization.toHiragana(conv)};
+        result.isJapanese = true;
+        result.matcher = MatcherEnum.Substring;
+        return result;
+    }
+
+    /**
      * Creates an EDICT query which searches for a japanese term.
      *
      * @param word
@@ -227,27 +271,15 @@ public final class SearchQuery implements Serializable {
      * @param exact
      *            if true then performs exact search, if false then performs a
      *            substring search.
-     * @param isDeinflect
-     *            if true then the word is expected to be a verb which is
-     *            deinflected.
      * @param isSearchInExamples if true then the search will be performed in Tanaka examples.
      * @return search query, never null
      */
-    public static SearchQuery searchForRomaji(final String word, final RomanizationEnum romanization, final boolean exact, final boolean isDeinflect, final boolean isSearchInExamples) {
-        final SearchQuery result = new SearchQuery(isSearchInExamples ? DictTypeEnum.Tanaka : DictTypeEnum.Edict);
+    public static SearchQuery searchJpRomaji(final String word, final RomanizationEnum romanization, final MatcherEnum matcher) {
+        final SearchQuery result = new SearchQuery(DictTypeEnum.Edict);
         String conv = KanjiUtils.halfwidthToKatakana(word);
-        if (isDeinflect) {
-            final String romaji = RomanizationEnum.NihonShiki.toRomaji(romanization.toHiragana(word));
-            final Set<String> deinflections = VerbDeinflection.deinflect(romaji);
-            result.query = deinflections.toArray(new String[0]);
-            for (int i = 0; i < result.query.length; i++) {
-                result.query[i] = RomanizationEnum.NihonShiki.toHiragana(result.query[i]);
-            }
-        } else {
-            result.query = new String[]{romanization.toKatakana(conv), romanization.toHiragana(conv)};
-        }
+        result.query = new String[]{romanization.toKatakana(conv), romanization.toHiragana(conv)};
         result.isJapanese = true;
-        result.matcher = exact || isDeinflect ? MatcherEnum.Exact : MatcherEnum.Substring;
+        result.matcher = matcher;
         return result;
     }
 

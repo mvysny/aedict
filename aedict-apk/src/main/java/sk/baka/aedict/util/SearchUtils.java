@@ -26,6 +26,7 @@ import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.Activity;
@@ -58,24 +59,6 @@ public final class SearchUtils {
 	 */
 	public SearchUtils(final Activity activity) {
 		this.activity = activity;
-	}
-
-	/**
-	 * Performs search for a japanese word or expression.
-	 * 
-	 * @param romaji
-	 *            word spelling. This string is converted to both hiragana and
-	 *            katakana, then the EDict search is performed.
-	 * @param isExact
-	 *            if true then only exact matches are returned.
-	 * @param isDeinflect
-	 *            if true then a verb deinflection is attempted before the
-	 *            search.
-	 */
-	private void searchForJapan(final String romaji, final boolean isExact, final boolean isDeinflect, final boolean isSearchInExamples) {
-		final Config cfg = AedictApp.getConfig();
-		final SearchQuery q = SearchQuery.searchForRomaji(romaji, cfg.getRomanization(), isExact, isDeinflect, isSearchInExamples);
-		performSearch(q);
 	}
 
 	/**
@@ -194,7 +177,16 @@ public final class SearchUtils {
 			final boolean isSearchInExamples = searchInExamplesCheckBox == null ? false : ((CheckBox) activity.findViewById(searchInExamplesCheckBox)).isChecked();
 			final boolean isExact = isDeinflect ? true : (isSearchInExamples ? false : (isExactCheckBox == null ? true : ((CheckBox) activity.findViewById(isExactCheckBox)).isChecked()));
 			if (isJapanSearch) {
-				searchForJapan(query, isExact, isDeinflect, isSearchInExamples);
+				final RomanizationEnum r = AedictApp.getConfig().getRomanization();
+				final SearchQuery q;
+				if (isDeinflect) {
+					q = SearchQuery.searchJpDeinflected(query, r);
+				} else if (isSearchInExamples) {
+					q = SearchQuery.searchJpTanaka(query, r);
+				} else {
+					q = SearchQuery.searchJpRomaji(query, r, isExact ? MatcherEnum.Exact : MatcherEnum.Substring);
+				}
+				SearchUtils.this.performSearch(q);
 			} else {
 				searchForEnglish(query, isExact, isSearchInExamples);
 			}

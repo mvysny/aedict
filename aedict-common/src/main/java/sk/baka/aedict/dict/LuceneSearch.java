@@ -115,7 +115,7 @@ public final class LuceneSearch implements Closeable {
         // "maxResults" results and filter out non-exact results - we can filter
         // out all results this way, and the real, exact matches, may remain
         // unretrieved by Lucene. TODO perhaps a better Lucene query might help.
-        final int maxLuceneResults = query.matcher == MatcherEnum.Exact ? 5000 : maxResults;
+        final int maxLuceneResults = query.matcher != MatcherEnum.Substring ? 5000 : maxResults;
         int resultsToFind = maxLuceneResults;
         for (final String q : queries) {
             // gradually walk through the queries and fill the result list.
