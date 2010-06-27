@@ -19,10 +19,8 @@
 package sk.baka.aedict.util;
 
 import sk.baka.aedict.AedictApp;
-import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.ResultActivity;
-import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
@@ -38,10 +36,10 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 /**
  * Contains utility methods for searching with Lucene.
@@ -235,29 +233,6 @@ public final class SearchUtils {
 				cm.setText(text.getText());
 				final Toast toast = Toast.makeText(activity, AedictApp.format(R.string.copied, text.getText()), Toast.LENGTH_SHORT);
 				toast.show();
-			}
-		}));
-	}
-
-	/**
-	 * Configures given button to perform an analysis of japanese text from
-	 * given edit.
-	 * 
-	 * @param analysisButton
-	 *            performs analysis on click on this button
-	 * @param textView
-	 *            analyzes text from this {@link TextView}
-	 * @param startWordAnalysis
-	 *            if true then a word analysis will be shown, if false then
-	 *            character-based analysis will be shown by default.
-	 */
-	public void setupAnalysisControls(final int analysisButton, final int textView, final boolean startWordAnalysis) {
-		final Button analyze = (Button) activity.findViewById(analysisButton);
-		final TextView text = (TextView) activity.findViewById(textView);
-		analyze.setOnClickListener(AndroidUtils.safe(activity, new View.OnClickListener() {
-
-			public void onClick(View v) {
-				KanjiAnalyzeActivity.launch(activity, text.getText().toString().trim(), startWordAnalysis);
 			}
 		}));
 	}
