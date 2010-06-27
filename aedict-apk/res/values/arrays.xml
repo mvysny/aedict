@@ -35,4 +35,10 @@
     	<item>By drawing recognition</item>
     	<item>By layout (SKIP)</item>
     </string-array>
+    <string-array name="matcher">
+    	<item>Any matches</item>
+    	<item>Exact matches</item>
+    	<item>Starts with</item>
+    	<item>Ends with</item>
+    </string-array>
 </resources>

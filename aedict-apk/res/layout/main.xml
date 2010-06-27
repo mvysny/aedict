@@ -33,30 +33,24 @@
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:orientation="vertical"
 		android:visibility="gone" android:id="@+id/advancedPanel">
+	<Spinner android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:id="@+id/matcher"
+		android:entries="@array/matcher"/>
 		<LinearLayout android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:orientation="horizontal">
-			<CheckBox android:layout_height="wrap_content" android:id="@+id/exactMatch"
-				android:text="@string/exactMatch" android:layout_width="wrap_content"
-				android:layout_weight="1" />
 			<CheckBox android:layout_height="wrap_content" android:id="@+id/jpDeinflectVerbs"
 				android:text="@string/deinflectVerbs" android:layout_width="wrap_content"
 				android:layout_weight="1" />
 			<CheckBox android:id="@+id/searchExamples"
 				android:layout_width="wrap_content" android:layout_weight="1"
 				android:layout_height="wrap_content" android:text="@string/searchInExamples" />
+			<CheckBox android:layout_height="wrap_content" android:id="@+id/translate"
+				android:text="@string/translate" android:layout_width="wrap_content"
+				android:layout_weight="1" />
 		</LinearLayout>
 		<TextView android:layout_width="fill_parent"
 			android:textColor="#FFF" android:layout_height="wrap_content"
 			android:text="@string/jpTranslate" />
-		<LinearLayout android:layout_width="fill_parent"
-			android:layout_height="wrap_content">
-			<EditText android:id="@+id/txtJpTranslate"
-				android:layout_width="wrap_content" android:layout_weight="1"
-				android:layout_height="wrap_content" />
-			<Button android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:text="@string/translate"
-				android:id="@+id/btnJpTranslate" />
-		</LinearLayout>
 	</LinearLayout>
 	<ScrollView android:layout_height="fill_parent"
 		android:layout_width="fill_parent" android:id="@+id/intro"

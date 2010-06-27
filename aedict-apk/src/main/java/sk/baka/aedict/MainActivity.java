@@ -24,8 +24,10 @@ import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.aedict.dict.MatcherEnum;
+import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
-import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
@@ -34,17 +36,20 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 /**
  * Provides means to search the edict dictionary file.
@@ -65,10 +70,6 @@ public class MainActivity extends ListActivity {
 				((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
 			}
 		};
-		final SearchUtils utils = new SearchUtils(this);
-		utils.registerSearch(R.id.exactMatch, null, R.id.searchExamples, R.id.searchEdit, R.id.englishSearch, false);
-		utils.registerSearch(R.id.exactMatch, R.id.jpDeinflectVerbs, R.id.searchExamples, R.id.searchEdit, R.id.jpSearch, true);
-		utils.setupAnalysisControls(R.id.btnJpTranslate, R.id.txtJpTranslate, true);
 		findViewById(R.id.advanced).setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
@@ -119,6 +120,8 @@ public class MainActivity extends ListActivity {
 		if (prefillTerm != null) {
 			((TextView) findViewById(R.id.searchEdit)).setText(prefillTerm);
 		}
+		// setup search controls
+		setupSearchControls();
 	}
 
 	@Override
@@ -137,10 +140,6 @@ public class MainActivity extends ListActivity {
 		showRomaji.onResume();
 		findViewById(R.id.intro).setVisibility(getModel().isEmpty() ? View.VISIBLE : View.GONE);
 		findViewById(R.id.recentlyViewed).setVisibility(getModel().isEmpty() ? View.GONE : View.VISIBLE);
-		findViewById(R.id.advancedPanel).setVisibility(View.GONE);
-		((CheckBox) findViewById(R.id.exactMatch)).setChecked(false);
-		((CheckBox) findViewById(R.id.jpDeinflectVerbs)).setChecked(false);
-		((CheckBox) findViewById(R.id.searchExamples)).setChecked(false);
 	}
 
 	private List<DictEntry> modelCache = null;
@@ -199,5 +198,97 @@ public class MainActivity extends ListActivity {
 			i.putExtra(INTENTKEY_PREFILL_SEARCH_FIELD, term);
 		}
 		activity.startActivity(i);
+	}
+
+	private void setupSearchControls() {
+		findViewById(R.id.englishSearch).setOnClickListener(new View.OnClickListener() {
+
+			public void onClick(View v) {
+				search(false);
+			}
+		});
+		findViewById(R.id.jpSearch).setOnClickListener(new View.OnClickListener() {
+
+			public void onClick(View v) {
+				search(true);
+			}
+		});
+		final CheckBox deinflect = (CheckBox) findViewById(R.id.jpDeinflectVerbs);
+		deinflect.setOnCheckedChangeListener(new ComponentUpdater());
+		final CheckBox tanaka = (CheckBox) findViewById(R.id.searchExamples);
+		tanaka.setOnCheckedChangeListener(new ComponentUpdater());
+		final CheckBox translate = (CheckBox) findViewById(R.id.translate);
+		translate.setOnCheckedChangeListener(new ComponentUpdater());
+	}
+
+	private void search(final boolean isJapanese) {
+		final boolean isAdvanced = findViewById(R.id.advancedPanel).getVisibility() != View.GONE;
+		final boolean isTranslate = ((CheckBox) findViewById(R.id.translate)).isChecked();
+		final String text = ((TextView) findViewById(R.id.searchEdit)).getText().toString().trim();
+		if (text.length() == 0) {
+			return;
+		}
+		if (isAdvanced && isTranslate && isJapanese) {
+			KanjiAnalyzeActivity.launch(this, text.trim(), true);
+			return;
+		}
+		final boolean isDeinflect = ((CheckBox) findViewById(R.id.jpDeinflectVerbs)).isChecked();
+		final RomanizationEnum r = AedictApp.getConfig().getRomanization();
+		if (isAdvanced && isDeinflect && isJapanese) {
+			final SearchQuery q = SearchQuery.searchJpDeinflected(text, r);
+			performSearch(q);
+			return;
+		}
+		final boolean isTanaka = ((CheckBox) findViewById(R.id.searchExamples)).isChecked();
+		if (isAdvanced && isTanaka) {
+			final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
+			q.isJapanese = isJapanese;
+			if (isJapanese) {
+				final String conv = KanjiUtils.halfwidthToKatakana(text);
+				q.query = new String[] { r.toKatakana(conv), r.toHiragana(conv) };
+			} else {
+				q.query = new String[] { text };
+			}
+			q.matcher = MatcherEnum.Substring;
+			performSearch(q);
+			return;
+		}
+		final MatcherEnum matcher = MatcherEnum.values()[((Spinner) findViewById(R.id.matcher)).getSelectedItemPosition()];
+		final SearchQuery q = isJapanese ? SearchQuery.searchJpRomaji(text, r, matcher) : SearchQuery.searchForEnglish(text, matcher == MatcherEnum.Exact);
+		performSearch(q);
+	}
+
+	private class ComponentUpdater implements OnCheckedChangeListener {
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			final Activity activity = MainActivity.this;
+			final Spinner matcher = (Spinner) activity.findViewById(R.id.matcher);
+			final CheckBox deinflect = (CheckBox) activity.findViewById(R.id.jpDeinflectVerbs);
+			final CheckBox tanaka = (CheckBox) activity.findViewById(R.id.searchExamples);
+			final CheckBox translate = (CheckBox) activity.findViewById(R.id.translate);
+			if (buttonView.getId() == R.id.jpDeinflectVerbs && isChecked) {
+				matcher.setSelection(MatcherEnum.Exact.ordinal());
+				tanaka.setChecked(false);
+				translate.setChecked(false);
+			} else if (buttonView.getId() == R.id.searchExamples && isChecked) {
+				matcher.setSelection(MatcherEnum.Substring.ordinal());
+				deinflect.setChecked(false);
+				translate.setChecked(false);
+			} else if (buttonView.getId() == R.id.translate && isChecked) {
+				deinflect.setChecked(false);
+				tanaka.setChecked(false);
+			}
+			matcher.setEnabled(!deinflect.isChecked() && !tanaka.isChecked() && !translate.isChecked());
+			findViewById(R.id.englishSearch).setEnabled(!translate.isChecked());
+		}
+	}
+
+	private void performSearch(final SearchQuery query) {
+		if (!AedictApp.getDownloader().checkDic(this, query.dictType)) {
+			// the dictionary is not yet available. An activity was popped up,
+			// which offers dictionary download. Nothing to do here, just do
+			// nothing.
+			return;
+		}
+		ResultActivity.launch(this, query);
 	}
 }
