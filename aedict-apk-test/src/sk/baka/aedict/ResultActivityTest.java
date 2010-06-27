@@ -220,7 +220,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		assertEquals("My mother tongue.", entry.english);
 		assertEquals("私の母国語。", entry.getJapanese());
 		assertEquals("わたしのぼこくご。", entry.reading);
-		assertEquals(100, lv.getCount());
+		assertEquals(12, lv.getCount());
 	}
 
 	public void testSodAnalysis() {

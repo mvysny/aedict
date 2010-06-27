@@ -29,6 +29,7 @@ import org.apache.lucene.document.Document;
 
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.autils.ListBuilder;
+import sk.baka.autils.MiscUtils;
 
 /**
  * Enumerates possible types of dictionaries.
@@ -424,7 +425,7 @@ public enum DictTypeEnum {
      */
     public DictEntry tryGetEntry(final Document doc, final SearchQuery query) {
         final DictEntry entry = tryGetEntry(doc);
-        if (!entry.isValid()) {
+        if (!entry.isValid() || MiscUtils.isBlank(query.query)) {
             return entry;
         }
         for (final String q : query.query) {

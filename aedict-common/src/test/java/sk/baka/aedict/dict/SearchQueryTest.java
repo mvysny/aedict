@@ -30,7 +30,7 @@ public class SearchQueryTest {
 
     @Test
     public void jpSearchWithDeinflect() {
-        final SearchQuery q = SearchQuery.searchForRomaji("tabenai", RomanizationEnum.Hepburn, true, true, false);
+        final SearchQuery q = SearchQuery.searchJpDeinflected("tabenai", RomanizationEnum.Hepburn);
         Arrays.sort(q.query);
         Assert.assertArrayEquals(q.query, new String[]{"たぶ", "たべる"});
     }

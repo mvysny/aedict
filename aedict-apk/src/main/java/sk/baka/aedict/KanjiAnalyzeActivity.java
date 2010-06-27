@@ -28,6 +28,7 @@ import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.LuceneSearch;
+import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.Radicals;
@@ -340,7 +341,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		 * etc.
 		 * 
 		 * @param word
-		 *            the word to analyze
+		 *            the word to analyze. Must not contain romaji.
 		 * @return longest word found or an entry consisting of the first
 		 *         character if we were unable to find nothing
 		 * @throws IOException
@@ -354,7 +355,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 				w = w.substring(0, maxLength);
 			}
 			while (w.length() > 0) {
-				final List<DictEntry> result = edict.search(SearchQuery.searchForJapanese(w, true), 1);
+				final List<DictEntry> result = edict.search(SearchQuery.searchJpEdict(w, MatcherEnum.Exact), 1);
 				DictEntry.removeInvalid(result);
 				if (!result.isEmpty()) {
 					for (final DictEntry e : result) {
@@ -387,9 +388,9 @@ public class KanjiAnalyzeActivity extends ListActivity {
 						if (!isKanji) {
 							result.add(new DictEntry(String.valueOf(c), String.valueOf(c), ""));
 						} else {
-							// it is probably a kanji. search for it in the
+							// it is a kanji. search for it in the
 							// dictionary.
-							final SearchQuery q = SearchQuery.searchForJapanese(String.valueOf(c), true);
+							final SearchQuery q = SearchQuery.searchJpEdict(String.valueOf(c), MatcherEnum.Exact);
 							List<DictEntry> matches = null;
 							DictEntry ee = null;
 							if (lsKanjidic != null) {
