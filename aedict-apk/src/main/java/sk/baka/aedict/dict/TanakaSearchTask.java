@@ -24,6 +24,7 @@ import java.util.List;
 
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.KanjiAnalyzeActivity;
+import sk.baka.aedict.MainActivity;
 import sk.baka.aedict.NotepadActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.StrokeOrderActivity;
@@ -34,7 +35,9 @@ import sk.baka.aedict.util.SpanStringBuilder;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.text.ClipboardManager;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.util.Log;
@@ -45,6 +48,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Performs background search in Tanaka example dictionary and automatically
@@ -165,6 +169,25 @@ public class TanakaSearchTask extends AsyncTask<String, Void, List<DictEntry>> i
 
 							public boolean onMenuItemClick(MenuItem item) {
 								StrokeOrderActivity.launch(activity, de.getJapanese());
+								return true;
+							}
+						}));
+						final MenuItem miCopyToClipboard = menu.add(Menu.NONE, 7, 7, R.string.copyToClipboard);
+						miCopyToClipboard.setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
+
+							public boolean onMenuItemClick(MenuItem item) {
+								final ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+								cm.setText(de.getJapanese());
+								final Toast toast = Toast.makeText(activity, AedictApp.format(R.string.copied, de.getJapanese()), Toast.LENGTH_SHORT);
+								toast.show();
+								return true;
+							}
+						}));
+						final MenuItem miSearchFurther = menu.add(Menu.NONE, 8, 8, R.string.searchFurther);
+						miSearchFurther.setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
+
+							public boolean onMenuItemClick(MenuItem item) {
+								MainActivity.launch(activity, de.getJapanese());
 								return true;
 							}
 						}));

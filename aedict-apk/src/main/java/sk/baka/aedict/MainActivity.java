@@ -29,7 +29,9 @@ import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
+import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -113,6 +115,10 @@ public class MainActivity extends ListActivity {
 				}
 			}
 		}));
+		final String prefillTerm = getIntent().getStringExtra(INTENTKEY_PREFILL_SEARCH_FIELD);
+		if (prefillTerm != null) {
+			((TextView) findViewById(R.id.searchEdit)).setText(prefillTerm);
+		}
 	}
 
 	@Override
@@ -183,5 +189,15 @@ public class MainActivity extends ListActivity {
 			return;
 		}
 		EdictEntryDetailActivity.launch(this, EdictEntry.fromEntry(e));
+	}
+
+	static final String INTENTKEY_PREFILL_SEARCH_FIELD = "prefillSearchField";
+
+	public static void launch(Activity activity, String term) {
+		final Intent i = new Intent(activity, MainActivity.class);
+		if (term != null) {
+			i.putExtra(INTENTKEY_PREFILL_SEARCH_FIELD, term);
+		}
+		activity.startActivity(i);
 	}
 }
