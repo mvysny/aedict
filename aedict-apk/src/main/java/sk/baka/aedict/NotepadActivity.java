@@ -29,7 +29,6 @@ import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.jlptquiz.QuizActivity;
 import sk.baka.aedict.kanji.RomanizationEnum;
-import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
@@ -40,21 +39,22 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
-import android.widget.TwoLineListItem;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.TabHost.TabContentFactory;
+import android.widget.TextView;
+import android.widget.TwoLineListItem;
 
 /**
  * A simple notepad activity, a simple kanji persistent storage. Allows for
@@ -194,7 +194,12 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 			}
 		};
 		initializeListView((ListView) findViewById(android.R.id.list), 0);
-		new SearchUtils(this).registerSearch(R.id.notepadExactMatch, R.id.notepadDeinflect, null, R.id.editNotepadSearch, R.id.btnNotepadSearch, true);
+		findViewById(R.id.btnNotepadSearch).setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				MainActivity.launch(NotepadActivity.this, ((TextView)findViewById(R.id.editNotepadSearch)).getText().toString().trim());
+			}
+		});
 		final TabHost tabs = getTabHost();
 		tabs.setup();
 		updateTabs();

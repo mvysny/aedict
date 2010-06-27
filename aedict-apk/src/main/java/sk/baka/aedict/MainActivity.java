@@ -253,7 +253,7 @@ public class MainActivity extends ListActivity {
 			performSearch(q);
 			return;
 		}
-		final MatcherEnum matcher = MatcherEnum.values()[((Spinner) findViewById(R.id.matcher)).getSelectedItemPosition()];
+		final MatcherEnum matcher = isAdvanced ? MatcherEnum.values()[((Spinner) findViewById(R.id.matcher)).getSelectedItemPosition()] : MatcherEnum.Substring;
 		final SearchQuery q = isJapanese ? SearchQuery.searchJpRomaji(text, r, matcher) : SearchQuery.searchForEnglish(text, matcher == MatcherEnum.Exact);
 		performSearch(q);
 	}

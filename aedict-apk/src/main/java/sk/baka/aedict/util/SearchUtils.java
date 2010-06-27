@@ -20,24 +20,12 @@ package sk.baka.aedict.util;
 
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.R;
-import sk.baka.aedict.ResultActivity;
-import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.dict.MatcherEnum;
-import sk.baka.aedict.dict.SearchQuery;
-import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.AndroidUtils;
-import sk.baka.autils.MiscUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.text.ClipboardManager;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,161 +45,6 @@ public final class SearchUtils {
 	 */
 	public SearchUtils(final Activity activity) {
 		this.activity = activity;
-	}
-
-	/**
-	 * Performs EDICT/TANAKA search for an english word or expression.
-	 * 
-	 * @param text
-	 *            the text to search for.
-	 * @param isExact
-	 *            if true then only exact matches are returned.
-	 * @param inExamples
-	 *            if true then the Tanaka dictionary is polled.
-	 */
-	private void searchForEnglish(final String text, final boolean isExact, final boolean inExamples) {
-		final SearchQuery q = new SearchQuery(inExamples ? DictTypeEnum.Tanaka : DictTypeEnum.Edict);
-		q.isJapanese = false;
-		q.query = new String[] { text };
-		q.matcher = isExact ? MatcherEnum.Exact : MatcherEnum.Substring;
-		performSearch(q);
-	}
-
-	private void performSearch(final SearchQuery query) {
-		if (!AedictApp.getDownloader().checkDic(activity, query.dictType)) {
-			// the dictionary is not yet available. An activity was popped up,
-			// which offers dictionary download. Nothing to do here, just do
-			// nothing.
-			return;
-		}
-		ResultActivity.launch(activity, query);
-	}
-
-	/**
-	 * Registers search functionality to a standardized set of three components:
-	 * the "IsExact" check box, the search query edit box and the "Search"
-	 * button.
-	 * 
-	 * @param isExactCheckBox
-	 *            the "IsExact" check box resource id. If null then an exact
-	 *            search will always be performed.
-	 * @param deinflectCheckBox
-	 *            the "deinflect" check box reference. If null then no
-	 *            deinflection attempt will be made.
-	 * @param searchInExamplesCheckBox
-	 *            the "Search in examples" check box reference. If null then a
-	 *            regular search will be performed.
-	 * @param searchEditText
-	 *            the search query edit box
-	 * @param searchButton
-	 *            the search button
-	 * @param isJapanSearch
-	 *            if true then we are searching for japanese text (in romaji).
-	 */
-	public void registerSearch(final Integer isExactCheckBox, final Integer deinflectCheckBox, final Integer searchInExamplesCheckBox, final int searchEditText, final int searchButton,
-			final boolean isJapanSearch) {
-		final Button searchBtn = (Button) activity.findViewById(searchButton);
-		final SearchText handler = new SearchText(isExactCheckBox, deinflectCheckBox, searchInExamplesCheckBox, searchEditText, isJapanSearch);
-		searchBtn.setOnClickListener(AndroidUtils.safe(activity, OnClickListener.class, handler));
-		if (isExactCheckBox != null && deinflectCheckBox != null) {
-			final CheckBox deinflect = (CheckBox) activity.findViewById(deinflectCheckBox);
-			deinflect.setOnCheckedChangeListener(AndroidUtils.safe(activity, OnCheckedChangeListener.class, handler));
-		}
-		if (isExactCheckBox != null && searchInExamplesCheckBox != null) {
-			final CheckBox search = (CheckBox) activity.findViewById(searchInExamplesCheckBox);
-			search.setOnCheckedChangeListener(AndroidUtils.safe(activity, OnCheckedChangeListener.class, handler));
-		}
-	}
-
-	/**
-	 * Configures specific GUI components for the dictionary search.
-	 * 
-	 * @author Martin Vysny
-	 */
-	private class SearchText implements TextView.OnEditorActionListener, View.OnClickListener, OnCheckedChangeListener {
-		private final Integer isExactCheckBox;
-		private final int searchEditText;
-		private final boolean isJapanSearch;
-		private final Integer deinflectCheckBox;
-		private final Integer searchInExamplesCheckBox;
-
-		/**
-		 * Creates new search instance.
-		 * 
-		 * @param isExactCheckBox
-		 *            the "IsExact" check box resource id. If null then an exact
-		 *            search will always be performed.
-		 * @param deinflectCheckBox
-		 *            the "deinflect" check box reference. If null then no
-		 *            deinflection attempt will be made.
-		 * @param searchInExamplesCheckBox
-		 *            the "Search in examples" check box reference. If null then
-		 *            a regular search will be performed.
-		 * @param searchEditText
-		 *            the search query edit box
-		 * @param isJapanSearch
-		 *            if true then we are searching for japanese text (in
-		 *            romaji).
-		 */
-		public SearchText(final Integer isExactCheckBox, final Integer deinflectCheckBox, final Integer searchInExamplesCheckBox, final int searchEditText, final boolean isJapanSearch) {
-			this.isExactCheckBox = isExactCheckBox;
-			this.deinflectCheckBox = deinflectCheckBox;
-			this.searchInExamplesCheckBox = searchInExamplesCheckBox;
-			this.searchEditText = searchEditText;
-			this.isJapanSearch = isJapanSearch;
-		}
-
-		public void onClick(View v) {
-			performSearch();
-		}
-
-		private void performSearch() {
-			final EditText searchEdit = (EditText) activity.findViewById(searchEditText);
-			String query = searchEdit.getText().toString();
-			if (MiscUtils.isBlank(query)) {
-				return;
-			}
-			final boolean isDeinflect = deinflectCheckBox == null ? false : ((CheckBox) activity.findViewById(deinflectCheckBox)).isChecked();
-			final boolean isSearchInExamples = searchInExamplesCheckBox == null ? false : ((CheckBox) activity.findViewById(searchInExamplesCheckBox)).isChecked();
-			final boolean isExact = isDeinflect ? true : (isSearchInExamples ? false : (isExactCheckBox == null ? true : ((CheckBox) activity.findViewById(isExactCheckBox)).isChecked()));
-			if (isJapanSearch) {
-				final RomanizationEnum r = AedictApp.getConfig().getRomanization();
-				final SearchQuery q;
-				if (isDeinflect) {
-					q = SearchQuery.searchJpDeinflected(query, r);
-				} else if (isSearchInExamples) {
-					q = SearchQuery.searchJpTanaka(query, r);
-				} else {
-					q = SearchQuery.searchJpRomaji(query, r, isExact ? MatcherEnum.Exact : MatcherEnum.Substring);
-				}
-				SearchUtils.this.performSearch(q);
-			} else {
-				searchForEnglish(query, isExact, isSearchInExamples);
-			}
-		}
-
-		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-			performSearch();
-			return true;
-		}
-
-		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-			final CheckBox isExact = (CheckBox) activity.findViewById(isExactCheckBox);
-			final CheckBox deinflect = deinflectCheckBox == null ? null : (CheckBox) activity.findViewById(deinflectCheckBox);
-			final CheckBox tanaka = searchInExamplesCheckBox == null ? null : (CheckBox) activity.findViewById(searchInExamplesCheckBox);
-			if (deinflectCheckBox != null && buttonView.getId() == deinflectCheckBox && isChecked) {
-				isExact.setChecked(true);
-				if (searchInExamplesCheckBox != null) {
-					tanaka.setChecked(false);
-				}
-			} else if (searchInExamplesCheckBox != null && ((CheckBox) activity.findViewById(searchInExamplesCheckBox)).isChecked()) {
-				isExact.setChecked(false);
-				if (deinflectCheckBox != null) {
-					deinflect.setChecked(false);
-				}
-			}
-			isExact.setEnabled(!deinflect.isChecked() && !tanaka.isChecked());
-		}
 	}
 
 	/**
