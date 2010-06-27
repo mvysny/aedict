@@ -41,6 +41,7 @@ import android.view.View;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View.OnCreateContextMenuListener;
 import android.widget.AbsListView;
+import android.widget.AbsSpinner;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
@@ -173,7 +174,7 @@ public class AndroidTester<T extends Activity> {
 	public void assertNoRequestedActivity() {
 		final Intent i = test.getStartedActivityIntent();
 		if (i != null) {
-			throw new AssertionError("The activity requested a start of another activity: "+i);
+			throw new AssertionError("The activity requested a start of another activity: " + i);
 		}
 	}
 
@@ -186,7 +187,7 @@ public class AndroidTester<T extends Activity> {
 	 *            the text to set
 	 */
 	public void setText(final int textViewId, final String text) {
-		((TextView) test.getActivity().findViewById(textViewId)).setText(text);
+		((TextView) get(textViewId)).setText(text);
 	}
 
 	/**
@@ -209,7 +210,7 @@ public class AndroidTester<T extends Activity> {
 	 * @return the text.
 	 */
 	public String getText(final int textViewId) {
-		return ((TextView) test.getActivity().findViewById(textViewId)).getText().toString();
+		return ((TextView) get(textViewId)).getText().toString();
 	}
 
 	/**
@@ -232,11 +233,37 @@ public class AndroidTester<T extends Activity> {
 	 *            the button id
 	 */
 	public void click(final int buttonId) {
-		final View view = test.getActivity().findViewById(buttonId);
-		if(view==null){
-			throw new IllegalArgumentException("No such view: "+buttonId);
-		}
+		final View view = get(buttonId);
 		view.performClick();
+	}
+
+	private View get(final int id) {
+		final View view = test.getActivity().findViewById(id);
+		if (view == null) {
+			throw new IllegalArgumentException("No such view: " + id);
+		}
+		if (view.getVisibility() != View.VISIBLE) {
+			throw new IllegalArgumentException("View " + view.getClass() + " is not visible: " + id);
+		}
+		return view;
+	}
+
+	/**
+	 * Sets given item.
+	 * 
+	 * @param spinnerId
+	 *            the spinner id
+	 * @param position
+	 *            the item position.
+	 */
+	public void setItem(final int spinnerId, final int position) {
+		final AbsSpinner view = (AbsSpinner) get(spinnerId);
+		view.setSelection(position);
+	}
+
+	public void assertItem(final int spinnerId, final int position) {
+		final AbsSpinner view = (AbsSpinner) get(spinnerId);
+		assertEquals("Incorrect item selected: expected " + position + " but got " + view.getSelectedItemPosition(), position, view.getSelectedItemPosition());
 	}
 
 	/**
@@ -244,10 +271,11 @@ public class AndroidTester<T extends Activity> {
 	 * 
 	 * @param listViewId
 	 *            the ListView id
-	 *            @param position the item position.
+	 * @param position
+	 *            the item position.
 	 */
 	public void click(final int listViewId, final int position) {
-		final AbsListView lv=(AbsListView)test.getActivity().findViewById(listViewId);
+		final AbsListView lv = (AbsListView) get(listViewId);
 		lv.performItemClick(lv, position, position);
 	}
 
@@ -260,7 +288,7 @@ public class AndroidTester<T extends Activity> {
 	 *            the button ID
 	 */
 	public void assertChecked(final boolean expected, final int checkboxId) {
-		assertEquals(expected, ((CompoundButton) test.getActivity().findViewById(checkboxId)).isChecked());
+		assertEquals(expected, ((CompoundButton) get(checkboxId)).isChecked());
 	}
 
 	/**
@@ -299,7 +327,8 @@ public class AndroidTester<T extends Activity> {
 		}
 		focus(view);
 		if (!test.getInstrumentation().invokeContextMenuAction(test.getActivity(), menuId, 0)) {
-			throw new AssertionError("Activation of menu item " + menuId + " failed for view " + view.getId() + " for unknown reasons. Check that there is menu item with such ID in the menu and it is enabled");
+			throw new AssertionError("Activation of menu item " + menuId + " failed for view " + view.getId()
+					+ " for unknown reasons. Check that there is menu item with such ID in the menu and it is enabled");
 		}
 	}
 
