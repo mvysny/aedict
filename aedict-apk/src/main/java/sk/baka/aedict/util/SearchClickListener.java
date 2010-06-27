@@ -18,11 +18,13 @@
 package sk.baka.aedict.util;
 
 import sk.baka.aedict.AedictApp;
+import sk.baka.aedict.MainActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.ResultActivity;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.autils.AndroidUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.text.ClipboardManager;
@@ -98,6 +100,13 @@ public class SearchClickListener implements View.OnClickListener, View.OnCreateC
 				return true;
 			}
 		});
+		final MenuItem miSearchFurther = menu.add(Menu.NONE, 8, 8, R.string.searchFurther);
+		miSearchFurther.setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
 
+			public boolean onMenuItemClick(MenuItem item) {
+				MainActivity.launch(activity, searchFor);
+				return true;
+			}
+		}));
 	}
 }
