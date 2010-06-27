@@ -33,6 +33,8 @@ public class MatcherEnumTest {
         assertTrue(MatcherEnum.Substring.matches("query", "query"));
         assertTrue(MatcherEnum.Substring.matches("query", "QUERY"));
         assertTrue(MatcherEnum.Substring.matches("query", "asd QUERYda dar4"));
+        assertTrue(MatcherEnum.Substring.matches("query", "QUERY asd QUERYda dar4"));
+        assertTrue(MatcherEnum.Substring.matches("query", "asd QUERYda dar4QUERY"));
     }
 
     @Test
@@ -40,12 +42,28 @@ public class MatcherEnumTest {
         assertFalse(MatcherEnum.Exact.matches("query", "foo"));
         assertTrue(MatcherEnum.Exact.matches("query", "query"));
         assertTrue(MatcherEnum.Exact.matches("query", "QUERY"));
+        assertFalse(MatcherEnum.Exact.matches("query", "asd QUERYda dar4"));
+        assertFalse(MatcherEnum.Exact.matches("query", "QUERY asd QUERYda dar4"));
+        assertFalse(MatcherEnum.Exact.matches("query", "asd QUERYda dar4QUERY"));
     }
 
     @Test
-    public void simpleAnyMatches() {
-        assertTrue(MatcherEnum.Any.matches("query", "foo"));
-        assertTrue(MatcherEnum.Any.matches("query", "query"));
-        assertTrue(MatcherEnum.Any.matches("query", "QUERY"));
+    public void simpleStartsWithMatches() {
+        assertFalse(MatcherEnum.StartsWith.matches("query", "foo"));
+        assertTrue(MatcherEnum.StartsWith.matches("query", "query"));
+        assertTrue(MatcherEnum.StartsWith.matches("query", "QUERY"));
+        assertFalse(MatcherEnum.StartsWith.matches("query", "asd QUERYda dar4"));
+        assertTrue(MatcherEnum.StartsWith.matches("query", "QUERY asd QUERYda dar4"));
+        assertFalse(MatcherEnum.StartsWith.matches("query", "asd QUERYda dar4QUERY"));
+    }
+
+    @Test
+    public void simpleEndsWithMatches() {
+        assertFalse(MatcherEnum.EndsWith.matches("query", "foo"));
+        assertTrue(MatcherEnum.EndsWith.matches("query", "query"));
+        assertTrue(MatcherEnum.EndsWith.matches("query", "QUERY"));
+        assertFalse(MatcherEnum.EndsWith.matches("query", "asd QUERYda dar4"));
+        assertFalse(MatcherEnum.EndsWith.matches("query", "QUERY asd QUERYda dar4"));
+        assertTrue(MatcherEnum.EndsWith.matches("query", "asd QUERYda dar4QUERY"));
     }
 }

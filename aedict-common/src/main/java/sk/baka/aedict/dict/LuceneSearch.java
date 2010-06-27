@@ -107,6 +107,7 @@ public final class LuceneSearch implements Closeable {
      *             on I/O error.
      */
     private List<DictEntry> searchInternal(final SearchQuery query, final int maxResults) throws IOException {
+        query.validate();
         final List<DictEntry> r = new ArrayList<DictEntry>();
         final String[] queries = dictType.getLuceneQuery(query);
         // 5000 is just an approximate value.

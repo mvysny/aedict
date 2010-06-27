@@ -23,6 +23,7 @@ import java.util.Set;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.kanji.VerbDeinflection;
+import sk.baka.autils.MiscUtils;
 
 /**
  * Contains values for a search.
@@ -248,5 +249,35 @@ public final class SearchQuery implements Serializable {
         result.isJapanese = true;
         result.matcher = exact || isDeinflect ? MatcherEnum.Exact : MatcherEnum.Substring;
         return result;
+    }
+
+    public void validate() {
+        // query may be blank when searching for kanjis based on SKIP number (see SkipActivity for details).
+        if (dictType != DictTypeEnum.Kanjidic && MiscUtils.isBlank(query)) {
+            throw new IllegalStateException("No query specified");
+        }
+        if (matcher == null) {
+            throw new IllegalStateException("Matcher must not be null");
+        }
+        switch (dictType) {
+            case Edict: {
+                if (!isJapanese && matcher != MatcherEnum.Exact && matcher != MatcherEnum.Substring) {
+                    throw new IllegalStateException("Edict eng search: invalid matcher type " + matcher);
+                }
+            }
+            break;
+            case Tanaka: {
+                if (matcher != MatcherEnum.Substring) {
+                    throw new IllegalStateException("Tanaka search: matcher must be Substring but is " + matcher);
+                }
+            }
+            break;
+            case Kanjidic: {
+                if (matcher != MatcherEnum.Exact) {
+                    throw new IllegalStateException("Tanaka search: matcher must be Substring but is " + matcher);
+                }
+            }
+            break;
+        }
     }
 }
