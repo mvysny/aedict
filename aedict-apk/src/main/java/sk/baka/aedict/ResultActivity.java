@@ -119,7 +119,7 @@ public class ResultActivity extends ListActivity {
 		}else if(EDICT_ACTION_INTERCEPT.equals(action)){
 			result = new SearchQuery(DictTypeEnum.Edict);
 			result.matcher=MatcherEnum.Exact;
-			String searchFor = it.getStringExtra(SIMEJI_INTENTKEY_REPLACE);
+			String searchFor = it.getStringExtra(EDICT_INTENTKEY_KANJIS);
 			if (!MiscUtils.isBlank(searchFor)) {
 				searchFor = searchFor.trim();
 				result.isJapanese = true;
