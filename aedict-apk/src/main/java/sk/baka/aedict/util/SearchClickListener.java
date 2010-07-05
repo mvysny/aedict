@@ -81,11 +81,7 @@ public class SearchClickListener implements View.OnClickListener, View.OnCreateC
 	}
 
 	public void onClick(View v) {
-		final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
-		q.isJapanese = isJapanese;
-		q.query = new String[] { searchFor };
-		q.matcher = MatcherEnum.Substring;
-		ResultActivity.launch(v.getContext(), q);
+		MainActivity.launch(activity, searchFor);
 	}
 
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
