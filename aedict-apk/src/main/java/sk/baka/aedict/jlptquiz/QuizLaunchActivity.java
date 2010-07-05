@@ -36,8 +36,10 @@ import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
+import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
+import sk.baka.autils.Progress;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -85,46 +87,56 @@ public class QuizLaunchActivity extends Activity {
 				if (jlpt.isEmpty()) {
 					return;
 				}
-				try {
-					final List<KanjidicEntry> questions = generateQuestions(jlpt);
-					QuizActivity.launch(QuizLaunchActivity.this, questions);
-				} catch (Exception ex) {
-					throw new RuntimeException(ex);
-				}
+				new QuestionGenerator().execute(QuizLaunchActivity.this, jlpt);
 			}
 		}));
 	}
 
-	private List<KanjidicEntry> generateQuestions(final Set<Integer> jlpts) throws IOException {
-		final StringBuilder kanjiPool = new StringBuilder();
-		for (final Integer level : jlpts) {
-			kanjiPool.append(KanjiUtils.getJlptKanjis(level));
-		}
-		final List<KanjidicEntry> questions = new ArrayList<KanjidicEntry>();
-		final Random r = new Random();
-		final LuceneSearch search = new LuceneSearch(DictTypeEnum.Kanjidic, null, true);
-		try {
-			for (int i = 0; i < QUIZ_QUESTION_COUNT; i++) {
-				if (kanjiPool.length() == 0) {
-					break;
-				}
-				final int index = r.nextInt(kanjiPool.length());
-				final char kanji = kanjiPool.charAt(index);
-				kanjiPool.deleteCharAt(index);
-				final List<DictEntry> result = search.search(SearchQuery.kanjiSearch(kanji, null, null));
-				for (final Iterator<? extends DictEntry> it = result.iterator(); it.hasNext();) {
-					final DictEntry e = it.next();
-					if (!e.isValid()) {
-						throw new RuntimeException(e.english);
-					}
-				}
-				questions.add((KanjidicEntry) result.get(0));
+	private class QuestionGenerator extends AbstractTask<Set<Integer>, List<KanjidicEntry>>{
+		@Override
+		public List<KanjidicEntry> impl(Set<Integer>... params) throws Exception {
+			publish(new Progress("Generating flashcards",0,QUIZ_QUESTION_COUNT));
+			final StringBuilder kanjiPool = new StringBuilder();
+			for (final Integer level : params[0]) {
+				kanjiPool.append(KanjiUtils.getJlptKanjis(level));
 			}
-		} finally {
-			MiscUtils.closeQuietly(search);
+			final List<KanjidicEntry> questions = new ArrayList<KanjidicEntry>();
+			final Random r = new Random();
+			final LuceneSearch search = new LuceneSearch(DictTypeEnum.Kanjidic, null, true);
+			try {
+				for (int i = 0; i < QUIZ_QUESTION_COUNT; i++) {
+					publish(new Progress(null,i,QUIZ_QUESTION_COUNT));
+					if (kanjiPool.length() == 0) {
+						break;
+					}
+					final int index = r.nextInt(kanjiPool.length());
+					final char kanji = kanjiPool.charAt(index);
+					kanjiPool.deleteCharAt(index);
+					final List<DictEntry> result = search.search(SearchQuery.kanjiSearch(kanji, null, null));
+					for (final Iterator<? extends DictEntry> it = result.iterator(); it.hasNext();) {
+						final DictEntry e = it.next();
+						if (!e.isValid()) {
+							throw new RuntimeException(e.english);
+						}
+					}
+					questions.add((KanjidicEntry) result.get(0));
+				}
+			} finally {
+				MiscUtils.closeQuietly(search);
+			}
+			return questions;
 		}
-		return questions;
-	}
 
+		@Override
+		protected void cleanupAfterError(Exception ex) {
+			// nothing to do
+		}
+
+		@Override
+		protected void onSucceeded(List<KanjidicEntry> result) {
+			QuizActivity.launch(QuizLaunchActivity.this, result);
+		}
+	}
+	
 	private static final int QUIZ_QUESTION_COUNT = 20;
 }
