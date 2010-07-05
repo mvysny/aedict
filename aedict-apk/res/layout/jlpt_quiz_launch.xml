@@ -19,17 +19,13 @@
 		android:layout_height="wrap_content" android:orientation="vertical"
 		android:paddingRight="?android:attr/scrollbarSize"
 		android:paddingLeft="?android:attr/scrollbarSize">
-		<CheckBox android:id="@+id/jlptLevel1" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" />
-		<CheckBox android:id="@+id/jlptLevel2" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" />
-		<CheckBox android:id="@+id/jlptLevel3" android:layout_width="fill_parent"
+		<CheckBox android:id="@+id/jlptLevel5" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" />
 		<CheckBox android:id="@+id/jlptLevel4" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" />
-		<CheckBox android:id="@+id/jlptLevel5" android:layout_width="fill_parent"
+		<CheckBox android:id="@+id/jlptLevel3" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" />
-		<CheckBox android:id="@+id/jlptLevel6" android:layout_width="fill_parent"
+		<CheckBox android:id="@+id/jlptLevel2" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" />
 		<Button android:id="@+id/launch" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:text="@string/launch" />
