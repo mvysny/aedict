@@ -175,11 +175,21 @@ public final class KanjiUtils {
      *
      * @param ch
      *            the character to check
-     * @return true if it is japanese kanji character (not {@link #isKana(char)}
+     * @return true if it is japanese kanji character (but not {@link #isKana(char)}
      *         kana), false otherwise.
      */
     public static boolean isKanji(char ch) {
         return (ch >= 19968) && (ch <= 40864);
+    }
+
+    /**
+     * Checks whether given character is a Japanese character ({@link #isKanji(char) kanji} or {@link #isKana(char) kana}.
+     * @param ch
+     *            the character to check
+     * @return true if it is japanese kanji character, false otherwise.
+     */
+    public static boolean isJapaneseChar(final char ch) {
+        return isKanji(ch)||isKana(ch);
     }
     /**
      * A kanji list, ordered by its commonality (most common one to least common one). Only first 1000 most common kanji characters are stored here.
