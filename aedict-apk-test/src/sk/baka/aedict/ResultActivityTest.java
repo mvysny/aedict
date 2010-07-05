@@ -152,6 +152,20 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		assertEquals(25, lv.getCount());
 	}
 
+	private void initEdictSearchEnv() {
+		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
+		i.setAction(ResultActivity.EDICT_ACTION_INTERCEPT);
+		i.putExtra(ResultActivity.EDICT_INTENTKEY_KANJIS, "空白");
+		tester.startActivity(i);
+		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Default"));
+		final ListView lv = getActivity().getListView();
+		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
+		assertEquals("(adj-na,n,adj-no) blank space/vacuum/space/null (NUL)/(P)", entry.english);
+		assertEquals("空白", entry.getJapanese());
+		assertEquals("くうはく", entry.reading);
+		assertEquals(1, lv.getCount());
+	}
+
 	public void testSimejiSearchKanji() {
 		initSimejiSearchEnv();
 		final ListView lv = getActivity().getListView();
@@ -178,6 +192,10 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		assertEquals(expected, tester.getResultIntent().getStringExtra(ResultActivity.SIMEJI_INTENTKEY_REPLACE));
 	}
 
+	public void testEdictExternSearch() {
+		initEdictSearchEnv();
+	}
+	
 	public void testSimpleEnglishSearchInTanaka() {
 		final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
 		q.isJapanese = false;

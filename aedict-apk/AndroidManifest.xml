@@ -30,6 +30,11 @@
 				<category android:name="com.adamrocker.android.simeji.REPLACE" />
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
+			<intent-filter>
+				<action android:name="sk.baka.aedict.action.ACTION_SEARCH_EDICT" />
+				<category android:name="sk.baka.aedict.category.SEARCH" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
 		</activity>
 		<activity android:name=".AboutActivity" android:label="@string/aboutCaption" />
 		<activity android:name=".KanaTableActivity" android:label="@string/kanaTable" >
