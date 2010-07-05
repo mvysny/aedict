@@ -54,12 +54,10 @@ public class QuizLaunchActivity extends Activity {
 	 */
 	private final Map<Integer, Integer> jlptMap = new HashMap<Integer, Integer>();
 	{
-		jlptMap.put(R.id.jlptLevel1, 1);
 		jlptMap.put(R.id.jlptLevel2, 2);
 		jlptMap.put(R.id.jlptLevel3, 3);
 		jlptMap.put(R.id.jlptLevel4, 4);
 		jlptMap.put(R.id.jlptLevel5, 5);
-		jlptMap.put(R.id.jlptLevel6, 6);
 	}
 
 	@Override

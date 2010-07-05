@@ -402,7 +402,7 @@
 	<string name="kanjiSearch">Kanji Search</string>
 	<string name="kanjiSearchMethod">Kanji search method</string>
 	<string name="exampleSentences">Example sentences</string>
-	<string name="jlptLevelX">JLPT level %d</string>
+	<string name="jlptLevelX">JLPT level N%d</string>
 	<string name="jlptQuiz">JLPT Quiz</string>
 	<string name="launch">Launch</string>
 	<string name="showDetailed">Show detailed</string>
