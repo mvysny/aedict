@@ -66,6 +66,7 @@ public class KanjiDetailActivityTest extends AbstractAedictTest<KanjiDetailActiv
 	public void testClickOnKanjiStartsSearch() {
 		testSimpleActivityStart();
 		tester.click(R.id.kanji);
-		tester.assertRequestedActivity(ResultActivity.class);
+		tester.assertRequestedActivity(MainActivity.class);
+		assertEquals("K", getStartedActivityIntent().getStringExtra(MainActivity.INTENTKEY_PREFILL_SEARCH_FIELD));
 	}
 }

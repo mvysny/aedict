@@ -61,6 +61,7 @@ public class MainActivityTest extends AbstractAedictTest<MainActivity> {
 		tester.startActivity();
 		tester.setText(R.id.searchEdit, "mother");
 		tester.setItem(R.id.matcher, MatcherEnum.Exact.ordinal());
+		tester.click(R.id.advanced);
 		tester.click(R.id.englishSearch);
 		tester.assertRequestedActivity(ResultActivity.class);
 		final SearchQuery q = (SearchQuery) getStartedActivityIntent().getSerializableExtra(ResultActivity.INTENTKEY_SEARCH_QUERY);
