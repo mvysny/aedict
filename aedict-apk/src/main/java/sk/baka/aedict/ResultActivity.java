@@ -30,6 +30,7 @@ import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.Constants;
 import sk.baka.aedict.util.SearchUtils;
@@ -86,6 +87,8 @@ public class ResultActivity extends ListActivity {
 	 * Simeji will send this action when requesting word translation.
 	 */
 	public static final String SIMEJI_ACTION_INTERCEPT = "com.adamrocker.android.simeji.ACTION_INTERCEPT";
+	public static final String EDICT_ACTION_INTERCEPT = "sk.baka.aedict.action.ACTION_SEARCH_EDICT";
+	public static final String EDICT_INTENTKEY_KANJIS="kanjis";
 	/**
 	 * Simeji expects a string stored under this key. This is the replacement
 	 * string.
@@ -110,8 +113,16 @@ public class ResultActivity extends ListActivity {
 				// If the first character is a japanese character then we are
 				// searching for a
 				// katakana/hiragana string
-				// a simple, stupid test, but mostly works :)
-				result.isJapanese = searchFor.charAt(0) >= 256;
+				result.isJapanese = KanjiUtils.isJapaneseChar(searchFor.charAt(0));
+				result.query = new String[] { searchFor };
+			}
+		}else if(EDICT_ACTION_INTERCEPT.equals(action)){
+			result = new SearchQuery(DictTypeEnum.Edict);
+			result.matcher=MatcherEnum.Exact;
+			String searchFor = it.getStringExtra(SIMEJI_INTENTKEY_REPLACE);
+			if (!MiscUtils.isBlank(searchFor)) {
+				searchFor = searchFor.trim();
+				result.isJapanese = true;
 				result.query = new String[] { searchFor };
 			}
 		} else {
