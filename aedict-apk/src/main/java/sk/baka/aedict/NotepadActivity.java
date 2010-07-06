@@ -112,6 +112,10 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 		return 1;
 	}
 
+	/**
+	 * Returns currently selected category tab.
+	 * @return currently selected tab, 0 if no tabs are displayed.
+	 */
 	private int getCurrentCategory() {
 		if (AedictApp.getConfig().getNotepadCategories().size() > 0) {
 			return getTabHost().getCurrentTab();
@@ -239,6 +243,11 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 		}
 	}
 
+	/**
+	 * Returns the contents of the category, loading it as required.
+	 * @param category the category number.
+	 * @return category items, never null, may be empty.
+	 */
 	private List<DictEntry> getModel(final int category) {
 		List<DictEntry> model = modelCache.get(category);
 		if (model == null) {
@@ -375,6 +384,10 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 		return true;
 	}
 
+	/**
+	 * Returns entries from all categories.
+	 * @return a list of entries, never null, may be empty.
+	 */
 	private List<DictEntry> getAllEntries() {
 		final List<DictEntry> result = new ArrayList<DictEntry>();
 		for (int i = 0; i < getCategoryCount(); i++) {
@@ -392,6 +405,9 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 		return lv;
 	}
 
+	/**
+	 * Updates all tabs by removing them and re-creating them anew.
+	 */
 	private void updateTabs() {
 		getTabHost().setCurrentTab(0);
 		final TabHost tabs = getTabHost();
