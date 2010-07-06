@@ -25,13 +25,13 @@
 			android:textColor="?android:attr/textColorPrimary" android:textSize="75dp"></TextView>
 		<TextView android:layout_height="wrap_content" android:id="@+id/onyomi"
 			android:text="ONYOMI" android:layout_width="fill_parent"
-			android:textSize="18.0px" android:textColor="#99F" android:gravity="center_horizontal"/>
+			android:textSize="18.0sp" android:textColor="#99F" android:gravity="center_horizontal"/>
 		<TextView android:layout_height="wrap_content" android:id="@+id/kunyomi"
 			android:text="KUNYOMI" android:layout_width="fill_parent"
-			android:textSize="18.0px" android:textColor="#99F" android:gravity="center_horizontal"/>
+			android:textSize="18.0sp" android:textColor="#99F" android:gravity="center_horizontal"/>
 		<TextView android:layout_height="wrap_content" android:id="@+id/namae"
 			android:text="NAMAE" android:layout_width="fill_parent"
-			android:textSize="18.0px" android:gravity="center_horizontal"/>
+			android:textSize="18.0sp" android:gravity="center_horizontal"/>
 		<TextView android:layout_height="wrap_content" android:id="@+id/english"
 			android:text="ENGLISH" android:layout_width="fill_parent" android:gravity="center_horizontal" />
 	</LinearLayout>

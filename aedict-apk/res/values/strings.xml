@@ -128,17 +128,22 @@
     <string name="searchInEdict">Search in the Edict dictionary</string>
     <string name="showConjugations">Show verb conjugations</string>
     <string name="iDoSomething">I do something.</string>
+    <string name="iDoSomethingPolitely">I do something. (politely)</string>
     <string name="plainFormExamples">Mama wa mise de _banana_ o kau.\nMom buys/will buy bananas at the store.\n_Jimu_ wa manga o yomu.\nJim will read a comic book.\nOjii-san wa sugu kaeru.\nGrandpa will return soon.\nWatashi wa ringo o taberu.\nI\'ll eat an apple.\n_Naomi_ wa _terebi_ o miru.\nNaomi will watch TV.</string>
     <string name="politeFormExamples">Mama wa mise de _banana_ o kaimasu.\nMom buys/will buy bananas at the store.\n_jimu_ wa manga o yomimasu.\nJim will read a comic book.\nOjii-san wa sugu kaerimasu.\nGrandpa will return soon.\nWatashi wa ashita kimemasu.\nI\'ll decide tomorrow.\nJerry wa sugu heya kara demasu.\nJerry will come out of the room soon.\nAyako wa mainichi _terebi_ o mimasu.\nAyako watches the TV every day.</string>
     <string name="iDoNotDoSomething">I do not do something.</string>
+    <string name="iDoNotDoSomethingPolitely">I do not do something. (politely)</string>
     <string name="politeNegativeFormExamples">Watashi wa kasa o kaimasen.\nI\'m not going to buy an umbrella.\nKare wa machimasen.\nHe won\'t wait.\nKimiko wa oosaka ni ikimasen.\nKimiko isn\'t going to Osaka.\nWatashi wa ima tabemasen.\nI\'m not going to eat now.\nKanojo wa kasa o karimasen.\nShe isn\'t going to borrow an umbrella.</string>
     <string name="iDidSomething">I did something.</string>
+    <string name="iDidSomethingPolitely">I did something. (politely)</string>
     <string name="politePastFormExamples">_jon_ wa Sendai ni ikimashita.\nJohn went to Sendai.\nKodomotachi wa kouen de asobimashita.\nThe children played at the park.\nYoshi wa ringo o tabemashita.\nYoshi ate an apple.\nShizu wa manga o kaimashita.\nShizu bought a comic book.\n_Bobbu_ wa sono eiga o mimashita.\nBob saw that movie.</string>
     <string name="iDidNotDoSomething">I didn\'t do something.</string>
+    <string name="iDidNotDoSomethingPolitely">I didn\'t do something. (politely)</string>
     <string name="politePastNegativeFormExamples">_jon_ wa Sendai ni ikimasen deshita.\nJohn didn\'t go to Sendai.\nKodomotachi wa kouen de asobimasen deshita.\nThe children didn\'t play at the park.\nYoshi wa ringo o tabemasen deshita.\nYoshi didn\'t eat an apple.</string>
     <string name="iWantToDoSomething">I want to do something.</string>
     <string name="wantFormExamples">Watashi wa kasa o kaitai.\nI want to buy an umbrella.\nKodomotachi wa asobitai.\nThe children want to play.\n_Bobbu_ wa tenpura o tabetai desu.\nBob wants to eat tempura.\n_Miki_ wa sono eiga o mitai desu.\nMiki wants to see that movie.\nWatakushi wa kasa o kaitakunai.\nI don\'t want to buy an umbrella.\nKodomotachi wa asobitakunai.\nThe children don\'t want to play.\n_Terebi_ o mitakereba, yuushoku o hayaku tabenasai.\nIf you want to watch TV, hurry and eat your dinner.\nShichiji no densha ni noritakereba, ashita hayaku okimashou.\nIf you want to make the 7:00 train, let\'s get up early tomorrow.</string>
     <string name="letsDoSomething">Let\'s do something</string>
+    <string name="letsDoSomethingPolitely">Let\'s do something (politely)</string>
     <string name="letsFormExamples">Ikimashou.\nLet\'s go.\nTabemashou.\nLet\'s eat.\nYasumimashou.\nLet\'s take a break.\nWatashi ga hakobimashou.\nI\'ll carry this / these [for you].\nEsa o agemashou.\n(To a pet) Let\'s get you some food.\nAnata no jitensha o naoshimashou.\nI\'ll fix your bicycle. / I\'ll help you fix your bicycle.</string>
     <string name="doSomething">Do something!</string>
     <string name="simpleCommandExamples">Tabenasai!\nEat!\nMinasai!\nLook!\nYominasai!\nRead it!\nIinasai!\nTell me!\nSuwarinasai!\nSit down!\nKoko ni kinasai!\nCome here!</string>
@@ -446,4 +451,6 @@
 	<string name="quiz">Notepad quiz</string>
 	<string name="searchFurther">Search further</string>
 	<string name="moveToCategory">Move to category...</string>
+	<string name="next">Next</string>
+	<string name="conjugationQuiz">Conjugation quiz</string>
 </resources>

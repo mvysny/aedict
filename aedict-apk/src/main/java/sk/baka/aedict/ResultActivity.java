@@ -30,6 +30,7 @@ import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.jlptquiz.InflectionQuizActivity;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.Constants;
@@ -198,6 +199,14 @@ public class ResultActivity extends ListActivity {
 
 						public boolean onMenuItemClick(MenuItem item) {
 							VerbInflectionActivity.launch(ResultActivity.this, (EdictEntry)ee);
+							return true;
+						}
+					}));
+					final MenuItem miConjugationQuiz = menu.add(Menu.NONE, 8, 8, R.string.conjugationQuiz);
+					miConjugationQuiz.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+						public boolean onMenuItemClick(MenuItem item) {
+							InflectionQuizActivity.launch(ResultActivity.this, (EdictEntry)ee);
 							return true;
 						}
 					}));
