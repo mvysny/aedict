@@ -167,6 +167,28 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 						return true;
 					}
 				}));
+				if (AedictApp.getConfig().getNotepadCategories().size() > 1) {
+					menu.add(0, 3, 3, R.string.moveToCategory).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
+						public boolean onMenuItemClick(MenuItem item) {
+							final List<String> notepadCategories = AedictApp.getConfig().getNotepadCategories();
+							notepadCategories.remove(category);
+							final AlertDialog.Builder builder = new AlertDialog.Builder(NotepadActivity.this);
+							builder.setItems(notepadCategories.toArray(new CharSequence[0]), new DialogInterface.OnClickListener() {
+
+								public void onClick(DialogInterface dialog, int which) {
+									final int target = which < category ? which : which + 1;
+									final DictEntry e = getModel(category).remove(pos);
+									getModel(target).add(0, e);
+									onModelChanged(category);
+									onModelChanged(target);
+								}
+							});
+							builder.setTitle(R.string.selectCategory);
+							builder.create().show();
+							return true;
+						}
+					}));
+				}
 			}
 		}));
 		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
