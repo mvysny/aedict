@@ -392,22 +392,22 @@ public final class VerbInflection {
 		 * The verb's polite plain form (I do something):
 		 * http://www.timwerx.net/language/jpverbs/lesson2.htm
 		 */
-		POLITE(new Base2Inflector(), "masu", true, R.string.iDoSomething, R.string.politeFormExamples),
+		POLITE(new Base2Inflector(), "masu", true, R.string.iDoSomethingPolitely, R.string.politeFormExamples),
 		/**
 		 * The verb's polite negative form (I do not do something):
 		 * http://www.timwerx.net/language/jpverbs/lesson4.htm
 		 */
-		POLITE_NEGATIVE(new Base2Inflector(), "masen", true, R.string.iDoNotDoSomething, R.string.politeNegativeFormExamples),
+		POLITE_NEGATIVE(new Base2Inflector(), "masen", true, R.string.iDoNotDoSomethingPolitely, R.string.politeNegativeFormExamples),
 		/**
 		 * The verb's polite past form (I did something):
 		 * http://www.timwerx.net/language/jpverbs/lesson5.htm
 		 */
-		POLITE_PAST(new Base2Inflector(), "masita", true, R.string.iDidSomething, R.string.politePastFormExamples),
+		POLITE_PAST(new Base2Inflector(), "masita", true, R.string.iDidSomethingPolitely, R.string.politePastFormExamples),
 		/**
 		 * The verb's polite past negative form (I didn't do something):
 		 * http://www.timwerx.net/language/jpverbs/lesson6.htm
 		 */
-		POLITE_PAST_NEGATIVE(new Base2Inflector(), "masen desita", true, R.string.iDidNotDoSomething, R.string.politePastNegativeFormExamples),
+		POLITE_PAST_NEGATIVE(new Base2Inflector(), "masen desita", true, R.string.iDidNotDoSomethingPolitely, R.string.politePastNegativeFormExamples),
 		/**
 		 * To hell with official names :-) The verb's "want" form:
 		 * http://www.timwerx.net/language/jpverbs/lesson8.htm
@@ -417,7 +417,7 @@ public final class VerbInflection {
 		 * The verb's "Let's do something." form:
 		 * http://www.timwerx.net/language/jpverbs/lesson9.htm
 		 */
-		LET_S(new Base2Inflector(), "masyou", true, R.string.letsDoSomething, R.string.letsFormExamples),
+		LET_S(new Base2Inflector(), "masyou", true, R.string.letsDoSomethingPolitely, R.string.letsFormExamples),
 		/**
 		 * The verb's "Do something!" form:
 		 * http://www.timwerx.net/language/jpverbs/lesson10.htm

@@ -71,6 +71,7 @@
 		<activity android:name=".jlptquiz.QuizActivity" android:label="@string/jlptQuiz" />
 		<activity android:name=".EdictEntryDetailActivity" android:label="@string/entryDetail" />
 		<activity android:name=".DownloadActivity" android:label="@string/downloadManager" />
+		<activity android:name=".jlptquiz.InflectionQuizActivity" android:label="@string/conjugationQuiz" />
 		<activity android:name=".GlobalSearchHandler" android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
