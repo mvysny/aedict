@@ -18,7 +18,7 @@
 
 package sk.baka.aedict;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,30 +31,33 @@ import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.jlptquiz.InflectionQuizActivity;
+import sk.baka.aedict.kanji.Deinflections.Deinflection;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.Constants;
-import sk.baka.aedict.util.SearchUtils;
 import sk.baka.aedict.util.ShowRomaji;
+import sk.baka.aedict.util.SpanStringBuilder;
 import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
+import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 /**
  * Performs a search and shows search result.
@@ -73,10 +76,12 @@ public class ResultActivity extends ListActivity {
 	private boolean isSimeji = false;
 
 	static final String INTENTKEY_SEARCH_QUERY = "QUERY";
+	static final String INTENTKEY_DEINFLECTIONS = "DEINFLECTIONS";
 
-	public static void launch(final Context activity, final SearchQuery query) {
+	public static void launch(final Context activity, final SearchQuery query, final List<Deinflection> deinflections) {
 		final Intent intent = new Intent(activity, ResultActivity.class);
 		intent.putExtra(INTENTKEY_SEARCH_QUERY, query);
+		intent.putExtra(INTENTKEY_DEINFLECTIONS, (Serializable) deinflections);
 		activity.startActivity(intent);
 	}
 
@@ -159,9 +164,7 @@ public class ResultActivity extends ListActivity {
 			updateModel(true);
 			new SearchTask().execute(AedictApp.isInstrumentation, this, query);
 		}
-		final Config cfg = AedictApp.getConfig();
-		final String dictName = query.dictType == DictTypeEnum.Tanaka ? DictTypeEnum.Tanaka.name() : cfg.getDictionaryName();
-		((TextView) findViewById(R.id.textSelectedDictionary)).setText(AedictApp.format(R.string.searchingInDictionary, dictName));
+		updateTopText();
 		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -321,5 +324,32 @@ public class ResultActivity extends ListActivity {
 			model = result;
 			updateModel(false);
 		}
+	}
+	
+	private void updateTopText() {
+		final SpanStringBuilder b=new SpanStringBuilder();
+		final Config cfg = AedictApp.getConfig();
+		final String dictName = query.dictType == DictTypeEnum.Tanaka ? DictTypeEnum.Tanaka.name() : cfg.getDictionaryName();
+		b.append(AedictApp.format(R.string.searchingInDictionary, dictName));
+		final List<Deinflection> ds=(List<Deinflection>) getIntent().getSerializableExtra(INTENTKEY_DEINFLECTIONS);
+		if(ds!=null){
+			for(final Deinflection d:ds) {
+				final String inflected=RomanizationEnum.NihonShiki.toHiragana(d.inflected);
+				b.append('\n');
+				b.append(b.newForeground(0xFFFFFFFF), inflected);
+				b.append(" -> ");
+				final ListBuilder lb=new ListBuilder(", ");
+				for(final String s:d.deinflected){
+					lb.add(RomanizationEnum.NihonShiki.toHiragana(s));
+				}
+				b.append(b.newForeground(0xFFFFFFFF), lb.toString());
+				if(d.inflectedForm!=null){
+					b.append(" (");
+					b.append(getString( d.inflectedForm.explanationResId));
+					b.append(')');
+				}
+			}
+		}
+		((TextView) findViewById(R.id.textSelectedDictionary)).setText(b);
 	}
 }

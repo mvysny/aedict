@@ -43,7 +43,7 @@ public class VerbDeinflectionTest {
 
     @Test
     public void testNonVerb() {
-        assertArrayEqualsNoOrder(VerbDeinflection.deinflect("kirei"), Arrays.asList("kirei"));
+        assertArrayEqualsNoOrder(VerbDeinflection.deinflect("kirei").deinflectedVerbs, Arrays.asList("kirei"));
     }
 
     @Test
@@ -178,13 +178,13 @@ public class VerbDeinflectionTest {
                 deinflectNihonShiki = RomanizationEnum.Hepburn.toHiragana(deinflectNihonShiki);
                 deinflectNihonShiki = RomanizationEnum.NihonShiki.toRomaji(deinflectNihonShiki);
             }
-            assertArrayEqualsNoOrder(VerbDeinflection.deinflect(deinflectNihonShiki), expected, "Deinflecting " + deinflectNihonShiki);
+            assertArrayEqualsNoOrder(VerbDeinflection.deinflect(deinflectNihonShiki).deinflectedVerbs, expected, "Deinflecting " + deinflectNihonShiki);
         }
     }
 
     @Test
     public void jpSearchWithDeinflect() {
-        final SearchQuery q = VerbDeinflection.searchJpDeinflected("tabenai", RomanizationEnum.Hepburn);
+        final SearchQuery q = VerbDeinflection.searchJpDeinflected("tabenai", RomanizationEnum.Hepburn).query;
         Arrays.sort(q.query);
         Assert.assertArrayEquals(q.query, new String[]{"たぶ", "たべる"});
     }
