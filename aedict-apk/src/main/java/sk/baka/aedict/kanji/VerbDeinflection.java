@@ -22,6 +22,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.MatcherEnum;
+import sk.baka.aedict.dict.SearchQuery;
+
 /**
  * Performs a simple verb deinflection.
  * 
@@ -268,5 +272,30 @@ public final class VerbDeinflection {
 
     private VerbDeinflection() {
         throw new AssertionError();
+    }
+
+    /**
+     * Creates an EDICT query which searches for a japanese term. Automatically performs a verb deinflection.
+     *
+     * @param verb
+     *            the word to search, in japanese language, may contain romaji.
+     *            Full-width katakana conversion is performed automatically. Not
+     *            null
+     * @param romanization
+     *            the romanization system to use, not null.
+     * @return search query, never null
+     */
+    public static SearchQuery searchJpDeinflected(final String verb, final RomanizationEnum romanization) {
+        final SearchQuery result = new SearchQuery(DictTypeEnum.Edict);
+        final String conv = KanjiUtils.halfwidthToKatakana(verb);
+        final String romaji = RomanizationEnum.NihonShiki.toRomaji(romanization.toHiragana(conv));
+        final Set<String> deinflections = VerbDeinflection.deinflect(romaji);
+        result.query = deinflections.toArray(new String[0]);
+        for (int i = 0; i < result.query.length; i++) {
+            result.query[i] = RomanizationEnum.NihonShiki.toHiragana(result.query[i]);
+        }
+        result.isJapanese = true;
+        result.matcher = MatcherEnum.Exact;
+        return result;
     }
 }

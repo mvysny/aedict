@@ -18,11 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package sk.baka.aedict.dict;
 
 import java.io.Serializable;
-import java.util.Set;
 
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
-import sk.baka.aedict.kanji.VerbDeinflection;
 import sk.baka.autils.MiscUtils;
 
 /**
@@ -211,31 +209,6 @@ public final class SearchQuery implements Serializable {
         result.query = new String[]{conv};
         result.isJapanese = true;
         result.matcher = matcher;
-        return result;
-    }
-
-    /**
-     * Creates an EDICT query which searches for a japanese term. Automatically performs a verb deinflection.
-     *
-     * @param verb
-     *            the word to search, in japanese language, may contain romaji.
-     *            Full-width katakana conversion is performed automatically. Not
-     *            null
-     * @param romanization
-     *            the romanization system to use, not null.
-     * @return search query, never null
-     */
-    public static SearchQuery searchJpDeinflected(final String verb, final RomanizationEnum romanization) {
-        final SearchQuery result = new SearchQuery(DictTypeEnum.Edict);
-        final String conv = KanjiUtils.halfwidthToKatakana(verb);
-        final String romaji = RomanizationEnum.NihonShiki.toRomaji(romanization.toHiragana(conv));
-        final Set<String> deinflections = VerbDeinflection.deinflect(romaji);
-        result.query = deinflections.toArray(new String[0]);
-        for (int i = 0; i < result.query.length; i++) {
-            result.query[i] = RomanizationEnum.NihonShiki.toHiragana(result.query[i]);
-        }
-        result.isJapanese = true;
-        result.matcher = MatcherEnum.Exact;
         return result;
     }
 

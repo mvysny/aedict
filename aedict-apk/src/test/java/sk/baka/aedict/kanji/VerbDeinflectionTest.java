@@ -25,6 +25,9 @@ import java.util.List;
 
 import org.junit.Test;
 
+import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.tools.test.Assert;
+
 /**
  * Tests the {@link VerbDeinflection} class.
  * 
@@ -177,5 +180,12 @@ public class VerbDeinflectionTest {
             }
             assertArrayEqualsNoOrder(VerbDeinflection.deinflect(deinflectNihonShiki), expected, "Deinflecting " + deinflectNihonShiki);
         }
+    }
+
+    @Test
+    public void jpSearchWithDeinflect() {
+        final SearchQuery q = VerbDeinflection.searchJpDeinflected("tabenai", RomanizationEnum.Hepburn);
+        Arrays.sort(q.query);
+        Assert.assertArrayEquals(q.query, new String[]{"たぶ", "たべる"});
     }
 }
