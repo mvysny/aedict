@@ -162,6 +162,7 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
 		showRomaji.register(menu);
 		AbstractActivity.addMenuItems(this, menu);
 		return true;
