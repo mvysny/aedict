@@ -26,8 +26,11 @@ import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.kanji.Deinflections;
+import sk.baka.aedict.kanji.Deinflections.Deinflection;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
+import sk.baka.aedict.kanji.VerbDeinflection;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
@@ -235,8 +238,8 @@ public class MainActivity extends ListActivity {
 		final boolean isDeinflect = ((CheckBox) findViewById(R.id.jpDeinflectVerbs)).isChecked();
 		final RomanizationEnum r = AedictApp.getConfig().getRomanization();
 		if (isAdvanced && isDeinflect && isJapanese) {
-			final SearchQuery q = SearchQuery.searchJpDeinflected(text, r);
-			performSearch(q);
+			final Deinflections q = VerbDeinflection.searchJpDeinflected(text, r);
+			performSearch(q.query, q.deinflections);
 			return;
 		}
 		final boolean isTanaka = ((CheckBox) findViewById(R.id.searchExamples)).isChecked();
@@ -250,12 +253,12 @@ public class MainActivity extends ListActivity {
 				q.query = new String[] { text };
 			}
 			q.matcher = MatcherEnum.Substring;
-			performSearch(q);
+			performSearch(q, null);
 			return;
 		}
 		final MatcherEnum matcher = isAdvanced ? MatcherEnum.values()[((Spinner) findViewById(R.id.matcher)).getSelectedItemPosition()] : MatcherEnum.Substring;
 		final SearchQuery q = isJapanese ? SearchQuery.searchJpRomaji(text, r, matcher) : SearchQuery.searchForEnglish(text, matcher == MatcherEnum.Exact);
-		performSearch(q);
+		performSearch(q, null);
 	}
 
 	private class ComponentUpdater implements OnCheckedChangeListener {
@@ -282,13 +285,13 @@ public class MainActivity extends ListActivity {
 		}
 	}
 
-	private void performSearch(final SearchQuery query) {
+	private void performSearch(final SearchQuery query, final List<Deinflection> deinflections) {
 		if (!AedictApp.getDownloader().checkDic(this, query.dictType)) {
 			// the dictionary is not yet available. An activity was popped up,
 			// which offers dictionary download. Nothing to do here, just do
 			// nothing.
 			return;
 		}
-		ResultActivity.launch(this, query);
+		ResultActivity.launch(this, query, deinflections);
 	}
 }
