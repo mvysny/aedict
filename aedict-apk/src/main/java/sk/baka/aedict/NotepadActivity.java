@@ -27,6 +27,8 @@ import java.util.Map;
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.Edict;
+import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.aedict.jlptquiz.InflectionQuizActivity;
 import sk.baka.aedict.jlptquiz.QuizActivity;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.ShowRomaji;
@@ -151,10 +153,11 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 
 			public void onCreateContextMenu(ContextMenu menu, View v, final ContextMenuInfo menuInfo) {
 				final int pos = ((AdapterContextMenuInfo) menuInfo).position;
+				final DictEntry ee = getModel(category).get(pos);
 				menu.add(0, 0, 0, R.string.analyze).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
 
 					public boolean onMenuItemClick(MenuItem item) {
-						KanjiAnalyzeActivity.launch(NotepadActivity.this, getModel(category).get(pos).getJapanese(), false);
+						KanjiAnalyzeActivity.launch(NotepadActivity.this, ee.getJapanese(), false);
 						return true;
 					}
 				}));
@@ -167,7 +170,7 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 				}));
 				menu.add(0, 2, 2, R.string.showSod).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
-						StrokeOrderActivity.launch(NotepadActivity.this, getModel(category).get(pos).getJapanese());
+						StrokeOrderActivity.launch(NotepadActivity.this, ee.getJapanese());
 						return true;
 					}
 				}));
@@ -189,6 +192,24 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 							});
 							builder.setTitle(R.string.selectCategory);
 							builder.create().show();
+							return true;
+						}
+					}));
+				}
+				if (EdictEntry.fromEntry(ee).isVerb()) {
+					final MenuItem miShowConjugations = menu.add(Menu.NONE, 7, 7, R.string.showConjugations);
+					miShowConjugations.setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+						public boolean onMenuItemClick(MenuItem item) {
+							VerbInflectionActivity.launch(NotepadActivity.this, EdictEntry.fromEntry(ee));
+							return true;
+						}
+					}));
+					final MenuItem miConjugationQuiz = menu.add(Menu.NONE, 8, 8, R.string.conjugationQuiz);
+					miConjugationQuiz.setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+						public boolean onMenuItemClick(MenuItem item) {
+							InflectionQuizActivity.launch(NotepadActivity.this, EdictEntry.fromEntry(ee));
 							return true;
 						}
 					}));
