@@ -5,11 +5,20 @@
 	</properties>
 	<body>
 		<release version="2.3" date="13. July 2010">
+			<action dev="vyzivus" type="add" issue="85">
+				Deinflections performed on a verb are now shown in the result activity.
+			</action>
+			<action dev="vyzivus" type="fix" issue="89">
+				EntryDetails activity menu items are not multiplying anymore.
+			</action>
+			<action dev="vyzivus" type="add" issue="83">
+				Added simple conjugation quiz.
+			</action>
 			<action dev="vyzivus" type="add" issue="77">
 				Added ability to move notepad items between categories.
 			</action>
 			<action dev="vyzivus" type="update" issue="79">
-				The quiz questions are now computed in a background thread.
+				The quiz questions are now computed in a background thread (The quiz questions launcher no longer shows App Not Responding window)
 			</action>
 			<action dev="vyzivus" type="fix" issue="80">
 				Fixed JLPT kanji levels - now using the N2..N5 system.

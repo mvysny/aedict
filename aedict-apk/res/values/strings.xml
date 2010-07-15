@@ -124,7 +124,7 @@
     <string name="resetIntroductions">Reset introductions</string>
     <string name="resetIntroductionsSummary">All introduction dialogs will be shown again</string>
     <string name="whatsNew">What\'s New in %s</string>
-    <string name="whatsNewText">For full changelog please see http://baka.sk/aedict/changes-report.html\n\n- AnyCut can now create shortcuts directly to KanjiPad, Skip Lookup, Kana Table and JLPT Quiz.\n- SOD images are now enlarged on high-DPI phones.\n- Added customizable categories to the Notepad\n- GUI Overhaul (thanks to Mitchell Liam)\n- Added ability to add given example entry to a notepad\n- The dictionary downloader now runs in background\n- A quiz showing the Notepad items can now be started.\n- Bugfixes</string>
+    <string name="whatsNewText">For full changelog please see http://baka.sk/aedict/changes-report.html\n\n- Example sentences: added CopyToClipboard and SearchFurther options.\n- Long-click on kanji/reading in KanjiDetail/EdictEntryDetail now shows SearchFurther menu item.\n- Fixed JLPT kanji levels - now using the N2..N5 system.\n- The quiz questions launcher no longer shows App Not Responding window.\n- Added ability to move notepad items between categories.\n- Added simple conjugation quiz.\n- EntryDetails activity menu items are not multiplying anymore.\n- Deinflections performed on a verb are now shown in the result activity.</string>
     <string name="searchInEdict">Search in the Edict dictionary</string>
     <string name="showConjugations">Show verb conjugations</string>
     <string name="iDoSomething">I do something.</string>
