@@ -109,6 +109,7 @@ public class InflectionQuizActivity extends Activity {
 				showingAnswer = !showingAnswer;
 				if (!showingAnswer) {
 					currentQuestion += NO_OF_OPTIONS;
+					correctAnswer = r.nextInt(NO_OF_OPTIONS);
 				}
 				if (currentQuestion >= model.size()) {
 					findViewById(R.id.next).setEnabled(false);
