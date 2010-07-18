@@ -453,4 +453,6 @@
 	<string name="moveToCategory">Move to category...</string>
 	<string name="next">Next</string>
 	<string name="conjugationQuiz">Conjugation quiz</string>
+	<string name="downloader">Downloader</string>
+	<string name="downloaderSummary">Shows current downloads</string>
 </resources>

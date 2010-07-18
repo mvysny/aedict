@@ -40,6 +40,9 @@
 		<PreferenceScreen android:key="downloadDictionaries" android:title="@string/downloadDictionaries"
 			android:summary="@string/downloadDictionariesSummary">
 		</PreferenceScreen>
+		<PreferenceScreen android:key="showDownloader" android:title="@string/downloader"
+			android:summary="@string/downloaderSummary">
+		</PreferenceScreen>
 		<PreferenceScreen android:key="sdcardCleanup" android:title="@string/sdcardCleanup"
 			android:summary="@string/sdcardCleanupSummary">
 		</PreferenceScreen>
