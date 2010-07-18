@@ -4,6 +4,20 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
+		<release version="2.4" date="18. July 2010">
+			<action dev="vyzivus" type="fix" issue="91">
+				Application crash was preventing the Kanjidic download.
+			</action>
+			<action dev="vyzivus" type="fix" issue="90">
+				Fixed: the downloadable dictionaries names contained characters which couldn't appear in the file names and the download was rejected. Fixed by using the zip name instead.
+			</action>
+			<action dev="vyzivus" type="add">
+				The conjugation quiz is now accessible also from the Notepad and from the Main Screen
+			</action>
+			<action dev="vyzivus" type="fix">
+				Fixed: The correct answer in the conjugation quiz always stayed the same.
+			</action>
+		</release>
 		<release version="2.3" date="13. July 2010">
 			<action dev="vyzivus" type="add" issue="85">
 				Deinflections performed on a verb are now shown in the result activity.
