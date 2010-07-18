@@ -75,6 +75,10 @@ public class ConfigActivity extends PreferenceActivity {
 	 */
 	public static final String KEY_RESET_INTRODUCTIONS = "resetIntroductions";
 	/**
+	 * Shows the download dialog
+	 */
+	public static final String KEY_SHOW_DOWNLOADER = "showDownloader";
+	/**
 	 * Shows the "About" dialog.
 	 */
 	public static final String KEY_ABOUT= "about";
@@ -110,6 +114,10 @@ public class ConfigActivity extends PreferenceActivity {
 		}
 		if (key.equals(KEY_ABOUT)) {
 			AboutActivity.launch(this);
+			return true;
+		}
+		if(key.equals(KEY_SHOW_DOWNLOADER)){
+			DownloadActivity.launch(this);
 			return true;
 		}
 		if (key.equals(KEY_DONATE)) {

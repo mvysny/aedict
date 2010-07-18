@@ -159,7 +159,7 @@ public class DownloaderService implements Closeable {
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
 						download(downloader);
-						activity.startActivity(new Intent(activity, DownloadActivity.class));
+						DownloadActivity.launch(activity);
 					}
 				});
 			}

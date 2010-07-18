@@ -22,6 +22,7 @@ import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.DownloaderService;
 import sk.baka.aedict.dict.DownloaderService.State;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -97,5 +98,9 @@ public class DownloadActivity extends Activity {
 		progress.setProgress(state == null || state.isError ? 0 : state.getCompleteness());
 		((TextView) findViewById(R.id.queue)).setText(AedictApp.format(R.string.queuedForDownload, service.getDownloadQueue().toString()));
 		((TextView) findViewById(R.id.progressText)).setText(state == null || state.isError ? "-" : state.downloaded + "kb / " + state.total + "kb");
+	}
+
+	public static void launch(Activity a) {
+		a.startActivity(new Intent(a, DownloadActivity.class));
 	}
 }
