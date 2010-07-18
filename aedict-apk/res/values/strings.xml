@@ -124,7 +124,7 @@
     <string name="resetIntroductions">Reset introductions</string>
     <string name="resetIntroductionsSummary">All introduction dialogs will be shown again</string>
     <string name="whatsNew">What\'s New in %s</string>
-    <string name="whatsNewText">For full changelog please see http://baka.sk/aedict/changes-report.html\n\n- Example sentences: added CopyToClipboard and SearchFurther options.\n- Long-click on kanji/reading in KanjiDetail/EdictEntryDetail now shows SearchFurther menu item.\n- Fixed JLPT kanji levels - now using the N2..N5 system.\n- The quiz questions launcher no longer shows App Not Responding window.\n- Added ability to move notepad items between categories.\n- Added simple conjugation quiz.\n- EntryDetails activity menu items are not multiplying anymore.\n- Deinflections performed on a verb are now shown in the result activity.</string>
+    <string name="whatsNewText">For full changelog please see http://baka.sk/aedict/changes-report.html\n\n- Fixed: The correct answer in the conjugation quiz always stayed the same.\n- The conjugation quiz is now accessible also from the Notepad and from the Main Screen\n- Fixed: Name dictionary was not downloadable\n- Application crash was preventing the Kanjidic download.</string>
     <string name="searchInEdict">Search in the Edict dictionary</string>
     <string name="showConjugations">Show verb conjugations</string>
     <string name="iDoSomething">I do something.</string>
