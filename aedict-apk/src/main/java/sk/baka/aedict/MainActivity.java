@@ -208,8 +208,16 @@ public class MainActivity extends ListActivity {
 		EdictEntryDetailActivity.launch(this, EdictEntry.fromEntry(e));
 	}
 
+	/**
+	 * Pre-fill the string under this key in the search box.
+	 */
 	static final String INTENTKEY_PREFILL_SEARCH_FIELD = "prefillSearchField";
 
+	/**
+	 * Launches this activity.
+	 * @param activity context.
+	 * @param term if not null this string will be filled in the search box.
+	 */
 	public static void launch(Activity activity, String term) {
 		final Intent i = new Intent(activity, MainActivity.class);
 		if (term != null) {

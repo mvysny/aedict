@@ -118,7 +118,8 @@ public class DownloaderService implements Closeable {
 	/**
 	 * Checks if given dictionary file exists. If not, user is prompted for a
 	 * download and the files are downloaded if requested.
-	 * 
+	 * @param activity context
+	 * @param downloader the downloader implementation
 	 * @return true if the files are available, false otherwise.
 	 */
 	private boolean checkDictionaryFile(final Activity activity, final AbstractDownloader downloader) {
@@ -145,16 +146,8 @@ public class DownloaderService implements Closeable {
 	/**
 	 * Checks if given dictionary exists. If not, user is prompted for a
 	 * download and the files are downloaded if requested.
-	 * 
-	 * @param source
-	 *            download the dictionary files from here. A zipped Lucene index
-	 *            file is expected.
-	 * @param targetDir
-	 *            unzip the files here
-	 * @param dictName
-	 *            the dictionary name.
-	 * @param expectedSize
-	 *            the expected file size of unpacked dictionary.
+	 *  @param a context
+	 *  @param dict the dictionary type.
 	 * @return true if the files are available, false otherwise.
 	 */
 	public boolean checkDic(final Activity a, final DictTypeEnum dict) {
@@ -164,7 +157,7 @@ public class DownloaderService implements Closeable {
 	/**
 	 * Checks if the SOD images exists. If not, user is prompted for a download
 	 * and the files are downloaded if requested.
-	 * 
+	 * @param a context
 	 * @return true if the files are available, false otherwise.
 	 */
 	public boolean checkSod(final Activity a) {
@@ -202,11 +195,14 @@ public class DownloaderService implements Closeable {
 	/**
 	 * Downloads a dictionary, no questions asked. If the dictionary is already
 	 * downloaded it will not be overwritten.
+	 * @param dict which dictionary to download.
 	 */
 	public void downloadDict(final DictTypeEnum dict) {
 		downloadDict(dict.getDownloadSite(), dict.getDefaultDictionaryPath(), dict.name(), dict.luceneFileSize());
 	}
-
+	/**
+	 * Downloads the <a href="http://www.kanjicafe.com/using_soder.htm#download">SOD</a> Kanji Draw Order images.
+	 */
 	public void downloadSod() {
 		download(new SodDownloader());
 	}
