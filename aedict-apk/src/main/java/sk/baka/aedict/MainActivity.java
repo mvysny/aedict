@@ -32,6 +32,7 @@ import sk.baka.aedict.kanji.Deinflections.Deinflection;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.kanji.VerbDeinflection;
+import sk.baka.aedict.util.Check;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
@@ -163,7 +164,12 @@ public class MainActivity extends ListActivity {
 		return modelCache;
 	}
 
+	/**
+	 * Adds given entry to the "recently viewed" list.
+	 * @param entry the entry, not null.
+	 */
 	public static void recentlyViewed(final DictEntry entry) {
+		Check.checkNotNull("entry", entry);
 		final List<DictEntry> entries = AedictApp.getConfig().getRecentlyViewed();
 		while (entries.size() > 15) {
 			entries.remove(entries.size() - 1);
