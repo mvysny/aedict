@@ -119,10 +119,30 @@ public class DownloaderService implements Closeable {
 	 * Checks if given dictionary file exists. If not, user is prompted for a
 	 * download and the files are downloaded if requested.
 	 * @param activity context
-	 * @param downloader the downloader implementation
+	 * @param source
+	 *            download the dictionary files from here. A zipped Lucene
+	 *            index file is expected.
+	 * @param targetDir
+	 *            unzip the files here
+	 * @param dictName
+	 *            the dictionary name.
+	 * @param expectedSize
+	 *            the expected file size of unpacked dictionary.
+	 * @param skipMissingMsg if true then the "dictionary is missing" message is shown only when there is not enough free space.
 	 * @return true if the files are available, false otherwise.
 	 */
-	private boolean checkDictionaryFile(final Activity activity, final AbstractDownloader downloader) {
+	public boolean checkDictionaryFile(final Activity activity, URL source, String targetDir, String dictName, long expectedSize, final boolean skipMissingMsg) {
+		return checkDictionaryFile(activity, new DictDownloader(source, targetDir, dictName, expectedSize), skipMissingMsg);
+	}
+	/**
+	 * Checks if given dictionary file exists. If not, user is prompted for a
+	 * download and the files are downloaded if requested.
+	 * @param activity context
+	 * @param downloader the downloader implementation
+	 * @param skipMissingMsg if true then the "dictionary is missing" message is shown only when there is not enough free space.
+	 * @return true if the files are available, false otherwise.
+	 */
+	private boolean checkDictionaryFile(final Activity activity, final AbstractDownloader downloader, final boolean skipMissingMsg) {
 		if (!isComplete(downloader.targetDir)) {
 			final StatFs stats = new StatFs("/sdcard");
 			final long free = ((long) stats.getBlockSize()) * stats.getAvailableBlocks();
@@ -131,13 +151,18 @@ public class DownloaderService implements Closeable {
 				msg.append('\n');
 				msg.append(AedictApp.format(R.string.warning_less_than_x_mb_free, downloader.expectedSize / 1024, free / 1024));
 			}
-			new DialogUtils(activity).showYesNoDialog(msg.toString(), new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-					download(downloader);
-					activity.startActivity(new Intent(activity, DownloadActivity.class));
-				}
-			});
+			if (free >= downloader.expectedSize && skipMissingMsg) {
+				download(downloader);
+				activity.startActivity(new Intent(activity, DownloadActivity.class));
+			} else {
+				new DialogUtils(activity).showYesNoDialog(msg.toString(), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						download(downloader);
+						activity.startActivity(new Intent(activity, DownloadActivity.class));
+					}
+				});
+			}
 			return false;
 		}
 		return true;
@@ -151,7 +176,7 @@ public class DownloaderService implements Closeable {
 	 * @return true if the files are available, false otherwise.
 	 */
 	public boolean checkDic(final Activity a, final DictTypeEnum dict) {
-		return checkDictionaryFile(a, new DictDownloader(dict.getDownloadSite(), dict.getDefaultDictionaryPath(), dict.name(), dict.luceneFileSize()));
+		return checkDictionaryFile(a, new DictDownloader(dict.getDownloadSite(), dict.getDefaultDictionaryPath(), dict.name(), dict.luceneFileSize()), false);
 	}
 
 	/**
@@ -161,7 +186,7 @@ public class DownloaderService implements Closeable {
 	 * @return true if the files are available, false otherwise.
 	 */
 	public boolean checkSod(final Activity a) {
-		return checkDictionaryFile(a, new SodDownloader());
+		return checkDictionaryFile(a, new SodDownloader(), false);
 	}
 
 	private void download(final AbstractDownloader download) {
@@ -177,28 +202,10 @@ public class DownloaderService implements Closeable {
 	/**
 	 * Downloads a dictionary, no questions asked. If the dictionary is already
 	 * downloaded it will not be overwritten.
-	 * 
-	 * @param source
-	 *            download the dictionary files from here. A zipped Lucene index
-	 *            file is expected.
-	 * @param targetDir
-	 *            unzip the files here
-	 * @param dictName
-	 *            the dictionary name.
-	 * @param expectedSize
-	 *            the expected file size of unpacked dictionary.
-	 */
-	public void downloadDict(final URL source, final String targetDir, final String dictName, final long expectedSize) {
-		download(new DictDownloader(source, targetDir, dictName, expectedSize));
-	}
-
-	/**
-	 * Downloads a dictionary, no questions asked. If the dictionary is already
-	 * downloaded it will not be overwritten.
 	 * @param dict which dictionary to download.
 	 */
 	public void downloadDict(final DictTypeEnum dict) {
-		downloadDict(dict.getDownloadSite(), dict.getDefaultDictionaryPath(), dict.name(), dict.luceneFileSize());
+		download(new DictDownloader(dict.getDownloadSite(), dict.getDefaultDictionaryPath(), dict.name(), dict.luceneFileSize()));
 	}
 	/**
 	 * Downloads the <a href="http://www.kanjicafe.com/using_soder.htm#download">SOD</a> Kanji Draw Order images.

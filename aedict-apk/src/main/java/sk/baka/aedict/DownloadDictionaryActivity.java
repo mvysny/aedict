@@ -37,8 +37,8 @@ import sk.baka.autils.MiscUtils;
 import sk.baka.autils.Progress;
 import android.app.ListActivity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -60,6 +60,7 @@ public class DownloadDictionaryActivity extends ListActivity {
 	}
 
 	private static class DownloadableDictionaryInfo implements Comparable<DownloadableDictionaryInfo> {
+		public String zipName;
 		/**
 		 * The dictionary printable name.
 		 */
@@ -94,8 +95,9 @@ public class DownloadDictionaryActivity extends ListActivity {
 		public static DownloadableDictionaryInfo parse(final String line) throws MalformedURLException {
 			final String[] parsed = line.split("\\,");
 			final DownloadableDictionaryInfo result = new DownloadableDictionaryInfo();
+			result.zipName = parsed[0].trim();
 			result.name = parsed[1].trim();
-			result.url = new URL(DictTypeEnum.DICT_BASE_LOCATION_URL + parsed[0].trim());
+			result.url = new URL(DictTypeEnum.DICT_BASE_LOCATION_URL + result.zipName);
 			result.zippedSize = Integer.valueOf(parsed[2].trim());
 			result.copyright = parsed[3].trim();
 			result.homepage = parsed[4].trim();
@@ -145,7 +147,7 @@ public class DownloadDictionaryActivity extends ListActivity {
 						continue;
 					}
 					final DownloadableDictionaryInfo info = DownloadableDictionaryInfo.parse(line);
-					result.put(info.name, info);
+					result.put(info.zipName, info);
 				}
 			} finally {
 				MiscUtils.closeQuietly(reader);
@@ -174,6 +176,6 @@ public class DownloadDictionaryActivity extends ListActivity {
 	}
 
 	private void downloadDictionary(final DownloadableDictionaryInfo e) {
-		AedictApp.getDownloader().downloadDict(e.url, DictTypeEnum.BASE_DIR + "/index-" + e.name, e.name, e.zippedSize);
+		AedictApp.getDownloader().checkDictionaryFile(this, e.url, DictTypeEnum.BASE_DIR + "/index-" + e.zipName, e.name, e.zippedSize, true);
 	}
 }
