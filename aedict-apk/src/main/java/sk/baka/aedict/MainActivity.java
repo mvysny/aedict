@@ -28,10 +28,9 @@ import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.jlptquiz.InflectionQuizActivity;
 import sk.baka.aedict.kanji.Deinflections;
-import sk.baka.aedict.kanji.Deinflections.Deinflection;
-import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.kanji.VerbDeinflection;
+import sk.baka.aedict.kanji.Deinflections.Deinflection;
 import sk.baka.aedict.util.Check;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AndroidUtils;
@@ -41,20 +40,20 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 /**
  * Provides means to search the edict dictionary file.
@@ -255,7 +254,7 @@ public class MainActivity extends ListActivity {
 			return;
 		}
 		if (isAdvanced && isTranslate && isJapanese) {
-			KanjiAnalyzeActivity.launch(this, text.trim(), true);
+			KanjiAnalyzeActivity.launch(this, text, true);
 			return;
 		}
 		final boolean isDeinflect = ((CheckBox) findViewById(R.id.jpDeinflectVerbs)).isChecked();
@@ -267,20 +266,12 @@ public class MainActivity extends ListActivity {
 		}
 		final boolean isTanaka = ((CheckBox) findViewById(R.id.searchExamples)).isChecked();
 		if (isAdvanced && isTanaka) {
-			final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
-			q.isJapanese = isJapanese;
-			if (isJapanese) {
-				final String conv = KanjiUtils.halfwidthToKatakana(text);
-				q.query = new String[] { r.toKatakana(conv), r.toHiragana(conv) };
-			} else {
-				q.query = new String[] { text };
-			}
-			q.matcher = MatcherEnum.Substring;
+			final SearchQuery q = SearchQuery.searchTanaka(text, isJapanese, r);
 			performSearch(q, null);
 			return;
 		}
 		final MatcherEnum matcher = isAdvanced ? MatcherEnum.values()[((Spinner) findViewById(R.id.matcher)).getSelectedItemPosition()] : MatcherEnum.Substring;
-		final SearchQuery q = isJapanese ? SearchQuery.searchJpRomaji(text, r, matcher) : SearchQuery.searchForEnglish(text, matcher == MatcherEnum.Exact);
+		final SearchQuery q = isJapanese ? SearchQuery.searchJpRomaji(text, r, matcher) : SearchQuery.searchEnEdict(text, matcher == MatcherEnum.Exact);
 		performSearch(q, null);
 	}
 

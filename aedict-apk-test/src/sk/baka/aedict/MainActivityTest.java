@@ -40,7 +40,7 @@ public class MainActivityTest extends AbstractAedictTest<MainActivity> {
 	/**
 	 * Tests that a search request is sent when japanese search is requested.
 	 */
-	public void testSimpleJapanSearch() {
+	public void testSimpleJapaneseSearch() {
 		tester.startActivity();
 		tester.setText(R.id.searchEdit, "haha");
 		tester.click(R.id.jpSearch);
@@ -48,6 +48,23 @@ public class MainActivityTest extends AbstractAedictTest<MainActivity> {
 		final SearchQuery q = (SearchQuery) getStartedActivityIntent().getSerializableExtra(ResultActivity.INTENTKEY_SEARCH_QUERY);
 		assertEquals(RomanizationEnum.Hepburn.toHiragana("haha"), q.query[1]);
 		assertEquals(RomanizationEnum.Hepburn.toKatakana("haha"), q.query[0]);
+		assertEquals(2, q.query.length);
+		assertTrue(q.isJapanese);
+		assertEquals(DictTypeEnum.Edict, q.dictType);
+		assertEquals(MatcherEnum.Substring, q.matcher);
+	}
+
+	/**
+	 * Tests that a search request is sent when japanese search is requested.
+	 */
+	public void testComplexJapaneseSearch() {
+		tester.startActivity();
+		tester.setText(R.id.searchEdit, "haha AND chichi");
+		tester.click(R.id.jpSearch);
+		tester.assertRequestedActivity(ResultActivity.class);
+		final SearchQuery q = (SearchQuery) getStartedActivityIntent().getSerializableExtra(ResultActivity.INTENTKEY_SEARCH_QUERY);
+		assertEquals(RomanizationEnum.Hepburn.toHiragana("haha") + " AND " 	+ RomanizationEnum.Hepburn.toHiragana("chichi"), q.query[1]);
+		assertEquals(RomanizationEnum.Hepburn.toKatakana("haha") + " AND " + RomanizationEnum.Hepburn.toKatakana("chichi"), q.query[0]);
 		assertEquals(2, q.query.length);
 		assertTrue(q.isJapanese);
 		assertEquals(DictTypeEnum.Edict, q.dictType);
@@ -66,6 +83,24 @@ public class MainActivityTest extends AbstractAedictTest<MainActivity> {
 		tester.assertRequestedActivity(ResultActivity.class);
 		final SearchQuery q = (SearchQuery) getStartedActivityIntent().getSerializableExtra(ResultActivity.INTENTKEY_SEARCH_QUERY);
 		assertEquals("mother", q.query[0]);
+		assertEquals(1, q.query.length);
+		assertFalse(q.isJapanese);
+		assertEquals(DictTypeEnum.Edict, q.dictType);
+		assertEquals(MatcherEnum.Exact, q.matcher);
+	}
+
+	/**
+	 * Tests that a search request is sent when english search is requested.
+	 */
+	public void testComplexAndEnglishSearch() {
+		tester.startActivity();
+		tester.setText(R.id.searchEdit, "mother AND father");
+		tester.setItem(R.id.matcher, MatcherEnum.Exact.ordinal());
+		tester.click(R.id.advanced);
+		tester.click(R.id.englishSearch);
+		tester.assertRequestedActivity(ResultActivity.class);
+		final SearchQuery q = (SearchQuery) getStartedActivityIntent().getSerializableExtra(ResultActivity.INTENTKEY_SEARCH_QUERY);
+		assertEquals("mother AND father", q.query[0]);
 		assertEquals(1, q.query.length);
 		assertFalse(q.isJapanese);
 		assertEquals(DictTypeEnum.Edict, q.dictType);

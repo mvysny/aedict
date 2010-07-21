@@ -72,7 +72,7 @@ public class SearchProvider extends ContentProvider {
 			final LuceneSearch lucene = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getConfig().getDictionaryLoc(), AedictApp.getConfig().isSorted());
 			try {
 				entries.addAll(lucene.search(VerbDeinflection.searchJpDeinflected(searchString, AedictApp.getConfig().getRomanization()).query));
-				entries.addAll(lucene.search(SearchQuery.searchForEnglish(searchString, true)));
+				entries.addAll(lucene.search(SearchQuery.searchEnEdict(searchString, true)));
 			} finally {
 				MiscUtils.closeQuietly(lucene);
 			}

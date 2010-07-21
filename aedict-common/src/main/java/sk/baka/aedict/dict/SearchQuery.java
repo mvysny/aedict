@@ -21,6 +21,7 @@ import java.io.Serializable;
 
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
+import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
 
 /**
@@ -186,12 +187,27 @@ public final class SearchQuery implements Serializable {
      *            substring search.
      * @return search query
      */
-    public static SearchQuery searchForEnglish(final String word, final boolean exact) {
+    public static SearchQuery searchEnEdict(final String word, final boolean exact) {
         final SearchQuery result = new SearchQuery(DictTypeEnum.Edict);
         result.query = new String[]{word};
         result.isJapanese = false;
         result.matcher = exact ? MatcherEnum.Exact : MatcherEnum.Substring;
         return result;
+    }
+
+    private static String[] parseQuery(final String query, final boolean isJapanese, final RomanizationEnum r) {
+	if (isJapanese) {
+	    final String conv = KanjiUtils.halfwidthToKatakana(query);
+	    final ListBuilder k = new ListBuilder(" AND ");
+	    final ListBuilder h = new ListBuilder(" AND ");
+	    for (final String token : conv.split("\\s+AND\\s+")) {
+		k.add(r.toKatakana(conv));
+		h.add(r.toHiragana(conv));
+	    }
+	    return new String[]{k.toString(), h.toString()};
+	} else {
+	    return new String[]{query};
+	}
     }
 
     /**
@@ -213,7 +229,7 @@ public final class SearchQuery implements Serializable {
     }
 
     /**
-     * Creates an EDICT query which searches for a japanese term in the Tanaka example dictionary.
+     * Creates an EDICT query which searches for a japanese or english term in the Tanaka example dictionary.
      *
      * @param word
      *            the word to search, in japanese language, may contain romaji.
@@ -223,11 +239,10 @@ public final class SearchQuery implements Serializable {
      *            the romanization system to use, not null.
      * @return search query, never null
      */
-    public static SearchQuery searchJpTanaka(final String word, final RomanizationEnum romanization) {
+    public static SearchQuery searchTanaka(final String word, final boolean isJapanese, final RomanizationEnum romanization) {
         final SearchQuery result = new SearchQuery(DictTypeEnum.Tanaka);
-        String conv = KanjiUtils.halfwidthToKatakana(word);
-        result.query = new String[]{romanization.toKatakana(conv), romanization.toHiragana(conv)};
-        result.isJapanese = true;
+	result.query = parseQuery(word, isJapanese, romanization);
+        result.isJapanese = isJapanese;
         result.matcher = MatcherEnum.Substring;
         return result;
     }
@@ -249,8 +264,7 @@ public final class SearchQuery implements Serializable {
      */
     public static SearchQuery searchJpRomaji(final String word, final RomanizationEnum romanization, final MatcherEnum matcher) {
         final SearchQuery result = new SearchQuery(DictTypeEnum.Edict);
-        String conv = KanjiUtils.halfwidthToKatakana(word);
-        result.query = new String[]{romanization.toKatakana(conv), romanization.toHiragana(conv)};
+        result.query = parseQuery(word, true, romanization);
         result.isJapanese = true;
         result.matcher = matcher;
         return result;
