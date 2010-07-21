@@ -126,7 +126,7 @@ public class DictTypeEnumTest {
         final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
         q.query = new String[]{"foo", "bar"};
         q.isJapanese = true;
-        Assert.assertArrayEquals(new String[]{"(\"foo\" OR \"bar\") AND \\(P\\)", "(\"foo\" OR \"bar\") NOT \\(P\\)"}, DictTypeEnum.Edict.getLuceneQuery(q));
+        Assert.assertArrayEquals(DictTypeEnum.Edict.getLuceneQuery(q), new String[]{"(\"foo\" OR \"bar\") AND \\(P\\)", "(\"foo\" OR \"bar\") NOT \\(P\\)"});
     }
 
     @Test
@@ -134,7 +134,7 @@ public class DictTypeEnumTest {
         final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
         q.query = new String[]{"foo AND goo", "bar"};
         q.isJapanese = true;
-        Assert.assertArrayEquals(new String[]{"((foo AND goo) OR \"bar\") AND \\(P\\)", "((foo AND goo) OR \"bar\") NOT \\(P\\)"}, DictTypeEnum.Edict.getLuceneQuery(q));
+        Assert.assertArrayEquals(DictTypeEnum.Edict.getLuceneQuery(q), new String[]{"((foo AND goo) OR \"bar\") AND \\(P\\)", "((foo AND goo) OR \"bar\") NOT \\(P\\)"});
     }
 
     @Test
@@ -142,8 +142,17 @@ public class DictTypeEnumTest {
         final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
         q.query = new String[]{"foo", "bar"};
         q.isJapanese = true;
-        Assert.assertArrayEquals(new String[]{"japanese:\"foo\" OR jp-deinflected:\"foo\" OR japanese:\"bar\" OR jp-deinflected:\"bar\""}, DictTypeEnum.Tanaka.getLuceneQuery(q));
+        Assert.assertArrayEquals(DictTypeEnum.Tanaka.getLuceneQuery(q), new String[]{"(japanese:\"foo\") OR (jp-deinflected:\"foo\") OR (japanese:\"bar\") OR (jp-deinflected:\"bar\")"});
         q.isJapanese = false;
-        Assert.assertArrayEquals(new String[]{"english:\"foo\" OR english:\"bar\""}, DictTypeEnum.Tanaka.getLuceneQuery(q));
+        Assert.assertArrayEquals(DictTypeEnum.Tanaka.getLuceneQuery(q), new String[]{"(english:\"foo\") OR (english:\"bar\")"});
+    }
+    @Test
+    public void testTanakaAndQueryCreator() {
+        final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
+        q.query = new String[]{"foo AND goo", "bar"};
+        q.isJapanese = true;
+        Assert.assertArrayEquals(DictTypeEnum.Tanaka.getLuceneQuery(q), new String[]{"(japanese:\"foo\" AND japanese:\"goo\") OR (jp-deinflected:\"foo\" AND jp-deinflected:\"goo\") OR (japanese:\"bar\") OR (jp-deinflected:\"bar\")"});
+        q.isJapanese = false;
+        Assert.assertArrayEquals(DictTypeEnum.Tanaka.getLuceneQuery(q), new String[]{"(english:\"foo\" AND english:\"goo\") OR (english:\"bar\")"});
     }
 }

@@ -287,15 +287,27 @@ public enum DictTypeEnum {
         public String[] getLuceneQuery(SearchQuery query) {
             final ListBuilder result = new ListBuilder(" OR ");
             for (final String q : query.trim().query) {
+		final String[] qs = q.split("\\s+AND\\s+");
                 if (query.isJapanese) {
-                    result.add("japanese:\"" + q + "\"");
-                    result.add("jp-deinflected:\"" + q + "\"");
+		    add(result, "japanese", qs);
+		    add(result, "jp-deinflected", qs);
+//                    result.add("japanese:\"" + q + "\"");
+//                    result.add("jp-deinflected:\"" + q + "\"");
                 } else {
-                    result.add("english:\"" + q + "\"");
+		    add(result, "english", qs);
+//                    result.add("english:\"" + q + "\"");
                 }
             }
             return new String[]{result.toString()};
         }
+
+	private void add(final ListBuilder bu, final String prefix, final String[] andTerms) {
+	    final ListBuilder b = new ListBuilder(" AND ");
+	    for(final String term: andTerms) {
+		b.add(prefix+":\""+term.trim()+"\"");
+	    }
+	    bu.add("("+b.toString()+")");
+	}
 
         @Override
         public String getDefaultDictionaryLoc() {
