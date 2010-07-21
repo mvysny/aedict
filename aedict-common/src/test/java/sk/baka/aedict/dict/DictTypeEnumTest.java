@@ -23,6 +23,7 @@ import java.text.ParseException;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.junit.Test;
+import sk.baka.tools.test.Assert;
 
 /**
  * Tests the {@link DictTypeEnum} class.
@@ -121,12 +122,28 @@ public class DictTypeEnumTest {
     }
 
     @Test
+    public void testEdictQueryCreator() {
+        final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
+        q.query = new String[]{"foo", "bar"};
+        q.isJapanese = true;
+        Assert.assertArrayEquals(new String[]{"(\"foo\" OR \"bar\") AND \\(P\\)", "(\"foo\" OR \"bar\") NOT \\(P\\)"}, DictTypeEnum.Edict.getLuceneQuery(q));
+    }
+
+    @Test
+    public void testEdictAndQueryCreator() {
+        final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
+        q.query = new String[]{"foo AND goo", "bar"};
+        q.isJapanese = true;
+        Assert.assertArrayEquals(new String[]{"((foo AND goo) OR \"bar\") AND \\(P\\)", "((foo AND goo) OR \"bar\") NOT \\(P\\)"}, DictTypeEnum.Edict.getLuceneQuery(q));
+    }
+
+    @Test
     public void testTanakaQueryCreator() {
         final SearchQuery q = new SearchQuery(DictTypeEnum.Tanaka);
         q.query = new String[]{"foo", "bar"};
         q.isJapanese = true;
-        assertArrayEquals(new String[]{"japanese:\"foo\" OR jp-deinflected:\"foo\" OR japanese:\"bar\" OR jp-deinflected:\"bar\""}, DictTypeEnum.Tanaka.getLuceneQuery(q));
+        Assert.assertArrayEquals(new String[]{"japanese:\"foo\" OR jp-deinflected:\"foo\" OR japanese:\"bar\" OR jp-deinflected:\"bar\""}, DictTypeEnum.Tanaka.getLuceneQuery(q));
         q.isJapanese = false;
-        assertArrayEquals(new String[]{"english:\"foo\" OR english:\"bar\""}, DictTypeEnum.Tanaka.getLuceneQuery(q));
+        Assert.assertArrayEquals(new String[]{"english:\"foo\" OR english:\"bar\""}, DictTypeEnum.Tanaka.getLuceneQuery(q));
     }
 }
