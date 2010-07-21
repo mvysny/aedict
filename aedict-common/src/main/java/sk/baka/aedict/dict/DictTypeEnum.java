@@ -47,7 +47,11 @@ public enum DictTypeEnum {
         public String[] getLuceneQuery(SearchQuery query) {
             final ListBuilder sb = new ListBuilder(" OR ");
             for (final String q : query.query) {
-                sb.add("\"" + q.trim() + "\"");
+		if (q.contains(" AND ")) {
+		    sb.add("(" + q.trim() + ")");
+		} else {
+		    sb.add("\"" + q.trim() + "\"");
+		}
             }
             // first the common words are returned, then return all the rest
             // fixes http://code.google.com/p/aedict/issues/detail?id=47
