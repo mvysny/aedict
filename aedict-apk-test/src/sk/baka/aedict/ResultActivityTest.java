@@ -241,6 +241,21 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		assertEquals(12, lv.getCount());
 	}
 
+	public void testComplexJapaneseAndSearch() {
+		final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
+		q.isJapanese = true;
+		q.matcher = MatcherEnum.Substring;
+		q.query = new String[] {"はは AND 父" };
+		launch(q);
+		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Default"));
+		final ListView lv = getActivity().getListView();
+		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
+		assertEquals("(n) father and mother/parents", entry.english);
+		assertEquals("父母", entry.getJapanese());
+		assertEquals("(ちちはは", entry.reading);
+		assertEquals(1, lv.getCount());
+	}
+
 	public void testSodAnalysis() {
 		testSimpleJapaneseSearch();
 		tester.contextMenu(getActivity().getListView(), 6, 0);
