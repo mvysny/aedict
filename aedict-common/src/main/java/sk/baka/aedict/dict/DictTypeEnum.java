@@ -291,11 +291,8 @@ public enum DictTypeEnum {
                 if (query.isJapanese) {
 		    add(result, "japanese", qs);
 		    add(result, "jp-deinflected", qs);
-//                    result.add("japanese:\"" + q + "\"");
-//                    result.add("jp-deinflected:\"" + q + "\"");
                 } else {
 		    add(result, "english", qs);
-//                    result.add("english:\"" + q + "\"");
                 }
             }
             return new String[]{result.toString()};
@@ -444,12 +441,22 @@ public enum DictTypeEnum {
         if (!entry.isValid() || MiscUtils.isBlank(query.query)) {
             return entry;
         }
-        for (final String q : query.query) {
-            if (matches(entry, query.isJapanese, q.toLowerCase(), query.matcher)) {
-                return entry;
-            }
-        }
+	for (final String q : query.query) {
+	    if (matchesHandlesAnd(entry, query.isJapanese, q, query.matcher)) {
+		return entry;
+	    }
+	}
         return null;
+    }
+
+    protected final boolean matchesHandlesAnd(final DictEntry entry, final boolean isJapanese, final String query, final MatcherEnum matcher){
+	    final String[] qt = query.split("\\s+AND\\s+");
+	    for (final String term : qt) {
+		if (!matches(entry, isJapanese, term.trim().toLowerCase(), matcher)) {
+		    return false;
+		}
+	    }
+	    return true;
     }
 
     /**
@@ -468,5 +475,5 @@ public enum DictTypeEnum {
      *            the matcher type, never {@link MatcherEnum#Any}.
      * @return true if the query matches, false otherwise.
      */
-    public abstract boolean matches(final DictEntry entry, final boolean isJapanese, final String query, final MatcherEnum matcher);
+    protected abstract boolean matches(final DictEntry entry, final boolean isJapanese, final String query, final MatcherEnum matcher);
 }
