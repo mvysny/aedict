@@ -106,20 +106,6 @@ public final class SearchQuery implements Serializable {
     }
 
     /**
-     * All query strings are converted to a lower case.
-     *
-     * @return this
-     */
-    public SearchQuery toLowerCase() {
-        if (query != null) {
-            for (int i = 0; i < query.length; i++) {
-                query[i] = query[i].toLowerCase();
-            }
-        }
-        return this;
-    }
-
-    /**
      * All query strings are trimmed.
      *
      * @return this
