@@ -134,7 +134,10 @@ public class KanjiDetailActivity extends AbstractActivity {
 			if (isJapanese) {
 				item = showRomaji.romanize(item);
 			}
-			final String query = KanjiUtils.isKatakana(sitem.charAt(0)) ? RomanizationEnum.NihonShiki.toHiragana(RomanizationEnum.NihonShiki.toRomaji(sitem)) : sitem;
+			String query = KanjiUtils.isKatakana(sitem.charAt(0)) ? RomanizationEnum.NihonShiki.toHiragana(RomanizationEnum.NihonShiki.toRomaji(sitem)) : sitem;
+			if (isJapanese) {
+				query += " AND " + entry.kanji;
+			}
 			final Object span = sb.newClickable(new SearchClickListener(this, query, isJapanese));
 			sb.append(span, item);
 			if (i < items.size() - 1) {
