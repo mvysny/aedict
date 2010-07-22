@@ -134,7 +134,7 @@ public class ResultActivity extends ListActivity {
 			result = (SearchQuery) getIntent().getSerializableExtra(INTENTKEY_SEARCH_QUERY);
 			isSimeji = it.getBooleanExtra(INTENTKEY_SIMEJI, false);
 		}
-		return result.toLowerCase();
+		return result;
 	}
 
 	ShowRomaji showRomaji=null;
