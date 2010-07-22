@@ -252,7 +252,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		final DictEntry entry = (DictEntry) lv.getItemAtPosition(0);
 		assertEquals("(n) father and mother/parents", entry.english);
 		assertEquals("父母", entry.getJapanese());
-		assertEquals("(ちちはは", entry.reading);
+		assertEquals("ちちはは", entry.reading);
 		assertEquals(1, lv.getCount());
 	}
 
