@@ -201,8 +201,8 @@ public final class SearchQuery implements Serializable {
 	    final ListBuilder k = new ListBuilder(" AND ");
 	    final ListBuilder h = new ListBuilder(" AND ");
 	    for (final String token : conv.split("\\s+AND\\s+")) {
-		k.add(r.toKatakana(conv));
-		h.add(r.toHiragana(conv));
+		k.add(r.toKatakana(token));
+		h.add(r.toHiragana(token));
 	    }
 	    return new String[]{k.toString(), h.toString()};
 	} else {
@@ -211,7 +211,7 @@ public final class SearchQuery implements Serializable {
     }
 
     /**
-     * Creates an EDICT query which searches for a japanese term. Automatically performs a verb deinflection.
+     * Creates an EDICT query which searches for a japanese term.
      *
      * @param verb
      *            the word to search, in japanese language. Must contain only katakana, hiragana and kanji. Not null.
