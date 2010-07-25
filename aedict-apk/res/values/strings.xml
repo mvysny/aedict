@@ -124,7 +124,7 @@
     <string name="resetIntroductions">Reset introductions</string>
     <string name="resetIntroductionsSummary">All introduction dialogs will be shown again</string>
     <string name="whatsNew">What\'s New in %s</string>
-    <string name="whatsNewText">For full changelog please see http://baka.sk/aedict/changes-report.html\n\n- Fixed: The correct answer in the conjugation quiz always stayed the same.\n- The conjugation quiz is now accessible also from the Notepad and from the Main Screen\n- Fixed: Name dictionary was not downloadable\n- Application crash was preventing the Kanjidic download.</string>
+    <string name="whatsNewText">For full changelog please see http://baka.sk/aedict/changes-report.html\n\n- KanjiDetail now uses onyomi AND kanji search string to narrow down search results.</string>
     <string name="searchInEdict">Search in the Edict dictionary</string>
     <string name="showConjugations">Show verb conjugations</string>
     <string name="iDoSomething">I do something.</string>
