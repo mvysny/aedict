@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+ Aedict - an EDICT browser for Android
+ Copyright (C) 2007 Martin Vysny
+ 
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory android:title="@string/preference_application">
+		<CheckBoxPreference android:key="alwaysAvailable"
+			android:defaultValue="false" android:title="@string/always_available"
+			android:summary="@string/always_available_summary" />
+		<CheckBoxPreference android:key="useRomaji"
+			android:defaultValue="false" android:title="@string/useRomaji"
+			android:summary="@string/useRomaji_summary" />
+		<ListPreference android:key="romanization"
+			android:defaultValue="Hepburn" android:title="@string/romanization"
+			android:summary="@string/romanizationSummary"
+			android:entries="@array/romanizations" android:entryValues="@array/romanizations_enum"
+			android:dialogTitle="@string/romanization" />
+		<PreferenceScreen android:key="about" android:title="@string/aboutCaption"/>
+		<PreferenceScreen android:key="donate" android:title="@string/donate"/>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/preference_dictionaries">
+		<ListPreference android:key="dictionaryName"
+			android:defaultValue="Default" android:title="@string/edictDictionary"
+			android:summary="@string/edictDictionarySummary"
+			android:dialogTitle="@string/edictDictionary" />
+		<PreferenceScreen android:key="downloadDictionaries" android:title="@string/downloadDictionaries"
+			android:summary="@string/downloadDictionariesSummary">
+		</PreferenceScreen>
+		<PreferenceScreen android:key="showDownloader" android:title="@string/downloader"
+			android:summary="@string/downloaderSummary">
+		</PreferenceScreen>
+		<PreferenceScreen android:key="sdcardCleanup" android:title="@string/sdcardCleanup"
+			android:summary="@string/sdcardCleanupSummary">
+		</PreferenceScreen>
+		<PreferenceScreen android:key="resetIntroductions" android:title="@string/resetIntroductions"
+			android:summary="@string/resetIntroductionsSummary">
+		</PreferenceScreen>
+	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/preference_expert">
+		<CheckBoxPreference android:key="sort"
+			android:defaultValue="true" android:title="@string/sort"
+			android:summary="@string/sort_summary" />
+	</PreferenceCategory>
+</PreferenceScreen>
