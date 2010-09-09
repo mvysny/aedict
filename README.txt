@@ -12,6 +12,8 @@ Releasing:
 
 - upload the target/checkout/aedict-apk/target/aedict-apk-*-signed.apk to http://appslib.com
 
+- upload the target/checkout/aedict-apk/target/aedict-apk-*-signed.apk to http://handster.com/administrator/
+
 - Increase the version in AndroidManifest.xml: both android:versionCode and android:versionName
 
 - Fix the aedict-common dependency in the aedict-apk/.classpath file
