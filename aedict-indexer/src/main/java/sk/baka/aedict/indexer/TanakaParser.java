@@ -140,6 +140,8 @@ public class TanakaParser implements IDictParser {
         final StringBuilder kana = new StringBuilder();
         String l = lastLine;
         for (final BWord word : words) {
+            // find the word itself, and skip preceding characters. This is used to skip e.g.
+            // 「」, question marks etc.
             final int wordIndex = l.indexOf(word.getInSentence());
             if (wordIndex < 0) {
                 //throw new IllegalArgumentException("Line " + lastLine + " does not contain word " + word);
@@ -147,6 +149,10 @@ public class TanakaParser implements IDictParser {
                 continue;
             }
             kana.append(l.substring(0, wordIndex));
+            if (wordIndex == 0 && !endsWithWhitespace(kana)) {
+                // add a whitespace to separate words. Fixes Issue 99
+                kana.append(' ');
+            }
             try {
                 kana.append(word.toKana());
             } catch (Exception ex) {
@@ -159,6 +165,13 @@ public class TanakaParser implements IDictParser {
         kana.append(l);
         doc.add(new Field("kana", CompressionTools.compressString(kana.toString()), Field.Store.YES));
         return true;
+    }
+
+    private boolean endsWithWhitespace(final StringBuilder sb) {
+        if (sb.length() == 0) {
+            return true;
+        }
+        return Character.isWhitespace(sb.charAt(sb.length() - 1));
     }
 
     private List<BWord> parseWords(final String bLine) {
