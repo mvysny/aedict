@@ -52,7 +52,7 @@ public class TanakaCorpusTest extends AbstractLuceneSearchTest {
     public void testHiraganaConversion() throws Exception{
         List<String> s = search("kana", "japanese:あれが生徒会長");
         assertEquals(1, s.size());
-        assertEquals("「あれがせいとかいちょう？」「かっこよくない？」「つーか、びけい？」", s.get(0));
+        assertEquals("「あれ が せいとかい ちょう？」「かっこよくない？」「つーか、びけい？」", s.get(0));
     }
 
     @Test
