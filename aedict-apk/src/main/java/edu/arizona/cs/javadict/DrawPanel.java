@@ -35,8 +35,8 @@ import java.util.StringTokenizer;
 
 public class DrawPanel {
 	private final ClassLoader classLoader;
-	public final List<List<Integer>> xstrokes = new ArrayList<List<Integer>>();
 	public final List<List<Integer>> ystrokes = new ArrayList<List<Integer>>();
+	public final List<List<Integer>> xstrokes = new ArrayList<List<Integer>>();
 	public List<Integer> curxvec = null;
 	public List<Integer> curyvec = null;
 
@@ -58,6 +58,16 @@ public class DrawPanel {
 		ystrokes.clear();
 		curxvec = null;
 		curyvec = null;
+	}
+	
+	public void undoLastStroke() {
+		if(ystrokes.isEmpty()) {
+			return;
+		}
+		ystrokes.subList(ystrokes.size()-1, ystrokes.size()).clear();
+		xstrokes.subList(xstrokes.size()-1, xstrokes.size()).clear();
+		curxvec = xstrokes.isEmpty()?null:xstrokes.get(xstrokes.size()-1);
+		curyvec = ystrokes.isEmpty()?null:ystrokes.get(ystrokes.size()-1);
 	}
 
 	private BufferedReader getResource(final int strokes) throws IOException {

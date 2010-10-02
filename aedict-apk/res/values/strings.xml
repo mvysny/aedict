@@ -455,4 +455,5 @@
 	<string name="conjugationQuiz">Conjugation quiz</string>
 	<string name="downloader">Downloader</string>
 	<string name="downloaderSummary">Shows current downloads</string>
+	<string name="undo">Undo</string>
 </resources>
