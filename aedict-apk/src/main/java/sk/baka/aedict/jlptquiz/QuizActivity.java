@@ -18,28 +18,19 @@
 package sk.baka.aedict.jlptquiz;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.EdictEntryDetailActivity;
 import sk.baka.aedict.KanjiDetailActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.dict.DictEntry;
-import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.KanjidicEntry;
-import sk.baka.aedict.dict.LuceneSearch;
-import sk.baka.aedict.dict.SearchQuery;
-import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.util.ShowRomaji;
-import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.ListBuilder;
-import sk.baka.autils.MiscUtils;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
