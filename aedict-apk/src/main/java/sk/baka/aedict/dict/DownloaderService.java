@@ -19,6 +19,7 @@
 package sk.baka.aedict.dict;
 
 import java.io.BufferedInputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -26,7 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
-import java.io.Closeable;
+import java.io.Serializable;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -46,12 +47,11 @@ import java.util.zip.ZipInputStream;
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.DownloadActivity;
 import sk.baka.aedict.R;
+import sk.baka.aedict.util.DialogActivity;
 import sk.baka.aedict.util.IOExceptionWithCause;
 import sk.baka.aedict.util.SodLoader;
-import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.StatFs;
 import android.util.Log;
@@ -155,13 +155,7 @@ public class DownloaderService implements Closeable {
 				download(downloader);
 				activity.startActivity(new Intent(activity, DownloadActivity.class));
 			} else {
-				new DialogUtils(activity).showYesNoDialog(msg.toString(), new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-						download(downloader);
-						DownloadActivity.launch(activity);
-					}
-				});
+				new DialogActivity.Builder(activity).setValue(DownloaderDialogActivity.KEY_DOWNLOADER, downloader).showYesNoDialog(msg.toString(), DownloaderDialogActivity.class);
 			}
 			return false;
 		}
@@ -189,7 +183,7 @@ public class DownloaderService implements Closeable {
 		return checkDictionaryFile(a, new SodDownloader(), false);
 	}
 
-	private void download(final AbstractDownloader download) {
+	void download(final AbstractDownloader download) {
 		if (!new File(download.targetDir).isAbsolute()) {
 			throw new IllegalArgumentException("Not absolute: " + download.targetDir);
 		}
@@ -231,7 +225,8 @@ public class DownloaderService implements Closeable {
 		return new HashSet<String>(queueDictNames.keySet());
 	}
 
-	private abstract class AbstractDownloader implements Runnable {
+	abstract static class AbstractDownloader implements Runnable, Serializable {
+		private static final long serialVersionUID = 1L;
 		protected final URL source;
 		protected final String targetDir;
 		protected final String dictName;
@@ -244,23 +239,27 @@ public class DownloaderService implements Closeable {
 			this.expectedSize = expectedSize;
 		}
 
+		private DownloaderService s() {
+			return AedictApp.getDownloader();
+		}
+		
 		public void run() {
-			queueDictNames.remove(dictName);
-			state = null;
-			if (isComplete(targetDir)) {
+			s().queueDictNames.remove(dictName);
+			s().state = null;
+			if (s().isComplete(targetDir)) {
 				return;
 			}
 			try {
-				isDownloading = true;
+				s().isDownloading = true;
 				try {
 					download();
 				} finally {
-					state = null;
-					isDownloading = false;
+					s().state = null;
+					s().isDownloading = false;
 				}
 			} catch (Throwable t) {
 				Log.e(DownloaderService.class.getSimpleName(), "Error downloading a dictionary", t);
-				state = new State(t.getMessage(), null, 0, 1, true);
+				s().state = new State(t.getMessage(), null, 0, 1, true);
 				deleteDirQuietly(new File(targetDir));
 			}
 		}
@@ -282,7 +281,7 @@ public class DownloaderService implements Closeable {
 			}
 			final InputStream in = new BufferedInputStream(conn.getInputStream());
 			try {
-				state = new State(AedictApp.format(R.string.downloading_dictionary, dictName), targetDir, 0, 100, false);
+				s().state = new State(AedictApp.format(R.string.downloading_dictionary, dictName), targetDir, 0, 100, false);
 				copy(in);
 			} finally {
 				MiscUtils.closeQuietly(in);
@@ -323,7 +322,7 @@ public class DownloaderService implements Closeable {
 			}
 			final int max = (int) (size / 1024L);
 			long downloaded = downloadedUntilNow;
-			state = new State(AedictApp.format(R.string.downloading_dictionary, dictName), targetDir, (int) (downloaded / 1024L), max, false);
+			s().state = new State(AedictApp.format(R.string.downloading_dictionary, dictName), targetDir, (int) (downloaded / 1024L), max, false);
 			int reportCountdown = REPORT_EACH_XTH_BYTE;
 			final byte[] buf = new byte[BUFFER_SIZE];
 			int bufLen;
@@ -336,7 +335,7 @@ public class DownloaderService implements Closeable {
 				reportCountdown -= bufLen;
 				if (reportCountdown <= 0) {
 					final int progress = (int) (downloaded / 1024L);
-					state = new State(AedictApp.format(R.string.downloading_dictionary, dictName), targetDir, progress, max, false);
+					s().state = new State(AedictApp.format(R.string.downloading_dictionary, dictName), targetDir, progress, max, false);
 					reportCountdown = REPORT_EACH_XTH_BYTE;
 				}
 			}
@@ -347,7 +346,9 @@ public class DownloaderService implements Closeable {
 		private static final int REPORT_EACH_XTH_BYTE = BUFFER_SIZE * 8;
 	}
 
-	private class DictDownloader extends AbstractDownloader {
+	static class DictDownloader extends AbstractDownloader {
+		private static final long serialVersionUID = 1L;
+
 		/**
 		 * Creates new dictionary downloader.
 		 * 
@@ -381,7 +382,8 @@ public class DownloaderService implements Closeable {
 		}
 	}
 
-	private class SodDownloader extends AbstractDownloader {
+	static class SodDownloader extends AbstractDownloader {
+		private static final long serialVersionUID = 1L;
 
 		/**
 		 * Creates new dictionary downloader.
