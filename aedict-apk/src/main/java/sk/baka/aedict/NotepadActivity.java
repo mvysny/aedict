@@ -125,7 +125,7 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 		return 0;
 	}
 
-	private final List<ListView> tabContents = new ArrayList<ListView>();
+	private final Map<Integer, ListView> tabContents = new HashMap<Integer, ListView>();
 
 	public ListView getListView(final int category) {
 		if (AedictApp.getConfig().getNotepadCategories().size() > 0) {
@@ -419,10 +419,14 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 
 	public View createTabContent(String tag) {
 		final int category = Integer.parseInt(tag);
+		if (category < 0 || category >= Config.MAX_CATEGORIES) {
+			throw new IllegalArgumentException("Invalid category value: "
+					+ category);
+		}
 		final ListView lv = new ListView(this);
 		lv.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 		initializeListView(lv, category);
-		tabContents.add(category, lv);
+		tabContents.put(category, lv);
 		return lv;
 	}
 
