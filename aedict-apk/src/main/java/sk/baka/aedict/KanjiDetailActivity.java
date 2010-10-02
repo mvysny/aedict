@@ -85,7 +85,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 		MainActivity.recentlyViewed(entry);
 		final TextView kanji = (TextView) findViewById(R.id.kanji);
 		kanji.setText(entry.kanji);
-		new SearchClickListener(this, entry.kanji, true).registerTo(kanji);
+		new SearchClickListener(this, entry.kanji).registerTo(kanji);
 		((TextView) findViewById(R.id.stroke)).setText(Integer.toString(entry.strokes));
 		((TextView) findViewById(R.id.grade)).setText(entry.grade == null ? "-" : entry.grade.toString());
 		((TextView) findViewById(R.id.skip)).setText(entry.skip);
@@ -138,7 +138,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 			if (isJapanese) {
 				query += " AND " + entry.kanji;
 			}
-			final Object span = sb.newClickable(new SearchClickListener(this, query, isJapanese));
+			final Object span = sb.newClickable(new SearchClickListener(this, query));
 			sb.append(span, item);
 			if (i < items.size() - 1) {
 				sb.append(", ");

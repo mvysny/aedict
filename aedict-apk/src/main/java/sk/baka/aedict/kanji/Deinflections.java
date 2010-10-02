@@ -29,6 +29,7 @@ import sk.baka.aedict.kanji.VerbInflection.Form;
  * @author Martin Vysny
  */
 public class Deinflections implements Serializable {
+	private static final long serialVersionUID = 1L;
 	/**
      * Deinflected verb(s) in {@link RomanizationEnum#NihonShiki}
      *         romanization. If the expression cannot be deinflected the
@@ -41,6 +42,7 @@ public class Deinflections implements Serializable {
 	public List<Deinflection> deinflections;
 	public SearchQuery query;
 	public static class Deinflection implements Serializable {
+		private static final long serialVersionUID = 1L;
 		public Deinflection(final String inflected, final Form inflectedForm, final String... deinflected){
 			this.inflected=inflected;
 			this.inflectedForm=inflectedForm;

@@ -107,13 +107,13 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 	private void displayEntry() {
 		final TextView kanji = ((TextView) findViewById(R.id.kanji));
 		kanji.setText(showRomaji.getJapanese(entry));
-		new SearchClickListener(this, entry.getJapanese(), true).registerTo(kanji);
+		new SearchClickListener(this, entry.getJapanese()).registerTo(kanji);
 		final TextView kana = ((TextView) findViewById(R.id.kana));
 		if (MiscUtils.isBlank(entry.kanji)) {
 			kana.setVisibility(View.GONE);
 		} else {
 			kana.setText(showRomaji.romanize(entry.reading));
-			new SearchClickListener(this, entry.reading, true).registerTo(kana);
+			new SearchClickListener(this, entry.reading).registerTo(kana);
 		}
 		// display the markings
 		final List<String> markings = entry.getMarkings();
@@ -137,7 +137,7 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 			sb.append(sb.newForeground(0xFF777777), "(" + (i + 1) + ") ");
 			for (int j = 0; j < senses.get(i).size(); j++) {
 				final String sense = senses.get(i).get(j);
-				final Object span = sb.newClickable(new SearchClickListener(this, sense, false));
+				final Object span = sb.newClickable(new SearchClickListener(this, sense));
 				sb.append(span, sense);
 				if (j < senses.get(i).size() - 1) {
 					sb.append(", ");
