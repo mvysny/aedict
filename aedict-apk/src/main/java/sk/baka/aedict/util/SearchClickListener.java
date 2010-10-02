@@ -20,19 +20,15 @@ package sk.baka.aedict.util;
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.MainActivity;
 import sk.baka.aedict.R;
-import sk.baka.aedict.ResultActivity;
-import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.dict.MatcherEnum;
-import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.autils.AndroidUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.text.ClipboardManager;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.Toast;
 
 /**
@@ -43,7 +39,6 @@ import android.widget.Toast;
  * @author Martin Vysny
  */
 public class SearchClickListener implements View.OnClickListener, View.OnCreateContextMenuListener {
-	private final boolean isJapanese;
 	private final String searchFor;
 	private final Activity activity;
 
@@ -54,16 +49,12 @@ public class SearchClickListener implements View.OnClickListener, View.OnCreateC
 	 *            owning activity, must not be null.
 	 * @param searchFor
 	 *            search for
-	 * @param isJapanese
-	 *            true if <code>searchFor</code> is a japanese term, false if it
-	 *            is an English term.
 	 */
-	public SearchClickListener(final Activity activity, final String searchFor, final boolean isJapanese) {
+	public SearchClickListener(final Activity activity, final String searchFor) {
 		Check.checkNotNull("activity", activity);
 		Check.checkNotNull("searchFor", searchFor);
 		this.activity = activity;
 		this.searchFor = searchFor;
-		this.isJapanese = isJapanese;
 	}
 
 	/**
