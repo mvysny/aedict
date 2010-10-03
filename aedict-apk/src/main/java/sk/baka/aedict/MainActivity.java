@@ -145,6 +145,14 @@ public class MainActivity extends ListActivity {
 						return true;
 					}
 				}));
+				final MenuItem miAdvancedCopy = menu.add(Menu.NONE, 11, 11, R.string.advancedCopy);
+				miAdvancedCopy.setOnMenuItemClickListener(AndroidUtils.safe(MainActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+					public boolean onMenuItemClick(MenuItem item) {
+						CopyActivity.launch(MainActivity.this, ee);
+						return true;
+					}
+				}));
 			}
 		}));
 		final String prefillTerm = getIntent().getStringExtra(INTENTKEY_PREFILL_SEARCH_FIELD);

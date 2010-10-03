@@ -213,6 +213,14 @@ public class ResultActivity extends ListActivity {
 						}
 					}));
 				}
+				final MenuItem miAdvancedCopy = menu.add(Menu.NONE, 9, 9, R.string.advancedCopy);
+				miAdvancedCopy.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
+
+					public boolean onMenuItemClick(MenuItem item) {
+						CopyActivity.launch(ResultActivity.this, ee);
+						return true;
+					}
+				}));
 			}
 		}));
 	}

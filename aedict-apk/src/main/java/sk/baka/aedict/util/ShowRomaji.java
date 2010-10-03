@@ -84,6 +84,12 @@ public abstract class ShowRomaji {
 		return kana;
 	}
 
+	public static String romanizeIfRequired(final String kana) {
+		final boolean isShowingRomaji = AedictApp.getConfig().isUseRomaji();
+		final RomanizationEnum romanization = AedictApp.getConfig().getRomanization();
+		return isShowingRomaji ? romanization.toRomaji(kana) : kana;
+	}
+	
 	public String getJapanese(final DictEntry e) {
 		Check.checkTrue("entry not valid", e.isValid());
 		if (MiscUtils.isBlank(e.kanji)) {

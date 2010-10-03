@@ -39,6 +39,7 @@
 		<activity android:name=".AboutActivity" android:label="@string/aboutCaption" />
 		<activity android:name=".util.DialogActivity" />
 		<activity android:name=".dict.DownloaderDialogActivity" />
+		<activity android:name=".CopyActivity" />
 		<activity android:name=".KanaTableActivity" android:label="@string/kanaTable" >
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

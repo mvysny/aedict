@@ -23,10 +23,12 @@ import java.util.Collections;
 import java.util.List;
 
 import sk.baka.aedict.AedictApp;
+import sk.baka.aedict.CopyActivity;
 import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.MainActivity;
 import sk.baka.aedict.NotepadActivity;
 import sk.baka.aedict.R;
+import sk.baka.aedict.ResultActivity;
 import sk.baka.aedict.StrokeOrderActivity;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.util.Check;
@@ -188,6 +190,14 @@ public class TanakaSearchTask extends AsyncTask<String, Void, List<DictEntry>> i
 
 							public boolean onMenuItemClick(MenuItem item) {
 								MainActivity.launch(activity, de.getJapanese());
+								return true;
+							}
+						}));
+						final MenuItem miAdvancedCopy = menu.add(Menu.NONE, 9, 9, R.string.advancedCopy);
+						miAdvancedCopy.setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
+
+							public boolean onMenuItemClick(MenuItem item) {
+								CopyActivity.launch(activity, de);
 								return true;
 							}
 						}));
