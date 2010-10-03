@@ -437,8 +437,8 @@
 		\n- Verb conjugations with example sentences
 		\n- Integrates with Simeji
 		\n- Simple JLPT quiz</string>
-	<string name="japanese">Japanese</string>
-	<string name="english">English</string>
+	<string name="japanese">From Japanese</string>
+	<string name="english">From English</string>
 	<string name="more">More...</string>
 	<string name="recentlyViewed">Recently viewed</string>
 	<string name="selectCategory">Select category</string>
