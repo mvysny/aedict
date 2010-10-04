@@ -88,7 +88,7 @@ public class QuizActivity extends Activity {
 		if (state == null) {
 			state = new State();
 		}
-		showRomaji = new ShowRomaji(this) {
+		showRomaji = new ShowRomaji(this, state.isShowingRomaji) {
 
 			@Override
 			protected void show(boolean romaji) {
@@ -142,17 +142,19 @@ public class QuizActivity extends Activity {
 			// the state would get erased if the screen orientation is changed.
 			final Intent intent = new Intent(this, QuizActivity.class);
 			intent.putExtra(INTENTKEY_JLPT_SET, (Serializable) questions);
+			state.isShowingRomaji = showRomaji.isShowingRomaji();
 			intent.putExtra(INTENTKEY_STATE, state);
 			startActivity(intent);
 			finish();
 		}
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		showRomaji.onResume();
-	}
+// Preserve user-configured show-romaji setting
+//	@Override
+//	protected void onResume() {
+//		super.onResume();
+//		showRomaji.onResume();
+//	}
 
 	private void updateControls() {
 		final boolean isFinished = state.currentQuestion >= questions.size();
