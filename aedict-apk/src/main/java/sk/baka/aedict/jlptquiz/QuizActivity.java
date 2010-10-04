@@ -46,6 +46,26 @@ import android.widget.TextView;
 public class QuizActivity extends Activity {
 
 	private static final String INTENTKEY_JLPT_SET = "jlptset";
+	private static final String INTENTKEY_STATE = "state";
+
+	public static class State implements Serializable {
+		private static final long serialVersionUID = 1L;
+		public int currentQuestion = 0;
+		public boolean showsAnswer = false;
+		public int correctQuestions = 0;
+		public Boolean isShowingRomaji = null;
+
+		public void correctAnswer() {
+			correctQuestions++;
+			showsAnswer = false;
+			currentQuestion++;
+		}
+
+		public void incorrectAnswer() {
+			showsAnswer = false;
+			currentQuestion++;
+		}
+	}
 
 	public static void launch(final Activity a, final List<? extends DictEntry> questions) {
 		if (questions.isEmpty()) {
@@ -57,15 +77,17 @@ public class QuizActivity extends Activity {
 	}
 
 	private List<? extends DictEntry> questions;
-	private int currentQuestion = 0;
-	private boolean showsAnswer = false;
-	private int correctQuestions = 0;
 	private ShowRomaji showRomaji;
+	private State state;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.jlpt_quiz);
+		state = (State) getIntent().getSerializableExtra(INTENTKEY_STATE);
+		if (state == null) {
+			state = new State();
+		}
 		showRomaji = new ShowRomaji(this) {
 
 			@Override
@@ -76,24 +98,21 @@ public class QuizActivity extends Activity {
 		findViewById(R.id.yes).setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
-				correctQuestions++;
-				showsAnswer = false;
-				currentQuestion++;
-				updateControls();
+				state.correctAnswer();
+				nextQuestion();
 			}
 		});
 		findViewById(R.id.no).setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
-				showsAnswer = false;
-				currentQuestion++;
-				updateControls();
+				state.incorrectAnswer();
+				nextQuestion();
 			}
 		});
 		findViewById(R.id.showDetailed).setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
-				final DictEntry e = questions.get(currentQuestion);
+				final DictEntry e = questions.get(state.currentQuestion);
 				if (e instanceof KanjidicEntry) {
 					KanjiDetailActivity.launch(QuizActivity.this, (KanjidicEntry) e);
 				} else if (e instanceof EdictEntry) {
@@ -104,17 +123,29 @@ public class QuizActivity extends Activity {
 		findViewById(R.id.main).setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
-				if (!showsAnswer) {
-					showsAnswer = true;
+				if (!state.showsAnswer) {
+					state.showsAnswer = true;
 					updateControls();
 				}
 			}
 		});
 		questions = (List<? extends DictEntry>) getIntent().getSerializableExtra(INTENTKEY_JLPT_SET);
-		currentQuestion = 0;
-		correctQuestions = 0;
-		showsAnswer = false;
 		updateControls();
+	}
+
+	private void nextQuestion() {
+		final boolean isFinished = state.currentQuestion >= questions.size();
+		if (isFinished) {
+			updateControls();
+		} else {
+			// we have to launch a new activity to preserve state of the quiz.
+			// the state would get erased if the screen orientation is changed.
+			final Intent intent = new Intent(this, QuizActivity.class);
+			intent.putExtra(INTENTKEY_JLPT_SET, (Serializable) questions);
+			intent.putExtra(INTENTKEY_STATE, state);
+			startActivity(intent);
+			finish();
+		}
 	}
 
 	@Override
@@ -124,10 +155,10 @@ public class QuizActivity extends Activity {
 	}
 
 	private void updateControls() {
-		final boolean isFinished = currentQuestion >= questions.size();
+		final boolean isFinished = state.currentQuestion >= questions.size();
 		if (!isFinished) {
-			final int vis = showsAnswer ? View.VISIBLE : View.INVISIBLE;
-			final DictEntry e = questions.get(currentQuestion);
+			final int vis = state.showsAnswer ? View.VISIBLE : View.INVISIBLE;
+			final DictEntry e = questions.get(state.currentQuestion);
 			if (e instanceof KanjidicEntry) {
 				final KanjidicEntry ke = (KanjidicEntry) e;
 				((TextView) findViewById(R.id.kanji)).setText(e.kanji);
@@ -157,12 +188,12 @@ public class QuizActivity extends Activity {
 				english.setVisibility(vis);
 			}
 		}
-		final int vis = !isFinished && showsAnswer ? View.VISIBLE : View.INVISIBLE;
+		final int vis = !isFinished && state.showsAnswer ? View.VISIBLE : View.INVISIBLE;
 		findViewById(R.id.yes).setVisibility(vis);
 		findViewById(R.id.no).setVisibility(vis);
 		findViewById(R.id.showDetailed).setVisibility(vis);
 		if (isFinished) {
-			new DialogUtils(this).showInfoDialog(getString(R.string.results), AedictApp.format(R.string.youScored, correctQuestions, questions.size()));
+			new DialogUtils(this).showInfoDialog(getString(R.string.results), AedictApp.format(R.string.youScored, state.correctQuestions, questions.size()));
 		}
 	}
 
