@@ -39,8 +39,11 @@ public abstract class ShowRomaji {
 	private final Activity activity;
 
 	public ShowRomaji(final Activity activity) {
+		this(activity, null);
+	}
+	public ShowRomaji(final Activity activity, final Boolean isShowingRomaji) {
 		this.activity = activity;
-		isShowingRomaji = AedictApp.getConfig().isUseRomaji();
+		this.isShowingRomaji = isShowingRomaji == null ? AedictApp.getConfig().isUseRomaji() : isShowingRomaji;
 		romanization = AedictApp.getConfig().getRomanization();
 	}
 
