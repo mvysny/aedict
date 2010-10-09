@@ -62,17 +62,13 @@ public class SearchProvider extends ContentProvider {
 		return true;
 	}
 
-	@Override
-	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-		final RomanizationEnum romanize = AedictApp.getConfig().isUseRomaji() ? AedictApp.getConfig().getRomanization() : null;
-		final String searchString = uri.getLastPathSegment();
-		final MatrixCursor cursor = new MatrixCursor(COLUMN_NAMES);
+	public static List<DictEntry> searchForQuery(final String query) {
 		final List<DictEntry> entries = new ArrayList<DictEntry>();
 		try {
 			final LuceneSearch lucene = new LuceneSearch(DictTypeEnum.Edict, AedictApp.getConfig().getDictionaryLoc(), AedictApp.getConfig().isSorted());
 			try {
-				entries.addAll(lucene.search(VerbDeinflection.searchJpDeinflected(searchString, AedictApp.getConfig().getRomanization()).query));
-				entries.addAll(lucene.search(SearchQuery.searchEnEdict(searchString, true)));
+				entries.addAll(lucene.search(VerbDeinflection.searchJpDeinflected(query, AedictApp.getConfig().getRomanization()).query));
+				entries.addAll(lucene.search(SearchQuery.searchEnEdict(query, true)));
 			} finally {
 				MiscUtils.closeQuietly(lucene);
 			}
@@ -83,6 +79,15 @@ public class SearchProvider extends ContentProvider {
 		if (AedictApp.getConfig().isSorted()) {
 			Collections.sort(entries);
 		}
+		return entries;
+	}
+	
+	@Override
+	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+		final RomanizationEnum romanize = AedictApp.getConfig().isUseRomaji() ? AedictApp.getConfig().getRomanization() : null;
+		final String searchString = uri.getLastPathSegment();
+		final MatrixCursor cursor = new MatrixCursor(COLUMN_NAMES);
+		final List<DictEntry> entries = searchForQuery(searchString);
 		for (final DictEntry entry : entries) {
 			Object[] rowObject = new Object[] { searchString, entry.formatJapanese(romanize), entry.english, entry.toExternal() };
 			cursor.addRow(rowObject);
