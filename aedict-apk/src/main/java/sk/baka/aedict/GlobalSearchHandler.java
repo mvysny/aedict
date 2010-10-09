@@ -17,8 +17,14 @@
  */
 package sk.baka.aedict;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.aedict.dict.SearchQuery;
+import sk.baka.aedict.kanji.Deinflections;
+import sk.baka.aedict.kanji.VerbDeinflection;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -37,8 +43,19 @@ public class GlobalSearchHandler extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		final Intent intent = getIntent();
-		final DictEntry entry = DictEntry.fromExternal(intent.getStringExtra(SearchManager.EXTRA_DATA_KEY));
-		EdictEntryDetailActivity.launch(this,EdictEntry.fromEntry(entry));
+		final String serializedDictEntry = intent.getStringExtra(SearchManager.EXTRA_DATA_KEY);
+		if (serializedDictEntry != null) {
+			final DictEntry entry = DictEntry.fromExternal(serializedDictEntry);
+			EdictEntryDetailActivity.launch(this, EdictEntry.fromEntry(entry));
+		}
+		final String query = intent.getStringExtra(SearchManager.QUERY);
+		if (query != null) {
+			final Deinflections deinflection = VerbDeinflection.searchJpDeinflected(query, AedictApp.getConfig().getRomanization());
+			final List<SearchQuery> queries = new ArrayList<SearchQuery>();
+			queries.add(deinflection.query);
+			queries.add(SearchQuery.searchEnEdict(query, true));
+			ResultActivity.launch(this, queries, deinflection.deinflections);
+		}
 		finish();
 	}
 }
