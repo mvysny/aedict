@@ -4,6 +4,35 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
+		<release version="2.6" date="9. October 2010">
+			<action dev="vyzivus" type="update" issue="99">
+				The kana version of example sentences is now separated by spaces.
+			</action>
+			<action dev="vyzivus" type="fix">
+				Fixed: Aedict would simply crash with  android.view.WindowLeaked if a certain functionality was activated and the dictionary file was missing
+			</action>
+			<action dev="vyzivus" type="add" issue="104">
+				Added Undo in Kanji Stroke Recognition.
+			</action>
+			<action dev="vyzivus" type="add" issue="103">
+				Implemented Clear Search History/Delete Entries From History.
+			</action>
+			<action dev="vyzivus" type="fix" issue="94">
+				Fixed: creating 4 tabs, deleting last one, creating it and switching into it would fail.
+			</action>
+			<action dev="vyzivus" type="fix" issue="101">
+				Added Advanced Copy activity.
+			</action>
+			<action dev="vyzivus" type="fix" issue="95">
+				QuizActivity now preserves its state on orientation change.
+			</action>
+			<action dev="vyzivus" type="fix" issue="106">
+				GlobalSearchHandler is now able to search for a query directly.
+			</action>
+			<action dev="vyzivus" type="fix" issue="88">
+				The ResultActivity now relaunches itself with result list. This prevents researches on orientation change.
+			</action>
+		</release>
 		<release version="2.5" date="25. July 2010">
 			<action dev="vyzivus" type="add" issue="92">
 				KanjiDetail now uses onyomi AND kanji search string to narrow down search results.
