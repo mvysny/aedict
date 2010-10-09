@@ -19,6 +19,7 @@
 package sk.baka.aedict;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -77,17 +78,29 @@ public class ResultActivity extends ListActivity {
 	static final String INTENTKEY_SEARCH_QUERY = "QUERY";
 	static final String INTENTKEY_DEINFLECTIONS = "DEINFLECTIONS";
 
-	public static void launch(final Context activity, final SearchQuery query, final List<Deinflection> deinflections) {
+	/**
+	 * Use this method sparingly, it has many caveats.
+	 * @param activity activity reference.
+	 * @param query all queries must have same dictionary type.
+	 * @param deinflections deinflections to show
+	 */
+	public static void launch(final Context activity, final List<SearchQuery> query, final List<Deinflection> deinflections) {
 		final Intent intent = new Intent(activity, ResultActivity.class);
-		intent.putExtra(INTENTKEY_SEARCH_QUERY, query);
+		intent.putExtra(INTENTKEY_SEARCH_QUERY, (Serializable) query);
 		intent.putExtra(INTENTKEY_DEINFLECTIONS, (Serializable) deinflections);
 		activity.startActivity(intent);
 	}
 
+	public static void launch(final Context activity, final SearchQuery query, final List<Deinflection> deinflections) {
+		final List<SearchQuery> queries = new ArrayList<SearchQuery>();
+		queries.add(query);
+		launch(activity, queries, deinflections);
+	}
+
 	/**
-	 * The query.
+	 * The queries.
 	 */
-	private SearchQuery query;
+	private List<SearchQuery> queries;
 	/**
 	 * Simeji will send this action when requesting word translation.
 	 */
@@ -104,35 +117,38 @@ public class ResultActivity extends ListActivity {
 	 */
 	public static final String INTENTKEY_SIMEJI = "simeji";
 
-	private SearchQuery fromIntent() {
+	private List<SearchQuery> fromIntent() {
 		final Intent it = getIntent();
-		final SearchQuery result;
+		final List<SearchQuery> result;
 		String action = it.getAction();
 		if (SIMEJI_ACTION_INTERCEPT.equals(action)) {
 			isSimeji = true;
-			result = new SearchQuery(DictTypeEnum.Edict);
-			result.matcher = MatcherEnum.Exact;
+			result = Collections.singletonList(new SearchQuery(DictTypeEnum.Edict));
+			result.get(0).matcher = MatcherEnum.Exact;
 			String searchFor = it.getStringExtra(SIMEJI_INTENTKEY_REPLACE);
 			if (!MiscUtils.isBlank(searchFor)) {
 				searchFor = searchFor.trim();
 				// If the first character is a japanese character then we are
 				// searching for a
 				// katakana/hiragana string
-				result.isJapanese = KanjiUtils.isJapaneseChar(searchFor.charAt(0));
-				result.query = new String[] { searchFor };
+				result.get(0).isJapanese = KanjiUtils.isJapaneseChar(searchFor.charAt(0));
+				result.get(0).query = new String[] { searchFor };
 			}
 		}else if(EDICT_ACTION_INTERCEPT.equals(action)){
-			result = new SearchQuery(DictTypeEnum.Edict);
-			result.matcher=MatcherEnum.Exact;
+			result = Collections.singletonList(new SearchQuery(DictTypeEnum.Edict));
+			result.get(0).matcher=MatcherEnum.Exact;
 			String searchFor = it.getStringExtra(EDICT_INTENTKEY_KANJIS);
 			if (!MiscUtils.isBlank(searchFor)) {
 				searchFor = searchFor.trim();
-				result.isJapanese = true;
-				result.query = new String[] { searchFor };
+				result.get(0).isJapanese = true;
+				result.get(0).query = new String[] { searchFor };
 			}
 		} else {
-			result = (SearchQuery) getIntent().getSerializableExtra(INTENTKEY_SEARCH_QUERY);
+			result = (List<SearchQuery>) getIntent().getSerializableExtra(INTENTKEY_SEARCH_QUERY);
 			isSimeji = it.getBooleanExtra(INTENTKEY_SIMEJI, false);
+		}
+		for(final SearchQuery sq:result) {
+			sq.trim();
 		}
 		return result;
 	}
@@ -150,18 +166,18 @@ public class ResultActivity extends ListActivity {
 				((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
 			}
 		};
-		query = fromIntent().trim();
-		if (query.dictType == DictTypeEnum.Tanaka && !AedictApp.isInstrumentation) {
+		queries = fromIntent();
+		if (queries.get(0).dictType == DictTypeEnum.Tanaka && !AedictApp.isInstrumentation) {
 			new DialogUtils(this).showInfoOnce(Constants.INFOONCE_TANAKA_MISSING_READING, -1, R.string.tanakaMissingReading);
 		}
-		setTitle(AedictApp.format(R.string.searchResultsFor, query.prettyPrintQuery()));
-		if (MiscUtils.isBlank(query.query)) {
+		setTitle(AedictApp.format(R.string.searchResultsFor, queries.get(0).prettyPrintQuery()));
+		if (MiscUtils.isBlank(queries.get(0).query)) {
 			// nothing to search for
 			model = Collections.singletonList(DictEntry.newErrorMsg(getString(R.string.nothing_to_search_for)));
 		} else {
 			model = Collections.emptyList();
 			updateModel(true);
-			new SearchTask().execute(AedictApp.isInstrumentation, this, query);
+			new SearchTask().execute(AedictApp.isInstrumentation, this, queries.toArray(new SearchQuery[0]));
 		}
 		updateTopText();
 		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
@@ -287,7 +303,7 @@ public class ResultActivity extends ListActivity {
 			return;
 		}
 		if (isSimeji) {
-			returnToSimeji(query.isJapanese ? e.english : e.getJapanese());
+			returnToSimeji(queries.get(0).isJapanese ? e.english : e.getJapanese());
 		} else if (e instanceof EdictEntry) {
 			EdictEntryDetailActivity.launch(this, (EdictEntry) e);
 		}
@@ -322,7 +338,15 @@ public class ResultActivity extends ListActivity {
 
 		@Override
 		public List<DictEntry> impl(SearchQuery... params) throws Exception {
-			final List<DictEntry> result = LuceneSearch.singleSearch(query, query.dictType == DictTypeEnum.Edict ? AedictApp.getConfig().getDictionaryLoc() : null, AedictApp.getConfig().isSorted());
+			final List<DictEntry> result = new ArrayList<DictEntry>();
+			final LuceneSearch lucene = new LuceneSearch(params[0].dictType, params[0].dictType == DictTypeEnum.Edict ? AedictApp.getConfig().getDictionaryLoc() : null, AedictApp.getConfig().isSorted());
+			try {
+				for (final SearchQuery query : params) {
+					result.addAll(lucene.search(query));
+				}
+			} finally {
+				MiscUtils.closeQuietly(lucene);
+			}
 			return result;
 		}
 
@@ -336,7 +360,7 @@ public class ResultActivity extends ListActivity {
 	private void updateTopText() {
 		final SpanStringBuilder b=new SpanStringBuilder();
 		final Config cfg = AedictApp.getConfig();
-		final String dictName = query.dictType == DictTypeEnum.Tanaka ? DictTypeEnum.Tanaka.name() : cfg.getDictionaryName();
+		final String dictName = queries.get(0).dictType == DictTypeEnum.Tanaka ? DictTypeEnum.Tanaka.name() : cfg.getDictionaryName();
 		b.append(AedictApp.format(R.string.searchingInDictionary, dictName));
 		final List<Deinflection> ds=(List<Deinflection>) getIntent().getSerializableExtra(INTENTKEY_DEINFLECTIONS);
 		if(ds!=null){
