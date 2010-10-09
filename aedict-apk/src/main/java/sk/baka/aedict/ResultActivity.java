@@ -77,6 +77,7 @@ public class ResultActivity extends ListActivity {
 
 	static final String INTENTKEY_SEARCH_QUERY = "QUERY";
 	static final String INTENTKEY_DEINFLECTIONS = "DEINFLECTIONS";
+	private static final String INTENTKEY_RESULT_LIST = "resultList";
 
 	/**
 	 * Use this method sparingly, it has many caveats.
@@ -174,6 +175,9 @@ public class ResultActivity extends ListActivity {
 		if (MiscUtils.isBlank(queries.get(0).query)) {
 			// nothing to search for
 			model = Collections.singletonList(DictEntry.newErrorMsg(getString(R.string.nothing_to_search_for)));
+		} else if (getIntent().getSerializableExtra(INTENTKEY_RESULT_LIST) != null) {
+			model = (List<DictEntry>) getIntent().getSerializableExtra(INTENTKEY_RESULT_LIST);
+			updateModel(false);
 		} else {
 			model = Collections.emptyList();
 			updateModel(true);
@@ -352,8 +356,10 @@ public class ResultActivity extends ListActivity {
 
 		@Override
 		protected void onSucceeded(List<DictEntry> result) {
-			model = result;
-			updateModel(false);
+			final Intent i = (Intent) ResultActivity.this.getIntent().clone();
+			i.putExtra(INTENTKEY_RESULT_LIST, (Serializable) result);
+			startActivity(i);
+			ResultActivity.this.finish();
 		}
 	}
 	
