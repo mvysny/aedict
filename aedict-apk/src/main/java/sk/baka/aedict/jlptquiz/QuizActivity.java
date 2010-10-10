@@ -81,14 +81,23 @@ public class QuizActivity extends Activity {
 	private State state;
 
 	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		state = (State) savedInstanceState.getSerializable(INTENTKEY_STATE);
+		showRomaji.showRomaji(state.isShowingRomaji);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		state.isShowingRomaji = showRomaji.isShowingRomaji();
+		outState.putSerializable(INTENTKEY_STATE, state);
+	}
+
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.jlpt_quiz);
-		state = (State) getIntent().getSerializableExtra(INTENTKEY_STATE);
-		if (state == null) {
-			state = new State();
-		}
-		showRomaji = new ShowRomaji(this, state.isShowingRomaji) {
+		state = new State();
+		showRomaji = new ShowRomaji(state.isShowingRomaji) {
 
 			@Override
 			protected void show(boolean romaji) {
@@ -99,14 +108,14 @@ public class QuizActivity extends Activity {
 
 			public void onClick(View v) {
 				state.correctAnswer();
-				nextQuestion();
+				updateControls();
 			}
 		});
 		findViewById(R.id.no).setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
 				state.incorrectAnswer();
-				nextQuestion();
+				updateControls();
 			}
 		});
 		findViewById(R.id.showDetailed).setOnClickListener(new View.OnClickListener() {
@@ -133,28 +142,11 @@ public class QuizActivity extends Activity {
 		updateControls();
 	}
 
-	private void nextQuestion() {
-		final boolean isFinished = state.currentQuestion >= questions.size();
-		if (isFinished) {
-			updateControls();
-		} else {
-			// we have to launch a new activity to preserve state of the quiz.
-			// the state would get erased if the screen orientation is changed.
-			final Intent intent = new Intent(this, QuizActivity.class);
-			intent.putExtra(INTENTKEY_JLPT_SET, (Serializable) questions);
-			state.isShowingRomaji = showRomaji.isShowingRomaji();
-			intent.putExtra(INTENTKEY_STATE, state);
-			startActivity(intent);
-			finish();
-		}
+	@Override
+	protected void onResume() {
+		super.onResume();
+		showRomaji.onResume();
 	}
-
-// Preserve user-configured show-romaji setting
-//	@Override
-//	protected void onResume() {
-//		super.onResume();
-//		showRomaji.onResume();
-//	}
 
 	private void updateControls() {
 		final boolean isFinished = state.currentQuestion >= questions.size();
@@ -210,7 +202,7 @@ public class QuizActivity extends Activity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		showRomaji.register(menu);
+		showRomaji.register(this, menu);
 		return true;
 	}
 }

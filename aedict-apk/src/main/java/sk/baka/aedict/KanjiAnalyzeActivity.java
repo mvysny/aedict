@@ -124,7 +124,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		showRomaji = new ShowRomaji(this) {
+		showRomaji = new ShowRomaji() {
 
 			@Override
 			protected void show(boolean romaji) {
@@ -258,7 +258,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 				return true;
 			}
 		});
-		showRomaji.register(menu);
+		showRomaji.register(this, menu);
 		return true;
 	}
 

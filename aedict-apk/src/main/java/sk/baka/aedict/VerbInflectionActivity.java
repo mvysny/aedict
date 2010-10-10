@@ -58,7 +58,7 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		showRomaji = new ShowRomaji(this) {
+		showRomaji = new ShowRomaji() {
 
 			@Override
 			protected void show(boolean romaji) {
@@ -80,7 +80,7 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 
 	private void buildAndSetAdapter() {
 		final boolean isIchidan = entry.isIchidan();
-		final RomanizationEnum romanization = !showRomaji.isShowingRomaji() ? null : AedictApp.getConfig().getRomanization();
+		final RomanizationEnum romanization = !showRomaji.resolveShowRomaji() ? null : AedictApp.getConfig().getRomanization();
 		final List<Map<String, String>> groupData = new ArrayList<Map<String, String>>();
 		final List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();
 		// first, add all Base-x inflections
@@ -134,7 +134,7 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 				return true;
 			}
 		}));
-		showRomaji.register(menu);
+		showRomaji.register(this, menu);
 		return true;
 	}
 

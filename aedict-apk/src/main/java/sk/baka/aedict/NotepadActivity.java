@@ -144,7 +144,7 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 				if (view == null) {
 					view = (TwoLineListItem) getLayoutInflater().inflate(android.R.layout.simple_list_item_2, getListView(category), false);
 				}
-				Edict.print(getModel(category).get(position), view, showRomaji.isShowingRomaji() ? romanization : null);
+				Edict.print(getModel(category).get(position), view, showRomaji.resolveShowRomaji() ? romanization : null);
 				return view;
 			}
 
@@ -231,7 +231,7 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.notepad);
-		showRomaji = new ShowRomaji(this) {
+		showRomaji = new ShowRomaji() {
 
 			@Override
 			protected void show(boolean romaji) {
@@ -299,7 +299,7 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		showRomaji.register(menu);
+		showRomaji.register(this, menu);
 		final MenuItem item = menu.add(0, 1, 1, R.string.deleteAll);
 		item.setIcon(android.R.drawable.ic_menu_delete);
 		item.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
