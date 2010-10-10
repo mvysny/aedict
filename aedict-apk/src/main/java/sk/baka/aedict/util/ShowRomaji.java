@@ -25,6 +25,7 @@ import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -106,5 +107,15 @@ public abstract class ShowRomaji {
 			return romanize(e.reading);
 		}
 		return e.kanji;
+	}
+	
+	private static final String BUNDLEKEY_STATE = "showRomaji_state";
+	
+	public void saveState(Bundle b) {
+		b.putBoolean(BUNDLEKEY_STATE, isShowingRomaji);
+	}
+	
+	public void loadState(Bundle b) {
+		isShowingRomaji = b.getBoolean(BUNDLEKEY_STATE);
 	}
 }

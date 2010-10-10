@@ -122,6 +122,16 @@ public class KanjiAnalyzeActivity extends ListActivity {
 	private ShowRomaji showRomaji;
 
 	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		showRomaji.loadState(savedInstanceState);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		showRomaji.saveState(outState);
+	}
+
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		showRomaji = new ShowRomaji() {
