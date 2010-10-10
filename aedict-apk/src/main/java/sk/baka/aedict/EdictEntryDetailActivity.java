@@ -95,7 +95,9 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 			@Override
 			protected void show(boolean romaji) {
 				displayEntry();
-				tanakaSearchTask.updateModel();
+				if (tanakaSearchTask != null) {
+					tanakaSearchTask.updateModel();
+				}
 			}
 		};
 		displayEntry();
