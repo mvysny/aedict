@@ -73,7 +73,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.kanji_detail);
-		showRomaji = new ShowRomaji(this) {
+		showRomaji = new ShowRomaji() {
 
 			@Override
 			protected void show(boolean romaji) {
@@ -149,7 +149,7 @@ public class KanjiDetailActivity extends AbstractActivity {
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		showRomaji.register(menu);
+		showRomaji.register(this, menu);
 		AbstractActivity.addMenuItems(this, menu);
 		return true;
 	}

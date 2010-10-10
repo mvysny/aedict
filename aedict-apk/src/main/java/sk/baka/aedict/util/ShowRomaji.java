@@ -34,33 +34,38 @@ import android.view.MenuItem;
  * @author Martin Vysny
  */
 public abstract class ShowRomaji {
-	private boolean isShowingRomaji;
-	private RomanizationEnum romanization;
-	private final Activity activity;
+	private Boolean isShowingRomaji;
 
-	public ShowRomaji(final Activity activity) {
-		this(activity, null);
+	public ShowRomaji() {
+		this(null);
 	}
-	public ShowRomaji(final Activity activity, final Boolean isShowingRomaji) {
-		this.activity = activity;
-		this.isShowingRomaji = isShowingRomaji == null ? AedictApp.getConfig().isUseRomaji() : isShowingRomaji;
-		romanization = AedictApp.getConfig().getRomanization();
+	public ShowRomaji(final Boolean isShowingRomaji) {
+		this.isShowingRomaji = isShowingRomaji;
 	}
 
-	public void register(final Menu menu) {
-		final MenuItem item = menu.add(isShowingRomaji ? R.string.show_kana : R.string.show_romaji);
-		item.setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
+	public boolean resolveShowRomaji() {
+		return isShowingRomaji == null ? AedictApp.getConfig().isUseRomaji() : isShowingRomaji;
+	}
+	
+	public void showRomaji(final Boolean isShowingRomaji) {
+		this.isShowingRomaji = isShowingRomaji;
+		show(resolveShowRomaji());
+	}
+	 
+	public void register(final Activity a, final Menu menu) {
+		final MenuItem item = menu.add(resolveShowRomaji() ? R.string.show_kana : R.string.show_romaji);
+		item.setOnMenuItemClickListener(AndroidUtils.safe(a, new MenuItem.OnMenuItemClickListener() {
 
 			public boolean onMenuItemClick(MenuItem item) {
-				isShowingRomaji = !isShowingRomaji;
+				isShowingRomaji = !resolveShowRomaji();
 				show(isShowingRomaji);
 				return true;
 			}
 		}));
-		item.setIcon(isShowingRomaji ? R.drawable.showkana : R.drawable.showromaji);
+		item.setIcon(resolveShowRomaji() ? R.drawable.showkana : R.drawable.showromaji);
 	}
 
-	public boolean isShowingRomaji() {
+	public Boolean isShowingRomaji() {
 		return isShowingRomaji;
 	}
 
@@ -71,18 +76,20 @@ public abstract class ShowRomaji {
 	 * changed the SHOW_ROMAJI flag and reacts accordingly.
 	 */
 	public void onResume() {
-		final RomanizationEnum newR = AedictApp.getConfig().getRomanization();
-		final boolean newS = AedictApp.getConfig().isUseRomaji();
-		if (isShowingRomaji != newS || newR != romanization) {
-			isShowingRomaji = newS;
-			romanization = newR;
-			show(isShowingRomaji);
-		}
+		show(resolveShowRomaji());
 	}
 
+	private RomanizationEnum getRomanization() {
+		RomanizationEnum result = AedictApp.getConfig().getRomanization();
+		if(result == null){
+			return RomanizationEnum.Hepburn;
+		}
+		return result;
+	}
+	
 	public String romanize(final String kana) {
-		if (isShowingRomaji) {
-			return (romanization == null ? RomanizationEnum.Hepburn : romanization).toRomaji(kana);
+		if (resolveShowRomaji()) {
+			return getRomanization().toRomaji(kana);
 		}
 		return kana;
 	}

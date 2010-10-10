@@ -80,7 +80,7 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 			throw new IllegalArgumentException("The "+INTENTKEY_ENTRY+" extra is missing from the intent");
 		}
 		MainActivity.recentlyViewed(entry);
-		showRomaji = new ShowRomaji(this) {
+		showRomaji = new ShowRomaji() {
 
 			@Override
 			protected void show(boolean romaji) {
@@ -163,7 +163,7 @@ public class EdictEntryDetailActivity extends AbstractActivity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		showRomaji.register(menu);
+		showRomaji.register(this, menu);
 		AbstractActivity.addMenuItems(this, menu);
 		return true;
 	}
