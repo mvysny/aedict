@@ -88,8 +88,9 @@ public class SearchProvider extends ContentProvider {
 		final String searchString = uri.getLastPathSegment();
 		final MatrixCursor cursor = new MatrixCursor(COLUMN_NAMES);
 		final List<DictEntry> entries = searchForQuery(searchString);
+		int i = 0;
 		for (final DictEntry entry : entries) {
-			Object[] rowObject = new Object[] { searchString, entry.formatJapanese(romanize), entry.english, entry.toExternal() };
+			Object[] rowObject = new Object[] { i++, entry.formatJapanese(romanize), entry.english, entry.toExternal() };
 			cursor.addRow(rowObject);
 		}
 		return cursor;
