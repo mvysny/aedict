@@ -55,6 +55,20 @@ public class VerbInflectionActivity extends ExpandableListActivity {
 	 */
 	private boolean isShowingBasicOnly = true;
 
+	private static final String BUNDLEKEY_STATE = "state";
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		showRomaji.loadState(savedInstanceState);
+		isShowingBasicOnly = savedInstanceState.getBoolean(BUNDLEKEY_STATE, true);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		showRomaji.saveState(outState);
+		outState.putBoolean(BUNDLEKEY_STATE, isShowingBasicOnly);
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

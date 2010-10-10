@@ -53,7 +53,6 @@ public class QuizActivity extends Activity {
 		public int currentQuestion = 0;
 		public boolean showsAnswer = false;
 		public int correctQuestions = 0;
-		public Boolean isShowingRomaji = null;
 
 		public void correctAnswer() {
 			correctQuestions++;
@@ -83,12 +82,12 @@ public class QuizActivity extends Activity {
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		state = (State) savedInstanceState.getSerializable(INTENTKEY_STATE);
-		showRomaji.showRomaji(state.isShowingRomaji);
+		showRomaji.loadState(savedInstanceState);
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		state.isShowingRomaji = showRomaji.isShowingRomaji();
+		showRomaji.saveState(outState);
 		outState.putSerializable(INTENTKEY_STATE, state);
 	}
 
@@ -97,7 +96,7 @@ public class QuizActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.jlpt_quiz);
 		state = new State();
-		showRomaji = new ShowRomaji(state.isShowingRomaji) {
+		showRomaji = new ShowRomaji() {
 
 			@Override
 			protected void show(boolean romaji) {

@@ -72,6 +72,16 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 	private final Map<Integer, List<DictEntry>> modelCache = new HashMap<Integer, List<DictEntry>>();
 	private ShowRomaji showRomaji;
 
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		showRomaji.loadState(savedInstanceState);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		showRomaji.saveState(outState);
+	}
+
 	/**
 	 * Expects {@link DictEntry} as a value. Adds given entry to the model list.
 	 */
