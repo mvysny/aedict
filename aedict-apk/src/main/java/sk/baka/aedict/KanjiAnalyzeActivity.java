@@ -138,7 +138,9 @@ public class KanjiAnalyzeActivity extends ListActivity {
 
 			@Override
 			protected void show(boolean romaji) {
-				((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
+				if (getListAdapter() != null) {
+					((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
+				}
 			}
 		};
 		word = getIntent().getStringExtra(INTENTKEY_WORD);

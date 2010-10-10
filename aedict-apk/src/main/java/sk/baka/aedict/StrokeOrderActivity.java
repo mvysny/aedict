@@ -126,6 +126,12 @@ public class StrokeOrderActivity extends ListActivity {
 	private void addKanjiPad(char kanji) {
 		final PainterView view = new PainterView(this, R.id.textStrokes);
 		((ViewGroup) findViewById(R.id.kanjidrawRoot)).addView(view);
+		findViewById(R.id.undo).setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
+
+			public void onClick(View v) {
+				view.undoLastStroke();
+			}
+		}));
 		findViewById(R.id.btnKanjiClear).setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
 
 			public void onClick(View v) {

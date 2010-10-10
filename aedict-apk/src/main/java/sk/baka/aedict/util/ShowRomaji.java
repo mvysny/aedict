@@ -112,10 +112,10 @@ public abstract class ShowRomaji {
 	private static final String BUNDLEKEY_STATE = "showRomaji_state";
 	
 	public void saveState(Bundle b) {
-		b.putBoolean(BUNDLEKEY_STATE, isShowingRomaji);
+		b.putSerializable(BUNDLEKEY_STATE, isShowingRomaji);
 	}
 	
 	public void loadState(Bundle b) {
-		isShowingRomaji = b.getBoolean(BUNDLEKEY_STATE);
+		isShowingRomaji = (Boolean) b.getSerializable(BUNDLEKEY_STATE);
 	}
 }
