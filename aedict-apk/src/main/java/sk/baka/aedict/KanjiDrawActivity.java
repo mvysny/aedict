@@ -69,7 +69,6 @@ public class KanjiDrawActivity extends AbstractActivity {
 		}));
 		findViewById(R.id.undo).setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
 			
-			@Override
 			public void onClick(View v) {
 				view.undoLastStroke();
 			}
