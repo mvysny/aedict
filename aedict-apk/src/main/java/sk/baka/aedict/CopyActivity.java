@@ -57,7 +57,6 @@ public class CopyActivity extends Activity {
 			((TextView) layout.findViewById(R.id.edit)).setText(content.trim());
 			layout.findViewById(R.id.copy).setOnClickListener(new View.OnClickListener() {
 
-				@Override
 				public void onClick(View v) {
 					final String text = getSelection((TextView) layout.findViewById(R.id.edit));
 					final ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);

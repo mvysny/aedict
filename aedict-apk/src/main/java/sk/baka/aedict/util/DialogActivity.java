@@ -198,7 +198,6 @@ public class DialogActivity extends Activity {
 		final Button no = (Button) findViewById(R.id.no);
 		no.setOnClickListener(new View.OnClickListener() {
 
-			@Override
 			public void onClick(View v) {
 				finish();
 			}
@@ -208,7 +207,6 @@ public class DialogActivity extends Activity {
 			no.setText(b.negativeTextId);
 			yes.setOnClickListener(new View.OnClickListener() {
 
-				@Override
 				public void onClick(View v) {
 					onPositiveClick();
 					finish();
