@@ -30,8 +30,8 @@
 	
 	<properties>
 		<masa.version>1.1-svn81-vyzivus3</masa.version>
-		<android.version>1.6-r1</android.version>
-		<android.api>1.6</android.api>
+		<android.version>2.2</android.version>
+		<android.api>2.2</android.api>
 	</properties>
 	
 	<dependencies>
