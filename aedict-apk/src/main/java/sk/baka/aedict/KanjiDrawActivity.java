@@ -19,6 +19,7 @@
 package sk.baka.aedict;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,14 +28,17 @@ import sk.baka.aedict.util.Constants;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import edu.arizona.cs.javadict.DrawPanel;
 
@@ -44,9 +48,42 @@ import edu.arizona.cs.javadict.DrawPanel;
  * @author Martin Vysny
  */
 public class KanjiDrawActivity extends AbstractActivity {
+
+	private static final class State implements Serializable {
+		private static final long serialVersionUID = 1L;
+		public final List<String> kanjis = new ArrayList<String>();
+		public final List<Character> selected = new ArrayList<Character>();
+
+		public boolean isEmpty() {
+			return kanjis.isEmpty();
+		}
+
+		public String getSelectedWord() {
+			final StringBuilder result = new StringBuilder();
+			for (final Character c : selected) {
+				result.append(c);
+			}
+			return result.toString();
+		}
+	}
+
+	private State state;
+	private static final String BUNDLEKEY_STATE = "state";
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		state = (State) savedInstanceState.getSerializable(BUNDLEKEY_STATE);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putSerializable(BUNDLEKEY_STATE, state);
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		state = new State();
 		setContentView(R.layout.kanjidraw);
 		final PainterView view = new PainterView(this, R.id.textStrokes);
 		((ViewGroup) findViewById(R.id.kanjidrawRoot)).addView(view);
@@ -60,17 +97,33 @@ public class KanjiDrawActivity extends AbstractActivity {
 
 			public void onClick(View v) {
 				try {
-					final String kanjis = view.analyzeKanji();
-					KanjiAnalyzeActivity.launch(KanjiDrawActivity.this, kanjis, false);
+					final String kanjis = state.isEmpty() ? view.analyzeKanji() : state.getSelectedWord();
+					KanjiAnalyzeActivity.launch(KanjiDrawActivity.this, kanjis, !state.isEmpty());
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
 			}
 		}));
 		findViewById(R.id.undo).setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
-			
+
 			public void onClick(View v) {
 				view.undoLastStroke();
+			}
+		}));
+		findViewById(R.id.more).setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
+
+			public void onClick(View v) {
+				try {
+					final String kanjis = view.analyzeKanji();
+					if (kanjis.length() > 0) {
+						state.kanjis.add(kanjis);
+						state.selected.add(kanjis.charAt(0));
+						view.clear();
+						update();
+					}
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
 			}
 		}));
 		new DialogUtils(this).showInfoOnce(Constants.INFOONCE_KANJIDRAWWARNING, -1, R.string.kanjiDrawWarning);
@@ -114,12 +167,13 @@ public class KanjiDrawActivity extends AbstractActivity {
 			updateStrokes();
 			invalidate();
 		}
+
 		public void clear() {
 			recognizer.clear();
 			updateStrokes();
 			invalidate();
 		}
-		
+
 		@Override
 		protected void onDraw(Canvas c) {
 			Rect r = new Rect();
@@ -163,7 +217,7 @@ public class KanjiDrawActivity extends AbstractActivity {
 		}
 
 		private void updateStrokes() {
-			((TextView) ((Activity)getContext()).findViewById(textViewStrokes)).setText(AedictApp.format(R.string.strokes, recognizer.xstrokes.size()));
+			((TextView) ((Activity) getContext()).findViewById(textViewStrokes)).setText(AedictApp.format(R.string.strokes, recognizer.xstrokes.size()));
 		}
 
 		private void drawVec(Canvas g, Iterator<Integer> xe2, Iterator<Integer> ye2, final Paint p) {
@@ -179,6 +233,52 @@ public class KanjiDrawActivity extends AbstractActivity {
 				lastx = x;
 				lasty = y;
 			} // while xe2
+		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		update();
+	}
+
+	private void update() {
+		final ViewGroup buttonList = (ViewGroup) findViewById(R.id.kanjiButtonBar);
+		buttonList.setVisibility(state.isEmpty() ? View.GONE : View.VISIBLE);
+		buttonList.removeAllViews();
+		for (int i = 0; i < state.kanjis.size(); i++) {
+			final Button b = new Button(this);
+			final int index = i;
+			final String kanjiList = state.kanjis.get(i);
+			b.setOnClickListener(new View.OnClickListener() {
+
+				public void onClick(View v) {
+					final AlertDialog.Builder builder = new AlertDialog.Builder(KanjiDrawActivity.this);
+					final CharSequence[] items = new CharSequence[kanjiList.length() + 1];
+					items[0] = getString(R.string.delete);
+					for (int i = 0; i < kanjiList.length(); i++) {
+						items[i + 1] = Character.toString(kanjiList.charAt(i));
+					}
+					builder.setItems(items, new DialogInterface.OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							if (which == 0) {
+								state.kanjis.remove(index);
+								state.selected.remove(index);
+							} else {
+								state.selected.set(index, kanjiList.charAt(which - 1));
+							}
+							update();
+						}
+					});
+					builder.setTitle(R.string.kanjiSearchMethod);
+					final AlertDialog dlg = builder.create();
+					dlg.setOwnerActivity(KanjiDrawActivity.this);
+					dlg.show();
+				}
+			});
+			b.setText(state.selected.get(i).toString());
+			buttonList.addView(b);
 		}
 	}
 }
