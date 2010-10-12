@@ -16,6 +16,8 @@
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="wrap_content" android:gravity="center"
 	android:id="@+id/kanjidrawRoot">
+	<LinearLayout android:orientation="horizontal" android:id="@+id/kanjiButtonBar"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"/>
 	<LinearLayout android:orientation="horizontal"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
 		android:gravity="center">
@@ -27,6 +29,9 @@
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/clear"
 			android:id="@+id/btnKanjiClear"></Button>
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/more"
+			android:id="@+id/more"></Button>
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="@string/search"
 			android:id="@+id/btnKanjiSearch"></Button>
