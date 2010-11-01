@@ -169,11 +169,12 @@ public class KanjiDetailActivity extends AbstractActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		showRomaji.onResume();
 		if (tanakaSearchTask == null && entry.isValid()) {
 			tanakaSearchTask = new TanakaSearchTask(this, (ViewGroup) findViewById(R.id.tanakaExamples), showRomaji, entry.getJapanese());
 			tanakaSearchTask.execute(entry.getJapanese());
 		}
+		// the tanakaSearchTask must be non-null otherwise this will fail.
+		showRomaji.onResume();
 	}
 
 	@Override
