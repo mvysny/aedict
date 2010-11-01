@@ -186,7 +186,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		assertEquals("母", entry.getJapanese());
 		assertEquals("はは", entry.reading);
 		assertEquals(25, result.size());
-		assertTrue(isSimeji);
+		assertEquals(ResultActivity.SIMEJI_ACTION_INTERCEPT, i2.getAction());
 	}
 
 	public void testEdictExternSearch() throws Exception {
