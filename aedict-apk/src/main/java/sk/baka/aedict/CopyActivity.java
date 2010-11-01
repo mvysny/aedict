@@ -38,22 +38,25 @@ public class CopyActivity extends Activity {
 	private static final String INTENTKEY_COPY1 = "copy1";
 	private static final String INTENTKEY_COPY2 = "copy2";
 	private static final String INTENTKEY_COPY3 = "copy3";
+	private static final String INTENTKEY_CLIPBOARD = "clipboard";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.copydialog);
-		setup(INTENTKEY_COPY1, R.id.copygroup1);
-		setup(INTENTKEY_COPY2, R.id.copygroup2);
-		setup(INTENTKEY_COPY3, R.id.copygroup3);
+		setup(INTENTKEY_COPY1, R.id.copygroup1, true);
+		setup(INTENTKEY_COPY2, R.id.copygroup2, true);
+		setup(INTENTKEY_COPY3, R.id.copygroup3, true);
+		setup(INTENTKEY_CLIPBOARD, R.id.copygroup4, false);
 	}
 
-	private void setup(final String intentkey, final int layoutid) {
-		final String content = getIntent().getStringExtra(intentkey);
+	private void setup(final String intentkey, final int layoutid, boolean autoHide) {
+		String content = getIntent().getStringExtra(intentkey);
 		final View layout = findViewById(layoutid);
-		if (MiscUtils.isBlank(content)) {
+		if (MiscUtils.isBlank(content) && autoHide) {
 			layout.setVisibility(View.GONE);
 		} else {
+			content = content == null ? "" : content;
 			((TextView) layout.findViewById(R.id.edit)).setText(content.trim());
 			layout.findViewById(R.id.copy).setOnClickListener(new View.OnClickListener() {
 
@@ -79,10 +82,12 @@ public class CopyActivity extends Activity {
 	}
 	
 	public static void launch(Activity activity, String text1, String text2, String text3) {
-		final Intent i=new Intent(activity, CopyActivity.class);
+		final Intent i = new Intent(activity, CopyActivity.class);
 		i.putExtra(INTENTKEY_COPY1, text1);
 		i.putExtra(INTENTKEY_COPY2, text2);
 		i.putExtra(INTENTKEY_COPY3, text3);
+		final ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+		i.putExtra(INTENTKEY_CLIPBOARD, cm.getText() + text1);
 		activity.startActivity(i);
 	}
 	public static void launch(Activity activity, final DictEntry e) {

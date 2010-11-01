@@ -460,4 +460,5 @@
 	<string name="copydialogInfo">Use Android built-in selection functionality (available with long-click) to select a portion of text, then press Copy&amp;Search to search further</string>
 	<string name="copysearch">Copy&amp;Search</string>
 	<string name="advancedCopy">Advanced Copy&amp;Search</string>
+	<string name="clipboard">Clipboard</string>
 </resources>
