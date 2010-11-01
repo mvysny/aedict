@@ -23,34 +23,25 @@ import java.util.Collections;
 import java.util.List;
 
 import sk.baka.aedict.AedictApp;
-import sk.baka.aedict.CopyActivity;
 import sk.baka.aedict.KanjiAnalyzeActivity;
-import sk.baka.aedict.MainActivity;
-import sk.baka.aedict.NotepadActivity;
 import sk.baka.aedict.R;
-import sk.baka.aedict.ResultActivity;
-import sk.baka.aedict.StrokeOrderActivity;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.util.Check;
+import sk.baka.aedict.util.DictEntryListActions;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.aedict.util.SpanStringBuilder;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
-import android.text.ClipboardManager;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Performs background search in Tanaka example dictionary and automatically
@@ -155,52 +146,11 @@ public class TanakaSearchTask extends AsyncTask<String, Void, List<DictEntry>> i
 			view.setFocusable(de.isValid());
 			view.setOnFocusChangeListener(de.isValid() ? this : null);
 			if (de.isValid()) {
+				final DictEntryListActions dela = new DictEntryListActions(activity, true, false, true);
 				view.setOnCreateContextMenuListener(AndroidUtils.safe(activity, new View.OnCreateContextMenuListener() {
 
 					public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-						final MenuItem miAddToNotepad = menu.add(Menu.NONE, 1, 1, R.string.addToNotepad);
-						miAddToNotepad.setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
-
-							public boolean onMenuItemClick(MenuItem item) {
-								NotepadActivity.addAndLaunch(activity, de);
-								return true;
-							}
-						}));
-						final MenuItem miShowSOD = menu.add(Menu.NONE, 6, 6, R.string.showSod);
-						miShowSOD.setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
-
-							public boolean onMenuItemClick(MenuItem item) {
-								StrokeOrderActivity.launch(activity, de.getJapanese());
-								return true;
-							}
-						}));
-						final MenuItem miCopyToClipboard = menu.add(Menu.NONE, 7, 7, R.string.copyToClipboard);
-						miCopyToClipboard.setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
-
-							public boolean onMenuItemClick(MenuItem item) {
-								final ClipboardManager cm = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-								cm.setText(de.getJapanese());
-								final Toast toast = Toast.makeText(activity, AedictApp.format(R.string.copied, de.getJapanese()), Toast.LENGTH_SHORT);
-								toast.show();
-								return true;
-							}
-						}));
-						final MenuItem miSearchFurther = menu.add(Menu.NONE, 8, 8, R.string.searchFurther);
-						miSearchFurther.setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
-
-							public boolean onMenuItemClick(MenuItem item) {
-								MainActivity.launch(activity, de.getJapanese());
-								return true;
-							}
-						}));
-						final MenuItem miAdvancedCopy = menu.add(Menu.NONE, 9, 9, R.string.advancedCopy);
-						miAdvancedCopy.setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
-
-							public boolean onMenuItemClick(MenuItem item) {
-								CopyActivity.launch(activity, de);
-								return true;
-							}
-						}));
+						dela.register(menu, de, -1);
 					}
 				}));
 			} else {

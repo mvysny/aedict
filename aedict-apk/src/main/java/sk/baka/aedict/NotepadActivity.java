@@ -27,10 +27,9 @@ import java.util.Map;
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.Edict;
-import sk.baka.aedict.dict.EdictEntry;
-import sk.baka.aedict.jlptquiz.InflectionQuizActivity;
 import sk.baka.aedict.jlptquiz.QuizActivity;
 import sk.baka.aedict.kanji.RomanizationEnum;
+import sk.baka.aedict.util.DictEntryListActions;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
@@ -41,14 +40,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -159,33 +156,13 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 			}
 
 		});
-		lv.setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
+		new DictEntryListActions(this, false, true, true) {
 
-			public void onCreateContextMenu(ContextMenu menu, View v, final ContextMenuInfo menuInfo) {
-				final int pos = ((AdapterContextMenuInfo) menuInfo).position;
-				final DictEntry ee = getModel(category).get(pos);
-				menu.add(0, 0, 0, R.string.analyze).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-					public boolean onMenuItemClick(MenuItem item) {
-						KanjiAnalyzeActivity.launch(NotepadActivity.this, ee.getJapanese(), false);
-						return true;
-					}
-				}));
-				menu.add(0, 1, 1, R.string.delete).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
-					public boolean onMenuItemClick(MenuItem item) {
-						getModel(category).remove(pos);
-						onModelChanged(category);
-						return true;
-					}
-				}));
-				menu.add(0, 2, 2, R.string.showSod).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
-					public boolean onMenuItemClick(MenuItem item) {
-						StrokeOrderActivity.launch(NotepadActivity.this, ee.getJapanese());
-						return true;
-					}
-				}));
+			@Override
+			protected void addCustomItems(ContextMenu menu, DictEntry entry,
+					final int itemIndex) {
 				if (AedictApp.getConfig().getNotepadCategories().size() > 1) {
-					menu.add(0, 3, 3, R.string.moveToCategory).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
+					menu.add(0, 20, 20, R.string.moveToCategory).setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
 						public boolean onMenuItemClick(MenuItem item) {
 							final List<String> notepadCategories = AedictApp.getConfig().getNotepadCategories();
 							notepadCategories.remove(category);
@@ -194,7 +171,7 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 
 								public void onClick(DialogInterface dialog, int which) {
 									final int target = which < category ? which : which + 1;
-									final DictEntry e = getModel(category).remove(pos);
+									final DictEntry e = getModel(category).remove(itemIndex);
 									getModel(target).add(0, e);
 									onModelChanged(category);
 									onModelChanged(target);
@@ -206,26 +183,22 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 						}
 					}));
 				}
-				if (EdictEntry.fromEntry(ee).isVerb()) {
-					final MenuItem miShowConjugations = menu.add(Menu.NONE, 7, 7, R.string.showConjugations);
-					miShowConjugations.setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-						public boolean onMenuItemClick(MenuItem item) {
-							VerbInflectionActivity.launch(NotepadActivity.this, EdictEntry.fromEntry(ee));
-							return true;
-						}
-					}));
-					final MenuItem miConjugationQuiz = menu.add(Menu.NONE, 8, 8, R.string.conjugationQuiz);
-					miConjugationQuiz.setOnMenuItemClickListener(AndroidUtils.safe(NotepadActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-						public boolean onMenuItemClick(MenuItem item) {
-							InflectionQuizActivity.launch(NotepadActivity.this, EdictEntry.fromEntry(ee));
-							return true;
-						}
-					}));
-				}
 			}
-		}));
+
+			@Override
+			protected void onDelete(int itemIndex) {
+				getModel(category).remove(itemIndex);
+				onModelChanged(category);
+			}
+
+			@Override
+			protected void onDeleteAll() {
+				final int category = getCurrentCategory();
+				getModel(category).clear();
+				onModelChanged(category);
+			}
+			
+		}.register(lv);
 		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
