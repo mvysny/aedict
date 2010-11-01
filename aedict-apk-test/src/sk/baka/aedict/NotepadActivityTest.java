@@ -72,7 +72,7 @@ public class NotepadActivityTest extends AbstractAedictTest<NotepadActivity> {
 
 	public void testShowSod() {
 		tester.startActivity();
-		tester.contextMenu(getActivity().getListView(0), 2, 0);
+		tester.contextMenu(getActivity().getListView(0), 6, 0);
 		tester.assertRequestedActivity(StrokeOrderActivity.class);
 		final String q = getStartedActivityIntent().getStringExtra(StrokeOrderActivity.INTENTKEY_KANJILIST);
 		assertEquals("母は留守です。", q);

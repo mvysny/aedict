@@ -219,7 +219,11 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 			@Override
 			protected void show(boolean romaji) {
 				for (int i = 0; i < getCategoryCount(); i++) {
-					((ArrayAdapter<?>) getListView(i).getAdapter()).notifyDataSetChanged();
+					final ListView lv = getListView(i);
+					if (lv != null) {
+						final ArrayAdapter<?> adapter = (ArrayAdapter<?>) lv.getAdapter();
+						adapter.notifyDataSetChanged();
+					}
 				}
 			}
 		};
