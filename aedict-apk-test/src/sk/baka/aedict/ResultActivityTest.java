@@ -18,6 +18,9 @@
 
 package sk.baka.aedict;
 
+import java.io.Serializable;
+import java.util.Collections;
+
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.MatcherEnum;
@@ -56,7 +59,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 
 	private void launch(final SearchQuery q) {
 		final Intent i = new Intent(getInstrumentation().getContext(), ResultActivity.class);
-		i.putExtra(ResultActivity.INTENTKEY_SEARCH_QUERY, q);
+		i.putExtra(ResultActivity.INTENTKEY_SEARCH_QUERY, (Serializable) Collections.singletonList(q));
 		tester.startActivity(i);
 	}
 
