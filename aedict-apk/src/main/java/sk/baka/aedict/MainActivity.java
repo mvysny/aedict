@@ -27,34 +27,29 @@ import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
-import sk.baka.aedict.jlptquiz.InflectionQuizActivity;
 import sk.baka.aedict.kanji.Deinflections;
-import sk.baka.aedict.kanji.Deinflections.Deinflection;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.kanji.VerbDeinflection;
+import sk.baka.aedict.kanji.Deinflections.Deinflection;
 import sk.baka.aedict.util.Check;
+import sk.baka.aedict.util.DictEntryListActions;
 import sk.baka.aedict.util.ShowRomaji;
-import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 /**
  * Provides means to search the edict dictionary file.
@@ -98,73 +93,23 @@ public class MainActivity extends ListActivity {
 			new DialogUtils(this).showInfoOnce(AedictApp.getVersion(), AedictApp.format(R.string.whatsNew, AedictApp.getVersion()), getString(R.string.whatsNewText));
 		}
 		((TextView) findViewById(R.id.aedict)).setText("Aedict " + AedictApp.getVersion());
-		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
+		new DictEntryListActions(this, true, true, false){
 
-			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-				final int position = ((AdapterContextMenuInfo) menuInfo).position;
-				final DictEntry ee = getModel().get(position);
-				final MenuItem miAddToNotepad = menu.add(Menu.NONE, 1, 1, R.string.addToNotepad);
-				miAddToNotepad.setOnMenuItemClickListener(AndroidUtils.safe(MainActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-					public boolean onMenuItemClick(MenuItem item) {
-						NotepadActivity.addAndLaunch(MainActivity.this, ee);
-						return true;
-					}
-				}));
-				final MenuItem miShowSOD = menu.add(Menu.NONE, 6, 6, R.string.showSod);
-				miShowSOD.setOnMenuItemClickListener(AndroidUtils.safe(MainActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-					public boolean onMenuItemClick(MenuItem item) {
-						StrokeOrderActivity.launch(MainActivity.this, ee.getJapanese());
-						return true;
-					}
-				}));
-				if (EdictEntry.fromEntry(ee).isVerb()) {
-					final MenuItem miShowConjugations = menu.add(Menu.NONE, 7, 7, R.string.showConjugations);
-					miShowConjugations.setOnMenuItemClickListener(AndroidUtils.safe(MainActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-						public boolean onMenuItemClick(MenuItem item) {
-							VerbInflectionActivity.launch(MainActivity.this, EdictEntry.fromEntry(ee));
-							return true;
-						}
-					}));
-					final MenuItem miConjugationQuiz = menu.add(Menu.NONE, 8, 8, R.string.conjugationQuiz);
-					miConjugationQuiz.setOnMenuItemClickListener(AndroidUtils.safe(MainActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-						public boolean onMenuItemClick(MenuItem item) {
-							InflectionQuizActivity.launch(MainActivity.this, EdictEntry.fromEntry(ee));
-							return true;
-						}
-					}));
-				}
-				menu.add(Menu.NONE, 9, 9, R.string.delete).setOnMenuItemClickListener(AndroidUtils.safe(MainActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-					public boolean onMenuItemClick(MenuItem item) {
-						final List<DictEntry> rv = AedictApp.getConfig().getRecentlyViewed();
-						rv.remove(position);
-						AedictApp.getConfig().setRecentlyViewed(rv);
-						invalidateModel();
-						return true;
-					}
-				}));
-				menu.add(Menu.NONE, 10, 10, R.string.deleteAll).setOnMenuItemClickListener(AndroidUtils.safe(MainActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-					public boolean onMenuItemClick(MenuItem item) {
-						AedictApp.getConfig().setRecentlyViewed(new ArrayList<DictEntry>());
-						invalidateModel();
-						return true;
-					}
-				}));
-				final MenuItem miAdvancedCopy = menu.add(Menu.NONE, 11, 11, R.string.advancedCopy);
-				miAdvancedCopy.setOnMenuItemClickListener(AndroidUtils.safe(MainActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-					public boolean onMenuItemClick(MenuItem item) {
-						CopyActivity.launch(MainActivity.this, ee);
-						return true;
-					}
-				}));
+			@Override
+			protected void onDelete(int itemIndex) {
+				final List<DictEntry> rv = AedictApp.getConfig().getRecentlyViewed();
+				rv.remove(itemIndex);
+				AedictApp.getConfig().setRecentlyViewed(rv);
+				invalidateModel();
 			}
-		}));
+
+			@Override
+			protected void onDeleteAll() {
+				AedictApp.getConfig().setRecentlyViewed(new ArrayList<DictEntry>());
+				invalidateModel();
+			}
+			
+		}.register(getListView());
 		final String prefillTerm = getIntent().getStringExtra(INTENTKEY_PREFILL_SEARCH_FIELD);
 		if (prefillTerm != null) {
 			((TextView) findViewById(R.id.searchEdit)).setText(prefillTerm);

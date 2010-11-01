@@ -36,6 +36,7 @@ import sk.baka.aedict.kanji.Deinflections.Deinflection;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.Constants;
+import sk.baka.aedict.util.DictEntryListActions;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.aedict.util.SpanStringBuilder;
 import sk.baka.autils.AbstractTask;
@@ -194,65 +195,22 @@ public class ResultActivity extends ListActivity {
 			new SearchTask().execute(AedictApp.isInstrumentation, this, queries.toArray(new SearchQuery[0]));
 		}
 		updateTopText();
-		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
-
-			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-				final int position = ((AdapterContextMenuInfo) menuInfo).position;
-				final DictEntry ee = model.get(position);
-				final MenuItem miAddToNotepad = menu.add(Menu.NONE, 1, 1, R.string.addToNotepad);
-				miAddToNotepad.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-					public boolean onMenuItemClick(MenuItem item) {
-						NotepadActivity.addAndLaunch(ResultActivity.this, ee);
-						return true;
-					}
-				}));
+		new DictEntryListActions(this, true, false, true) {
+			@Override
+			protected void addCustomItems(ContextMenu menu, DictEntry entry,
+					int itemIndex) {
 				if (isSimeji) {
-					if (!ee.isValid()) {
+					if (!entry.isValid()) {
 						return;
 					}
-					if (ee.kanji != null) {
-						menu.add(Menu.NONE, 2, 2, AedictApp.format(R.string.return_, ee.kanji)).setOnMenuItemClickListener(new SimejiReturn(ee.kanji));
+					if (entry.kanji != null) {
+						menu.add(Menu.NONE, 2, 2, AedictApp.format(R.string.return_, entry.kanji)).setOnMenuItemClickListener(new SimejiReturn(entry.kanji));
 					}
-					menu.add(Menu.NONE, 3, 3, AedictApp.format(R.string.return_, ee.reading)).setOnMenuItemClickListener(new SimejiReturn(ee.reading));
-					menu.add(Menu.NONE, 4, 4, AedictApp.format(R.string.return_, ee.english)).setOnMenuItemClickListener(new SimejiReturn(ee.english));
+					menu.add(Menu.NONE, 3, 3, AedictApp.format(R.string.return_, entry.reading)).setOnMenuItemClickListener(new SimejiReturn(entry.reading));
+					menu.add(Menu.NONE, 4, 4, AedictApp.format(R.string.return_, entry.english)).setOnMenuItemClickListener(new SimejiReturn(entry.english));
 				}
-				final MenuItem miShowSOD = menu.add(Menu.NONE, 6, 6, R.string.showSod);
-				miShowSOD.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-					public boolean onMenuItemClick(MenuItem item) {
-						StrokeOrderActivity.launch(ResultActivity.this, ee.getJapanese());
-						return true;
-					}
-				}));
-				if ((ee instanceof EdictEntry) && ((EdictEntry) ee).isVerb()) {
-					final MenuItem miShowConjugations = menu.add(Menu.NONE, 7, 7, R.string.showConjugations);
-					miShowConjugations.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-						public boolean onMenuItemClick(MenuItem item) {
-							VerbInflectionActivity.launch(ResultActivity.this, (EdictEntry)ee);
-							return true;
-						}
-					}));
-					final MenuItem miConjugationQuiz = menu.add(Menu.NONE, 8, 8, R.string.conjugationQuiz);
-					miConjugationQuiz.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-						public boolean onMenuItemClick(MenuItem item) {
-							InflectionQuizActivity.launch(ResultActivity.this, (EdictEntry)ee);
-							return true;
-						}
-					}));
-				}
-				final MenuItem miAdvancedCopy = menu.add(Menu.NONE, 9, 9, R.string.advancedCopy);
-				miAdvancedCopy.setOnMenuItemClickListener(AndroidUtils.safe(ResultActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-					public boolean onMenuItemClick(MenuItem item) {
-						CopyActivity.launch(ResultActivity.this, ee);
-						return true;
-					}
-				}));
 			}
-		}));
+		}.register(getListView());
 	}
 
 	private void updateModel(final boolean searching) {
