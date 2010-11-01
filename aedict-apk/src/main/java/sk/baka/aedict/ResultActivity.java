@@ -78,7 +78,7 @@ public class ResultActivity extends ListActivity {
 
 	static final String INTENTKEY_SEARCH_QUERY = "QUERY";
 	static final String INTENTKEY_DEINFLECTIONS = "DEINFLECTIONS";
-	private static final String INTENTKEY_RESULT_LIST = "resultList";
+	static final String INTENTKEY_RESULT_LIST = "resultList";
 
 	/**
 	 * Use this method sparingly, it has many caveats.

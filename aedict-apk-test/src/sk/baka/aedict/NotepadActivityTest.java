@@ -60,13 +60,19 @@ public class NotepadActivityTest extends AbstractAedictTest<NotepadActivity> {
 
 	public void testDelete() {
 		testAddEntry();
-		tester.contextMenu(getActivity().getListView(0), 1, 0);
+		tester.contextMenu(getActivity().getListView(0), 9, 0);
 		assertEquals(1, getActivity().getListView(0).getAdapter().getCount());
 	}
 
 	public void testDeleteAll() {
 		testAddEntry();
 		tester.optionMenu(1);
+		assertEquals(0, getActivity().getListView(0).getAdapter().getCount());
+	}
+
+	public void testDeleteAll2() {
+		testAddEntry();
+		tester.contextMenu(getActivity().getListView(0), 10, 0);
 		assertEquals(0, getActivity().getListView(0).getAdapter().getCount());
 	}
 
