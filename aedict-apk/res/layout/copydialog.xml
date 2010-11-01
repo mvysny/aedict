@@ -34,4 +34,13 @@
 		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:id="@+id/copy" android:text="@string/copysearch" />
 	</LinearLayout>
+	<TextView android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text="@string/clipboard" android:textColor="#FFF" android:background="#666"/>
+	<LinearLayout android:layout_width="fill_parent" android:id="@+id/copygroup4"
+		android:layout_height="wrap_content" android:orientation="horizontal">
+		<EditText android:layout_width="wrap_content" android:layout_weight="1"
+			android:layout_height="wrap_content" android:id="@+id/edit" />
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/copy" android:text="@string/copysearch" />
+	</LinearLayout>
 </LinearLayout>
