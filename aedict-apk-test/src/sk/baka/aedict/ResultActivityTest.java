@@ -245,7 +245,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		final DictEntry entry = result.get(0);
 		assertEquals("Mother is away from home.", entry.english);
 		assertEquals("母は留守です。", entry.getJapanese());
-		assertEquals("はははるすです。", entry.reading);
+		assertEquals("はは は るす です。", entry.reading);
 		assertEquals(100, result.size());
 	}
 
@@ -274,7 +274,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		assertEquals("My mother tongue.", entry.english);
 		assertEquals("私の母国語。", entry.getJapanese());
 		assertEquals("わたしの ぼこくご。", entry.reading);
-		assertEquals(12, result.size());
+		assertEquals(100, result.size());
 	}
 
 	public void testComplexJapaneseAndSearch() throws Exception {
