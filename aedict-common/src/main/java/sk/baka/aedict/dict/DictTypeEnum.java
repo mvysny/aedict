@@ -332,7 +332,7 @@ public enum DictTypeEnum {
             final byte[] b = doc.getBinaryValue("kana");
             try {
                 final String reading = b == null ? null : CompressionTools.decompressString(b);
-                return new DictEntry(japanese, reading, english);
+                return new TanakaDictEntry(japanese, reading, english, doc.get("jp-deinflected"));
             } catch (DataFormatException ex) {
                 throw new RuntimeException(ex);
             }
