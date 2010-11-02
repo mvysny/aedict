@@ -32,6 +32,7 @@ import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.Radicals;
+import sk.baka.aedict.util.DictEntryListActions;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
@@ -159,26 +160,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 			// fixes http://code.google.com/p/aedict/issues/detail?id=29
 			setListAdapter(newAdapter());
 		}
-		// check that the KANJIDIC dictionary file is available
-		getListView().setOnCreateContextMenuListener(AndroidUtils.safe(this, new View.OnCreateContextMenuListener() {
-
-			public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-				final DictEntry ee = model.get(((AdapterContextMenuInfo) menuInfo).position);
-				menu.add(R.string.addToNotepad).setOnMenuItemClickListener(AndroidUtils.safe(KanjiAnalyzeActivity.this, new MenuItem.OnMenuItemClickListener() {
-
-					public boolean onMenuItemClick(MenuItem item) {
-						NotepadActivity.addAndLaunch(KanjiAnalyzeActivity.this, ee);
-						return true;
-					}
-				}));
-				menu.add(R.string.showSod).setOnMenuItemClickListener(AndroidUtils.safe(KanjiAnalyzeActivity.this, new MenuItem.OnMenuItemClickListener() {
-					public boolean onMenuItemClick(MenuItem item) {
-						StrokeOrderActivity.launch(KanjiAnalyzeActivity.this, ee.getJapanese());
-						return true;
-					}
-				}));
-			}
-		}));
+		new DictEntryListActions(this, true, true, false, true).register(getListView());
 	}
 
 	private ArrayAdapter<DictEntry> newAdapter() {
