@@ -36,6 +36,8 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -145,6 +147,13 @@ public class TanakaAnalyzeActivity extends ListActivity {
 		}
 	}
 
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		showRomaji.register(this, menu);
+		return true;
+	}
+
 	private void recomputeModel() {
 		new RecomputeModel().execute(AedictApp.isInstrumentation, this, tanaka);
 	}
@@ -159,6 +168,7 @@ public class TanakaAnalyzeActivity extends ListActivity {
 		@Override
 		protected void onSucceeded(List<DictEntry> result) {
 			model = result;
+			model.add(0, new DictEntry("", tanaka.kanji + "\n" + tanaka.reading, tanaka.english));
 			setListAdapter(newAdapter());
 		}
 
