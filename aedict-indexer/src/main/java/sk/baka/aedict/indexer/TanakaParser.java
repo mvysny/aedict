@@ -130,12 +130,9 @@ public class TanakaParser implements IDictParser {
         final List<BWord> words = parseWords(line);
         final StringBuilder wordList = new StringBuilder();
         for (final BWord word : words) {
-            if (word.isInflected()) {
-                // the word is inflected. Retrieve the xxx part and add it
-                wordList.append(word.dictionaryForm).append(' ');
-            }
+            wordList.append(word.dictionaryForm).append(' ');
         }
-        doc.add(new Field("jp-deinflected", wordList.toString(), Field.Store.NO, Field.Index.ANALYZED));
+        doc.add(new Field("jp-deinflected", wordList.toString(), Field.Store.YES, Field.Index.ANALYZED));
         // prepare the kana form of the sentence.
         final StringBuilder kana = new StringBuilder();
         String l = lastLine;
