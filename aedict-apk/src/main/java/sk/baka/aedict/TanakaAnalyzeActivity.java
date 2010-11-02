@@ -19,6 +19,7 @@ package sk.baka.aedict;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import sk.baka.aedict.dict.DictEntry;
@@ -186,7 +187,13 @@ public class TanakaAnalyzeActivity extends ListActivity {
 					}
 					final String kanji = e.wordList.get(i);
 					final SearchQuery q = SearchQuery.searchJpEdict(kanji, MatcherEnum.Exact);
-					final List<DictEntry> matches = lsEdict.search(q, 1);
+					final List<DictEntry> matches = lsEdict.search(q, 10);
+					for (Iterator<DictEntry> it = matches.iterator(); it.hasNext();) {
+						final DictEntry ee = it.next();
+						if (!ee.getJapanese().equals(kanji)) {
+							it.remove();
+						}
+					}
 					DictEntry.removeInvalid(matches);
 					final DictEntry ee;
 					if (!matches.isEmpty()) {
