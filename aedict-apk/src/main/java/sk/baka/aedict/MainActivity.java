@@ -93,7 +93,7 @@ public class MainActivity extends ListActivity {
 			new DialogUtils(this).showInfoOnce(AedictApp.getVersion(), AedictApp.format(R.string.whatsNew, AedictApp.getVersion()), getString(R.string.whatsNewText));
 		}
 		((TextView) findViewById(R.id.aedict)).setText("Aedict " + AedictApp.getVersion());
-		new DictEntryListActions(this, true, true, false){
+		new DictEntryListActions(this, true, true, true, false){
 
 			@Override
 			protected void onDelete(int itemIndex) {

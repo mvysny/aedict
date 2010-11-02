@@ -25,6 +25,7 @@ import java.util.List;
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.KanjiAnalyzeActivity;
 import sk.baka.aedict.R;
+import sk.baka.aedict.TanakaAnalyzeActivity;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.util.Check;
 import sk.baka.aedict.util.DictEntryListActions;
@@ -38,6 +39,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -146,7 +148,24 @@ public class TanakaSearchTask extends AsyncTask<String, Void, List<DictEntry>> i
 			view.setFocusable(de.isValid());
 			view.setOnFocusChangeListener(de.isValid() ? this : null);
 			if (de.isValid()) {
-				final DictEntryListActions dela = new DictEntryListActions(activity, true, false, true);
+				final DictEntryListActions dela = new DictEntryListActions(activity, false, true, false, true){
+
+					@Override
+					protected void addCustomItems(final ContextMenu menu, final DictEntry entry, final int itemIndex) {
+						menu.add(0, 0, 0, R.string.analyze).setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
+
+							public boolean onMenuItemClick(MenuItem item) {
+								final TanakaDictEntry e = (TanakaDictEntry) entry;
+								if (e.wordList != null && !e.wordList.isEmpty()) {
+									TanakaAnalyzeActivity.launch(activity, e);
+								} else {
+									KanjiAnalyzeActivity.launch(activity, entry.getJapanese(), false);
+								}
+								return true;
+							}
+						}));
+					}
+				};
 				view.setOnCreateContextMenuListener(AndroidUtils.safe(activity, new View.OnCreateContextMenuListener() {
 
 					public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
