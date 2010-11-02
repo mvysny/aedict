@@ -139,7 +139,12 @@ public class TanakaSearchTask extends AsyncTask<String, Void, List<DictEntry>> i
 				view.setOnClickListener(AndroidUtils.safe(activity, new View.OnClickListener() {
 
 					public void onClick(View v) {
-						KanjiAnalyzeActivity.launch(activity, de.kanji, false);
+						final TanakaDictEntry e = (TanakaDictEntry) de;
+						if (e.wordList != null && !e.wordList.isEmpty()) {
+							TanakaAnalyzeActivity.launch(activity, e);
+						} else {
+							KanjiAnalyzeActivity.launch(activity, de.getJapanese(), false);
+						}
 					}
 				}));
 			} else {
