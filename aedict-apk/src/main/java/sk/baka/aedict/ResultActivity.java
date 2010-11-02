@@ -195,7 +195,7 @@ public class ResultActivity extends ListActivity {
 			new SearchTask().execute(AedictApp.isInstrumentation, this, queries.toArray(new SearchQuery[0]));
 		}
 		updateTopText();
-		new DictEntryListActions(this, true, false, true) {
+		new DictEntryListActions(this, true, true, false, true) {
 			@Override
 			protected void addCustomItems(ContextMenu menu, DictEntry entry,
 					int itemIndex) {

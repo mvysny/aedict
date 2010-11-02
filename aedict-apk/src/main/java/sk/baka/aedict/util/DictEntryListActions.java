@@ -33,9 +33,11 @@ public class DictEntryListActions {
 	public final boolean canAddToNotepad;
 	public final boolean canDeleteItems;
 	public final boolean canSearchFurther;
+	public final boolean canAnalyze;
 	
-	public DictEntryListActions(Activity activity, final boolean canAddToNotepad, final boolean canDeleteItems, final boolean canSearchFurther) {
+	public DictEntryListActions(Activity activity, final boolean canAnalyze, final boolean canAddToNotepad, final boolean canDeleteItems, final boolean canSearchFurther) {
 		this.activity = activity;
+		this.canAnalyze = canAnalyze;
 		this.canAddToNotepad = canAddToNotepad;
 		this.canDeleteItems = canDeleteItems;
 		this.canSearchFurther = canSearchFurther;
@@ -54,13 +56,15 @@ public class DictEntryListActions {
 	}
 	
 	public DictEntryListActions register(final ContextMenu menu, final DictEntry entry, final int itemIndex) {
-		menu.add(0, 0, 0, R.string.analyze).setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
+		if (canAnalyze) {
+			menu.add(0, 0, 0, R.string.analyze).setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
 
-			public boolean onMenuItemClick(MenuItem item) {
-				KanjiAnalyzeActivity.launch(activity, entry.getJapanese(), false);
-				return true;
-			}
-		}));
+				public boolean onMenuItemClick(MenuItem item) {
+					KanjiAnalyzeActivity.launch(activity, entry.getJapanese(), false);
+					return true;
+				}
+			}));
+		}
 		if (canAddToNotepad) {
 			final MenuItem miAddToNotepad = menu.add(Menu.NONE, 1, 1, R.string.addToNotepad);
 			miAddToNotepad.setOnMenuItemClickListener(AndroidUtils.safe(

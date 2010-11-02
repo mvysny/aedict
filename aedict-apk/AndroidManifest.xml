@@ -48,6 +48,7 @@
 		</activity>
 		<activity android:name=".ConfigActivity" android:label="@string/configuration" />
 		<activity android:name=".KanjiAnalyzeActivity" android:label="@string/kanjiAnalysisOf" />
+		<activity android:name=".TanakaAnalyzeActivity" android:label="@string/kanjiAnalysisOf" />
 		<activity android:name=".KanjiSearchRadicalActivity"
 			android:label="@string/kanjiRadicalLookup" />
 		<activity android:name=".KanjiDrawActivity" android:label="@string/kanjiDrawLookup" >

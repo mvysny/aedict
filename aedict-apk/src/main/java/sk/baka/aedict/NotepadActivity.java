@@ -156,7 +156,7 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 			}
 
 		});
-		new DictEntryListActions(this, false, true, true) {
+		new DictEntryListActions(this, true, false, true, true) {
 
 			@Override
 			protected void addCustomItems(ContextMenu menu, DictEntry entry,
