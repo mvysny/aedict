@@ -4,6 +4,29 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
+		<release version="2.7" date="3. November 2010">
+			<action dev="vyzivus" type="add">
+				Kanji/TanakaAnalysis activities now provide correct context menu, with all items.
+			</action>
+			<action dev="vyzivus" type="update" issue="96">
+				Implemented new engine for Tanaka example sentence analysis. Note that you need to re-download Tanaka dictionary to make use of this fix.
+			</action>
+			<action dev="vyzivus" type="update" issue="110">
+				Added support for joining text to the clipboard.
+			</action>
+			<action dev="vyzivus" type="add" issue="102">
+				Added possibility to search for more kanjis at once using the kanjipad.
+			</action>
+			<action dev="vyzivus" type="add" issue="107">
+				Added missing Undo button to the StrokeOrderActivity.
+			</action>
+			<action dev="vyzivus" type="fix" issue="109">
+				Aedict can now be installed onto the SD card.
+			</action>
+			<action dev="vyzivus" type="fix" issue="108">
+				Fixed: Aedict crashes when searching with Android Search.
+			</action>
+		</release>
 		<release version="2.6" date="9. October 2010">
 			<action dev="vyzivus" type="update" issue="99">
 				The kana version of example sentences is now separated by spaces.
