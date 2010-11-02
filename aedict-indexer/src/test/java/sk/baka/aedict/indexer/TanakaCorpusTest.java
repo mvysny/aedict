@@ -90,6 +90,6 @@ public class TanakaCorpusTest extends AbstractLuceneSearchTest {
     public void testJapaneseSearchForHaha() throws Exception {
         List<String> s = search("japanese", "japanese:母 OR jp-deinflected:母 OR japanese:はは OR jp-deinflected:はは");
         assertEquals("※基本的な禁止事項（誹謗・中傷の禁止等）は「はじめにお読み下さい」に記載してあります。必ずお読みください。", s.get(0));
-        assertEquals(1653, s.size());
+        assertEquals(1676, s.size());
     }
 }
