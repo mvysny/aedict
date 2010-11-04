@@ -77,7 +77,7 @@ public class KanjiAnalyzeActivityTest extends AbstractAedictTest<KanjiAnalyzeAct
 
 	public void testAddToNotepad() {
 		startActivity("母上");
-		tester.contextMenu(getActivity().getListView(), 10000, 0);
+		tester.contextMenu(getActivity().getListView(), 1, 0);
 		tester.assertRequestedActivity(NotepadActivity.class);
 		assertEquals("母", ((DictEntry)getStartedActivityIntent().getSerializableExtra(NotepadActivity.INTENTKEY_ADD_ENTRY)).getJapanese());
 	}
@@ -123,7 +123,7 @@ public class KanjiAnalyzeActivityTest extends AbstractAedictTest<KanjiAnalyzeAct
 	 */
 	public void testShowSod() {
 		startActivity("今週のおすすめﾊﾞｰｹﾞﾝTVｹﾞｰﾑ", false);
-		tester.contextMenu(getActivity().getListView(), 10001, 0);
+		tester.contextMenu(getActivity().getListView(), 6, 0);
 		tester.assertRequestedActivity(StrokeOrderActivity.class);
 		final String q = getStartedActivityIntent().getStringExtra(StrokeOrderActivity.INTENTKEY_KANJILIST);
 		assertEquals("今", q);
