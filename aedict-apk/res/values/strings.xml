@@ -124,7 +124,7 @@
     <string name="resetIntroductions">Reset introductions</string>
     <string name="resetIntroductionsSummary">All introduction dialogs will be shown again</string>
     <string name="whatsNew">What\'s New in %s</string>
-    <string name="whatsNewText">For full changelog please see http://baka.sk/aedict/changes-report.html\n\n- Added Undo in Kanjipad\n- Crashes when the dictionary file is missing\n- The kana version of example sentences is now separated by spaces (re-download the Tanaka dictionary for this)\n- Implemented Clear Search History/Delete Entries From History.\n- Fixed crashes on Android search\n -Prevents researches on orientation change.\n- Fixed: adding fourth tab to the notepad would crash\n- Added Advanced Copy activity.</string>
+    <string name="whatsNewText">For full changelog please see http://baka.sk/aedict/changes-report.html\n\n- Aedict can now be installed onto the SD card.\n- Implemented new engine for Tanaka example sentence analysis. Note that you need to re-download Tanaka dictionary to make use of this fix.\n- Added support for joining text to the clipboard.\n- Added possibility to search for more kanjis at once using the kanjipad.\n- Crash fixes</string>
     <string name="searchInEdict">Search in the Edict dictionary</string>
     <string name="showConjugations">Show verb conjugations</string>
     <string name="iDoSomething">I do something.</string>
