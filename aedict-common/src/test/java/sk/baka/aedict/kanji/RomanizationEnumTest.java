@@ -73,6 +73,7 @@ public class RomanizationEnumTest {
         assertEquals("コンピュータ", RomanizationEnum.NihonShiki.toKatakana("konpyuuta"));
         assertEquals("ボッブ", RomanizationEnum.NihonShiki.toKatakana("bobbu"));
         assertEquals("ソンナ", RomanizationEnum.NihonShiki.toKatakana("sonna"));
+        assertEquals("ソンンア", RomanizationEnum.NihonShiki.toKatakana("sonxna"));
         assertEquals("ンア", RomanizationEnum.NihonShiki.toKatakana("xna"));
     }
 
@@ -105,5 +106,20 @@ public class RomanizationEnumTest {
         assertEquals("sonna", RomanizationEnum.NihonShiki.toRomaji("そんな"));
         assertEquals("sonna", RomanizationEnum.NihonShiki.toRomaji("そんんあ"));
         assertEquals("na", RomanizationEnum.NihonShiki.toRomaji("んあ"));
+    }
+
+    /**
+     * Test for http://code.google.com/p/aedict/issues/detail?id=117
+     */
+    @Test
+    public void testApostropheSupport() {
+	assertEquals("ボンヤリ", RomanizationEnum.Hepburn.toKatakana("bonxyari"));
+	assertEquals("ボンヤリ", RomanizationEnum.NihonShiki.toKatakana("bonxyari"));
+	assertEquals("ぼんやり", RomanizationEnum.Hepburn.toHiragana("bonxyari"));
+	assertEquals("ぼんやり", RomanizationEnum.NihonShiki.toHiragana("bonxyari"));
+	assertEquals("ボンヤリ", RomanizationEnum.Hepburn.toKatakana("bon'yari"));
+	assertEquals("ボンヤリ", RomanizationEnum.NihonShiki.toKatakana("bon'yari"));
+	assertEquals("ぼんやり", RomanizationEnum.Hepburn.toHiragana("bon'yari"));
+	assertEquals("ぼんやり", RomanizationEnum.NihonShiki.toHiragana("bon'yari"));
     }
 }
