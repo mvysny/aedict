@@ -7,9 +7,11 @@ import sk.baka.aedict.MainActivity;
 import sk.baka.aedict.NotepadActivity;
 import sk.baka.aedict.R;
 import sk.baka.aedict.StrokeOrderActivity;
+import sk.baka.aedict.TanakaAnalyzeActivity;
 import sk.baka.aedict.VerbInflectionActivity;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.aedict.dict.TanakaDictEntry;
 import sk.baka.aedict.jlptquiz.InflectionQuizActivity;
 import sk.baka.autils.AndroidUtils;
 import android.app.Activity;
@@ -60,6 +62,13 @@ public class DictEntryListActions {
 			menu.add(0, 0, 0, R.string.analyze).setOnMenuItemClickListener(AndroidUtils.safe(activity, new MenuItem.OnMenuItemClickListener() {
 
 				public boolean onMenuItemClick(MenuItem item) {
+					if (entry instanceof TanakaDictEntry) {
+						final TanakaDictEntry e = (TanakaDictEntry) entry;
+						if (e.wordList != null && !e.wordList.isEmpty()) {
+							TanakaAnalyzeActivity.launch(activity, e);
+							return true;
+						}
+					}
 					KanjiAnalyzeActivity.launch(activity, entry.getJapanese(), false);
 					return true;
 				}
