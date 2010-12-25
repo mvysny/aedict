@@ -37,11 +37,13 @@ import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.DialogUtils;
 import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -131,6 +133,9 @@ public class MainActivity extends ListActivity {
 		super.onResume();
 		invalidateModel();
 		showRomaji.onResume();
+		findViewById(R.id.searchEdit).requestFocus();
+		final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
 	}
 
 	private List<DictEntry> modelCache = null;
