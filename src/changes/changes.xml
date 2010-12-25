@@ -4,6 +4,20 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
+		<release version="2.8" date="30. December 2010">
+			<action dev="vyzivus" type="add" issue="115">
+				Pressing the Enter key in Main Activity will now trigger intelligent search.
+			</action>
+			<action dev="vyzivus" type="update" issue="115">
+				MainActivity should now show soft input keyboard implicitly.
+			</action>
+			<action dev="vyzivus" type="add" issue="116">
+				Implemented Notepad.sendTo.
+			</action>
+			<action dev="vyzivus" type="fix" issue="117">
+				You can now force ya with xya and 'ya.
+			</action>
+		</release>
 		<release version="2.7" date="3. November 2010">
 			<action dev="vyzivus" type="add">
 				Kanji/TanakaAnalysis activities now provide correct context menu, with all items.
