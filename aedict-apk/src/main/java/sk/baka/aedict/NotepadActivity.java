@@ -408,7 +408,7 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 					intent.setType("text/plain");
 					intent.putExtra(Intent.EXTRA_SUBJECT, "Aedict Notepad");
 					intent.putExtra(Intent.EXTRA_TEXT, sb.toString());
-					startActivity(Intent.createChooser(intent, "Foo"));
+					startActivity(Intent.createChooser(intent, getString(R.string.sendTo)));
 					return true;
 				}
 			}));
