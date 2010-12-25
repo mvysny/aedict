@@ -247,15 +247,21 @@ public class MainActivity extends ListActivity {
 					return true;
 				}
 				final boolean isAdvanced = findViewById(R.id.advancedPanel).getVisibility() != View.GONE;
+				final RomanizationEnum r = AedictApp.getConfig().getRomanization();
 				if (!isAdvanced) {
 					// search for jp/en
-					final Deinflections d = VerbDeinflection.searchJpDeinflected(text, AedictApp.getConfig().getRomanization());
+					final Deinflections d = VerbDeinflection.searchJpDeinflected(text, r);
 					final SearchQuery en = SearchQuery.searchEnEdict(text, true);
-					ResultActivity.launch(MainActivity.this, Arrays.asList(d.query, en), d.deinflections);
+					ResultActivity.launch(MainActivity.this, Arrays.asList(en, d.query), d.deinflections);
 				} else if (deinflect.isChecked() || translate.isChecked()) {
 					search(true);
 				} else if (tanaka.isChecked()) {
-					// TODO tanaka search both in english and in jp
+					if (!AedictApp.getDownloader().checkDic(MainActivity.this, DictTypeEnum.Tanaka)) {
+						return true;
+					}
+					final SearchQuery jp = SearchQuery.searchTanaka(text, true, r);
+					final SearchQuery en = SearchQuery.searchTanaka(text, false, r);
+					ResultActivity.launch(MainActivity.this, Arrays.asList(en, jp), null);
 				}
 				return true;
 			}
