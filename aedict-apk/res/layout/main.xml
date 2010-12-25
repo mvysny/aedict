@@ -17,7 +17,7 @@
 	android:layout_width="fill_parent" android:layout_height="fill_parent">
 	<EditText android:layout_height="wrap_content" android:id="@+id/searchEdit"
 		android:layout_width="fill_parent" android:hint="@string/enterKanaRomajiEnglish"
-		android:inputType="text" />
+		android:inputType="text" android:imeOptions="actionDone"/>
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:orientation="horizontal">
 		<Button android:layout_width="wrap_content"
