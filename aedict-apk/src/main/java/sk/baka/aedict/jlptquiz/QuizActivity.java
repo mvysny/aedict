@@ -91,6 +91,7 @@ public class QuizActivity extends Activity {
 		outState.putSerializable(INTENTKEY_STATE, state);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

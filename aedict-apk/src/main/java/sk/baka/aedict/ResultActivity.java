@@ -31,16 +31,14 @@ import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
-import sk.baka.aedict.jlptquiz.InflectionQuizActivity;
-import sk.baka.aedict.kanji.Deinflections.Deinflection;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.aedict.kanji.RomanizationEnum;
+import sk.baka.aedict.kanji.Deinflections.Deinflection;
 import sk.baka.aedict.util.Constants;
 import sk.baka.aedict.util.DictEntryListActions;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.aedict.util.SpanStringBuilder;
 import sk.baka.autils.AbstractTask;
-import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
@@ -49,12 +47,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -119,6 +115,7 @@ public class ResultActivity extends ListActivity {
 	 */
 	public static final String INTENTKEY_SIMEJI = "simeji";
 
+	@SuppressWarnings("unchecked")
 	private List<SearchQuery> fromIntent() {
 		final Intent it = getIntent();
 		final List<SearchQuery> result;
@@ -167,6 +164,7 @@ public class ResultActivity extends ListActivity {
 		showRomaji.saveState(outState);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -331,6 +329,7 @@ public class ResultActivity extends ListActivity {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void updateTopText() {
 		final SpanStringBuilder b=new SpanStringBuilder();
 		final Config cfg = AedictApp.getConfig();

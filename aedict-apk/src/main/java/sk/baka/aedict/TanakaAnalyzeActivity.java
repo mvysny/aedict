@@ -38,7 +38,6 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -72,6 +71,7 @@ public class TanakaAnalyzeActivity extends ListActivity {
 	private List<DictEntry> model = null;
 	private TanakaDictEntry tanaka;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		model = (List<DictEntry>) savedInstanceState.getSerializable(INTENTKEY_STATE);

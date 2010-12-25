@@ -35,23 +35,19 @@ import sk.baka.aedict.kanji.Radicals;
 import sk.baka.aedict.util.DictEntryListActions;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AbstractTask;
-import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
 import sk.baka.autils.Progress;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 /**
  * Analyzes each kanji in given word.
@@ -132,6 +128,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		showRomaji.saveState(outState);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

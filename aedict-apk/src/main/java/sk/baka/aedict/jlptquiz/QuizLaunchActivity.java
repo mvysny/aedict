@@ -75,6 +75,7 @@ public class QuizLaunchActivity extends Activity {
 		}
 		findViewById(R.id.launch).setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
 
+			@SuppressWarnings("unchecked")
 			public void onClick(View v) {
 				final Set<Integer> jlpt = new HashSet<Integer>();
 				for (final Map.Entry<Integer, Integer> e : jlptMap.entrySet()) {
