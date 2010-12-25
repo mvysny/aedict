@@ -19,6 +19,7 @@
 package sk.baka.aedict;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import sk.baka.aedict.dict.DictEntry;
@@ -40,6 +41,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +49,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -235,6 +238,28 @@ public class MainActivity extends ListActivity {
 		tanaka.setOnCheckedChangeListener(new ComponentUpdater());
 		final CheckBox translate = (CheckBox) findViewById(R.id.translate);
 		translate.setOnCheckedChangeListener(new ComponentUpdater());
+		((EditText)findViewById(R.id.searchEdit)).setOnEditorActionListener(new EditText.OnEditorActionListener() {
+			
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				final String text = ((TextView) findViewById(R.id.searchEdit)).getText().toString().trim();
+				if (text.length() == 0) {
+					return true;
+				}
+				final boolean isAdvanced = findViewById(R.id.advancedPanel).getVisibility() != View.GONE;
+				if (!isAdvanced) {
+					// search for jp/en
+					final Deinflections d = VerbDeinflection.searchJpDeinflected(text, AedictApp.getConfig().getRomanization());
+					final SearchQuery en = SearchQuery.searchEnEdict(text, true);
+					ResultActivity.launch(MainActivity.this, Arrays.asList(d.query, en), d.deinflections);
+				} else if (deinflect.isChecked() || translate.isChecked()) {
+					search(true);
+				} else if (tanaka.isChecked()) {
+					// TODO tanaka search both in english and in jp
+				}
+				return true;
+			}
+		});
 	}
 
 	private void search(final boolean isJapanese) {
@@ -286,7 +311,7 @@ public class MainActivity extends ListActivity {
 				tanaka.setChecked(false);
 			}
 			matcher.setEnabled(!deinflect.isChecked() && !tanaka.isChecked() && !translate.isChecked());
-			findViewById(R.id.englishSearch).setEnabled(!translate.isChecked());
+			findViewById(R.id.englishSearch).setEnabled(!translate.isChecked() && !deinflect.isChecked());
 		}
 	}
 
