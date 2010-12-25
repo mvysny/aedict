@@ -51,9 +51,9 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
-import android.widget.TabHost.TabContentFactory;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
+import android.widget.TabHost.TabContentFactory;
 
 /**
  * A simple notepad activity, a simple kanji persistent storage. Allows for
@@ -385,6 +385,30 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 					Collections.shuffle(all);
 					all = new ArrayList<DictEntry>(all.subList(0, Math.min(20, all.size())));
 					QuizActivity.launch(NotepadActivity.this, all);
+					return true;
+				}
+			}));
+			final MenuItem sendTo = menu.add(0, 6, 6, R.string.sendTo);
+			sendTo.setIcon(android.R.drawable.ic_menu_send);
+			sendTo.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
+
+				public boolean onMenuItemClick(MenuItem item) {
+					final StringBuilder sb = new StringBuilder();
+					final List<String> categories = AedictApp.getConfig().getNotepadCategories();
+					if (categories.isEmpty()) {
+						categories.add("default");
+					}
+					for (int i = 0; i < categories.size(); i++) {
+						sb.append('[').append(categories.get(i)).append("]\n");
+						for (int j = 0; j < getModel(i).size(); j++) {
+							sb.append(getModel(i).get(j).toString()).append('\n');
+						}
+					}
+					final Intent intent = new Intent(Intent.ACTION_SEND);
+					intent.setType("text/plain");
+					intent.putExtra(Intent.EXTRA_SUBJECT, "Aedict Notepad");
+					intent.putExtra(Intent.EXTRA_TEXT, sb.toString());
+					startActivity(Intent.createChooser(intent, "Foo"));
 					return true;
 				}
 			}));
