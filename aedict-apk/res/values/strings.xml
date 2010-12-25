@@ -462,4 +462,5 @@
 	<string name="advancedCopy">Advanced Copy&amp;Search</string>
 	<string name="clipboard">Clipboard</string>
 	<string name="tanakaAnalysis">Tanaka Analysis</string>
+	<string name="sendTo">Send To</string>
 </resources>
