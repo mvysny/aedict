@@ -5,6 +5,12 @@
 	</properties>
 	<body>
 		<release version="2.8" date="30. December 2010">
+			<action dev="vyzivus" type="add" issue="112">
+				Notepad backup-to-SDCard/restore added.
+			</action>
+			<action dev="vyzivus" type="update" issue="114">
+				Tanaka analysis is now used whenever applicable.
+			</action>
 			<action dev="vyzivus" type="add" issue="115">
 				Pressing the Enter key in Main Activity will now trigger intelligent search.
 			</action>
