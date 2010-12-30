@@ -41,4 +41,8 @@
     	<item>Starts with</item>
     	<item>Ends with</item>
     </string-array>
+    <string-array name="notepadRestore">
+    	<item>Overwrite</item>
+    	<item>Merge</item>
+    </string-array>
 </resources>

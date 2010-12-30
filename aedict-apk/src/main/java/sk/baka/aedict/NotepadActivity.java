@@ -474,6 +474,7 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 	private void updateTabs() {
 		getTabHost().setCurrentTab(0);
 		final TabHost tabs = getTabHost();
+		tabContents.clear();
 		tabs.clearAllTabs();
 		final List<String> categories = AedictApp.getConfig().getNotepadCategories();
 		findViewById(android.R.id.list).setVisibility(categories.isEmpty() ? View.VISIBLE : View.GONE);
@@ -485,7 +486,6 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 			getTabHost().addTab(getTabHost().newTabSpec("0").setIndicator("0").setContent(this));
 			initializeListView((ListView) findViewById(android.R.id.list), 0);
 		}
-		tabContents.clear();
 		int i = 0;
 		for (final String cat : categories) {
 			final TabHost.TabSpec newTab = getTabHost().newTabSpec(Integer.toString(i++)).setIndicator(cat).setContent(this);
@@ -512,6 +512,7 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void restoreNotepad() {
 		if(!BACKUP.exists()) {
 			new DialogUtils(this).showErrorDialog(R.string.noBackup);
@@ -529,11 +530,39 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 			} finally {
 				MiscUtils.closeQuietly(dos);
 			}
-			AedictApp.getConfig().setNotepadCategories(categories);
-			for(int i=0;i<categories.size();i++){
-				AedictApp.getConfig().setNotepadItems(i, items.get(categories.get(i)));
-			}
-			updateTabs();
+			final AlertDialog.Builder builder = new AlertDialog.Builder(NotepadActivity.this);
+			builder.setItems(R.array.notepadRestore, new DialogInterface.OnClickListener() {
+
+				public void onClick(DialogInterface dialog, int which) {
+					final boolean isMerge = which == 1;
+					if(isMerge){
+						final List<String> currentCategories = AedictApp.getConfig().getNotepadCategories();
+						for (int i=0;i<currentCategories.size();i++){
+							final String currentCategory = currentCategories.get(i);
+							final List<DictEntry> currentItems = AedictApp.getConfig().getNotepadItems(i);
+							final List<DictEntry> backupItems = items.get(currentCategory);
+							if (backupItems == null) {
+								items.put(currentCategory, currentItems);
+								categories.add(currentCategory);
+							} else {
+								for (final DictEntry e : currentItems) {
+									if (!backupItems.contains(e)) {
+										backupItems.add(e);
+									}
+								}
+							}
+						}
+					}
+					AedictApp.getConfig().setNotepadCategories(categories);
+					for(int i=0;i<categories.size();i++){
+						AedictApp.getConfig().setNotepadItems(i, items.get(categories.get(i)));
+					}
+					modelCache.clear();
+					updateTabs();
+				}
+			});
+			builder.setTitle(R.string.restoreNotepad);
+			builder.create().show();
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
