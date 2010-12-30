@@ -465,6 +465,7 @@
 	<string name="sendTo">Send To</string>
 	<string name="backup">Backup</string>
 	<string name="restore">Restore</string>
+	<string name="restoreNotepad">Restore Notepad</string>
 	<string name="backupDone">Backup done!</string>
 	<string name="noBackup">There is no backup available.</string>
 </resources>
