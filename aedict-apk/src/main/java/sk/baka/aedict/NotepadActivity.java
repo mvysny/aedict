@@ -279,8 +279,13 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 	private void onModelChanged(final int category) {
 		final Config cfg = AedictApp.getConfig();
 		cfg.setNotepadItems(category, getModel(category));
-		final ArrayAdapter<?> adapter = (ArrayAdapter<?>) getListView(category).getAdapter();
-		adapter.notifyDataSetChanged();
+		final ListView lv = getListView(category);
+		// lv may be null if fucking TabHost does not call createTabContent()
+		// for some fucking reason.
+		if (lv != null) {
+			final ArrayAdapter<?> adapter = (ArrayAdapter<?>) lv.getAdapter();
+			adapter.notifyDataSetChanged();
+		}
 	}
 
 	@Override
@@ -298,25 +303,23 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 				return true;
 			}
 		}));
-		if (AedictApp.getConfig().getNotepadCategories().size() < Config.MAX_CATEGORIES) {
-			final MenuItem addCategory = menu.add(0, 2, 2, R.string.addCategory);
-			addCategory.setIcon(android.R.drawable.ic_menu_add);
-			addCategory.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
+		final MenuItem addCategory = menu.add(0, 2, 2, R.string.addCategory);
+		addCategory.setIcon(android.R.drawable.ic_menu_add);
+		addCategory.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
 
-				public boolean onMenuItemClick(MenuItem item) {
-					final List<String> categories = AedictApp.getConfig().getNotepadCategories();
-					categories.add("new");
-					AedictApp.getConfig().setNotepadCategories(categories);
-					final int category = categories.size() - 1;
-					if (category != 0) {
-						getModel(category).clear();
-					}
-					updateTabs();
-					return true;
+			public boolean onMenuItemClick(MenuItem item) {
+				final List<String> categories = AedictApp.getConfig().getNotepadCategories();
+				categories.add("new");
+				AedictApp.getConfig().setNotepadCategories(categories);
+				final int category = categories.size() - 1;
+				if (category != 0) {
+					getModel(category).clear();
 				}
+				updateTabs();
+				return true;
+			}
 
-			}));
-		}
+		}));
 		if (!AedictApp.getConfig().getNotepadCategories().isEmpty()) {
 			final MenuItem deleteCategory = menu.add(0, 3, 3, R.string.deleteCategory);
 			deleteCategory.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
@@ -430,9 +433,8 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 
 	public View createTabContent(String tag) {
 		final int category = Integer.parseInt(tag);
-		if (category < 0 || category >= Config.MAX_CATEGORIES) {
-			throw new IllegalArgumentException("Invalid category value: "
-					+ category);
+		if (category < 0) {
+			throw new IllegalArgumentException("Invalid category value: " + category);
 		}
 		final ListView lv = new ListView(this);
 		lv.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
