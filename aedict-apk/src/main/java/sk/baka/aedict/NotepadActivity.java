@@ -18,6 +18,11 @@
 
 package sk.baka.aedict;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,6 +37,7 @@ import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.DictEntryListActions;
 import sk.baka.aedict.util.ShowRomaji;
 import sk.baka.autils.AndroidUtils;
+import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -416,6 +422,25 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 				}
 			}));
 		}
+		final MenuItem backup = menu.add(0, 7, 7, R.string.backup);
+		backup.setIcon(android.R.drawable.ic_menu_save);
+		backup.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
+
+			public boolean onMenuItemClick(MenuItem item) {
+				backupNotepad();
+				new DialogUtils(NotepadActivity.this).showToast(R.string.backupDone);
+				return true;
+			}
+		}));
+		final MenuItem restore = menu.add(0, 8, 8, R.string.restore);
+		restore.setIcon(android.R.drawable.ic_menu_revert);
+		restore.setOnMenuItemClickListener(AndroidUtils.safe(this, new MenuItem.OnMenuItemClickListener() {
+
+			public boolean onMenuItemClick(MenuItem item) {
+				restoreNotepad();
+				return true;
+			}
+		}));
 		return true;
 	}
 
@@ -465,6 +490,52 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 		for (final String cat : categories) {
 			final TabHost.TabSpec newTab = getTabHost().newTabSpec(Integer.toString(i++)).setIndicator(cat).setContent(this);
 			getTabHost().addTab(newTab);
+		}
+	}
+	
+	private static final File BACKUP = new File("/sdcard/aedict/notepad.backup");
+	
+	private void backupNotepad() {
+		try {
+			final ObjectOutputStream dos = new ObjectOutputStream(new FileOutputStream(BACKUP));
+			try {
+				final List<String> categories = AedictApp.getConfig().getNotepadCategories();
+				dos.writeObject(categories);
+				for (int i = 0; i < categories.size(); i++) {
+					dos.writeObject(AedictApp.getConfig().getNotepadItems(i));
+				}
+			} finally {
+				MiscUtils.closeQuietly(dos);
+			}
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	private void restoreNotepad() {
+		if(!BACKUP.exists()) {
+			new DialogUtils(this).showErrorDialog(R.string.noBackup);
+			return;
+		}
+		try {
+			final List<String> categories;
+			final Map<String, List<DictEntry>> items = new HashMap<String,List<DictEntry>>();
+			final ObjectInputStream dos = new ObjectInputStream(new FileInputStream(BACKUP));
+			try {
+				categories = (List<String>) dos.readObject();
+				for (int i = 0; i < categories.size(); i++) {
+					items.put(categories.get(i), (List<DictEntry>) dos.readObject());
+				}
+			} finally {
+				MiscUtils.closeQuietly(dos);
+			}
+			AedictApp.getConfig().setNotepadCategories(categories);
+			for(int i=0;i<categories.size();i++){
+				AedictApp.getConfig().setNotepadItems(i, items.get(categories.get(i)));
+			}
+			updateTabs();
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
 		}
 	}
 }
