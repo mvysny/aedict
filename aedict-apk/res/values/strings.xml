@@ -34,7 +34,7 @@
     <string name="yes">Yes</string>
     <string name="sdcardCleanup">SD-Card cleanup</string>
     <string name="sdcardCleanupSummary">Deletes all Aedict-downloaded files, including dictionaries</string>
-    <string name="warning_less_than_x_mb_free"> Warning: there is less than %d kb of free space on the sd card (%d kb). The download will most probably fail.</string>
+    <string name="warning_less_than_x_mb_free" formatted="false"> Warning: there is less than %d kb of free space on the sd card (%d kb). The download will most probably fail.</string>
     <string name="dictionary_missing_download">The %s dictionary is missing. Do you wish to download it now?</string>
     <string name="downloading_dictionary">Downloading %s</string>
     <string name="interrupted">Interrupted</string>
@@ -411,7 +411,7 @@
 	<string name="jlptQuiz">JLPT Quiz</string>
 	<string name="launch">Launch</string>
 	<string name="showDetailed">Show detailed</string>
-	<string name="youScored">You scored %d out of %d questions</string>
+	<string name="youScored" formatted="false">You scored %d out of %d questions</string>
 	<string name="results">Results</string>
 	<string name="downloadAll">Download all dictionaries</string>
 	<string name="noActiveDownload">No active download</string>
