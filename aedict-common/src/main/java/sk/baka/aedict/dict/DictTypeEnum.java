@@ -202,64 +202,28 @@ public enum DictTypeEnum {
         public DictEntry getEntry(Document doc) {
             // the entry is described at
             // http://www.csse.monash.edu.au/~jwb/kanjidic.html
-            String kanjidicEntry = doc.get("contents");
-            if (kanjidicEntry == null) {
-                // reading Lucene >=2.9.0 data file...
-                try {
-                    kanjidicEntry = CompressionTools.decompressString(doc.getBinaryValue("contents"));
-                } catch (DataFormatException ex) {
-                    throw new RuntimeException(ex);
+            try {
+                final char kanji = doc.get("kanji").charAt(0);
+                String reading = CompressionTools.decompressString(doc.getBinaryValue("reading"));
+                final String namereading = CompressionTools.decompressString(doc.getBinaryValue("namereading"));
+                final int radicalNumber = Integer.parseInt(doc.get("radical"));
+                // the strokes count is a space-separated list of strokes. First
+                // number denotes a correct number of strokes, following numbers
+                // denote a commonly mismatched number of strokes.
+                final int strokeCount = Integer.parseInt(new StringTokenizer(doc.get("strokes")).nextToken());
+                Integer grade = null;
+                if (doc.get("grade") != null) {
+                    grade = Integer.parseInt(doc.get("grade"));
                 }
-            }
-            final char kanji = kanjidicEntry.charAt(0);
-            if (kanjidicEntry.charAt(1) != ' ') {
-                throw new IllegalArgumentException("Invalid kanjidic entry: " + kanjidicEntry);
-            }
-            final ListBuilder reading = new ListBuilder(", ");
-            final ListBuilder namesReading = new ListBuilder(", ");
-            boolean readingInNames = false;
-            final int radicalNumber = Integer.parseInt(doc.get("radical"));
-            // the strokes count is a space-separated list of strokes. First
-            // number denotes a correct number of strokes, following numbers
-            // denote a commonly mismatched number of strokes.
-            final int strokeCount = Integer.parseInt(new StringTokenizer(doc.get("strokes")).nextToken());
-            Integer grade = null;
-            final String skip = doc.get("skip");
-            // first pass: ignore English readings as they may contain spaces
-            // and
-            // this simple algorithm would match them as readings (as the token
-            // does
-            // not start with '{' )
-            for (final String field : kanjidicEntry.substring(2).split("\\ ")) {
-                final char firstChar = KanjidicEntry.removeSplits(field).charAt(0);
-                if (firstChar == '{') {
-                    break;
-                } else if (firstChar == 'G') {
-                    grade = Integer.parseInt(field.substring(1));
-                } else if (KanjiUtils.isHiragana(firstChar) || KanjiUtils.isKatakana(firstChar)) {
-                    // a reading
-                    (readingInNames ? namesReading : reading).add(field);
-                } else if (field.equals("T1")) {
-                    readingInNames = true;
+                final String skip = doc.get("skip");
+                final String english = doc.get("english");
+                if (namereading.length() != 0) {
+                    reading = reading + ", [" + namereading + "]";
                 }
+                return new KanjidicEntry(String.valueOf(kanji), reading, english, radicalNumber, strokeCount, skip, grade);
+            } catch (DataFormatException ex) {
+                throw new RuntimeException(ex);
             }
-            // second pass: English translations
-            final ListBuilder english = new ListBuilder(", ");
-            List<Object> tokens = Collections.list(new StringTokenizer(kanjidicEntry, "{}"));
-            // skip the kanji definition tokens
-            tokens = tokens.subList(1, tokens.size());
-            for (final Object eng : tokens) {
-                final String engStr = eng.toString().trim();
-                if (engStr.length() == 0) {
-                    // skip spaces between } {
-                    continue;
-                }
-                english.add(engStr);
-            }
-            if (!namesReading.isEmpty()) {
-                reading.add("[" + namesReading + "]");
-            }
-            return new KanjidicEntry(String.valueOf(kanji), reading.toString(), english.toString(), radicalNumber, strokeCount, skip, grade);
         }
 
         @Override
