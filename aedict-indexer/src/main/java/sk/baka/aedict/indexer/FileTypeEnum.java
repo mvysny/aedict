@@ -20,12 +20,17 @@ package sk.baka.aedict.indexer;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.List;
+import java.util.StringTokenizer;
 import org.apache.commons.io.IOUtils;
 import org.apache.lucene.document.CompressionTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.aedict.dict.KanjidicEntry;
+import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.autils.ListBuilder;
 
 /**
@@ -98,7 +103,6 @@ public enum FileTypeEnum {
                 private int highestKanjiCodePoint = 0;
 
                 public boolean addLine(String line, Document doc) {
-                    doc.add(new Field("contents", CompressionTools.compressString(line), Field.Store.YES));
                     final String kanji = getKanji(line);
                     final int kanjiCodePoint = kanji.codePointAt(0);
                     lowestKanjiCodePoint = Math.min(kanjiCodePoint, lowestKanjiCodePoint);
@@ -119,6 +123,42 @@ public enum FileTypeEnum {
                             commonality[rank - 1] = kanji.charAt(0);
                         }
                     }
+                    final ListBuilder reading = new ListBuilder(", ");
+                    final ListBuilder namesReading = new ListBuilder(", ");
+                    boolean readingInNames = false;
+                    for (final String field : line.substring(2).split("\\s+")) {
+                        final char firstChar = KanjidicEntry.removeSplits(field).charAt(0);
+                        if (firstChar == '{') {
+                            break;
+                        } else if (firstChar == 'G') {
+                            final int grade = Integer.parseInt(field.substring(1));
+                            doc.add(new Field("grade", String.valueOf(grade), Field.Store.YES, Field.Index.NO));
+                        } else if (KanjiUtils.isHiragana(firstChar) || KanjiUtils.isKatakana(firstChar)) {
+                            // a reading
+                            (readingInNames ? namesReading : reading).add(field);
+                        } else if (field.equals("T1")) {
+                            readingInNames = true;
+                        }
+                    }
+                    // second pass: English translations
+                    final ListBuilder english = new ListBuilder(", ");
+                    List<Object> tokens = Collections.list(new StringTokenizer(line, "{}"));
+                    // skip the kanji definition tokens
+                    tokens = tokens.subList(1, tokens.size());
+                    for (final Object eng : tokens) {
+                        final String engStr = eng.toString().trim();
+                        if (engStr.length() == 0) {
+                            // skip spaces between } {
+                            continue;
+                        }
+                        english.add(engStr);
+                    }
+                    if (!namesReading.isEmpty()) {
+                        reading.add("[" + namesReading + "]");
+                    }
+                    doc.add(new Field("english", CompressionTools.compressString(english.toString()), Field.Store.YES));
+                    doc.add(new Field("reading", CompressionTools.compressString(reading.toString()), Field.Store.YES));
+                    doc.add(new Field("namereading", CompressionTools.compressString(namesReading.toString()), Field.Store.YES));
                     return true;
                 }
 
