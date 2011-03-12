@@ -279,7 +279,7 @@ public final class SearchQuery implements Serializable {
             break;
             case Kanjidic: {
                 if (matcher != MatcherEnum.Exact) {
-                    throw new IllegalStateException("Tanaka search: matcher must be Substring but is " + matcher);
+                    throw new IllegalStateException("Kanjidic search: matcher must be Exact but is " + matcher);
                 }
             }
             break;
