@@ -52,6 +52,7 @@ public final class LuceneSearch implements Closeable {
     private final IndexReader reader;
     private final Searcher searcher;
     private final QueryParser parser;
+    public static final Version LUCENE_VERSION = Version.LUCENE_30;
     /**
      * The dictionary type.
      */
@@ -78,7 +79,7 @@ public final class LuceneSearch implements Closeable {
         directory = FSDirectory.open(new File(dictionaryPath != null ? dictionaryPath : dictType.getDefaultDictionaryPath()));
         reader = IndexReader.open(directory, true);
         searcher = new IndexSearcher(reader);
-        parser = new QueryParser(Version.LUCENE_24, "contents", new StandardAnalyzer(Version.LUCENE_24));
+        parser = new QueryParser(LUCENE_VERSION, "contents", new StandardAnalyzer(LUCENE_VERSION));
         this.sort = sort;
     }
 
@@ -115,7 +116,7 @@ public final class LuceneSearch implements Closeable {
         // "maxResults" results and filter out non-exact results - we can filter
         // out all results this way, and the real, exact matches, may remain
         // unretrieved by Lucene. TODO perhaps a better Lucene query might help.
-        final int maxLuceneResults = query.matcher != MatcherEnum.Substring ? 5000 : maxResults;
+        final int maxLuceneResults = (query.matcher != MatcherEnum.Substring) && (query.dictType == DictTypeEnum.Edict) && (!query.isJapanese) ? 5000 : maxResults;
         int resultsToFind = maxLuceneResults;
         for (final String q : queries) {
             // gradually walk through the queries and fill the result list.

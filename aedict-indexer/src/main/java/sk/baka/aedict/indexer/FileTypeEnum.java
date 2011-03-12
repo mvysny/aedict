@@ -26,6 +26,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.EdictEntry;
+import sk.baka.autils.ListBuilder;
 
 /**
  * Denotes a dictionary file type.
@@ -54,7 +55,14 @@ public enum FileTypeEnum {
                         return true;
                     }
                     final EdictEntry entry = DictTypeEnum.parseEdictEntry(line);
-                    doc.add(new Field("contents", line, Field.Store.YES, Field.Index.NOT_ANALYZED));
+                    doc.add(new Field("contents", line, Field.Store.YES, Field.Index.ANALYZED));
+                    doc.add(new Field("common", entry.isCommon ? "t" : "f", Field.Store.NO, Field.Index.NOT_ANALYZED));
+                    final ListBuilder jp = new ListBuilder(" ");
+                    if (entry.kanji != null) {
+                        jp.add("W" + entry.kanji + "W");
+                    }
+                    jp.add("W" + entry.reading + "W");
+                    doc.add(new Field("jp", jp.toString(), Field.Store.NO, Field.Index.ANALYZED));
                     return true;
                 }
 
@@ -200,5 +208,9 @@ public enum FileTypeEnum {
      */
     public abstract String getDefaultDownloadUrl();
 
+    /**
+     * Indexer uses this method to display a hint to the user, where the dictionary is stored on the SD card.
+     * @return a displayable hint.
+     */
     public abstract String getAndroidSdcardRelativeLoc();
 }
