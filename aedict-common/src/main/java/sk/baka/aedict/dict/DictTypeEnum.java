@@ -61,11 +61,11 @@ public enum DictTypeEnum {
                     if (q.contains(" AND ")) {
                         final ListBuilder lb = new ListBuilder(" AND ");
                         for (final String term : q.split(" AND ")) {
-                            lb.add(getJpSearchTerm(term.trim(), query.matcher));
+                            lb.add("jp:" + getJpSearchTerm(term.trim(), query.matcher));
                         }
                         sb.add("(" + lb + ")");
                     } else {
-                        sb.add("\"" + getJpSearchTerm(q.trim(), query.matcher) + "\"");
+                        sb.add("jp:\"" + getJpSearchTerm(q.trim(), query.matcher) + "\"");
                     }
                 } else {
                     if (q.contains(" AND ")) {
