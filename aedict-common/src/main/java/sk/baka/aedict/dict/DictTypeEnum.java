@@ -19,15 +19,10 @@ package sk.baka.aedict.dict;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
 import java.util.StringTokenizer;
 import java.util.zip.DataFormatException;
-
 import org.apache.lucene.document.CompressionTools;
 import org.apache.lucene.document.Document;
-
-import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
 
