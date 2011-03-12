@@ -48,7 +48,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.commons.cli.Options;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
+import sk.baka.aedict.dict.LuceneSearch;
 
 /**
  * Downloads the EDict file, indexes it with Lucene then zips it.
@@ -191,7 +191,7 @@ public class Main {
             final Directory directory = FSDirectory.open(new File(LUCENE_INDEX));
             try {
                 final IndexWriter luceneWriter = new IndexWriter(directory,
-                        new StandardAnalyzer(Version.LUCENE_24), true,
+                        new StandardAnalyzer(LuceneSearch.LUCENE_VERSION), true,
                         IndexWriter.MaxFieldLength.UNLIMITED);
                 try {
                     final IDictParser parser = fileType.newParser();

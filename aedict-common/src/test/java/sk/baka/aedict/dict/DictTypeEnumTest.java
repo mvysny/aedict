@@ -133,17 +133,21 @@ public class DictTypeEnumTest {
     @Test
     public void testEdictQueryCreator() {
         final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
+        q.matcher = MatcherEnum.Exact;
         q.query = new String[]{"foo", "bar"};
         q.isJapanese = true;
-        Assert.assertArrayEquals(DictTypeEnum.Edict.getLuceneQuery(q), new String[]{"(\"foo\" OR \"bar\") AND \\(P\\)", "(\"foo\" OR \"bar\") NOT \\(P\\)"});
+        q.validate();
+        Assert.assertArrayEquals(DictTypeEnum.Edict.getLuceneQuery(q), new String[]{"(\"WfooW\" OR \"WbarW\") AND common:t", "(\"WfooW\" OR \"WbarW\") AND common:f"});
     }
 
     @Test
     public void testEdictAndQueryCreator() {
         final SearchQuery q = new SearchQuery(DictTypeEnum.Edict);
+        q.matcher = MatcherEnum.StartsWith;
         q.query = new String[]{"foo AND goo", "bar"};
         q.isJapanese = true;
-        Assert.assertArrayEquals(DictTypeEnum.Edict.getLuceneQuery(q), new String[]{"((foo AND goo) OR \"bar\") AND \\(P\\)", "((foo AND goo) OR \"bar\") NOT \\(P\\)"});
+        q.validate();
+        Assert.assertArrayEquals(DictTypeEnum.Edict.getLuceneQuery(q), new String[]{"((Wfoo AND Wgoo) OR \"Wbar\") AND common:t", "((Wfoo AND Wgoo) OR \"Wbar\") AND common:f"});
     }
 
     @Test

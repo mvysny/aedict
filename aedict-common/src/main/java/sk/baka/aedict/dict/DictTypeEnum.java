@@ -43,19 +43,41 @@ public enum DictTypeEnum {
      */
     Edict {
 
+        private String getJpSearchTerm(String term, MatcherEnum matcher) {
+            switch(matcher){
+                case EndsWith: return term+"W";
+                case Exact: return "W"+term+"W";
+                case StartsWith: return "W"+term;
+                case Substring: return term;
+            }
+            throw new RuntimeException("Unknown matcher: "+matcher);
+        }
+
         @Override
         public String[] getLuceneQuery(SearchQuery query) {
             final ListBuilder sb = new ListBuilder(" OR ");
             for (final String q : query.query) {
-		if (q.contains(" AND ")) {
-		    sb.add("(" + q.trim() + ")");
-		} else {
-		    sb.add("\"" + q.trim() + "\"");
-		}
+                if (query.isJapanese) {
+                    if (q.contains(" AND ")) {
+                        final ListBuilder lb = new ListBuilder(" AND ");
+                        for (final String term : q.split(" AND ")) {
+                            lb.add(getJpSearchTerm(term.trim(), query.matcher));
+                        }
+                        sb.add("(" + lb + ")");
+                    } else {
+                        sb.add("\"" + getJpSearchTerm(q.trim(), query.matcher) + "\"");
+                    }
+                } else {
+                    if (q.contains(" AND ")) {
+                        sb.add("(" + q.trim() + ")");
+                    } else {
+                        sb.add("\"" + q.trim() + "\"");
+                    }
+                }
             }
             // first the common words are returned, then return all the rest
             // fixes http://code.google.com/p/aedict/issues/detail?id=47
-            return new String[]{"(" + sb + ") AND \\(P\\)", "(" + sb + ") NOT \\(P\\)"};
+            return new String[]{"(" + sb + ") AND common:t", "(" + sb + ") AND common:f"};
         }
 
         @Override
