@@ -17,7 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package sk.baka.aedict.dict;
 
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -109,7 +111,21 @@ public class DictEntry implements Comparable<DictEntry>, Serializable {
      * @return invalid edict entry.
      */
     public static DictEntry newErrorMsg(final Throwable t) {
-        return newErrorMsg(t.toString());
+        return newErrorMsg(t.toString() + "\n" + getStacktrace(t));
+    }
+    /**
+     * Returns stacktrace of given exception.
+     *
+     * @param ex
+     *            the exception
+     * @return stacktrace as string.
+     */
+    private static String getStacktrace(Throwable ex) {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        pw.close();
+        return sw.toString();
     }
 
     /**
