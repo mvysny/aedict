@@ -216,7 +216,7 @@ public enum DictTypeEnum {
                     grade = Integer.parseInt(doc.get("grade"));
                 }
                 final String skip = doc.get("skip");
-                final String english = doc.get("english");
+                final String english = CompressionTools.decompressString(doc.getBinaryValue("english"));
                 if (namereading.length() != 0) {
                     reading = reading + ", [" + namereading + "]";
                 }
