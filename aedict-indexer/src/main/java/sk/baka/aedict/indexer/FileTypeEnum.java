@@ -24,6 +24,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.lucene.document.CompressionTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.EdictEntry;
 
 /**
  * Denotes a dictionary file type.
@@ -51,7 +53,8 @@ public enum FileTypeEnum {
                     if (line.startsWith("　？？？")) {
                         return true;
                     }
-                    doc.add(new Field("contents", line, Field.Store.YES, Field.Index.ANALYZED));
+                    final EdictEntry entry = DictTypeEnum.parseEdictEntry(line);
+                    doc.add(new Field("contents", line, Field.Store.YES, Field.Index.NOT_ANALYZED));
                     return true;
                 }
 
