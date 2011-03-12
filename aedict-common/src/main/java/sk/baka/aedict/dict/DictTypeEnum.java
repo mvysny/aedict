@@ -77,38 +77,9 @@ public enum DictTypeEnum {
             return 20L * 1024 * 1024;
         }
 
-        public DictEntry parseEntry(final String edictEntry) {
-            // the entry is in one of the two following formats:
-            // KANJI [hiragana] / english meaning
-            // katakana / english meaning
-            final int firstSlash = edictEntry.indexOf('/');
-            if (firstSlash < 0) {
-                throw new IllegalArgumentException("Failed to parse " + edictEntry + ": missing slash");
-            }
-            String englishPart = edictEntry.substring(firstSlash + 1).trim();
-            while (englishPart.endsWith("/")) {
-                // drop trailing slashes
-                englishPart = englishPart.substring(0, englishPart.length() - 1);
-            }
-            final String jpPart = edictEntry.substring(0, firstSlash).trim();
-            final int openSquareBracket = jpPart.indexOf('[');
-            final String kanji;
-            final String reading;
-            if (openSquareBracket < 0) {
-                // just a katakana reading, no kanji
-                kanji = null;
-                reading = jpPart;
-            } else {
-                kanji = jpPart.substring(0, openSquareBracket).trim();
-                final int closingSquareBracket = jpPart.indexOf(']');
-                reading = jpPart.substring(openSquareBracket + 1, closingSquareBracket).trim();
-            }
-            return new EdictEntry(kanji, reading, englishPart);
-        }
-
         @Override
         public DictEntry getEntry(Document doc) {
-            return parseEntry(doc.get("contents"));
+            return parseEdictEntry(doc.get("contents"));
         }
 
         @Override
@@ -165,15 +136,17 @@ public enum DictTypeEnum {
                 qb.add("kanji:\"" + q.query[0].trim() + "\"");
             }
             if (q.strokeCount != null) {
-                final ListBuilder sb = new ListBuilder(" OR ");
                 final int plusMinus = q.strokesPlusMinus == null ? 0 : q.strokesPlusMinus;
                 if ((plusMinus > 3) || (plusMinus < 0)) {
                     throw new IllegalStateException("Invalid value: " + q.strokesPlusMinus);
                 }
-                for (int strokes = q.strokeCount - plusMinus; strokes <= q.strokeCount + plusMinus; strokes++) {
-                    sb.add("strokes:" + strokes);
+                final String sc;
+                if (plusMinus > 0) {
+                    sc = "[" + (q.strokeCount - plusMinus) + " TO " + (q.strokeCount + plusMinus) +"]";
+                } else {
+                    sc = String.valueOf(q.strokeCount);
                 }
-                qb.add("(" + sb.toString() + ")");
+                qb.add("(strokes:" + sc + ")");
             }
             if (q.skip != null) {
                 qb.add("skip:" + q.skip);
@@ -476,4 +449,33 @@ public enum DictTypeEnum {
      * @return true if the query matches, false otherwise.
      */
     protected abstract boolean matches(final DictEntry entry, final boolean isJapanese, final String query, final MatcherEnum matcher);
+
+    public static EdictEntry parseEdictEntry(final String edictEntry) {
+        // the entry is in one of the two following formats:
+        // KANJI [hiragana] / english meaning
+        // katakana / english meaning
+        final int firstSlash = edictEntry.indexOf('/');
+        if (firstSlash < 0) {
+            throw new IllegalArgumentException("Failed to parse " + edictEntry + ": missing slash");
+        }
+        String englishPart = edictEntry.substring(firstSlash + 1).trim();
+        while (englishPart.endsWith("/")) {
+            // drop trailing slashes
+            englishPart = englishPart.substring(0, englishPart.length() - 1);
+        }
+        final String jpPart = edictEntry.substring(0, firstSlash).trim();
+        final int openSquareBracket = jpPart.indexOf('[');
+        final String kanji;
+        final String reading;
+        if (openSquareBracket < 0) {
+            // just a katakana reading, no kanji
+            kanji = null;
+            reading = jpPart;
+        } else {
+            kanji = jpPart.substring(0, openSquareBracket).trim();
+            final int closingSquareBracket = jpPart.indexOf(']');
+            reading = jpPart.substring(openSquareBracket + 1, closingSquareBracket).trim();
+        }
+        return new EdictEntry(kanji, reading, englishPart);
+    }
 }
