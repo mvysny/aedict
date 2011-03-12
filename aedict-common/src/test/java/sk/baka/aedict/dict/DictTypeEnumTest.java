@@ -137,7 +137,7 @@ public class DictTypeEnumTest {
         q.query = new String[]{"foo", "bar"};
         q.isJapanese = true;
         q.validate();
-        Assert.assertArrayEquals(DictTypeEnum.Edict.getLuceneQuery(q), new String[]{"(\"WfooW\" OR \"WbarW\") AND common:t", "(\"WfooW\" OR \"WbarW\") AND common:f"});
+        Assert.assertArrayEquals(DictTypeEnum.Edict.getLuceneQuery(q), new String[]{"(jp:\"WfooW\" OR jp:\"WbarW\") AND common:t", "(jp:\"WfooW\" OR jp:\"WbarW\") AND common:f"});
     }
 
     @Test
@@ -147,7 +147,7 @@ public class DictTypeEnumTest {
         q.query = new String[]{"foo AND goo", "bar"};
         q.isJapanese = true;
         q.validate();
-        Assert.assertArrayEquals(DictTypeEnum.Edict.getLuceneQuery(q), new String[]{"((Wfoo AND Wgoo) OR \"Wbar\") AND common:t", "((Wfoo AND Wgoo) OR \"Wbar\") AND common:f"});
+        Assert.assertArrayEquals(DictTypeEnum.Edict.getLuceneQuery(q), new String[]{"((jp:Wfoo AND jp:Wgoo) OR jp:\"Wbar\") AND common:t", "((jp:Wfoo AND jp:Wgoo) OR jp:\"Wbar\") AND common:f"});
     }
 
     @Test
