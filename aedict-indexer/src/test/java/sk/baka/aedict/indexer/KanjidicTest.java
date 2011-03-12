@@ -47,4 +47,19 @@ public class KanjidicTest extends AbstractLuceneSearchTest {
         assertEquals(1, s.size());
         assertEquals("1-7-7", s.get(0));
     }
+
+    /**
+     * Tests issue 124: missing kanji for:
+     * 慕 4A69 U6155 B140 C61 G8 S14 F2100 J1 N4040 V1948 H2353 DK1521 L633 K1895 DO1382 MN11088X MP4.1153 E1788 IN1431 DF1313 DJ1668 DG835 DM640 DM                                     P2-3-11 I3k11.12 Q4433.3 DR1940 Ymu4 Wmo ボ した.う {pining} {yearn for} {love dearly} {adore} 
+     * @throws Exception
+     */
+    @Test
+    public void testForIssue124MissingKanji() throws Exception {
+        List<String> s = search(null, "慕");
+        assertEquals(1, s.size());
+        assertEquals("慕", s.get(0));
+        s = search("skip", "kanji:慕");
+        assertEquals(1, s.size());
+        assertEquals("2-3-11", s.get(0));
+    }
 }
