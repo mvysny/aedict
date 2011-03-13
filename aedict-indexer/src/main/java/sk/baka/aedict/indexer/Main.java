@@ -28,12 +28,18 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
+import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.connection.ConnectionException;
+import net.schmizz.sshj.connection.channel.direct.Session;
+import net.schmizz.sshj.connection.channel.direct.Session.Command;
+import net.schmizz.sshj.transport.TransportException;
+import net.schmizz.sshj.xfer.scp.SCPFileTransfer;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -43,12 +49,12 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.commons.cli.Options;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import sk.baka.aedict.dict.LuceneSearch;
+import sk.baka.autils.MiscUtils;
 
 /**
  * Downloads the EDict file, indexes it with Lucene then zips it.
@@ -77,6 +83,49 @@ public class Main {
             System.exit(1);
         }
     }
+    private static final String REMOTE_DIR = "/home/moto/public_html/aedict";
+
+    private static void exec(SSHClient ssh, String cmd) throws ConnectionException, TransportException, IOException {
+        final Session s = ssh.startSession();
+        try {
+            final Command c = s.exec(cmd);
+            if (c.getExitErrorMessage() != null) {
+                throw new RuntimeException("Command " + cmd + " failed to execute with status " + c.getExitStatus() + ": " + c.getExitErrorMessage() + ", " + c.getErrorAsString());
+            }
+        } finally {
+            MiscUtils.closeQuietly(s);
+        }
+    }
+
+    private void upload() throws Exception {
+        System.out.println("Uploading");
+        final SSHClient ssh = new SSHClient();
+        ssh.loadKnownHosts();
+        String password = config.password;
+        if (password == null) {
+            System.out.println("Enter password");
+            final Scanner s = new Scanner(System.in);
+            password = s.nextLine();
+            if (MiscUtils.isBlank(password)) {
+                throw new RuntimeException("Invalid password: blank");
+            }
+        }
+        System.out.println("Connecting");
+        ssh.connect("rt.sk");
+        try {
+            System.out.println("Authenticating");
+            ssh.authPassword("moto", password);
+            System.out.println("Uploading version");
+            final String targetFName = REMOTE_DIR + "/" + config.fileType.getTargetFileName();
+            exec(ssh, "echo `date +%Y%m%d` >" + REMOTE_DIR + "/" + config.fileType.getTargetFileName() + ".version");
+            exec(ssh, "rm -f " + targetFName);
+            System.out.println("Uploading");
+            final SCPFileTransfer ft = ssh.newSCPFileTransfer();
+            ft.upload(config.fileType.getTargetFileName(), targetFName);
+        } finally {
+            ssh.disconnect();
+        }
+    }
 
     public static class Config {
 
@@ -86,6 +135,8 @@ public class Main {
         public boolean isGzipped;
         public FileTypeEnum fileType;
         public Charset encoding;
+        public boolean upload;
+        public String password;
 
         public InputStream newInputStream() throws IOException {
             InputStream in;
@@ -123,6 +174,8 @@ public class Main {
         opts.addOption("k", "kanjidic", false, "the file to process is actually a kanjidic");
         opts.addOption("t", "tanaka", false, "the file to process is a Tanaka Corpus with example sentences");
         opts.addOption("T", "tatoeba", false, "the file to process is a Tatoeba Project file with example sentences");
+        opts.addOption(null, "upload", false, "Uploads the dictionary file to www.baka.sk");
+        opts.addOption("p", "password", true, "Upload SSH password");
         return opts;
     }
 
@@ -163,6 +216,8 @@ public class Main {
             throw new ParseException("Charset " + charset + " is not supported by JVM. Supported charsets: " + new ArrayList<String>(Charset.availableCharsets().keySet()));
         }
         config.encoding = Charset.forName(charset);
+        config.upload = cl.hasOption("upload");
+        config.password = cl.getOptionValue('p');
     }
 
     private static void printHelp() {
@@ -183,6 +238,9 @@ public class Main {
         System.out.println(sb.toString());
         indexWithLucene();
         zipLuceneIndex();
+        if (config.upload) {
+            upload();
+        }
         final String aedictDir = config.fileType.getAndroidSdcardRelativeLoc();
         System.out.println("Finished - the index file '" + config.fileType.getTargetFileName() + "' was created.");
         System.out.println("To use the indexed file with Aedict, you'll have to:");

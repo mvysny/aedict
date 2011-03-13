@@ -161,9 +161,6 @@ public class TatoebaParser implements IDictParser {
             for (Integer i : graph) {
                 links.remove(i);
             }
-            if (graphs.size() % 1000 == 0) {
-                System.out.println("Got " + graphs.size() + " sentences");
-            }
             if (graphs.size() % 10000 == 0) {
                 links = new HashMap<Integer, Set<Integer>>(links);  // force re-hash to increase performance
             }
