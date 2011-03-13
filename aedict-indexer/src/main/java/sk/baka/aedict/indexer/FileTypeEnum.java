@@ -31,6 +31,7 @@ import org.apache.lucene.index.IndexWriter;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.KanjidicEntry;
+import sk.baka.aedict.indexer.Main.Config;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.autils.ListBuilder;
 
@@ -53,7 +54,7 @@ public enum FileTypeEnum {
             return "http://ftp.monash.edu.au/pub/nihongo/edict.gz";
         }
 
-        public IDictParser newParser() {
+        public IDictParser newParser(Config cfg) {
             return new IDictParser() {
 
                 public void addLine(String line, IndexWriter writer) throws IOException {
@@ -82,6 +83,14 @@ public enum FileTypeEnum {
         public String getAndroidSdcardRelativeLoc() {
             return "aedict/index-DICTIONARY_NAME/";
         }
+
+        public String getDefaultEncoding() {
+            return "EUC_JP";
+        }
+
+        public boolean isDefaultGzipped() {
+            return true;
+        }
     },
     Kanjidic {
 
@@ -97,7 +106,7 @@ public enum FileTypeEnum {
             return "aedict/index-kanjidic/";
         }
 
-        public IDictParser newParser() {
+        public IDictParser newParser(final Config cfg) {
             return new IDictParser() {
 
                 private final char[] commonality = new char[1000];
@@ -213,10 +222,18 @@ public enum FileTypeEnum {
             }
             return kanjidicLine.substring(0, 1);
         }
+
+        public String getDefaultEncoding() {
+            return "EUC_JP";
+        }
+
+        public boolean isDefaultGzipped() {
+            return true;
+        }
     },
     Tanaka {
 
-        public IDictParser newParser() {
+        public IDictParser newParser(Config cfg) {
             return new TanakaParser();
         }
 
@@ -231,13 +248,51 @@ public enum FileTypeEnum {
         public String getAndroidSdcardRelativeLoc() {
             return "aedict/index-tanaka/";
         }
+
+        public String getDefaultEncoding() {
+            return "EUC_JP";
+        }
+
+        public boolean isDefaultGzipped() {
+            return true;
+        }
+    },
+    Tatoeba {
+
+        public IDictParser newParser(Config cfg) {
+            try {
+                return new TatoebaParser(cfg);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+        public String getTargetFileName() {
+            return "tatoeba-lucene.zip";
+        }
+
+        public String getDefaultDownloadUrl() {
+            return "http://tatoeba.org/files/downloads/sentences.csv";
+        }
+
+        public String getAndroidSdcardRelativeLoc() {
+            return "aedict/index-tatoeba/";
+        }
+
+        public String getDefaultEncoding() {
+            return "UTF-8";
+        }
+
+        public boolean isDefaultGzipped() {
+            return false;
+        }
     };
 
     /**
      * Produces new parser for this dictionary type.
      * @return a new instance of the parser, never null.
      */
-    public abstract IDictParser newParser();
+    public abstract IDictParser newParser(Config cfg);
 
     /**
      * The file name of the target zip file, which contains the Lucene index.
@@ -256,4 +311,8 @@ public enum FileTypeEnum {
      * @return a displayable hint.
      */
     public abstract String getAndroidSdcardRelativeLoc();
+
+    public abstract String getDefaultEncoding();
+
+    public abstract boolean isDefaultGzipped();
 }
