@@ -43,20 +43,7 @@ import sk.baka.autils.MiscUtils;
  */
 public class TanakaParser implements IDictParser {
 
-    /**
-     * Maps entry word (kanji+hiragana) to its hiragana reading. Does not contain katakana nor pure hiragana entries as it
-     * is only used to get the kana transcription of Tanaka entries.
-     */
-    private final Map<String, String> edict = new HashMap<String, String>();
-
-    private int maxKanjiWordLength=0;
-    private String longestKanjiWord;
-    private int maxKanaWordLength=0;
-    private String longestKanaWord;
-    /**
-     * Check if the {@link #edict} entry is common or not. Incommon entries may get overwritten.
-     */
-    private final Map<String, Boolean> entryIsCommon = new HashMap<String, Boolean>();
+    private final Edict edict;
 
     public TanakaParser() {
         String location = System.getProperty("edict.gz");
@@ -65,7 +52,41 @@ public class TanakaParser implements IDictParser {
         }
         // quickly parse the EDICT dictionary, we are going to need it when constructing the kana reading of the example sentence.
         try {
-            final BufferedReader in = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(location + "edict.gz")), "EUC_JP"));
+            edict = new Edict(new File(location + "edict.gz"));
+        } catch (Exception ex) {
+            throw new RuntimeException("Tanaka parser requires edict.gz to be available at " + new File(location).getAbsolutePath(), ex);
+        }
+    }
+
+    static boolean containsKanji(final String str) {
+        for (int i = 0; i < str.length(); i++) {
+            if (KanjiUtils.isKanji(str.charAt(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private String lastLine = null;
+    private Document doc;
+
+    public static class Edict {
+
+        /**
+         * Maps entry word (kanji+hiragana) to its hiragana reading. Does not contain katakana nor pure hiragana entries as it
+         * is only used to get the kana transcription of Tanaka entries.
+         */
+        public final Map<String, String> edict = new HashMap<String, String>();
+        private int maxKanjiWordLength = 0;
+        private String longestKanjiWord;
+        private int maxKanaWordLength = 0;
+        private String longestKanaWord;
+        /**
+         * Check if the {@link #edict} entry is common or not. Incommon entries may get overwritten.
+         */
+        private final Map<String, Boolean> entryIsCommon = new HashMap<String, Boolean>();
+
+        public Edict(File edictGz) throws IOException {
+            final BufferedReader in = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(edictGz)), "EUC_JP"));
             try {
                 for (String line = in.readLine(); line != null; line = in.readLine()) {
                     if (line.startsWith("#") || MiscUtils.isBlank(line) || line.startsWith("　？？？")) {
@@ -74,16 +95,16 @@ public class TanakaParser implements IDictParser {
                     }
                     final String[] tokens = line.split("\\[|\\]|\\/");
                     final String kanji = tokens[0].trim();
-                    final boolean containsKanji=containsKanji(kanji);
+                    final boolean containsKanji = containsKanji(kanji);
                     if (containsKanji) {
                         if (kanji.length() > maxKanjiWordLength) {
                             maxKanjiWordLength = kanji.length();
-                            longestKanjiWord=kanji;
+                            longestKanjiWord = kanji;
                         }
                     } else {
                         if (kanji.length() > maxKanaWordLength) {
                             maxKanaWordLength = kanji.length();
-                            longestKanaWord=kanji;
+                            longestKanaWord = kanji;
                         }
                     }
                     if (!containsKanji) {
@@ -99,22 +120,92 @@ public class TanakaParser implements IDictParser {
             } finally {
                 IOUtils.closeQuietly(in);
             }
-        } catch (Exception ex) {
-            throw new RuntimeException("Tanaka parser requires edict.gz to be available at " + new File(location).getAbsolutePath(), ex);
+        }
+
+        public String getLongestKanaWord() {
+            return longestKanaWord;
+        }
+
+        public String getLongestKanjiWord() {
+            return longestKanjiWord;
         }
     }
+    /**
+     * Tanaka B-line parser. See http://www.edrdg.org/wiki/index.php/Tanaka_Corpus for details.
+     */
+    public static class BLineParser {
 
-    static boolean containsKanji(final String str) {
-        for (int i = 0; i < str.length(); i++) {
-            if (KanjiUtils.isKanji(str.charAt(i))) {
+        /**
+         * A list of dictionary forms of all words in the B-line.
+         */
+        public final String dictionaryFormWordList;
+
+        /**
+         * The Japanese sentence translated to the hiragana/katakana (where available).
+         */
+        public final String kana;
+        private final Edict edict;
+
+        /**
+         * Parses the Tanaka B-line.
+         * @param japaneseSentence the original Japanese sentence.
+         * @param bLine the Tanaka B-line, without the B: prefix.
+         */
+        public BLineParser(Edict edict, String japaneseSentence, String bLine) {
+            this.edict = edict;
+            // gather all words in their dictionary form.
+            final List<BWord> words = parseWords(bLine);
+            final StringBuilder wordList = new StringBuilder();
+            for (final BWord word : words) {
+                wordList.append(word.dictionaryForm).append(' ');
+            }
+            dictionaryFormWordList = wordList.toString();
+            // prepare the kana form of the sentence.
+            final StringBuilder kana = new StringBuilder();
+            String l = japaneseSentence;
+            for (final BWord word : words) {
+                // find the word itself, and skip preceding characters. This is used to skip e.g.
+                // 「」, question marks etc.
+                final int wordIndex = l.indexOf(word.getInSentence());
+                if (wordIndex < 0) {
+                    //throw new IllegalArgumentException("Line " + lastLine + " does not contain word " + word);
+                    // this seems to be quite a common case. Just skip the word
+                    continue;
+                }
+                kana.append(l.substring(0, wordIndex));
+                if (wordIndex == 0 && !endsWithWhitespace(kana)) {
+                    // add a whitespace to separate words. Fixes Issue 99
+                    kana.append(' ');
+                }
+                try {
+                    kana.append(word.toKana());
+                } catch (Exception ex) {
+//                System.out.println(ex.getMessage());
+                    // untranslatable word. just keep the original one
+                    kana.append(word.getInSentence());
+                }
+                l = l.substring(wordIndex + word.getInSentence().length());
+            }
+            kana.append(l);
+            this.kana = kana.toString();
+        }
+
+        private boolean endsWithWhitespace(final StringBuilder sb) {
+            if (sb.length() == 0) {
                 return true;
             }
+            return Character.isWhitespace(sb.charAt(sb.length() - 1));
         }
-        return false;
-    }
-    private String lastLine = null;
 
-    private Document doc;
+        private List<BWord> parseWords(final String bLine) {
+            final List<BWord> result = new ArrayList<BWord>();
+            final ArrayList<Object> words = Collections.list(new StringTokenizer(bLine));
+            for (final Object w : words) {
+                result.add(new BWord(edict, (String) w));
+            }
+            return result;
+        }
+    }
 
     public void addLine(String line, IndexWriter writer) throws IOException {
         if (line.startsWith("A: ")) {
@@ -131,71 +222,24 @@ public class TanakaParser implements IDictParser {
         if (!line.startsWith("B: ")) {
             throw new IllegalArgumentException("The TanakaCorpus file has unexpected format: line " + line);
         }
-        // gather all words in their dictionary form.
-        final List<BWord> words = parseWords(line);
-        final StringBuilder wordList = new StringBuilder();
-        for (final BWord word : words) {
-            wordList.append(word.dictionaryForm).append(' ');
-        }
-        doc.add(new Field("jp-deinflected", wordList.toString(), Field.Store.YES, Field.Index.ANALYZED));
-        // prepare the kana form of the sentence.
-        final StringBuilder kana = new StringBuilder();
-        String l = lastLine;
-        for (final BWord word : words) {
-            // find the word itself, and skip preceding characters. This is used to skip e.g.
-            // 「」, question marks etc.
-            final int wordIndex = l.indexOf(word.getInSentence());
-            if (wordIndex < 0) {
-                //throw new IllegalArgumentException("Line " + lastLine + " does not contain word " + word);
-                // this seems to be quite a common case. Just skip the word
-                continue;
-            }
-            kana.append(l.substring(0, wordIndex));
-            if (wordIndex == 0 && !endsWithWhitespace(kana)) {
-                // add a whitespace to separate words. Fixes Issue 99
-                kana.append(' ');
-            }
-            try {
-                kana.append(word.toKana());
-            } catch (Exception ex) {
-//                System.out.println(ex.getMessage());
-                // untranslatable word. just keep the original one
-                kana.append(word.getInSentence());
-            }
-            l = l.substring(wordIndex + word.getInSentence().length());
-        }
-        kana.append(l);
-        doc.add(new Field("kana", CompressionTools.compressString(kana.toString()), Field.Store.YES));
+        final BLineParser parser = new BLineParser(edict, lastLine, line.substring(3));
+        doc.add(new Field("jp-deinflected", parser.dictionaryFormWordList, Field.Store.YES, Field.Index.ANALYZED));
+        doc.add(new Field("kana", CompressionTools.compressString(parser.kana), Field.Store.YES));
         writer.addDocument(doc);
     }
 
-    private boolean endsWithWhitespace(final StringBuilder sb) {
-        if (sb.length() == 0) {
-            return true;
-        }
-        return Character.isWhitespace(sb.charAt(sb.length() - 1));
-    }
-
-    private List<BWord> parseWords(final String bLine) {
-        final List<BWord> result = new ArrayList<BWord>();
-        final ArrayList<Object> words = Collections.list(new StringTokenizer(bLine.substring(3)));
-        for (final Object w : words) {
-            result.add(new BWord((String) w));
-        }
-        return result;
-    }
-
     public void onFinish(IndexWriter writer) {
-        System.out.println("EDICT Statistics: longest word containing kanji: " + maxKanjiWordLength + ": " + longestKanjiWord);
-        System.out.println("Longest word composed purely of kana characters: " + maxKanaWordLength + ": " + longestKanaWord);
+        System.out.println("EDICT Statistics: longest word containing kanji: " + edict.getLongestKanjiWord().length() + ": " + edict.getLongestKanjiWord());
+        System.out.println("Longest word composed purely of kana characters: " + edict.getLongestKanaWord().length() + ": " + edict.getLongestKanaWord());
     }
 
     /**
      * Parses a word stored on the B line of the Tanaka file. See http://www.edrdg.org/wiki/index.php/Tanaka_Corpus for details.
      */
-    private class BWord {
+    private static class BWord {
+        private final Edict edict;
 
-        public BWord(final String word) {
+        public BWord(final Edict edict, final String word) {
             String _hiraganaReading = null;
             Integer _senseNumber = null;
             String _wordInSentence = null;
@@ -235,6 +279,7 @@ public class TanakaParser implements IDictParser {
             hiraganaReading = _hiraganaReading;
             senseNumber = _senseNumber;
             wordInSentence = _wordInSentence;
+            this.edict = edict;
         }
         /**
          * The dictionary form of the word.
@@ -277,13 +322,13 @@ public class TanakaParser implements IDictParser {
             }
             // no luck. We have to search Edict for the dictionary form of the word
             if (wordInSentence != null) {
-                result = edict.get(wordInSentence);
+                result = edict.edict.get(wordInSentence);
                 if (result != null) {
                     return result;
                 }
             }
             // ow, tough. We need to try to somehow match it with the deinflected form.
-            String hiragana = containsKanji(dictionaryForm) ? edict.get(dictionaryForm) : dictionaryForm;
+            String hiragana = containsKanji(dictionaryForm) ? edict.edict.get(dictionaryForm) : dictionaryForm;
             if (hiragana == null) {
                 throw new RuntimeException(dictionaryForm + " is not in EDICT. Nothing to do.");
             }
