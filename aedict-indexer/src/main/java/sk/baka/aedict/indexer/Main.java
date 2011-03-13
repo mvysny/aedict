@@ -100,6 +100,7 @@ public class Main {
         opts.addOption("?", null, false, "prints help");
         opts.addOption("k", "kanjidic", false, "the file to process is actually a kanjidic");
         opts.addOption("t", "tanaka", false, "the file to process is a Tanaka Corpus with example sentences");
+        opts.addOption("T", "tatoeba", false, "the file to process is a Tatoeba Project file with example sentences");
         return opts;
     }
 
@@ -196,7 +197,6 @@ public class Main {
                 try {
                     final IDictParser parser = fileType.newParser();
                     indexWithLucene(edict, luceneWriter, parser);
-                    parser.onFinish();
                     System.out.println("Optimizing Lucene index");
                     luceneWriter.optimize();
                 } finally {
@@ -222,7 +222,6 @@ public class Main {
 
     private static void indexWithLucene(BufferedReader edict,
             IndexWriter luceneWriter, final IDictParser parser) throws IOException {
-        Document doc = new Document();
         for (String line = edict.readLine(); line != null; line = edict.readLine()) {
             if (line.startsWith("#")) {
                 // skip comments
@@ -232,11 +231,9 @@ public class Main {
                 // skip blank lines
                 continue;
             }
-            if (parser.addLine(line, doc)) {
-                luceneWriter.addDocument(doc);
-                doc = new Document();
-            }
+            parser.addLine(line, luceneWriter);
         }
+        parser.onFinish(luceneWriter);
         luceneWriter.commit();
     }
 

@@ -27,6 +27,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.lucene.document.CompressionTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexWriter;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.KanjidicEntry;
@@ -55,10 +56,11 @@ public enum FileTypeEnum {
         public IDictParser newParser() {
             return new IDictParser() {
 
-                public boolean addLine(String line, Document doc) {
+                public void addLine(String line, IndexWriter writer) throws IOException {
                     if (line.startsWith("　？？？")) {
-                        return true;
+                        return;
                     }
+                    final Document doc = new Document();
                     final EdictEntry entry = DictTypeEnum.parseEdictEntry(line);
                     doc.add(new Field("contents", line, Field.Store.YES, Field.Index.ANALYZED));
                     doc.add(new Field("common", entry.isCommon ? "t" : "f", Field.Store.NO, Field.Index.NOT_ANALYZED));
@@ -68,10 +70,10 @@ public enum FileTypeEnum {
                     }
                     jp.add("W" + entry.reading + "W");
                     doc.add(new Field("jp", jp.toString(), Field.Store.NO, Field.Index.ANALYZED));
-                    return true;
+                    writer.addDocument(doc);
                 }
 
-                public void onFinish() {
+                public void onFinish(final IndexWriter writer) {
                     // do nothing
                 }
             };
@@ -102,7 +104,8 @@ public enum FileTypeEnum {
                 private int lowestKanjiCodePoint = Integer.MAX_VALUE;
                 private int highestKanjiCodePoint = 0;
 
-                public boolean addLine(String line, Document doc) {
+                public void addLine(String line, IndexWriter writer) throws IOException {
+                    final Document doc = new Document();
                     final String kanji = getKanji(line);
                     final int kanjiCodePoint = kanji.codePointAt(0);
                     lowestKanjiCodePoint = Math.min(kanjiCodePoint, lowestKanjiCodePoint);
@@ -159,10 +162,10 @@ public enum FileTypeEnum {
                     doc.add(new Field("english", CompressionTools.compressString(english.toString()), Field.Store.YES));
                     doc.add(new Field("reading", CompressionTools.compressString(reading.toString()), Field.Store.YES));
                     doc.add(new Field("namereading", CompressionTools.compressString(namesReading.toString()), Field.Store.YES));
-                    return true;
+                    writer.addDocument(doc);
                 }
 
-                public void onFinish() throws IOException {
+                public void onFinish(final IndexWriter writer) throws IOException {
                     // check if there are no missing characters
                     for (int i = 0; i < commonality.length; i++) {
                         if (commonality[i] == 0) {
