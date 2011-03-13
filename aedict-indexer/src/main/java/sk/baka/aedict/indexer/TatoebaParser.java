@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -64,8 +65,7 @@ public class TatoebaParser implements IDictParser {
     }
 
     public void onFinish(IndexWriter writer) throws IOException {
-        parseLinks();
-        postprocessNonJpSentences();
+        postprocessNonJpSentences(parseLinks());
         parseBLines();
         writeLucene(writer);
     }
@@ -84,7 +84,7 @@ public class TatoebaParser implements IDictParser {
         }
     }
 
-    private void parseLinks() throws IOException {
+    private Map<Integer, Integer> parseLinks() throws IOException {
         // maps source link ID to a list of links.
         final Map<Integer, Set<Integer>> links = new HashMap<Integer, Set<Integer>>();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("jpn_indices.csv"), cfg.encoding));
@@ -111,7 +111,7 @@ public class TatoebaParser implements IDictParser {
         } finally {
             MiscUtils.closeQuietly(reader);
         }
-        // the "links" map is essentially a graph. We need to shrink this graph a bit, for the map to contain only one line per connected graph.
+        // the "links" map is essentially a representation of a graph. We need to shrink this graph a bit, for the map to contain only one line per connected graph.
         for (Iterator<Entry<Integer, Set<Integer>>> i = links.entrySet().iterator(); i.hasNext();) {
             final Entry<Integer, Set<Integer>> e = i.next();
             for (final Integer in : e.getValue()) {
@@ -123,6 +123,45 @@ public class TatoebaParser implements IDictParser {
                 }
             }
         }
+        // construct a map which maps non-JP-lang-sentence ID to a JP-lang-sentence_id
+        final Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+        for (Entry<Integer, Set<Integer>> e : links.entrySet()) {
+            e.getValue().add(e.getKey());
+            final int jpSentenceId = findJpSentenceId(e.getValue());
+            for (Integer i : e.getValue()) {
+                if (i != jpSentenceId) {
+                    final Integer prev = result.put(i, jpSentenceId);
+                    if (prev != null) {
+                        throw new RuntimeException(i + "=>" + jpSentenceId + " defined multiple times, prev: " + i + "=>" + prev);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private int findJpSentenceId(Collection<Integer> ids) {
+        for (Integer i : ids) {
+            if (sentences.containsKey(i)) {
+                return i;
+            }
+        }
+        throw new RuntimeException("Collection " + ids + " does not contain japanese sentence id");
+    }
+
+    private void postprocessNonJpSentences(Map<Integer, Integer> links) {
+        for (Sentence s : nonJpSentences) {
+            final Integer jpId = links.get(s.index);
+            if (jpId == null) {
+                throw new RuntimeException("No JP ID for sentence " + s);
+            }
+            final Sentences se = sentences.get(jpId);
+            if (se == null) {
+                throw new RuntimeException("No Sentences object for #" + jpId);
+            }
+            se.sentences.put(s.lang, s.sentence);
+        }
+        nonJpSentences.clear();
     }
 
     private static class Sentence {
@@ -135,6 +174,11 @@ public class TatoebaParser implements IDictParser {
             this.index = index;
             this.lang = lang;
             this.sentence = sentence;
+        }
+
+        @Override
+        public String toString() {
+            return "Sentence{" + "#" + index + " " + lang + " " + sentence + '}';
         }
     }
 
