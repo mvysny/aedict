@@ -48,7 +48,19 @@
                     <artifactId>aedict-common</artifactId>
                     <version>${project.version}</version>
                 </dependency>
-	</dependencies>
+        <dependency>
+            <groupId>net.schmizz</groupId>
+            <artifactId>sshj</artifactId>
+            <version>0.3.1</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <!-- dependency of SSHJ -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
