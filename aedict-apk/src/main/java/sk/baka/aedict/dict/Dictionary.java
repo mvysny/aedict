@@ -229,5 +229,43 @@ public class Dictionary implements Serializable {
 			}
 			return dv;
 		}
+
+		public static Set<Dictionary> getNewer(DictionaryVersions current,
+				DictionaryVersions newer) {
+			final Set<Dictionary> dict = new HashSet<Dictionary>();
+			for (Dictionary d : Dictionary.listInstalled()) {
+				if (!current.versions.containsKey(d)) {
+					current.versions.put(d, "20000101");
+				}
+			}
+			for (Dictionary d : current.versions.keySet()) {
+				if (!newer.versions.containsKey(d)) {
+					continue;
+				}
+				if (current.versions.get(d).compareTo(newer.versions.get(d)) < 0) {
+					dict.add(d);
+				}
+			}
+			return dict;
+		}
+	}
+	
+	public static final DictionaryVersions MIN_REQUIRED = new DictionaryVersions();
+	static {
+		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Kanjidic, null), "20110313");
+		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, null), "20110313");
+		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, "compdic"), "20110313");
+		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, "enamdict"), "20110313");
+		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, "wdjteuc"), "20110313");
+		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, "french-fj"), "20110313");
+		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, "hispadic"), "20110313");
+	}
+	
+	public static Set<Dictionary> requireUpdate(DictionaryVersions current) {
+		return DictionaryVersions.getNewer(current, MIN_REQUIRED);
+	}
+
+	public static Set<Dictionary> getUpdatable(DictionaryVersions current, DictionaryVersions server) {
+		return DictionaryVersions.getNewer(current, server);
 	}
 }
