@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,8 +47,24 @@ public class TatoebaParser implements IDictParser {
         }
         final String[] result = new String[tabcount + 1];
         int i = 0;
-        for (StringTokenizer st = new StringTokenizer(line, "\t"); st.hasMoreElements();) {
-            result[i++] = st.nextToken();
+        boolean prevTokenWasSeparator = false;
+        for (StringTokenizer st = new StringTokenizer(line, "\t", true); st.hasMoreElements();) {
+            final String token = st.nextToken();
+            if (token.equals("\t")) {
+                if (prevTokenWasSeparator) {
+                    result[i++] = "";
+                }
+                prevTokenWasSeparator = true;
+            } else {
+                result[i++] = token;
+                prevTokenWasSeparator = false;
+            }
+        }
+        if (prevTokenWasSeparator) {
+            result[i++] = "";
+        }
+        if (i < result.length) {
+            throw new RuntimeException("Line " + line + ": Expected " + result.length + " tokens, found only " + i);
         }
         return result;
     }
@@ -57,6 +72,10 @@ public class TatoebaParser implements IDictParser {
     public void addLine(String line, IndexWriter writer) throws IOException {
         final String[] tokens = split(line);
         final int index = Integer.parseInt(tokens[0]);
+        if (MiscUtils.isBlank(tokens[1])) {
+            System.out.println("Sentence #" + index + " language is missing - ignoring");
+            return;
+        }
         if (tokens[1].equals(JAPAN_ISO_639_3_CODE)) {
             sentences.put(index, new Sentences(tokens[2]));
         } else {
@@ -71,28 +90,39 @@ public class TatoebaParser implements IDictParser {
     }
 
     private void writeLucene(IndexWriter writer) throws IOException {
+        int sc = 0;
         for (final Entry<Integer, Sentences> e : sentences.entrySet()) {
             if (e.getValue().bLine == null) {
-                throw new RuntimeException("Missing B-Line for sentence " + e.getKey());
+                System.out.println("Missing B-Line for sentence " + e.getKey() + ", skipping");
+            } else {
+                final Document doc = new Document();
+                doc.add(new Field("japanese", e.getValue().japanese, Field.Store.YES, Field.Index.ANALYZED));
+                doc.add(new Field("translations", e.getValue().getSentences(), Field.Store.YES, Field.Index.ANALYZED));
+                doc.add(new Field("jp-deinflected", e.getValue().bLine.dictionaryFormWordList, Field.Store.YES, Field.Index.ANALYZED));
+                doc.add(new Field("kana", CompressionTools.compressString(e.getValue().bLine.kana), Field.Store.YES));
+                writer.addDocument(doc);
+                sc++;
             }
-            final Document doc = new Document();
-            doc.add(new Field("japanese", e.getValue().japanese, Field.Store.YES, Field.Index.ANALYZED));
-            doc.add(new Field("translations", e.getValue().getSentences(), Field.Store.YES, Field.Index.ANALYZED));
-            doc.add(new Field("jp-deinflected", e.getValue().bLine.dictionaryFormWordList, Field.Store.YES, Field.Index.ANALYZED));
-            doc.add(new Field("kana", CompressionTools.compressString(e.getValue().bLine.kana), Field.Store.YES));
-            writer.addDocument(doc);
         }
+        System.out.println("Lucene indexed " + sc + " example sentences");
     }
 
     private Map<Integer, Integer> parseLinks() throws IOException {
+        System.out.println("Parsing Sentence Links file");
         // maps source link ID to a list of links.
         final Map<Integer, Set<Integer>> links = new HashMap<Integer, Set<Integer>>();
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("jpn_indices.csv"), cfg.encoding));
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("links.csv"), cfg.encoding));
         try {
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 final String[] tokens = split(line);
                 final int index1 = Integer.parseInt(tokens[0]);
+                if (index1 < 0) {
+                    throw new RuntimeException("Error parsing " + tokens[0]);
+                }
                 final int index2 = Integer.parseInt(tokens[1]);
+                if (index2 < 0) {
+                    throw new RuntimeException("Error parsing " + tokens[1]);
+                }
                 if (index1 != index2) {
                     Set<Integer> list = links.get(index1);
                     if (list == null) {
@@ -111,49 +141,77 @@ public class TatoebaParser implements IDictParser {
         } finally {
             MiscUtils.closeQuietly(reader);
         }
-        // the "links" map is essentially a representation of a graph. We need to shrink this graph a bit, for the map to contain only one line per connected graph.
-        for (Iterator<Entry<Integer, Set<Integer>>> i = links.entrySet().iterator(); i.hasNext();) {
-            final Entry<Integer, Set<Integer>> e = i.next();
-            for (final Integer in : e.getValue()) {
-                final Set<Integer> other = links.get(in);
-                if (other != null) {
-                    other.addAll(e.getValue());
-                    i.remove();
-                    break;
-                }
+        System.out.println("Constructing sentence sets, please wait");
+        final List<Set<Integer>> graphs = new ArrayList<Set<Integer>>(200000);
+        while (!links.isEmpty()) {
+            final Set<Integer> graph = findCompleteGraph(links);
+            if (graph.isEmpty()) {
+                throw new RuntimeException("Empty graph");
+            }
+            graphs.add(graph);
+            for (Integer i : graph) {
+                links.remove(i);
+            }
+            if (graphs.size() % 1000 == 0) {
+                System.out.println("Got " + graphs.size() + " sentences");
             }
         }
+        System.out.println(graphs.size() + " example sentences found");
+        int skipped = 0;
         // construct a map which maps non-JP-lang-sentence ID to a JP-lang-sentence_id
         final Map<Integer, Integer> result = new HashMap<Integer, Integer>();
-        for (Entry<Integer, Set<Integer>> e : links.entrySet()) {
-            e.getValue().add(e.getKey());
-            final int jpSentenceId = findJpSentenceId(e.getValue());
-            for (Integer i : e.getValue()) {
-                if (i != jpSentenceId) {
-                    final Integer prev = result.put(i, jpSentenceId);
-                    if (prev != null) {
-                        throw new RuntimeException(i + "=>" + jpSentenceId + " defined multiple times, prev: " + i + "=>" + prev);
+        for (Set<Integer> graph : graphs) {
+            final Integer jpSentenceId = findJpSentenceId(graph);
+            if (jpSentenceId == null) {
+                System.out.println("No JP ID in graph " + graph);
+                skipped++;
+            } else {
+                for (Integer i : graph) {
+                    if (i.intValue() != jpSentenceId.intValue()) {
+                        final Integer prev = result.put(i, jpSentenceId);
+                        if (prev != null) {
+                            throw new RuntimeException(i + "=>" + jpSentenceId + " defined multiple times, prev: " + i + "=>" + prev);
+                        }
                     }
                 }
             }
         }
+        System.out.println("Link analysis complete; found " + skipped + " sentence graphs without Japanese examples");
         return result;
     }
 
-    private int findJpSentenceId(Collection<Integer> ids) {
+    private Integer findJpSentenceId(Collection<Integer> ids) {
         for (Integer i : ids) {
             if (sentences.containsKey(i)) {
                 return i;
             }
         }
-        throw new RuntimeException("Collection " + ids + " does not contain japanese sentence id");
+        return null;
+    }
+
+    private Set<Integer> findCompleteGraph(Map<Integer, Set<Integer>> graph) {
+        final Set<Integer> result = new HashSet<Integer>();
+        final Integer index = graph.keySet().iterator().next();
+        findCompleteGraph(graph, result, index);
+        return result;
+    }
+
+    private void findCompleteGraph(Map<Integer, Set<Integer>> graph, Set<Integer> result, Integer index) {
+        if (result.contains(index)) {
+            return;
+        }
+        result.add(index);
+        for (final Integer i : graph.get(index)) {
+            findCompleteGraph(graph, result, i);
+        }
     }
 
     private void postprocessNonJpSentences(Map<Integer, Integer> links) {
+        System.out.println("Post-processing non-JP sentences");
         for (Sentence s : nonJpSentences) {
             final Integer jpId = links.get(s.index);
             if (jpId == null) {
-                throw new RuntimeException("No JP ID for sentence " + s);
+                continue;
             }
             final Sentences se = sentences.get(jpId);
             if (se == null) {
@@ -212,6 +270,7 @@ public class TatoebaParser implements IDictParser {
     }
 
     private void parseBLines() throws IOException {
+        System.out.println("Parsing B-Lines");
         final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("jpn_indices.csv"), cfg.encoding));
         try {
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
