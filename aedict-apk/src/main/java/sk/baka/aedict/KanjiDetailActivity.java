@@ -22,6 +22,7 @@ import java.util.List;
 import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.TanakaSearchTask;
 import sk.baka.aedict.kanji.KanjiUtils;
+import sk.baka.aedict.kanji.Radicals;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.Check;
 import sk.baka.aedict.util.Constants;
@@ -101,6 +102,8 @@ public class KanjiDetailActivity extends AbstractActivity {
 		((TextView) findViewById(R.id.skip)).setText(entry.skip);
 		final Integer jlpt = entry.getJlpt();
 		((TextView) findViewById(R.id.jlpt)).setText(jlpt == null ? "-" : jlpt.toString());
+		((TextView) findViewById(R.id.radicals)).setText(Radicals.getRadicals(entry.getKanji()));
+		((TextView) findViewById(R.id.radicalNumber)).setText(String.valueOf(entry.radical));
 		final SearchUtils utils = new SearchUtils(this);
 		utils.setupCopyButton(R.id.copy, R.id.kanji);
 		((Button) findViewById(R.id.showStrokeOrder)).setOnClickListener(new View.OnClickListener() {

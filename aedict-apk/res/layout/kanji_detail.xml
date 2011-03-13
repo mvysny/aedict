@@ -71,6 +71,26 @@
 						android:text="S-K-I" android:paddingLeft="3dp"
 						android:textColor="?android:attr/textColorPrimary"></TextView>
 				</TableRow>
+				<TableRow 
+					android:layout_width="wrap_content" android:layout_height="wrap_content">
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/radicals_colon" android:gravity="right" android:textColor="#777"></TextView>
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content" android:id="@+id/radicals"
+						android:text="RADICALS" android:paddingLeft="3dp"
+						android:textColor="?android:attr/textColorPrimary"></TextView>
+				</TableRow>
+				<TableRow 
+					android:layout_width="wrap_content" android:layout_height="wrap_content">
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/radicalNumber" android:gravity="right" android:textColor="#777"></TextView>
+					<TextView android:layout_width="wrap_content"
+						android:layout_height="wrap_content" android:id="@+id/radicalNumber"
+						android:text="RADICALS" android:paddingLeft="3dp"
+						android:textColor="?android:attr/textColorPrimary"></TextView>
+				</TableRow>
 			</TableLayout>
 		</LinearLayout>
 		<TextView android:id="@+id/onyomi" android:textSize="20sp" android:textColor="#777" android:textColorLink="#FFF"
