@@ -29,7 +29,7 @@ import sk.baka.aedict.util.Check;
 import sk.baka.autils.MiscUtils;
 
 /**
- * Represents a dictionary
+ * Represents a dictionary installed locally on the SD Card.
  * 
  * @author Martin Vysny
  */
