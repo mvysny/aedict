@@ -46,16 +46,7 @@ public class TanakaParser implements IDictParser {
     private final Edict edict;
 
     public TanakaParser() {
-        String location = System.getProperty("edict.gz");
-        if (location == null) {
-            location = "";
-        }
-        // quickly parse the EDICT dictionary, we are going to need it when constructing the kana reading of the example sentence.
-        try {
-            edict = new Edict(new File(location + "edict.gz"));
-        } catch (Exception ex) {
-            throw new RuntimeException("Tanaka parser requires edict.gz to be available at " + new File(location).getAbsolutePath(), ex);
-        }
+        edict = Edict.loadFromDefaultLocation(null);
     }
 
     static boolean containsKanji(final String str) {
@@ -71,6 +62,21 @@ public class TanakaParser implements IDictParser {
 
     public static class Edict {
 
+        public static Edict loadFromDefaultLocation(String expectedDirectory) {
+            String location = System.getProperty("edict.gz");
+            if (location == null && expectedDirectory != null) {
+                location = expectedDirectory;
+            }
+            if (location == null) {
+                location = ".";
+            }
+            // quickly parse the EDICT dictionary, we are going to need it when constructing the kana reading of the example sentence.
+            try {
+                return new Edict(new File(location + "/edict.gz"));
+            } catch (Exception ex) {
+                throw new RuntimeException("Tanaka parser requires edict.gz to be available at " + new File(location).getAbsolutePath(), ex);
+            }
+        }
         /**
          * Maps entry word (kanji+hiragana) to its hiragana reading. Does not contain katakana nor pure hiragana entries as it
          * is only used to get the kana transcription of Tanaka entries.

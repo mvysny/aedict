@@ -77,12 +77,34 @@ public class Main {
             System.exit(1);
         }
     }
-    private final File localSource;
-    private final URL urlSource;
-    private final String source;
-    private final boolean isGzipped;
-    private final FileTypeEnum fileType;
-    private final Charset encoding;
+
+    public static class Config {
+
+        public File localSource;
+        public URL urlSource;
+        public String source;
+        public boolean isGzipped;
+        public FileTypeEnum fileType;
+        public Charset encoding;
+
+        public InputStream newInputStream() throws IOException {
+            InputStream in;
+            if (localSource != null) {
+                in = new FileInputStream(localSource);
+            } else {
+                in = urlSource.openStream();
+            }
+            if (isGzipped) {
+                in = new GZIPInputStream(in);
+            }
+            return in;
+        }
+
+        public BufferedReader newReader() throws IOException {
+            return new BufferedReader(new InputStreamReader(newInputStream(), encoding));
+        }
+    }
+    public final Config config = new Config();
 
     private static Options getOptions() {
         final Options opts = new Options();
@@ -112,33 +134,35 @@ public class Main {
             System.exit(255);
         }
         if (cl.hasOption('k')) {
-            fileType = FileTypeEnum.Kanjidic;
+            config.fileType = FileTypeEnum.Kanjidic;
         } else if (cl.hasOption('t')) {
-            fileType = FileTypeEnum.Tanaka;
+            config.fileType = FileTypeEnum.Tanaka;
+        } else if (cl.hasOption('T')) {
+            config.fileType = FileTypeEnum.Tatoeba;
         } else {
-            fileType = FileTypeEnum.Edict;
+            config.fileType = FileTypeEnum.Edict;
         }
         if (cl.hasOption('u')) {
-            source = cl.getOptionValue('u');
-            urlSource = new URL(source);
-            localSource = null;
+            config.source = cl.getOptionValue('u');
+            config.urlSource = new URL(config.source);
+            config.localSource = null;
         } else if (cl.hasOption('d')) {
-            source = fileType.getDefaultDownloadUrl();
-            urlSource = new URL(source);
-            localSource = null;
+            config.source = config.fileType.getDefaultDownloadUrl();
+            config.urlSource = new URL(config.source);
+            config.localSource = null;
         } else if (cl.hasOption('f')) {
-            source = cl.getOptionValue('f');
-            urlSource = null;
-            localSource = new File(source);
+            config.source = cl.getOptionValue('f');
+            config.urlSource = null;
+            config.localSource = new File(config.source);
         } else {
             throw new ParseException("At least one of -u, -d or -f switch must be specified");
         }
-        isGzipped = cl.hasOption('g') || cl.hasOption('d');
-        final String charset = cl.getOptionValue('e', "EUC_JP");
+        config.isGzipped = (cl.hasOption('g') || cl.hasOption('d')) && config.fileType.isDefaultGzipped();
+        final String charset = cl.getOptionValue('e', config.fileType.getDefaultEncoding());
         if (!Charset.isSupported(charset)) {
             throw new ParseException("Charset " + charset + " is not supported by JVM. Supported charsets: " + new ArrayList<String>(Charset.availableCharsets().keySet()));
         }
-        encoding = Charset.forName(charset);
+        config.encoding = Charset.forName(charset);
     }
 
     private static void printHelp() {
@@ -149,45 +173,31 @@ public class Main {
     void run() throws Exception {
         final StringBuilder sb = new StringBuilder();
         sb.append("Indexing ");
-        if (isGzipped) {
+        if (config.isGzipped) {
             sb.append("gzipped ");
         }
-        sb.append(fileType);
+        sb.append(config.fileType);
         sb.append(" file from ");
-        sb.append(urlSource != null ? "URL" : "file");
-        sb.append(' ').append(source);
+        sb.append(config.urlSource != null ? "URL" : "file");
+        sb.append(' ').append(config.source);
         System.out.println(sb.toString());
         indexWithLucene();
         zipLuceneIndex();
-        final String aedictDir = fileType.getAndroidSdcardRelativeLoc();
-        System.out.println("Finished - the index file '" + fileType.getTargetFileName() + "' was created.");
+        final String aedictDir = config.fileType.getAndroidSdcardRelativeLoc();
+        System.out.println("Finished - the index file '" + config.fileType.getTargetFileName() + "' was created.");
         System.out.println("To use the indexed file with Aedict, you'll have to:");
         System.out.println("1. Connect your phone as a mass storage device to your computer");
         System.out.println("2. Browse the SDCard contents and delete the aedict/ directory if it is present");
         System.out.println("3. Create the " + aedictDir + " directory");
-        System.out.println("4. Unzip the " + fileType.getTargetFileName() + " file to the " + aedictDir + " directory");
+        System.out.println("4. Unzip the " + config.fileType.getTargetFileName() + " file to the " + aedictDir + " directory");
         System.out.println("See http://code.google.com/p/aedict/wiki/CustomEdictFile for details");
-    }
-
-    private InputStream readEdict() throws IOException {
-        InputStream in;
-        if (localSource != null) {
-            in = new FileInputStream(localSource);
-        } else {
-            in = urlSource.openStream();
-        }
-        if (isGzipped) {
-            in = new GZIPInputStream(in);
-        }
-        return in;
     }
 
     private void indexWithLucene() throws IOException {
         System.out.println("Deleting old Lucene index");
         FileUtils.deleteDirectory(new File(LUCENE_INDEX));
         System.out.println("Indexing with Lucene");
-        final BufferedReader edict = new BufferedReader(new InputStreamReader(
-                readEdict(), encoding));
+        final BufferedReader dictionary = config.newReader();
         try {
             final Directory directory = FSDirectory.open(new File(LUCENE_INDEX));
             try {
@@ -195,8 +205,8 @@ public class Main {
                         new StandardAnalyzer(LuceneSearch.LUCENE_VERSION), true,
                         IndexWriter.MaxFieldLength.UNLIMITED);
                 try {
-                    final IDictParser parser = fileType.newParser();
-                    indexWithLucene(edict, luceneWriter, parser);
+                    final IDictParser parser = config.fileType.newParser(config);
+                    indexWithLucene(dictionary, luceneWriter, parser);
                     System.out.println("Optimizing Lucene index");
                     luceneWriter.optimize();
                 } finally {
@@ -206,7 +216,7 @@ public class Main {
                 closeQuietly(directory);
             }
         } finally {
-            IOUtils.closeQuietly(edict);
+            IOUtils.closeQuietly(dictionary);
         }
         System.out.println("Finished Lucene indexing");
     }
@@ -239,7 +249,7 @@ public class Main {
 
     private void zipLuceneIndex() throws IOException {
         System.out.println("Zipping the index file");
-        final File zip = new File(fileType.getTargetFileName());
+        final File zip = new File(config.fileType.getTargetFileName());
         if (zip.exists() && !zip.delete()) {
             throw new IOException("Cannot delete " + zip.getAbsolutePath());
         }
