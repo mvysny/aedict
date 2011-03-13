@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package sk.baka.aedict.indexer;
 
 import java.io.IOException;
-import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexWriter;
 
 /**
  * Serves for dictionary parsing. Parses lines from the dictionary and stores them in the Lucene document.
@@ -29,14 +29,14 @@ public interface IDictParser {
     /**
      * Adds given line from given file type to the document.
      * @param line the file line
-     * @param doc the document
-     * @return true if the document should be added, false if next line will also be stored to the same document.
+     * @param writer the Lucene document writer.
      */
-    boolean addLine(final String line, final Document doc);
+    void addLine(final String line, final IndexWriter writer) throws IOException;
 
     /**
      * Invoked after the parsing finishes.
+     * @param writer the Lucene document writer.
      * @throws IOException on i/o error
      */
-    void onFinish() throws IOException;
+    void onFinish(final IndexWriter writer) throws IOException;
 }

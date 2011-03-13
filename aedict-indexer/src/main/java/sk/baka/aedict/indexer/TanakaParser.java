@@ -20,6 +20,7 @@ package sk.baka.aedict.indexer;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,6 +33,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.lucene.document.CompressionTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexWriter;
 import sk.baka.aedict.kanji.KanjiUtils;
 import sk.baka.autils.MiscUtils;
 
@@ -112,8 +114,11 @@ public class TanakaParser implements IDictParser {
     }
     private String lastLine = null;
 
-    public boolean addLine(String line, Document doc) {
+    private Document doc;
+
+    public void addLine(String line, IndexWriter writer) throws IOException {
         if (line.startsWith("A: ")) {
+            doc = new Document();
             lastLine = line.substring(3);
             lastLine = lastLine.substring(0, lastLine.indexOf('\t'));
             final ArrayList<Object> parsed = Collections.list(new StringTokenizer(line.substring(3), "\t#"));
@@ -121,7 +126,7 @@ public class TanakaParser implements IDictParser {
             final String english = (String) parsed.get(1);
             doc.add(new Field("japanese", japanese, Field.Store.YES, Field.Index.ANALYZED));
             doc.add(new Field("english", english, Field.Store.YES, Field.Index.ANALYZED));
-            return false;
+            return;
         }
         if (!line.startsWith("B: ")) {
             throw new IllegalArgumentException("The TanakaCorpus file has unexpected format: line " + line);
@@ -161,7 +166,7 @@ public class TanakaParser implements IDictParser {
         }
         kana.append(l);
         doc.add(new Field("kana", CompressionTools.compressString(kana.toString()), Field.Store.YES));
-        return true;
+        writer.addDocument(doc);
     }
 
     private boolean endsWithWhitespace(final StringBuilder sb) {
@@ -180,7 +185,7 @@ public class TanakaParser implements IDictParser {
         return result;
     }
 
-    public void onFinish() {
+    public void onFinish(IndexWriter writer) {
         System.out.println("EDICT Statistics: longest word containing kanji: " + maxKanjiWordLength + ": " + longestKanjiWord);
         System.out.println("Longest word composed purely of kana characters: " + maxKanaWordLength + ": " + longestKanaWord);
     }
