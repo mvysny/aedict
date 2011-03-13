@@ -18,7 +18,6 @@
 
 package sk.baka.aedict;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -26,8 +25,10 @@ import java.util.List;
 
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.Dictionary;
 import sk.baka.aedict.dict.DownloaderService;
 import sk.baka.aedict.kanji.RomanizationEnum;
+import sk.baka.aedict.util.BackgroundService;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
@@ -63,18 +64,25 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
 		apply(new Config(this));
 		ds = new DownloaderService();
+		bs = new BackgroundService();
 	}
 
 	@Override
 	public void onTerminate() {
 		MiscUtils.closeQuietly(ds);
+		MiscUtils.closeQuietly(bs);
 		super.onTerminate();
 	}
 
 	private volatile DownloaderService ds;
+	private volatile BackgroundService bs;
 
 	public static DownloaderService getDownloader() {
 		return getApp().ds;
+	}
+
+	public static BackgroundService getBackground() {
+		return getApp().bs;
 	}
 
 	private static AedictApp instance;
@@ -343,19 +351,14 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		}
 
 		/**
-		 * Returns the dictionary location on the SD card of the EDICT
-		 * dictionary..
+		 * Returns the dictionary location on the SD card of currently selected EDICT
+		 * dictionary.
 		 * 
 		 * @return absolute OS-specific location of the dictionary.
 		 */
 		public String getDictionaryLoc() {
-			final String dictionaryName = getDictionaryName();
-			if (dictionaryName == null || dictionaryName.equals(Config.DEFAULT_DICTIONARY_NAME)) {
-				return DictTypeEnum.Edict.getDefaultDictionaryPath();
-			}
-			final String loc = DictTypeEnum.Edict.getDefaultDictionaryPath() + "-" + dictionaryName;
-			final File f = new File(loc);
-			return f.exists() && f.isDirectory() ? loc : DictTypeEnum.Edict.getDefaultDictionaryPath();
+			final Dictionary d = new Dictionary(DictTypeEnum.Edict, getDictionaryName());
+			return d.exists() ? d.getDictionaryLocation().getAbsolutePath() : DictTypeEnum.Edict.getDefaultDictionaryPath();
 		}
 	}
 
