@@ -22,7 +22,6 @@ import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
@@ -30,9 +29,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -442,47 +439,6 @@ public class DownloaderService implements Closeable {
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Lists all available edict dictionaries, omitting kanjidic.
-	 * 
-	 * @return maps a dictionary name to to an absolute directory name (e.g.
-	 *         /sdcard/aedict/index). The list will always contain the default
-	 *         dictionary.
-	 */
-	public static Map<String, String> listEdictDictionaries() {
-		final Map<String, String> result = new HashMap<String, String>();
-		result.put(AedictApp.Config.DEFAULT_DICTIONARY_NAME, "/sdcard/aedict/index");
-		final File aedict = new File("/sdcard/aedict");
-		if (aedict.exists() && aedict.isDirectory()) {
-			final String[] dictionaries = aedict.list(new FilenameFilter() {
-
-				public boolean accept(File dir, String filename) {
-					return filename.toLowerCase().startsWith("index-");
-				}
-			});
-			for (final String dict : dictionaries) {
-				if (isNonEdictDirectory(dict)) {
-					continue;
-				}
-				final String dictName = dict.substring("index-".length());
-				result.put(dictName, "/sdcard/aedict/" + dict);
-			}
-		}
-		return result;
-	}
-
-	private static boolean isNonEdictDirectory(final String name) {
-		for (DictTypeEnum e : DictTypeEnum.values()) {
-			if (e == DictTypeEnum.Edict) {
-				continue;
-			}
-			if (e.getDefaultDictionaryLoc().equals(name)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public void cancelCurrentDownload() {

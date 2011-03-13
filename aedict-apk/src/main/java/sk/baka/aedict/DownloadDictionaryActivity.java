@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import sk.baka.aedict.dict.DictTypeEnum;
-import sk.baka.aedict.dict.DownloaderService;
+import sk.baka.aedict.dict.Dictionary;
 import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.DialogUtils;
@@ -153,7 +153,11 @@ public class DownloadDictionaryActivity extends ListActivity {
 				MiscUtils.closeQuietly(reader);
 			}
 			// remove all dictionaries which are already downloaded
-			result.keySet().removeAll(DownloaderService.listEdictDictionaries().keySet());
+			for (final Dictionary d: Dictionary.listEdictInstalled()) {
+				if(d.custom!=null){
+					result.remove(d.custom);
+				}
+			}
 			final List<DownloadableDictionaryInfo> items = new ArrayList<DownloadableDictionaryInfo>(result.values());
 			Collections.sort(items);
 			return items;
