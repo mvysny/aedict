@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.Callable;
 
+import sk.baka.aedict.AedictApp;
+import sk.baka.aedict.dict.Dictionary.DictionaryVersions;
 import sk.baka.autils.MiscUtils;
 
 /**
@@ -32,9 +34,12 @@ public class Updater {
 		public static final String KEY = "getNewDictionaryVersionNumbers";
 		@Override
 		public Void call() throws Exception {
+			final DictionaryVersions dv = new DictionaryVersions();
 			for(Dictionary d: Dictionary.listInstalled()) {
 				final String version = getVersion(d.getVersionFileURL());
+				dv.versions.put(d, version);
 			}
+			AedictApp.getConfig().setServerDictVersions(dv);
 			return null;
 		}
 		private String getVersion(String dictionaryURL) throws IOException {

@@ -21,11 +21,15 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.util.Check;
+import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
 
 /**
@@ -190,5 +194,40 @@ public class Dictionary implements Serializable {
 			downloadURL += "-" + custom;
 		}
 		return downloadURL + ".version";
+	}
+	
+	public String toExternal() {
+		String result = dte.name();
+		if (custom != null) {
+			result += "@@@@" + custom;
+		}
+		return result;
+	}
+	
+	public static Dictionary fromExternal(String external) {
+		final String[] parsed = external.split("@@@@");
+		final DictTypeEnum dte = DictTypeEnum.valueOf(parsed[0]);
+		return new Dictionary(dte, parsed.length == 1 ? null : parsed[1]);
+	}
+	
+	public static class DictionaryVersions {
+		public final Map<Dictionary, String> versions = new HashMap<Dictionary, String>();
+
+		public String toExternal() {
+			final ListBuilder sb = new ListBuilder("####");
+			for (Entry<Dictionary, String> e : versions.entrySet()) {
+				sb.add(e.getKey().toExternal() + "##" + e.getValue());
+			}
+			return sb.toString();
+		}
+
+		public static DictionaryVersions fromExternal(String external) {
+			final DictionaryVersions dv = new DictionaryVersions();
+			for (String entry : external.split("####")) {
+				final String[] e = entry.split("##");
+				dv.versions.put(Dictionary.fromExternal(e[0]), e[1]);
+			}
+			return dv;
+		}
 	}
 }

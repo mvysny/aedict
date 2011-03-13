@@ -26,6 +26,7 @@ import java.util.List;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.Dictionary;
+import sk.baka.aedict.dict.Dictionary.DictionaryVersions;
 import sk.baka.aedict.dict.DownloaderService;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.BackgroundService;
@@ -180,7 +181,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * 
 		 * @return the romanization system to use. Never null.
 		 */
-		public RomanizationEnum getRomanization() {
+		public synchronized RomanizationEnum getRomanization() {
 			return RomanizationEnum.valueOf(prefs.getString(ConfigActivity.KEY_ROMANIZATION, null));
 		}
 
@@ -189,7 +190,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * 
 		 * @return true if the application is always available.
 		 */
-		public boolean isAlwaysAvailable() {
+		public synchronized boolean isAlwaysAvailable() {
 			return prefs.getBoolean(ConfigActivity.KEY_ALWAYS_AVAILABLE, false);
 		}
 
@@ -199,7 +200,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * 
 		 * @return true if Romaji will be displayed.
 		 */
-		public boolean isUseRomaji() {
+		public synchronized boolean isUseRomaji() {
 			return prefs.getBoolean(ConfigActivity.KEY_USE_ROMAJI, false);
 		}
 
@@ -210,7 +211,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * @param useRomaji
 		 *            true if Romaji will be displayed.
 		 */
-		public void setUseRomaji(boolean useRomaji) {
+		public synchronized void setUseRomaji(boolean useRomaji) {
 			commit(prefs.edit().putBoolean(ConfigActivity.KEY_USE_ROMAJI, useRomaji));
 		}
 
@@ -222,7 +223,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 *         {@value Config#DEFAULT_DICTIONARY_NAME} for the default Edict
 		 *         file.
 		 */
-		public String getDictionaryName() {
+		public synchronized String getDictionaryName() {
 			return prefs.getString(ConfigActivity.KEY_DICTIONARY_NAME, null);
 		}
 
@@ -238,7 +239,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 *            the category, 0 is the default one.
 		 * @return the notepad items, never null.
 		 */
-		public List<DictEntry> getNotepadItems(final int category) {
+		public synchronized List<DictEntry> getNotepadItems(final int category) {
 			try {
 				return DictEntry.fromExternalList(prefs.getString(KEY_NOTEPAD_ITEMS + (category == 0 ? "" : "" + category), ""));
 			} catch (Exception ex) {
@@ -258,7 +259,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * @param notepadItems
 		 *            the new notepad items, never null.
 		 */
-		public void setNotepadItems(final int category, final List<? extends DictEntry> notepadItems) {
+		public synchronized void setNotepadItems(final int category, final List<? extends DictEntry> notepadItems) {
 			commit(prefs.edit().putString(KEY_NOTEPAD_ITEMS + (category == 0 ? "" : "" + category), DictEntry.toExternalList(notepadItems)));
 		}
 
@@ -269,7 +270,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * 
 		 * @return a list of notepad category names, not null, may be empty.
 		 */
-		public List<String> getNotepadCategories() {
+		public synchronized List<String> getNotepadCategories() {
 			final List<String> result = new ArrayList<String>();
 			for (final String cat : prefs.getString(KEY_NOTEPAD_CATEGORIES, "").split("@@@@")) {
 				if (!MiscUtils.isBlank(cat)) {
@@ -285,7 +286,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * @param categories
 		 *            a list of notepad category names, not null, may be empty.
 		 */
-		public void setNotepadCategories(final List<String> categories) {
+		public synchronized void setNotepadCategories(final List<String> categories) {
 			final ListBuilder b = new ListBuilder("@@@@");
 			for (final String s : categories) {
 				b.add(s);
@@ -303,7 +304,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * 
 		 * @return the notepad items, never null.
 		 */
-		public List<DictEntry> getRecentlyViewed() {
+		public synchronized List<DictEntry> getRecentlyViewed() {
 			return DictEntry.fromExternalList(prefs.getString(KEY_RECENTLY_VIEWED_ITEMS, ""));
 		}
 
@@ -313,7 +314,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * @param notepadItems
 		 *            the new notepad items, never null.
 		 */
-		public void setRecentlyViewed(final List<? extends DictEntry> notepadItems) {
+		public synchronized void setRecentlyViewed(final List<? extends DictEntry> notepadItems) {
 			commit(prefs.edit().putString(KEY_RECENTLY_VIEWED_ITEMS, DictEntry.toExternalList(notepadItems)));
 		}
 
@@ -336,7 +337,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * @param sorted
 		 *            sort
 		 */
-		public void setSorted(final boolean sorted) {
+		public synchronized void setSorted(final boolean sorted) {
 			commit(prefs.edit().putBoolean(KEY_SORT, sorted));
 		}
 
@@ -346,7 +347,7 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		 * 
 		 * @return sort
 		 */
-		public boolean isSorted() {
+		public synchronized boolean isSorted() {
 			return prefs.getBoolean(KEY_SORT, true);
 		}
 
@@ -359,6 +360,21 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		public String getDictionaryLoc() {
 			final Dictionary d = new Dictionary(DictTypeEnum.Edict, getDictionaryName());
 			return d.exists() ? d.getDictionaryLocation().getAbsolutePath() : DictTypeEnum.Edict.getDefaultDictionaryPath();
+		}
+		
+		private static final String KEY_CURRENT_DICT_VERSIONS = "currentDictVersions";
+		public synchronized void setCurrentDictVersions(DictionaryVersions dv) {
+			commit(prefs.edit().putString(KEY_CURRENT_DICT_VERSIONS, dv.toExternal()));
+		}
+		public synchronized DictionaryVersions getCurrentDictVersions() {
+			return DictionaryVersions.fromExternal(prefs.getString(KEY_CURRENT_DICT_VERSIONS, ""));
+		}
+		private static final String KEY_SERVER_DICT_VERSIONS = "serverDictVersions";
+		public synchronized void setServerDictVersions(DictionaryVersions dv) {
+			commit(prefs.edit().putString(KEY_SERVER_DICT_VERSIONS, dv.toExternal()));
+		}
+		public synchronized DictionaryVersions getServerDictVersions() {
+			return DictionaryVersions.fromExternal(prefs.getString(KEY_SERVER_DICT_VERSIONS, ""));
 		}
 	}
 
