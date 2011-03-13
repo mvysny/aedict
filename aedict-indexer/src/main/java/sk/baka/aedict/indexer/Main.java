@@ -86,18 +86,18 @@ public class Main {
 
     private static Options getOptions() {
         final Options opts = new Options();
-        Option opt = new Option("f", "file", true, "load edict file from a filesystem");
+        Option opt = new Option("f", "file", true, "load dictionary file from a filesystem");
         opt.setArgName("file");
         opts.addOption(opt);
-        opt = new Option("u", "url", true, "load edict file from a URL");
+        opt = new Option("u", "url", true, "load dictionary file from a URL");
         opt.setArgName("url");
         opts.addOption(opt);
-        opts.addOption("d", "default", false, "load default eng-jp edict file. Equal to -g -u " + FileTypeEnum.Edict.getDefaultDownloadUrl() + ". May be used with the -k switch to download default kanjidic or -t to download default tanaka corpus");
-        opts.addOption("g", "gzipped", false, "the edict file is gzipped");
-        opt = new Option("e", "encoding", true, "edict file encoding, defaults to EUC_JP");
+        opts.addOption("d", "default", false, "download the dictionary file from the official download URL. Equal to -g -u " + FileTypeEnum.Edict.getDefaultDownloadUrl() + ". May be used with the -k/-t/-T switches.");
+        opts.addOption("g", "gzipped", false, "the dictionary file is gzipped");
+        opt = new Option("e", "encoding", true, "dictionary file encoding, defaults to EUC_JP for Jim Breen's dictionaries, UTF-8 for Tatoeba");
         opt.setArgName("encoding");
         opts.addOption(opt);
-        opts.addOption("?", null, false, "prints help");
+        opts.addOption("?", null, false, "prints this help");
         opts.addOption("k", "kanjidic", false, "the file to process is actually a kanjidic");
         opts.addOption("t", "tanaka", false, "the file to process is a Tanaka Corpus with example sentences");
         opts.addOption("T", "tatoeba", false, "the file to process is a Tatoeba Project file with example sentences");
@@ -143,7 +143,7 @@ public class Main {
 
     private static void printHelp() {
         final HelpFormatter f = new HelpFormatter();
-        f.printHelp("ai", "Aedict index file generator\nProduces a Lucene-indexed file from given EDict- or kanjidic-formatted dictionary file. To download and index the default english-japan edict file just use the -d switch - the file is downloaded automatically.", getOptions(), null, true);
+        f.printHelp("ai", "Aedict index file generator\nProduces a Lucene-indexed file from given dictionary file (expects Jim Breen's Edict by default). To download and index the default english-japan edict file just use the -d switch - the file is downloaded automatically.", getOptions(), null, true);
     }
 
     void run() throws Exception {
