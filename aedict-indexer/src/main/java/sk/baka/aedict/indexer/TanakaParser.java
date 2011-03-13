@@ -74,7 +74,7 @@ public class TanakaParser implements IDictParser {
             try {
                 return new Edict(new File(location + "/edict.gz"));
             } catch (Exception ex) {
-                throw new RuntimeException("Tanaka parser requires edict.gz to be available at " + new File(location).getAbsolutePath(), ex);
+                throw new RuntimeException("The parser requires edict.gz to be available at " + new File(location).getAbsolutePath(), ex);
             }
         }
         /**
