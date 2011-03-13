@@ -4,4 +4,5 @@ bin
 gen
 eclipse-target
 target
+nbactions.xml
 
