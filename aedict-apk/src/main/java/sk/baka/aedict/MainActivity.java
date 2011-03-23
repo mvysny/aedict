@@ -240,7 +240,6 @@ public class MainActivity extends ListActivity {
 		translate.setOnCheckedChangeListener(new ComponentUpdater());
 		((EditText)findViewById(R.id.searchEdit)).setOnEditorActionListener(new EditText.OnEditorActionListener() {
 			
-			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				final String text = ((TextView) findViewById(R.id.searchEdit)).getText().toString().trim();
 				if (text.length() == 0) {

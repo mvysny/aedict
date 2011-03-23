@@ -74,7 +74,6 @@ public class BackgroundService implements Closeable {
 			taskStatus.put(key, new Status(StatusEnum.Scheduled, null));
 			executor.submit(new Runnable() {
 
-				@Override
 				public void run() {
 					taskStatus.put(key, new Status(StatusEnum.Running, null));
 					try {
@@ -90,7 +89,6 @@ public class BackgroundService implements Closeable {
 		}
 	}
 
-	@Override
 	public void close() throws IOException {
 		executor.shutdownNow();
 		try {
