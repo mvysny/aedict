@@ -162,15 +162,19 @@ public class Dictionary implements Serializable {
 			final String[] dictionaries = aedict.list(new FilenameFilter() {
 
 				public boolean accept(File dir, String filename) {
-					return filename.toLowerCase().startsWith("index-");
+					return filename.toLowerCase().startsWith("index");
 				}
 			});
 			for (final String dict : dictionaries) {
 				if (isNonEdictDirectory(dict)) {
 					continue;
 				}
-				final String dictName = dict.substring("index-".length());
-				result.add(new Dictionary(DictTypeEnum.Edict, dictName));
+				if (dict.equals("index")) {
+					result.add(new Dictionary(DictTypeEnum.Edict, null));
+				} else {
+					final String dictName = dict.substring("index-".length());
+					result.add(new Dictionary(DictTypeEnum.Edict, dictName));
+				}
 			}
 		}
 		return result;
