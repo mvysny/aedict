@@ -32,7 +32,6 @@ import sk.baka.autils.MiscUtils;
 public class Updater {
 	private static class GetVersionNumbers implements Callable<Void> {
 		public static final String KEY = "getNewDictionaryVersionNumbers";
-		@Override
 		public Void call() throws Exception {
 			final DictionaryVersions dv = new DictionaryVersions();
 			for(Dictionary d: Dictionary.listInstalled()) {
