@@ -83,7 +83,7 @@ public class Main {
             System.exit(1);
         }
     }
-    private static final String REMOTE_DIR = "/home/moto/public_html/aedict";
+    private static final String REMOTE_DIR = "/home/moto/public_html/aedict/dictionaries";
 
     private static void exec(SSHClient ssh, String cmd) throws ConnectionException, TransportException, IOException {
         final Session s = ssh.startSession();

@@ -301,7 +301,7 @@ public enum DictTypeEnum {
     /**
      * A base http:// location of the dictionary files.
      */
-    public static final String DICT_BASE_LOCATION_URL = "http://baka.sk/aedict/";
+    public static final String DICT_BASE_LOCATION_URL = "http://baka.sk/aedict/dictionaries/";
 
     /**
      * Returns a Lucene query which matches given query as close as possible.
