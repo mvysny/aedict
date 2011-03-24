@@ -19,6 +19,7 @@
 package sk.baka.aedict;
 
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.Dictionary;
 import sk.baka.aedict.dict.DownloaderService;
 import sk.baka.aedict.dict.DownloaderService.State;
 import android.app.Activity;
@@ -50,7 +51,7 @@ public class DownloadActivity extends Activity {
 
 			public void onClick(View v) {
 				for (DictTypeEnum dt : DictTypeEnum.values()) {
-					AedictApp.getDownloader().downloadDict(dt);
+					AedictApp.getDownloader().downloadDict(new Dictionary(dt, null));
 				}
 				AedictApp.getDownloader().downloadSod();
 			}

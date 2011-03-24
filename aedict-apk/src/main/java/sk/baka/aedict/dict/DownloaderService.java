@@ -44,6 +44,7 @@ import java.util.zip.ZipInputStream;
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.DownloadActivity;
 import sk.baka.aedict.R;
+import sk.baka.aedict.dict.Dictionary.DictionaryVersions;
 import sk.baka.aedict.util.DialogActivity;
 import sk.baka.aedict.util.IOExceptionWithCause;
 import sk.baka.aedict.util.SodLoader;
@@ -122,7 +123,7 @@ public class DownloaderService implements Closeable {
 	 * @return true if the files are available, false otherwise.
 	 */
 	public boolean checkDictionary(final Activity activity, Dictionary dictionary, Long expectedSize, final boolean skipMissingMsg) {
-		return checkDictionaryFile(activity, new DictDownloader(dictionary.getDownloadSite(), dictionary.getDictionaryLocation().getAbsolutePath(), dictionary.getName(), expectedSize == null ? dictionary.dte.luceneFileSize() : expectedSize), skipMissingMsg);
+		return checkDictionaryFile(activity, new DictDownloader(dictionary, dictionary.getDownloadSite(), dictionary.getDictionaryLocation().getAbsolutePath(), dictionary.getName(), expectedSize == null ? dictionary.dte.luceneFileSize() : expectedSize), skipMissingMsg);
 	}
 	
 	/**
@@ -153,7 +154,7 @@ public class DownloaderService implements Closeable {
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
-				AedictApp.getDownloader().download(new DictDownloader(dict.getDownloadSite(), dict.getDictionaryLocation().getAbsolutePath(), dict.getName(), dict.dte.luceneFileSize()));
+				AedictApp.getDownloader().download(new DictDownloader(dict, dict.getDownloadSite(), dict.getDictionaryLocation().getAbsolutePath(), dict.getName(), dict.dte.luceneFileSize()));
 			}
 			activity.startActivity(new Intent(activity, DownloadActivity.class));
 		}
@@ -175,8 +176,8 @@ public class DownloaderService implements Closeable {
 	 * @param skipMissingMsg if true then the "dictionary is missing" message is shown only when there is not enough free space.
 	 * @return true if the files are available, false otherwise.
 	 */
-	public boolean checkDictionary(final Activity activity, URL source, String targetDir, String dictName, long expectedSize, final boolean skipMissingMsg) {
-		return checkDictionaryFile(activity, new DictDownloader(source, targetDir, dictName, expectedSize), skipMissingMsg);
+	public boolean checkDictionary(final Activity activity, Dictionary dict, URL source, String targetDir, String dictName, long expectedSize, final boolean skipMissingMsg) {
+		return checkDictionaryFile(activity, new DictDownloader(dict, source, targetDir, dictName, expectedSize), skipMissingMsg);
 	}
 	
 	/**
@@ -232,8 +233,8 @@ public class DownloaderService implements Closeable {
 	 * downloaded it will not be overwritten.
 	 * @param dict which dictionary to download.
 	 */
-	public void downloadDict(final DictTypeEnum dict) {
-		download(new DictDownloader(dict.getDownloadSite(), dict.getDefaultDictionaryPath(), dict.name(), dict.luceneFileSize()));
+	public void downloadDict(final Dictionary dict) {
+		download(new DictDownloader(dict, dict.getDownloadSite(), dict.dte.getDefaultDictionaryPath(), dict.getName(), dict.dte.luceneFileSize()));
 	}
 	/**
 	 * Downloads the <a href="http://www.kanjicafe.com/using_soder.htm#download">SOD</a> Kanji Draw Order images.
@@ -293,7 +294,7 @@ public class DownloaderService implements Closeable {
 				}
 			} catch (Throwable t) {
 				Log.e(DownloaderService.class.getSimpleName(), "Error downloading a dictionary", t);
-				s().state = new State(t.getMessage(), null, 0, 1, true);
+				s().state = new State(t.getClass().getName() + ": " + t.getMessage(), null, 0, 1, true);
 				deleteDirQuietly(new File(targetDir));
 			}
 		}
@@ -382,7 +383,7 @@ public class DownloaderService implements Closeable {
 
 	static class DictDownloader extends AbstractDownloader {
 		private static final long serialVersionUID = 1L;
-
+		private final Dictionary dictionary;
 		/**
 		 * Creates new dictionary downloader.
 		 * 
@@ -396,8 +397,9 @@ public class DownloaderService implements Closeable {
 		 * @param expectedSize
 		 *            the expected file size of unpacked dictionary.
 		 */
-		public DictDownloader(URL source, String targetDir, String dictName, long expectedSize) {
+		public DictDownloader(Dictionary dictionary, URL source, String targetDir, String dictName, long expectedSize) {
 			super(source, targetDir, dictName, expectedSize);
+			this.dictionary = dictionary;
 		}
 
 		@Override
@@ -413,6 +415,11 @@ public class DownloaderService implements Closeable {
 				}
 				zip.closeEntry();
 			}
+			// update the version
+			final String version = dictionary.downloadVersion();
+			final DictionaryVersions versions = AedictApp.getConfig().getCurrentDictVersions();
+			versions.versions.put(dictionary, version);
+			AedictApp.getConfig().setCurrentDictVersions(versions);
 		}
 	}
 

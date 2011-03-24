@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -202,6 +203,10 @@ public class Dictionary implements Serializable {
 		return downloadURL + ".version";
 	}
 	
+	public String downloadVersion() throws IOException {
+		return new String(MiscUtils.readFully(new URL(getVersionFileURL()).openStream()), "UTF-8");
+	}
+
 	public String toExternal() {
 		String result = dte.name();
 		if (custom != null) {
