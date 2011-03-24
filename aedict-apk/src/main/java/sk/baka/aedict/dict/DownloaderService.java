@@ -140,7 +140,7 @@ public class DownloaderService implements Closeable {
 		return needsUpdate.isEmpty();
 	}
 
-	private static class UpdateDictionaries implements DialogActivity.IDialogListener {
+	public static class UpdateDictionaries implements DialogActivity.IDialogListener {
 		private static final long serialVersionUID = 1L;
 		public final Set<Dictionary> dictionariesToUpdate;
 		public UpdateDictionaries(Set<Dictionary> dictionariesToUpdate) {
