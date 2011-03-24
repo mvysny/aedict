@@ -23,12 +23,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
 
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.Dictionary;
+import sk.baka.aedict.dict.Dictionary.DictionaryVersions;
+import sk.baka.aedict.dict.DownloaderService.UpdateDictionaries;
 import sk.baka.aedict.kanji.RomanizationEnum;
+import sk.baka.aedict.util.DialogActivity;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -37,6 +43,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
+import android.widget.Toast;
 
 /**
  * Configures AEdict.
@@ -74,6 +81,10 @@ public class ConfigActivity extends PreferenceActivity {
 	 * Resets the introduction dialogs - all dialogs will be shown again.
 	 */
 	public static final String KEY_RESET_INTRODUCTIONS = "resetIntroductions";
+	/**
+	 * Checks for dictionary updates.
+	 */
+	public static final String KEY_CHECK_FOR_UPDATES = "checkForUpdates";
 	/**
 	 * Shows the download dialog
 	 */
@@ -124,6 +135,10 @@ public class ConfigActivity extends PreferenceActivity {
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://code.google.com/p/aedict/#Donate")));
 			return true;
 		}
+		if(key.equals(KEY_CHECK_FOR_UPDATES)) {
+			checkForNewVersions();
+			return true;
+		}
 		return super.onPreferenceTreeClick(preferenceScreen, preference);
 	}
 
@@ -159,5 +174,35 @@ public class ConfigActivity extends PreferenceActivity {
 			}
 
 		});
+	}
+
+	private static class GetVersionNumbers implements Callable<Void> {
+		public final Activity a;
+		public GetVersionNumbers(Activity a){
+			this.a=a;
+		}
+		public static final String KEY = "getNewDictionaryVersionNumbers";
+		public Void call() throws Exception {
+			final DictionaryVersions dv = new DictionaryVersions();
+			for(Dictionary d: Dictionary.listInstalled()) {
+				final String version = d.downloadVersion();
+				dv.versions.put(d, version);
+			}
+			AedictApp.getConfig().setServerDictVersions(dv);
+			final DictionaryVersions current = AedictApp.getConfig().getCurrentDictVersions();
+			final Set<Dictionary> updatable = Dictionary.getUpdatable(current, dv);
+			if(updatable.isEmpty()){
+				new DialogActivity.Builder(a).showInfoDialog("No updates found", "No dictionary updates has been found.");
+			}else{
+				new DialogActivity.Builder(a).setDialogListener(new UpdateDictionaries(updatable)).showYesNoDialog(
+						"The following dictionaries may be updated: " + updatable + ". Perform the update now?");
+			}
+			return null;
+		}
+	}
+	private void checkForNewVersions() {
+		final Toast toast = Toast.makeText(this, "Checking for updates", Toast.LENGTH_SHORT);
+		toast.show();
+		AedictApp.getBackground().schedule(GetVersionNumbers.KEY, new GetVersionNumbers(this));
 	}
 }

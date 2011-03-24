@@ -470,4 +470,6 @@
 	<string name="noBackup">There is no backup available.</string>
     <string name="radicals_colon">Radicals:</string>
 	<string name="radicalNumber">Rad. Num.:</string>
+	<string name="checkForUpdates">Check for updates</string>
+	<string name="checkForUpdatesSummary">Check for newer dictionary files</string>
 </resources>

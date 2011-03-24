@@ -33,6 +33,8 @@
 		<PreferenceScreen android:key="donate" android:title="@string/donate"/>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/preference_dictionaries">
+		<PreferenceScreen android:key="checkForUpdates" android:title="@string/checkForUpdates"
+			android:summary="@string/checkForUpdatesSummary"/>
 		<ListPreference android:key="dictionaryName"
 			android:defaultValue="Default" android:title="@string/edictDictionary"
 			android:summary="@string/edictDictionarySummary"
