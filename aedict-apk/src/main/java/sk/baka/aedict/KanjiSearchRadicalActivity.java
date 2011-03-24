@@ -27,6 +27,7 @@ import java.util.Set;
 
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.Dictionary;
 import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
@@ -42,10 +43,10 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.ImageView.ScaleType;
 
 /**
  * Allows search for Kanji characters using a Radical lookup.
@@ -99,7 +100,7 @@ public class KanjiSearchRadicalActivity extends AbstractActivity {
 			}
 		}));
 		// check that KANJIDIC exists
-		AedictApp.getDownloader().checkDic(this, DictTypeEnum.Kanjidic);
+		AedictApp.getDownloader().checkDictionary(this, new Dictionary(DictTypeEnum.Kanjidic, null), null, false);
 	}
 
 	/**

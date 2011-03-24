@@ -84,7 +84,7 @@ public class TanakaSearchTask extends AsyncTask<String, Void, List<DictEntry>> i
 
 	@Override
 	protected void onPreExecute() {
-		AedictApp.getDownloader().checkDic(activity, DictTypeEnum.Tanaka);
+		AedictApp.getDownloader().checkDictionary(activity, new Dictionary(DictTypeEnum.Tanaka, null), null, false);
 		activity.setProgressBarIndeterminate(true);
 		activity.setProgressBarIndeterminateVisibility(true);
 		final TextView tv = (TextView) activity.getLayoutInflater().inflate(android.R.layout.simple_list_item_1, vg, false);

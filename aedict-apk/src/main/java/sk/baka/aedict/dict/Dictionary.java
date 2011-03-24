@@ -272,4 +272,12 @@ public class Dictionary implements Serializable {
 	public static Set<Dictionary> getUpdatable(DictionaryVersions current, DictionaryVersions server) {
 		return DictionaryVersions.getNewer(current, server);
 	}
+	
+	public String getName() {
+		String result = dte.name();
+		if (custom != null) {
+			result = result + "-" + custom;
+		}
+		return result;
+	}
 }

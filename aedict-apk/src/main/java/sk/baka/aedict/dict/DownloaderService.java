@@ -116,6 +116,19 @@ public class DownloaderService implements Closeable {
 	 * Checks if given dictionary file exists. If not, user is prompted for a
 	 * download and the files are downloaded if requested.
 	 * @param activity context
+	 * @param dictionary the dictionary to download.
+	 * @param expectedSize the expected file size of unpacked dictionary. May be null if not known - in this case {@link DictTypeEnum#luceneFileSize()} is used.
+	 * @param skipMissingMsg if true then the "dictionary is missing" message is shown only when there is not enough free space.
+	 * @return true if the files are available, false otherwise.
+	 */
+	public boolean checkDictionary(final Activity activity, Dictionary dictionary, Long expectedSize, final boolean skipMissingMsg) {
+		return checkDictionaryFile(activity, new DictDownloader(dictionary.dte.getDownloadSite(), dictionary.getDictionaryLocation().getAbsolutePath(), dictionary.getName(), expectedSize == null ? dictionary.dte.luceneFileSize() : expectedSize), skipMissingMsg);
+	}
+	
+	/**
+	 * Checks if given dictionary file exists. If not, user is prompted for a
+	 * download and the files are downloaded if requested.
+	 * @param activity context
 	 * @param source
 	 *            download the dictionary files from here. A zipped Lucene
 	 *            index file is expected.
@@ -128,9 +141,10 @@ public class DownloaderService implements Closeable {
 	 * @param skipMissingMsg if true then the "dictionary is missing" message is shown only when there is not enough free space.
 	 * @return true if the files are available, false otherwise.
 	 */
-	public boolean checkDictionaryFile(final Activity activity, URL source, String targetDir, String dictName, long expectedSize, final boolean skipMissingMsg) {
+	public boolean checkDictionary(final Activity activity, URL source, String targetDir, String dictName, long expectedSize, final boolean skipMissingMsg) {
 		return checkDictionaryFile(activity, new DictDownloader(source, targetDir, dictName, expectedSize), skipMissingMsg);
 	}
+	
 	/**
 	 * Checks if given dictionary file exists. If not, user is prompted for a
 	 * download and the files are downloaded if requested.
@@ -157,17 +171,6 @@ public class DownloaderService implements Closeable {
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Checks if given dictionary exists. If not, user is prompted for a
-	 * download and the files are downloaded if requested.
-	 *  @param a context
-	 *  @param dict the dictionary type.
-	 * @return true if the files are available, false otherwise.
-	 */
-	public boolean checkDic(final Activity a, final DictTypeEnum dict) {
-		return checkDictionaryFile(a, new DictDownloader(dict.getDownloadSite(), dict.getDefaultDictionaryPath(), dict.name(), dict.luceneFileSize()), false);
 	}
 
 	/**
