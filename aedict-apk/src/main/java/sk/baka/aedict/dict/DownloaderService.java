@@ -122,7 +122,41 @@ public class DownloaderService implements Closeable {
 	 * @return true if the files are available, false otherwise.
 	 */
 	public boolean checkDictionary(final Activity activity, Dictionary dictionary, Long expectedSize, final boolean skipMissingMsg) {
-		return checkDictionaryFile(activity, new DictDownloader(dictionary.dte.getDownloadSite(), dictionary.getDictionaryLocation().getAbsolutePath(), dictionary.getName(), expectedSize == null ? dictionary.dte.luceneFileSize() : expectedSize), skipMissingMsg);
+		return checkDictionaryFile(activity, new DictDownloader(dictionary.getDownloadSite(), dictionary.getDictionaryLocation().getAbsolutePath(), dictionary.getName(), expectedSize == null ? dictionary.dte.luceneFileSize() : expectedSize), skipMissingMsg);
+	}
+	
+	/**
+	 * Checks if there are old dictionaries present on the SD Card which needs update.
+	 * @param activity context
+	 * @return true if the dictionaries are okay, false if there is an old dictionary. In this case, an activity handling this case is already launched.
+	 */
+	public boolean checkRequiredVersions(final Activity activity) {
+		final Set<Dictionary> needsUpdate = Dictionary.requireUpdate(AedictApp.getConfig().getCurrentDictVersions());
+		if (!needsUpdate.isEmpty()) {
+			new DialogActivity.Builder(activity).setDialogListener(new UpdateDictionaries(needsUpdate)).showYesNoDialog(
+					"The following dictionaries are no longer compatible with this version of Aedict and needs to be updated: " + needsUpdate + ". Perform the update now?");
+		}
+		return needsUpdate.isEmpty();
+	}
+
+	private static class UpdateDictionaries implements DialogActivity.IDialogListener {
+		private static final long serialVersionUID = 1L;
+		public final Set<Dictionary> dictionariesToUpdate;
+		public UpdateDictionaries(Set<Dictionary> dictionariesToUpdate) {
+			super();
+			this.dictionariesToUpdate = dictionariesToUpdate;
+		}
+		public void onPositiveClick(DialogActivity activity) {
+			for(final Dictionary dict: dictionariesToUpdate) {
+				try {
+					dict.delete();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+				AedictApp.getDownloader().download(new DictDownloader(dict.getDownloadSite(), dict.getDictionaryLocation().getAbsolutePath(), dict.getName(), dict.dte.luceneFileSize()));
+			}
+			activity.startActivity(new Intent(activity, DownloadActivity.class));
+		}
 	}
 	
 	/**
@@ -166,7 +200,7 @@ public class DownloaderService implements Closeable {
 				download(downloader);
 				activity.startActivity(new Intent(activity, DownloadActivity.class));
 			} else {
-				new DialogActivity.Builder(activity).setValue(DownloaderDialogActivity.KEY_DOWNLOADER, downloader).showYesNoDialog(msg.toString(), DownloaderDialogActivity.class);
+				new DialogActivity.Builder(activity).setDialogListener(new DownloaderDialogActivity(downloader)).showYesNoDialog(msg.toString());
 			}
 			return false;
 		}

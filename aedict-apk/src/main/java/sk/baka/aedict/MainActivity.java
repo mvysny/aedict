@@ -94,7 +94,8 @@ public class MainActivity extends ListActivity {
 			}
 		});
 		// check for dictionary file and download it if it is missing.
-		AedictApp.getDownloader().checkDictionary(MainActivity.this, new Dictionary(DictTypeEnum.Edict, null), null, false);
+		AedictApp.getDownloader().checkDictionary(this, new Dictionary(DictTypeEnum.Edict, null), null, false);
+		AedictApp.getDownloader().checkRequiredVersions(this);
 		if (!AedictApp.isInstrumentation) {
 			new DialogUtils(this).showInfoOnce(AedictApp.getVersion(), AedictApp.format(R.string.whatsNew, AedictApp.getVersion()), getString(R.string.whatsNewText));
 		}

@@ -22,14 +22,15 @@ import sk.baka.aedict.DownloadActivity;
 import sk.baka.aedict.dict.DownloaderService.AbstractDownloader;
 import sk.baka.aedict.util.DialogActivity;
 
-public class DownloaderDialogActivity extends DialogActivity {
-	static final String KEY_DOWNLOADER = "downloader";
+public class DownloaderDialogActivity implements DialogActivity.IDialogListener {
+	public final AbstractDownloader downloader;
+	
+	public DownloaderDialogActivity(AbstractDownloader downloader) {
+		this.downloader = downloader;
+	}
 
-	@Override
-	protected void onPositiveClick() {
-		final AbstractDownloader d = (AbstractDownloader) getValues().get(
-				KEY_DOWNLOADER);
-		AedictApp.getDownloader().download(d);
-		DownloadActivity.launch(this);
+	public void onPositiveClick(final DialogActivity activity) {
+		AedictApp.getDownloader().download(downloader);
+		DownloadActivity.launch(activity);
 	}
 }
