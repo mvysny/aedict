@@ -19,8 +19,6 @@
 package sk.baka.aedict.util;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import sk.baka.aedict.R;
 import sk.baka.autils.DialogUtils;
@@ -56,10 +54,13 @@ public class DialogActivity extends Activity {
 		public String message;
 		public Integer positiveTextId;
 		public Integer negativeTextId;
-		public final Map<String, Serializable> values = new HashMap<String, Serializable>();
-
-		public void show(final Class<? extends DialogActivity> clazz) {
-			final Intent i = new Intent(context, clazz);
+		public IDialogListener dlgListener;
+		public Builder setDialogListener(IDialogListener dlgListener) {
+			this.dlgListener = dlgListener;
+			return this;
+		}
+		public void show() {
+			final Intent i = new Intent(context, DialogActivity.class);
 			i.putExtra(INTENTKEY_BUILDER, this);
 			context.startActivity(i);
 		}
@@ -84,7 +85,7 @@ public class DialogActivity extends Activity {
 			setMessage(message);
 			setTitle(new DialogUtils(context).getErrorMsg());
 			setIcon(android.R.drawable.ic_dialog_alert);
-			show(DialogActivity.class);
+			show();
 		}
 
 		/**
@@ -112,7 +113,7 @@ public class DialogActivity extends Activity {
 			setMessage(message);
 			setTitle(title);
 			setIcon(android.R.drawable.ic_dialog_info);
-			show(DialogActivity.class);
+			show();
 		}
 
 		/**
@@ -121,13 +122,9 @@ public class DialogActivity extends Activity {
 		 * 
 		 * @param message
 		 *            the message to show
-		 * @param clazz
-		 *            class which implements the
-		 *            {@link DialogActivity#onPositiveClick()} method.
 		 */
-		public void showYesNoDialog(final String message,
-				final Class<? extends DialogActivity> clazz) {
-			showYesNoDialog(null, message, clazz);
+		public void showYesNoDialog(final String message) {
+			showYesNoDialog(null, message);
 		}
 
 		/**
@@ -139,17 +136,13 @@ public class DialogActivity extends Activity {
 		 *            title will not be shown.
 		 * @param message
 		 *            the message to show
-		 * @param clazz
-		 *            class which implements the
-		 *            {@link DialogActivity#onPositiveClick()} method.
 		 */
-		public void showYesNoDialog(final String title, final String message,
-				final Class<? extends DialogActivity> clazz) {
+		public void showYesNoDialog(final String title, final String message) {
 			setTitle(title);
 			setMessage(message);
 			positiveTextId = R.string.yes;
 			negativeTextId = R.string.no;
-			show(clazz);
+			show();
 		}
 
 		public Builder setTitle(String title) {
@@ -166,11 +159,6 @@ public class DialogActivity extends Activity {
 
 		public Builder setIcon(int iconId) {
 			this.iconId = iconId;
-			return this;
-		}
-		
-		public Builder setValue(final String key, final Serializable value) {
-			values.put(key, value);
 			return this;
 		}
 	}
@@ -208,7 +196,9 @@ public class DialogActivity extends Activity {
 			yes.setOnClickListener(new View.OnClickListener() {
 
 				public void onClick(View v) {
-					onPositiveClick();
+					if (b.dlgListener != null) {
+						b.dlgListener.onPositiveClick(DialogActivity.this);
+					}
 					finish();
 				}
 			});
@@ -218,15 +208,13 @@ public class DialogActivity extends Activity {
 		}
 	}
 
-	protected final Map<String, Serializable> getValues() {
-		final Builder b = (Builder) getIntent().getSerializableExtra(
-				INTENTKEY_BUILDER);
-		return b.values;
-	}
-	
-	protected void onPositiveClick() {
-		// invoked when the positive button is clicked. Override to implement
-		// custom functionality. The default implementation does nothing. The
-		// activity automatically terminates after this method is invoked.
+	public static interface IDialogListener extends Serializable {
+		/**
+		 * Invoked when the positive button is clicked. Override to implement
+		 * custom functionality. The default implementation does nothing. The
+		 * activity automatically terminates after this method is invoked.
+		 * @param activity the activity reference, never null.
+		 */
+		void onPositiveClick(final DialogActivity activity);
 	}
 }

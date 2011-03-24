@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -209,9 +211,13 @@ public class Dictionary implements Serializable {
 	}
 	
 	public static Dictionary fromExternal(String external) {
-		final String[] parsed = external.split("@@@@");
-		final DictTypeEnum dte = DictTypeEnum.valueOf(parsed[0]);
-		return new Dictionary(dte, parsed.length == 1 ? null : parsed[1]);
+		try {
+			final String[] parsed = external.split("@@@@");
+			final DictTypeEnum dte = DictTypeEnum.valueOf(parsed[0]);
+			return new Dictionary(dte, parsed.length == 1 ? null : parsed[1]);
+		} catch (Exception ex) {
+			throw new RuntimeException("Failed to parse '" + external + "'", ex);
+		}
 	}
 	
 	public static class DictionaryVersions {
@@ -226,12 +232,19 @@ public class Dictionary implements Serializable {
 		}
 
 		public static DictionaryVersions fromExternal(String external) {
+			try{
 			final DictionaryVersions dv = new DictionaryVersions();
+			if(external.trim().length()==0){
+				return dv;
+			}
 			for (String entry : external.split("####")) {
 				final String[] e = entry.split("##");
 				dv.versions.put(Dictionary.fromExternal(e[0]), e[1]);
 			}
 			return dv;
+			}catch(Exception ex){
+				throw new RuntimeException("Failed to parse '"+external+"'",ex);
+			}
 		}
 
 		public static Set<Dictionary> getNewer(DictionaryVersions current,
@@ -279,5 +292,16 @@ public class Dictionary implements Serializable {
 			result = result + "-" + custom;
 		}
 		return result;
+	}
+
+	public URL getDownloadSite() {
+		if(custom==null){
+			return dte.getDownloadSite();
+		}
+		try {
+			return new URL(DictTypeEnum.DICT_BASE_LOCATION_URL+custom+".zip");
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
