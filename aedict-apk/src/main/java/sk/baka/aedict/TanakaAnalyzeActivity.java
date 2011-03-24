@@ -24,6 +24,7 @@ import java.util.List;
 
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.Dictionary;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
@@ -59,7 +60,7 @@ public class TanakaAnalyzeActivity extends ListActivity {
 		if (td == null || td.wordList == null || td.wordList.isEmpty()) {
 			throw new IllegalArgumentException("word is null");
 		}
-		if (!AedictApp.getDownloader().checkDic(activity, DictTypeEnum.Tanaka)) {
+		if (!AedictApp.getDownloader().checkDictionary(activity, new Dictionary(DictTypeEnum.Tanaka, null), null, false)) {
 			return;
 		}
 		final Intent i = new Intent(activity, TanakaAnalyzeActivity.class);

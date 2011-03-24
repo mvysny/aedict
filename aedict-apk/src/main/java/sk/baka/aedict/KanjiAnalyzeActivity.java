@@ -25,6 +25,7 @@ import java.util.List;
 
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.Dictionary;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.LuceneSearch;
@@ -83,7 +84,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		if (word == null) {
 			throw new IllegalArgumentException("word is null");
 		}
-		if (!AedictApp.getDownloader().checkDic(activity, DictTypeEnum.Kanjidic)) {
+		if (!AedictApp.getDownloader().checkDictionary(activity, new Dictionary(DictTypeEnum.Kanjidic, null), null, false)) {
 			return;
 		}
 		final Intent i = new Intent(activity, KanjiAnalyzeActivity.class);
@@ -96,7 +97,7 @@ public class KanjiAnalyzeActivity extends ListActivity {
 		if (entries == null) {
 			throw new IllegalArgumentException("entries is null");
 		}
-		if (!AedictApp.getDownloader().checkDic(activity, DictTypeEnum.Kanjidic)) {
+		if (!AedictApp.getDownloader().checkDictionary(activity, new Dictionary(DictTypeEnum.Kanjidic, null), null, false)) {
 			return;
 		}
 		final Intent i = new Intent(activity, KanjiAnalyzeActivity.class);

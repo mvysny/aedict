@@ -31,6 +31,7 @@ import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.R;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.Dictionary;
 import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
@@ -64,7 +65,7 @@ public class QuizLaunchActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (!AedictApp.getDownloader().checkDic(this, DictTypeEnum.Kanjidic)) {
+		if (!AedictApp.getDownloader().checkDictionary(this, new Dictionary(DictTypeEnum.Kanjidic, null), null, false)) {
 			finish();
 			return;
 		}

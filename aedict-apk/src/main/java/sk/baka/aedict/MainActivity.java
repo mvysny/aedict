@@ -24,14 +24,15 @@ import java.util.List;
 
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
+import sk.baka.aedict.dict.Dictionary;
 import sk.baka.aedict.dict.Edict;
 import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.Deinflections;
+import sk.baka.aedict.kanji.Deinflections.Deinflection;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.kanji.VerbDeinflection;
-import sk.baka.aedict.kanji.Deinflections.Deinflection;
 import sk.baka.aedict.util.Check;
 import sk.baka.aedict.util.DictEntryListActions;
 import sk.baka.aedict.util.ShowRomaji;
@@ -49,12 +50,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 /**
  * Provides means to search the edict dictionary file.
@@ -93,7 +94,7 @@ public class MainActivity extends ListActivity {
 			}
 		});
 		// check for dictionary file and download it if it is missing.
-		AedictApp.getDownloader().checkDic(MainActivity.this, DictTypeEnum.Edict);
+		AedictApp.getDownloader().checkDictionary(MainActivity.this, new Dictionary(DictTypeEnum.Edict, null), null, false);
 		if (!AedictApp.isInstrumentation) {
 			new DialogUtils(this).showInfoOnce(AedictApp.getVersion(), AedictApp.format(R.string.whatsNew, AedictApp.getVersion()), getString(R.string.whatsNewText));
 		}
@@ -255,7 +256,7 @@ public class MainActivity extends ListActivity {
 				} else if (deinflect.isChecked() || translate.isChecked()) {
 					search(true);
 				} else if (tanaka.isChecked()) {
-					if (!AedictApp.getDownloader().checkDic(MainActivity.this, DictTypeEnum.Tanaka)) {
+					if (!AedictApp.getDownloader().checkDictionary(MainActivity.this, new Dictionary(DictTypeEnum.Tanaka, null), null, false)) {
 						return true;
 					}
 					final SearchQuery jp = SearchQuery.searchTanaka(text, true, r);
@@ -321,7 +322,7 @@ public class MainActivity extends ListActivity {
 	}
 
 	private void performSearch(final SearchQuery query, final List<Deinflection> deinflections) {
-		if (!AedictApp.getDownloader().checkDic(this, query.dictType)) {
+		if (!AedictApp.getDownloader().checkDictionary(this, new Dictionary(query.dictType, null), null, false)) {
 			// the dictionary is not yet available. An activity was popped up,
 			// which offers dictionary download. Nothing to do here, just do
 			// nothing.

@@ -180,6 +180,6 @@ public class DownloadDictionaryActivity extends ListActivity {
 	}
 
 	private void downloadDictionary(final DownloadableDictionaryInfo e) {
-		AedictApp.getDownloader().checkDictionaryFile(this, e.url, DictTypeEnum.BASE_DIR + "/index-" + e.zipName, e.name, e.zippedSize, true);
+		AedictApp.getDownloader().checkDictionary(this, e.url, DictTypeEnum.BASE_DIR + "/index-" + e.zipName, e.name, e.zippedSize, true);
 	}
 }
