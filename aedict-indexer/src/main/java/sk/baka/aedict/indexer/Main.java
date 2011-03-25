@@ -116,12 +116,12 @@ public class Main {
             System.out.println("Authenticating");
             ssh.authPassword("moto", password);
             System.out.println("Uploading version");
-            final String targetFName = REMOTE_DIR + "/" + config.fileType.getTargetFileName();
-            exec(ssh, "echo `date +%Y%m%d` >" + REMOTE_DIR + "/" + config.fileType.getTargetFileName() + ".version");
+            final String targetFName = REMOTE_DIR + "/" + config.getTargetFileName();
+            exec(ssh, "echo `date +%Y%m%d` >" + REMOTE_DIR + "/" + config.getTargetFileName() + ".version");
             exec(ssh, "rm -f " + targetFName);
             System.out.println("Uploading");
             final SCPFileTransfer ft = ssh.newSCPFileTransfer();
-            ft.upload(config.fileType.getTargetFileName(), targetFName);
+            ft.upload(config.getTargetFileName(), targetFName);
         } finally {
             ssh.disconnect();
         }
@@ -137,6 +137,10 @@ public class Main {
         public Charset encoding;
         public boolean upload;
         public String password;
+        public String name;
+        public String getTargetFileName() {
+            return fileType.getTargetFileName(name);
+        }
 
         public InputStream newInputStream() throws IOException {
             InputStream in;
@@ -176,6 +180,7 @@ public class Main {
         opts.addOption("T", "tatoeba", false, "the file to process is a Tatoeba Project file with example sentences");
         opts.addOption(null, "upload", false, "Uploads the dictionary file to www.baka.sk");
         opts.addOption("p", "password", true, "Upload SSH password");
+        opts.addOption("n", "name", true, "(Optional) A custom dictionary name");
         return opts;
     }
 
@@ -218,6 +223,7 @@ public class Main {
         config.encoding = Charset.forName(charset);
         config.upload = cl.hasOption("upload");
         config.password = cl.getOptionValue('p');
+        config.name = cl.getOptionValue('n');
     }
 
     private static void printHelp() {
@@ -241,13 +247,13 @@ public class Main {
         if (config.upload) {
             upload();
         }
-        final String aedictDir = config.fileType.getAndroidSdcardRelativeLoc();
-        System.out.println("Finished - the index file '" + config.fileType.getTargetFileName() + "' was created.");
+        final String aedictDir = config.fileType.getAndroidSdcardRelativeLoc(config.name);
+        System.out.println("Finished - the index file '" + config.getTargetFileName() + "' was created.");
         System.out.println("To use the indexed file with Aedict, you'll have to:");
         System.out.println("1. Connect your phone as a mass storage device to your computer");
         System.out.println("2. Browse the SDCard contents and delete the aedict/ directory if it is present");
         System.out.println("3. Create the " + aedictDir + " directory");
-        System.out.println("4. Unzip the " + config.fileType.getTargetFileName() + " file to the " + aedictDir + " directory");
+        System.out.println("4. Unzip the " + config.getTargetFileName() + " file to the " + aedictDir + " directory");
         System.out.println("See http://code.google.com/p/aedict/wiki/CustomEdictFile for details");
     }
 
@@ -307,7 +313,7 @@ public class Main {
 
     private void zipLuceneIndex() throws IOException {
         System.out.println("Zipping the index file");
-        final File zip = new File(config.fileType.getTargetFileName());
+        final File zip = new File(config.getTargetFileName());
         if (zip.exists() && !zip.delete()) {
             throw new IOException("Cannot delete " + zip.getAbsolutePath());
         }

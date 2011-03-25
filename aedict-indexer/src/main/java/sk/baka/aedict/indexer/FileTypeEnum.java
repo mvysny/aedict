@@ -46,8 +46,12 @@ public enum FileTypeEnum {
      */
     Edict {
 
-        public String getTargetFileName() {
-            return "edict-lucene.zip";
+        public String getTargetFileName(String name) {
+            String result = "edict-lucene";
+            if (name != null) {
+                result += "-"+name;
+            }
+            return result+".zip";
         }
 
         public String getDefaultDownloadUrl() {
@@ -80,8 +84,12 @@ public enum FileTypeEnum {
             };
         }
 
-        public String getAndroidSdcardRelativeLoc() {
-            return "aedict/index-DICTIONARY_NAME/";
+        public String getAndroidSdcardRelativeLoc(String custom) {
+            String result = "aedict/index";
+            if (custom != null) {
+                result += "-" + custom;
+            }
+            return result + '/';
         }
 
         public String getDefaultEncoding() {
@@ -94,7 +102,7 @@ public enum FileTypeEnum {
     },
     Kanjidic {
 
-        public String getTargetFileName() {
+        public String getTargetFileName(String name) {
             return "kanjidic-lucene.zip";
         }
 
@@ -102,7 +110,7 @@ public enum FileTypeEnum {
             return "http://ftp.monash.edu.au/pub/nihongo/kanjidic.gz";
         }
 
-        public String getAndroidSdcardRelativeLoc() {
+        public String getAndroidSdcardRelativeLoc(String custom) {
             return "aedict/index-kanjidic/";
         }
 
@@ -237,7 +245,7 @@ public enum FileTypeEnum {
             return new TanakaParser();
         }
 
-        public String getTargetFileName() {
+        public String getTargetFileName(String name) {
             return "tanaka-lucene.zip";
         }
 
@@ -245,7 +253,7 @@ public enum FileTypeEnum {
             return "http://www.csse.monash.edu.au/~jwb/examples.gz";
         }
 
-        public String getAndroidSdcardRelativeLoc() {
+        public String getAndroidSdcardRelativeLoc(String custom) {
             return "aedict/index-tanaka/";
         }
 
@@ -267,7 +275,7 @@ public enum FileTypeEnum {
             }
         }
 
-        public String getTargetFileName() {
+        public String getTargetFileName(String name) {
             return "tatoeba-lucene.zip";
         }
 
@@ -275,7 +283,7 @@ public enum FileTypeEnum {
             return "http://tatoeba.org/files/downloads/sentences.csv";
         }
 
-        public String getAndroidSdcardRelativeLoc() {
+        public String getAndroidSdcardRelativeLoc(String custom) {
             return "aedict/index-tatoeba/";
         }
 
@@ -298,7 +306,7 @@ public enum FileTypeEnum {
      * The file name of the target zip file, which contains the Lucene index.
      * @return the file name, without a path.
      */
-    public abstract String getTargetFileName();
+    public abstract String getTargetFileName(String custom);
 
     /**
      * Returns a default download URL of the gzipped file.
@@ -310,7 +318,7 @@ public enum FileTypeEnum {
      * Indexer uses this method to display a hint to the user, where the dictionary is stored on the SD card.
      * @return a displayable hint.
      */
-    public abstract String getAndroidSdcardRelativeLoc();
+    public abstract String getAndroidSdcardRelativeLoc(String custom);
 
     public abstract String getDefaultEncoding();
 
