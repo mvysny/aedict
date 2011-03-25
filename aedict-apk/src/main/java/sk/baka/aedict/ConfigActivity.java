@@ -28,7 +28,7 @@ import java.util.concurrent.Callable;
 
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.Dictionary;
-import sk.baka.aedict.dict.Dictionary.DictionaryVersions;
+import sk.baka.aedict.dict.DictionaryVersions;
 import sk.baka.aedict.dict.DownloaderService.UpdateDictionaries;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.DialogActivity;
@@ -149,7 +149,7 @@ public class ConfigActivity extends PreferenceActivity {
 		// dictionary list when a new dictionary is downloaded
 		final List<String> dictionaries = new ArrayList<String>();
 		for(final Dictionary d:Dictionary.listEdictInstalled()){
-			dictionaries.add(d.custom==null?AedictApp.Config.DEFAULT_DICTIONARY_NAME:d.custom);
+			dictionaries.add(d.custom==null?Dictionary.DEFAULT_DICTIONARY_NAME:d.custom);
 		}
 		Collections.sort(dictionaries);
 		((ListPreference) findPreference(KEY_DICTIONARY_NAME)).setEntries(dictionaries.toArray(new CharSequence[0]));
@@ -190,7 +190,7 @@ public class ConfigActivity extends PreferenceActivity {
 			}
 			AedictApp.getConfig().setServerDictVersions(dv);
 			final DictionaryVersions current = AedictApp.getConfig().getCurrentDictVersions();
-			final Set<Dictionary> updatable = Dictionary.getUpdatable(current, dv);
+			final Set<Dictionary> updatable = current.getOlderThan(dv);
 			if(updatable.isEmpty()){
 				new DialogActivity.Builder(a).showInfoDialog("No updates found", "No dictionary updates has been found.");
 			}else{

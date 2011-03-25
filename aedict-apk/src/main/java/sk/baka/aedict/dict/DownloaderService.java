@@ -44,7 +44,6 @@ import java.util.zip.ZipInputStream;
 import sk.baka.aedict.AedictApp;
 import sk.baka.aedict.DownloadActivity;
 import sk.baka.aedict.R;
-import sk.baka.aedict.dict.Dictionary.DictionaryVersions;
 import sk.baka.aedict.util.DialogActivity;
 import sk.baka.aedict.util.IOExceptionWithCause;
 import sk.baka.aedict.util.SodLoader;
@@ -132,7 +131,7 @@ public class DownloaderService implements Closeable {
 	 * @return true if the dictionaries are okay, false if there is an old dictionary. In this case, an activity handling this case is already launched.
 	 */
 	public boolean checkRequiredVersions(final Activity activity) {
-		final Set<Dictionary> needsUpdate = Dictionary.requireUpdate(AedictApp.getConfig().getCurrentDictVersions());
+		final Set<Dictionary> needsUpdate = AedictApp.getConfig().getCurrentDictVersions().getOlderThan(AedictApp.MIN_REQUIRED);
 		if (!needsUpdate.isEmpty()) {
 			new DialogActivity.Builder(activity).setDialogListener(new UpdateDictionaries(needsUpdate)).showYesNoDialog(
 					"The following dictionaries are no longer compatible with this version of Aedict and needs to be updated: " + needsUpdate + ". Perform the update now?");
