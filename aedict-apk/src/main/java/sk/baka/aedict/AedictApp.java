@@ -26,7 +26,7 @@ import java.util.List;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.Dictionary;
-import sk.baka.aedict.dict.Dictionary.DictionaryVersions;
+import sk.baka.aedict.dict.DictionaryVersions;
 import sk.baka.aedict.dict.DownloaderService;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.BackgroundService;
@@ -170,11 +170,6 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		public Config(final Context context) {
 			this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		}
-
-		/**
-		 * The name of the default dictionary.
-		 */
-		public static final String DEFAULT_DICTIONARY_NAME = "Default";
 
 		/**
 		 * Which romanization system to use. Defaults to Hepburn.
@@ -418,5 +413,16 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		if (key.equals(ConfigActivity.KEY_ALWAYS_AVAILABLE)) {
 			apply(getConfig());
 		}
+	}
+
+	public static final DictionaryVersions MIN_REQUIRED = new DictionaryVersions();
+	static {
+		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Kanjidic, null), "20110313");
+		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, null), "20110313");
+		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, "compdic"), "20110313");
+		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, "enamdict"), "20110313");
+		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, "wdjteuc"), "20110313");
+		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, "french-fj"), "20110313");
+		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, "hispadic"), "20110313");
 	}
 }

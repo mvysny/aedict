@@ -1,12 +1,12 @@
 /**
  *     Aedict - an EDICT browser for Android
  Copyright (C) 2009 Martin Vysny
- 
+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,31 +21,29 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
-import sk.baka.aedict.AedictApp.Config;
 import sk.baka.aedict.util.Check;
-import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
 
 /**
  * Represents a dictionary installed locally on the SD Card.
- * 
+ *
  * @author Martin Vysny
  */
 public class Dictionary implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+    /**
+     * The name of the default dictionary.
+     */
+    public static final String DEFAULT_DICTIONARY_NAME = "Default";
 	/**
 	 * Creates new dictionary object.
-	 * 
+	 *
 	 * @param dte
 	 *            the dictionary type, must not be null.
 	 * @param custom
@@ -54,7 +52,7 @@ public class Dictionary implements Serializable {
 	 */
 	public Dictionary(DictTypeEnum dte, String custom) {
 		Check.checkNotNull("dte", dte);
-		if (Config.DEFAULT_DICTIONARY_NAME.equals(custom)) {
+		if (DEFAULT_DICTIONARY_NAME.equals(custom)) {
 			custom = null;
 		}
 		if (custom != null && MiscUtils.isBlank(custom)) {
@@ -109,7 +107,7 @@ public class Dictionary implements Serializable {
 
 	/**
 	 * Returns the dictionary location on the SD card of this dictionary.
-	 * 
+	 *
 	 * @return absolute OS-specific location of the dictionary.
 	 */
 	public File getDictionaryLocation() {
@@ -122,7 +120,7 @@ public class Dictionary implements Serializable {
 
 	/**
 	 * Checks if this dictionary has all necessary files present on the SD Card.
-	 * 
+	 *
 	 * @return true if the dictionary files are present, false otherwise.
 	 */
 	public boolean exists() {
@@ -139,7 +137,7 @@ public class Dictionary implements Serializable {
 
 	/**
 	 * Lists all dictionaries currently installed on the SD Card.
-	 * 
+	 *
 	 * @return list of all installed dictionaries, never null, may be empty.
 	 */
 	public static Set<Dictionary> listInstalled() {
@@ -155,7 +153,7 @@ public class Dictionary implements Serializable {
 	}
 	/**
 	 * Lists all EDICT dictionaries currently installed on the SD Card.
-	 * 
+	 *
 	 * @return list of all Edict installed dictionaries, never null, may be empty.
 	 */
 	public static Set<Dictionary> listEdictInstalled() {
@@ -202,7 +200,7 @@ public class Dictionary implements Serializable {
 		}
 		return downloadURL + ".version";
 	}
-	
+
 	public String downloadVersion() throws IOException {
 		return new String(MiscUtils.readFully(new URL(getVersionFileURL()).openStream()), "UTF-8");
 	}
@@ -214,7 +212,7 @@ public class Dictionary implements Serializable {
 		}
 		return result;
 	}
-	
+
 	public static Dictionary fromExternal(String external) {
 		try {
 			final String[] parsed = external.split("@@@@");
@@ -224,73 +222,7 @@ public class Dictionary implements Serializable {
 			throw new RuntimeException("Failed to parse '" + external + "'", ex);
 		}
 	}
-	
-	public static class DictionaryVersions {
-		public final Map<Dictionary, String> versions = new HashMap<Dictionary, String>();
 
-		public String toExternal() {
-			final ListBuilder sb = new ListBuilder("####");
-			for (Entry<Dictionary, String> e : versions.entrySet()) {
-				sb.add(e.getKey().toExternal() + "##" + e.getValue());
-			}
-			return sb.toString();
-		}
-
-		public static DictionaryVersions fromExternal(String external) {
-			try{
-			final DictionaryVersions dv = new DictionaryVersions();
-			if(external.trim().length()==0){
-				return dv;
-			}
-			for (String entry : external.split("####")) {
-				final String[] e = entry.split("##");
-				dv.versions.put(Dictionary.fromExternal(e[0]), e[1]);
-			}
-			return dv;
-			}catch(Exception ex){
-				throw new RuntimeException("Failed to parse '"+external+"'",ex);
-			}
-		}
-
-		public static Set<Dictionary> getNewer(DictionaryVersions current,
-				DictionaryVersions newer) {
-			final Set<Dictionary> dict = new HashSet<Dictionary>();
-			for (Dictionary d : Dictionary.listInstalled()) {
-				if (!current.versions.containsKey(d)) {
-					current.versions.put(d, "20000101");
-				}
-			}
-			for (Dictionary d : current.versions.keySet()) {
-				if (!newer.versions.containsKey(d)) {
-					continue;
-				}
-				if (current.versions.get(d).compareTo(newer.versions.get(d)) < 0) {
-					dict.add(d);
-				}
-			}
-			return dict;
-		}
-	}
-	
-	public static final DictionaryVersions MIN_REQUIRED = new DictionaryVersions();
-	static {
-		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Kanjidic, null), "20110313");
-		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, null), "20110313");
-		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, "compdic"), "20110313");
-		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, "enamdict"), "20110313");
-		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, "wdjteuc"), "20110313");
-		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, "french-fj"), "20110313");
-		MIN_REQUIRED.versions.put(new Dictionary(DictTypeEnum.Edict, "hispadic"), "20110313");
-	}
-	
-	public static Set<Dictionary> requireUpdate(DictionaryVersions current) {
-		return DictionaryVersions.getNewer(current, MIN_REQUIRED);
-	}
-
-	public static Set<Dictionary> getUpdatable(DictionaryVersions current, DictionaryVersions server) {
-		return DictionaryVersions.getNewer(current, server);
-	}
-	
 	public String getName() {
 		String result = dte.name();
 		if (custom != null) {
