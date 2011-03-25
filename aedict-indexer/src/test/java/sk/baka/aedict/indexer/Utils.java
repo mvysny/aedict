@@ -47,9 +47,9 @@ public class Utils {
         }
         new Main(params.toArray(new String[0])).run();
         // check that the target file exists
-        assertTrue(new File(fileType.getTargetFileName()).exists());
-        final File targetFile = new File("target/" + fileType.getTargetFileName());
+        assertTrue(new File(fileType.getTargetFileName(null)).exists());
+        final File targetFile = new File("target/" + fileType.getTargetFileName(null));
         targetFile.delete();
-        FileUtils.moveFile(new File(fileType.getTargetFileName()), targetFile);
+        FileUtils.moveFile(new File(fileType.getTargetFileName(null)), targetFile);
     }
 }
