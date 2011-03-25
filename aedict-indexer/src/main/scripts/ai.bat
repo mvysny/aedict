@@ -3,7 +3,7 @@ if "%OS%"=="Windows_NT" @setlocal
 
 SET CLSPATH=.
 
-set JAVA_OPTS=-Xmx512m
+set JAVA_OPTS=-Xmx1024m
 
 rem Add platform runtime libraries
 for %%i in (lib\*) do call :cpappend %%i
