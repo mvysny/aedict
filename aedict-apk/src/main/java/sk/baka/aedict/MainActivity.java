@@ -93,6 +93,12 @@ public class MainActivity extends ListActivity {
 				g.setVisibility(g.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
 			}
 		});
+		findViewById(R.id.clearSearchBox).setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				((TextView)findViewById(R.id.searchEdit)).setText("");
+			}
+		});
 		// check for dictionary file and download it if it is missing.
 		AedictApp.getDownloader().checkDictionary(this, new Dictionary(DictTypeEnum.Edict, null), null, false);
 		AedictApp.getDownloader().checkRequiredVersions(this);
