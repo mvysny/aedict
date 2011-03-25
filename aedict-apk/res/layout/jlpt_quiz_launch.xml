@@ -12,7 +12,9 @@
 		should have received a copy of the GNU General Public License along
 		with this program. If not, see <http://www.gnu.org/licenses/>.
 	-->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="fill_parent"
+	android:layout_width="fill_parent">
+<LinearLayout 
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="wrap_content">
 	<LinearLayout android:layout_width="fill_parent"
@@ -20,14 +22,33 @@
 		android:paddingRight="?android:attr/scrollbarSize"
 		android:paddingLeft="?android:attr/scrollbarSize">
 		<CheckBox android:id="@+id/jlptLevel5" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" />
+			android:layout_height="wrap_content" android:text="JLPT N5"/>
 		<CheckBox android:id="@+id/jlptLevel4" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" />
+			android:layout_height="wrap_content" android:text="JLPT N4" />
 		<CheckBox android:id="@+id/jlptLevel3" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" />
+			android:layout_height="wrap_content" android:text="JLPT N3" />
 		<CheckBox android:id="@+id/jlptLevel2" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" />
+			android:layout_height="wrap_content" android:text="JLPT N2" />
+		<CheckBox android:id="@+id/jlptLevel1" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="JLPT N1" />
+		<CheckBox android:id="@+id/quizCommonNewspaper" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="2500 Most Common Kanjis in Newspaper" />
+		<CheckBox android:id="@+id/joyo1" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="Joyo Grade 1" />
+		<CheckBox android:id="@+id/joyo2" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="Joyo Grade 2" />
+		<CheckBox android:id="@+id/joyo3" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="Joyo Grade 3" />
+		<CheckBox android:id="@+id/joyo4" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="Joyo Grade 4" />
+		<CheckBox android:id="@+id/joyo5" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="Joyo Grade 5" />
+		<CheckBox android:id="@+id/joyo6" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="Joyo Grade 6" />
+		<CheckBox android:id="@+id/joyoJuniorHighSchool" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="Joyo Junior High School" />
 		<Button android:id="@+id/launch" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:text="@string/launch" />
 	</LinearLayout>
 </LinearLayout>
+</ScrollView>
