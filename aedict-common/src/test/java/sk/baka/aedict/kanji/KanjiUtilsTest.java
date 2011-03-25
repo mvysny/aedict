@@ -99,10 +99,10 @@ public class KanjiUtilsTest {
     @Test
     public void testJlpt() {
         assertEquals((Integer) 5, KanjiUtils.getJlptLevel('山'));
-        assertEquals((Integer) 5, KanjiUtils.getJlptLevel('週'));
+        assertEquals((Integer) 4, KanjiUtils.getJlptLevel('週'));
         assertEquals((Integer) 3, KanjiUtils.getJlptLevel('商'));
-        assertEquals((Integer) 3, KanjiUtils.getJlptLevel('司'));
-        assertEquals((Integer) 2, KanjiUtils.getJlptLevel('可'));
+        assertEquals((Integer) 1, KanjiUtils.getJlptLevel('司'));
+        assertNull(KanjiUtils.getJlptLevel('可'));
         assertEquals((Integer) 2, KanjiUtils.getJlptLevel('庁'));
     }
 }

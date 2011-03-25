@@ -36,6 +36,7 @@ import sk.baka.aedict.dict.KanjidicEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.SearchQuery;
 import sk.baka.aedict.kanji.KanjiUtils;
+import sk.baka.aedict.kanji.KanjiUtils.KanjiQuiz;
 import sk.baka.autils.AbstractTask;
 import sk.baka.autils.AndroidUtils;
 import sk.baka.autils.MiscUtils;
@@ -54,12 +55,21 @@ public class QuizLaunchActivity extends Activity {
 	/**
 	 * Maps checkbox component ID to JLPT level.
 	 */
-	private final Map<Integer, Integer> jlptMap = new HashMap<Integer, Integer>();
+	private final Map<Integer, KanjiQuiz> jlptMap = new HashMap<Integer, KanjiQuiz>();
 	{
-		jlptMap.put(R.id.jlptLevel2, 2);
-		jlptMap.put(R.id.jlptLevel3, 3);
-		jlptMap.put(R.id.jlptLevel4, 4);
-		jlptMap.put(R.id.jlptLevel5, 5);
+		jlptMap.put(R.id.jlptLevel1, KanjiQuiz.JlptN1);
+		jlptMap.put(R.id.jlptLevel2, KanjiQuiz.JlptN2);
+		jlptMap.put(R.id.jlptLevel3, KanjiQuiz.JlptN3);
+		jlptMap.put(R.id.jlptLevel4, KanjiQuiz.JlptN4);
+		jlptMap.put(R.id.jlptLevel5, KanjiQuiz.JlptN5);
+		jlptMap.put(R.id.quizCommonNewspaper, KanjiQuiz.MostFrequentKanjisInNewspaper);
+		jlptMap.put(R.id.joyo1, KanjiQuiz.JoyoGrade1);
+		jlptMap.put(R.id.joyo2, KanjiQuiz.JoyoGrade2);
+		jlptMap.put(R.id.joyo3, KanjiQuiz.JoyoGrade3);
+		jlptMap.put(R.id.joyo4, KanjiQuiz.JoyoGrade4);
+		jlptMap.put(R.id.joyo5, KanjiQuiz.JoyoGrade5);
+		jlptMap.put(R.id.joyo6, KanjiQuiz.JoyoGrade6);
+		jlptMap.put(R.id.joyoJuniorHighSchool, KanjiQuiz.JoyoJuniorHighSchool);
 	}
 
 	@Override
@@ -70,16 +80,12 @@ public class QuizLaunchActivity extends Activity {
 			return;
 		}
 		setContentView(R.layout.jlpt_quiz_launch);
-		for (final Map.Entry<Integer, Integer> e : jlptMap.entrySet()) {
-			final CheckBox cb = (CheckBox) findViewById(e.getKey());
-			cb.setText(AedictApp.format(R.string.jlptLevelX, e.getValue()));
-		}
 		findViewById(R.id.launch).setOnClickListener(AndroidUtils.safe(this, new View.OnClickListener() {
 
 			@SuppressWarnings("unchecked")
 			public void onClick(View v) {
-				final Set<Integer> jlpt = new HashSet<Integer>();
-				for (final Map.Entry<Integer, Integer> e : jlptMap.entrySet()) {
+				final Set<KanjiQuiz> jlpt = new HashSet<KanjiQuiz>();
+				for (final Map.Entry<Integer, KanjiQuiz> e : jlptMap.entrySet()) {
 					final CheckBox cb = (CheckBox) findViewById(e.getKey());
 					if (cb.isChecked()) {
 						jlpt.add(e.getValue());
@@ -93,13 +99,13 @@ public class QuizLaunchActivity extends Activity {
 		}));
 	}
 
-	private class QuestionGenerator extends AbstractTask<Set<Integer>, List<KanjidicEntry>>{
+	private class QuestionGenerator extends AbstractTask<Set<KanjiQuiz>, List<KanjidicEntry>>{
 		@Override
-		public List<KanjidicEntry> impl(Set<Integer>... params) throws Exception {
+		public List<KanjidicEntry> impl(Set<KanjiQuiz>... params) throws Exception {
 			publish(new Progress("Generating flashcards",0,QUIZ_QUESTION_COUNT));
 			final StringBuilder kanjiPool = new StringBuilder();
-			for (final Integer level : params[0]) {
-				kanjiPool.append(KanjiUtils.getJlptKanjis(level));
+			for (final KanjiQuiz level : params[0]) {
+				kanjiPool.append(KanjiUtils.QUIZ_TABLE.get(level));
 			}
 			final List<KanjidicEntry> questions = new ArrayList<KanjidicEntry>();
 			final Random r = new Random();
