@@ -196,7 +196,9 @@ public class Dictionary implements Serializable {
 	public String getVersionFileURL() {
 		String downloadURL = dte.getDownloadSite().toString();
 		if (custom != null) {
-			downloadURL += "-" + custom;
+                    // strip the ending .zip
+                    downloadURL = downloadURL.substring(0, downloadURL.length() - 4);
+			downloadURL += "-" + custom + ".zip";
 		}
 		return downloadURL + ".version";
 	}

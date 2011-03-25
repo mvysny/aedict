@@ -155,7 +155,7 @@ public class DownloadDictionaryActivity extends ListActivity {
 			// remove all dictionaries which are already downloaded
 			for (final Dictionary d: Dictionary.listEdictInstalled()) {
 				if(d.custom!=null){
-					result.remove(d.custom);
+					result.remove("edict-lucene-"+d.custom+".zip");
 				}
 			}
 			final List<DownloadableDictionaryInfo> items = new ArrayList<DownloadableDictionaryInfo>(result.values());
@@ -179,8 +179,16 @@ public class DownloadDictionaryActivity extends ListActivity {
 		startActivity(i);
 	}
 
+	private final static String ZIP_NAME_PREFIX="edict-lucene-";
+	private final static String ZIP_NAME_SUFFIX=".zip";
+	
 	private void downloadDictionary(final DownloadableDictionaryInfo e) {
-		final Dictionary dict = new Dictionary(DictTypeEnum.Edict, e.zipName);
+		if(!e.zipName.startsWith(ZIP_NAME_PREFIX)||!e.zipName.endsWith(ZIP_NAME_SUFFIX)) {
+			throw new RuntimeException("Invalid zip name: " + e.zipName);
+		}
+		String custom = e.zipName.substring(ZIP_NAME_PREFIX.length());
+		custom = custom.substring(0, custom.length()-ZIP_NAME_SUFFIX.length());
+		final Dictionary dict = new Dictionary(DictTypeEnum.Edict, custom);
 		AedictApp.getDownloader().checkDictionary(this, dict, e.url, dict.getDictionaryLocation().getAbsolutePath(), e.name, e.zippedSize, true);
 	}
 }
