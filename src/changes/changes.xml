@@ -4,6 +4,29 @@
 		<author email="vysny@baka.sk">Martin Vyšný</author>
 	</properties>
 	<body>
+		<release version="2.9" date="30. March 2011">
+			<action dev="vyzivus" type="fix" issue="123">
+				Searching for 頑 will have no result despite 頑張る being quite a common word.
+			</action>
+			<action dev="vyzivus" type="fix" issue="124">
+				Radical search tool cant find 慕う for grass day heart radicals.
+			</action>
+			<action dev="vyzivus" type="add" issue="126">
+				Added support for updating dictionaries to newer versions.
+			</action>
+			<action dev="vyzivus" type="update" issue="127">
+				include radical and its number into Kanji detail view
+			</action>
+			<action dev="vyzivus" type="add" issue="129">
+				Indexer should be able to push new dictionaries to the baka.sk site
+			</action>
+			<action dev="vyzivus" type="add" issue="132">
+				Add an red X button on the word search field to clean the field
+			</action>
+			<action dev="vyzivus" type="fix" issue="133">
+					Attempt to view the kanji 負 (defeat) seems to cause a force close.
+			</action>
+		</release>
 		<release version="2.8" date="30. December 2010">
 			<action dev="vyzivus" type="add" issue="112">
 				Notepad backup-to-SDCard/restore added.
