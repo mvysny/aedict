@@ -98,14 +98,14 @@ public class DictTypeEnumTest {
 
     @Test
     public void simpleKatakanaParse() throws ParseException {
-        final DictEntry e = DictTypeEnum.Edict.getEntry(doc("aaa / bbb"));
+        final DictEntry e = DictTypeEnum.Edict.getEntry(doc("aaa / bbb"), "eng");
         assertEquals("aaa", e.reading);
         assertEquals("bbb", e.english);
     }
 
     @Test
     public void simpleHiraganaParse() throws ParseException {
-        final DictEntry e = DictTypeEnum.Edict.getEntry(doc("aaa [ccc] / bbb"));
+        final DictEntry e = DictTypeEnum.Edict.getEntry(doc("aaa [ccc] / bbb"), "eng");
         assertEquals("aaa", e.kanji);
         assertEquals("ccc", e.reading);
         assertEquals("bbb", e.english);
@@ -113,7 +113,7 @@ public class DictTypeEnumTest {
 
     @Test
     public void parserDropsTrailingSlashes() throws ParseException {
-        final DictEntry e = DictTypeEnum.Edict.getEntry(doc("aaa [ccc] / bbb//"));
+        final DictEntry e = DictTypeEnum.Edict.getEntry(doc("aaa [ccc] / bbb//"), "eng");
         assertEquals("aaa", e.kanji);
         assertEquals("ccc", e.reading);
         assertEquals("bbb", e.english);
@@ -121,7 +121,7 @@ public class DictTypeEnumTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void simpleUnsuccessfullParse() throws ParseException {
-        DictTypeEnum.Edict.getEntry(doc("aaa"));
+        DictTypeEnum.Edict.getEntry(doc("aaa"), "eng");
     }
 
     private Document doc(final String edictLine) {

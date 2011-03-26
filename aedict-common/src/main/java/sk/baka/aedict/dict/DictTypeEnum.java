@@ -19,10 +19,13 @@ package sk.baka.aedict.dict;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.zip.DataFormatException;
 import org.apache.lucene.document.CompressionTools;
 import org.apache.lucene.document.Document;
+import sk.baka.aedict.util.Iso6393Codes;
 import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
 
@@ -95,7 +98,7 @@ public enum DictTypeEnum {
         }
 
         @Override
-        public DictEntry getEntry(Document doc) {
+        public DictEntry getEntry(Document doc, String langCode) {
             return parseEdictEntry(doc.get("contents"));
         }
 
@@ -194,7 +197,7 @@ public enum DictTypeEnum {
         }
 
         @Override
-        public DictEntry getEntry(Document doc) {
+        public DictEntry getEntry(Document doc, String langCode) {
             // the entry is described at
             // http://www.csse.monash.edu.au/~jwb/kanjidic.html
             try {
@@ -280,9 +283,91 @@ public enum DictTypeEnum {
         }
 
         @Override
-        public DictEntry getEntry(Document doc) {
+        public DictEntry getEntry(Document doc, String langCode) {
             final String japanese = doc.get("japanese");
             final String english = doc.get("english");
+            final byte[] b = doc.getBinaryValue("kana");
+            try {
+                final String reading = b == null ? null : CompressionTools.decompressString(b);
+                return new TanakaDictEntry(japanese, reading, english, doc.get("jp-deinflected"));
+            } catch (DataFormatException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+
+        @Override
+        public boolean matches(final DictEntry entry, final boolean isJapanese, String query, MatcherEnum matcher) {
+            final String line = isJapanese ? entry.getJapanese() : entry.english;
+            return matcher.matches(query, line);
+        }
+    },
+    /**
+     * The Tatoeba project files containing example sentences.
+     */
+    Tatoeba {
+
+        @Override
+        public String[] getLuceneQuery(SearchQuery query) {
+            final ListBuilder result = new ListBuilder(" OR ");
+            for (final String q : query.trim().query) {
+		final String[] qs = q.split("\\s+AND\\s+");
+                if (query.isJapanese) {
+		    add(result, "japanese", qs);
+		    add(result, "jp-deinflected", qs);
+                } else {
+		    add(result, "translations", qs);
+                }
+            }
+            return new String[]{result.toString()};
+        }
+
+	private void add(final ListBuilder bu, final String prefix, final String[] andTerms) {
+	    final ListBuilder b = new ListBuilder(" AND ");
+	    for(final String term: andTerms) {
+		b.add(prefix+":\""+term.trim()+"\"");
+	    }
+	    bu.add("("+b.toString()+")");
+	}
+
+        @Override
+        public String getDefaultDictionaryLoc() {
+            return "index-tatoeba";
+        }
+
+        @Override
+        public URL getDownloadSite() {
+            try {
+                return new URL(DICT_BASE_LOCATION_URL + "tatoeba-lucene.zip");
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public long luceneFileSize() {
+            return 73234781;
+        }
+
+        @Override
+        public DictEntry getEntry(Document doc, String langCode) {
+            final String japanese = doc.get("japanese");
+            String translations = doc.get("translations");
+            final Map<String, String> langCodeToSentence = new HashMap<String, String>();
+            for (final String sentence: translations.split("\n")) {
+                if(sentence.length()>=4 || sentence.charAt(3)==':'){
+                    langCodeToSentence.put(sentence.substring(0, 3), sentence.substring(5));
+                }
+            }
+            if (langCode == null) {
+                langCode = Iso6393Codes.LANG_CODE_ENGLISH;
+            }
+            String english = langCodeToSentence.get(langCode);
+            if (english == null) {
+                english = langCodeToSentence.get(Iso6393Codes.LANG_CODE_ENGLISH);
+            }
+            if (english == null) {
+                english = translations;
+            }
             final byte[] b = doc.getBinaryValue("kana");
             try {
                 final String reading = b == null ? null : CompressionTools.decompressString(b);
@@ -359,9 +444,10 @@ public enum DictTypeEnum {
      *
      * @param doc
      *            the lucene document, not null.
+     * @param langCode ISO 639-3 language code of the language instead of english. May be null - in such case any language may be used (preferably english).
      * @return never null entry.
      */
-    public abstract DictEntry getEntry(final Document doc);
+    public abstract DictEntry getEntry(final Document doc, final String langCode);
 
     /**
      * Returns a dictionary entry from a Lucene document, from a proper
@@ -369,11 +455,12 @@ public enum DictTypeEnum {
      *
      * @param doc
      *            the lucene document, not null.
+     * @param langCode ISO 639-3 language code of the language instead of english. May be null - in such case any language may be used (preferably english).
      * @return never null entry. May return an error entry on parse error.
      */
-    public DictEntry tryGetEntry(final Document doc) {
+    public DictEntry tryGetEntry(final Document doc, final String langCode) {
         try {
-            return getEntry(doc);
+            return getEntry(doc, langCode);
         } catch (Exception ex) {
             return DictEntry.newErrorMsg(ex);
         }
@@ -391,7 +478,7 @@ public enum DictTypeEnum {
      *         case of a parsing error.
      */
     public DictEntry tryGetEntry(final Document doc, final SearchQuery query) {
-        final DictEntry entry = tryGetEntry(doc);
+        final DictEntry entry = tryGetEntry(doc, query.langCode);
         if (!entry.isValid() || MiscUtils.isBlank(query.query)) {
             return entry;
         }
