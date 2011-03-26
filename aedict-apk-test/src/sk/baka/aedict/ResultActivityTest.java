@@ -51,11 +51,11 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		q.query = new String[] { "mother" };
 		final List<DictEntry> result = launch(q);
 		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Default"));
-		assertEquals(25, result.size());
 		final DictEntry entry = result.get(0);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
 		assertEquals("はは", entry.reading);
+		assertEquals(38, result.size());
 	}
 
 	private List<DictEntry> launch(final SearchQuery q) throws Exception {
@@ -135,7 +135,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		assertEquals("(n) (1) imperial capital (esp. Kyoto)/(2) final word of an iroha-uta/(3) 10^16/10,000,000,000,000,000/ten quadrillion (American)/(obs) ten thousand billion (British)/(P)", entry.english);
 		assertEquals("京", entry.getJapanese());
 		entry = (DictEntry) result.get(6);
-		assertEquals("(n-t) today/this day/(P)", entry.english);
+		assertEquals("(n-t) (1) today/this day/(P)", entry.english);
 		assertEquals("今日", entry.getJapanese());
 	}
 
@@ -185,7 +185,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
 		assertEquals("はは", entry.reading);
-		assertEquals(25, result.size());
+		assertEquals(38, result.size());
 		assertEquals(ResultActivity.SIMEJI_ACTION_INTERCEPT, i2.getAction());
 	}
 
@@ -257,9 +257,9 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		final List<DictEntry> result = launch(q);
 		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Tanaka"));
 		final DictEntry entry = (DictEntry) result.get(0);
-		assertEquals("My mother tongue.", entry.english);
-		assertEquals("私の母国語。", entry.getJapanese());
-		assertEquals("わたしの ぼこくご。", entry.reading);
+		assertEquals("My mother tongue is Japanese.", entry.english);
+		assertEquals("私の母語は日本語です。", entry.getJapanese());
+		assertEquals(RomanizationEnum.Hepburn.toHiragana("watashino bago ha nihongo desu。"), entry.reading);
 		assertEquals(15, result.size());
 	}
 
@@ -271,9 +271,9 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		final List<DictEntry> result = launch(q);
 		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Tanaka"));
 		final DictEntry entry = (DictEntry) result.get(0);
-		assertEquals("My mother tongue.", entry.english);
-		assertEquals("私の母国語。", entry.getJapanese());
-		assertEquals("わたしの ぼこくご。", entry.reading);
+		assertEquals("Mother has old-fashioned ideas.", entry.english);
+		assertEquals("母は頭が古い。", entry.getJapanese());
+		assertEquals(RomanizationEnum.Hepburn.toHiragana("haha ha atama ga furui。"), entry.reading);
 		assertEquals(100, result.size());
 	}
 
