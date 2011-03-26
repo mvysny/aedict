@@ -112,10 +112,10 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		q.query = new String[] { RomanizationEnum.Hepburn.toHiragana("haha"), RomanizationEnum.Hepburn.toKatakana("haha") };
 		final List<DictEntry> result = launch(q);
 		assertTrue(tester.getText(R.id.textSelectedDictionary).contains("Default"));
-		assertEquals(30, result.size());
 		final DictEntry entry = result.get(0);
 		assertEquals("(n) (hum) mother/(P)", entry.english);
 		assertEquals("母", entry.getJapanese());
+		assertEquals(36, result.size());
 	}
 
 	/**
@@ -259,7 +259,7 @@ public class ResultActivityTest extends AbstractAedictTest<ResultActivity> {
 		final DictEntry entry = (DictEntry) result.get(0);
 		assertEquals("My mother tongue is Japanese.", entry.english);
 		assertEquals("私の母語は日本語です。", entry.getJapanese());
-		assertEquals(RomanizationEnum.Hepburn.toHiragana("watashino bago ha nihongo desu。"), entry.reading);
+		assertEquals(RomanizationEnum.Hepburn.toHiragana("watashino bogo ha nihongo desu。"), entry.reading);
 		assertEquals(15, result.size());
 	}
 
