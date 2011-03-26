@@ -124,7 +124,7 @@
     <string name="resetIntroductions">Reset introductions</string>
     <string name="resetIntroductionsSummary">All introduction dialogs will be shown again</string>
     <string name="whatsNew">What\'s New in %s</string>
-    <string name="whatsNewText">For full changelog please see http://baka.sk/aedict/changes-report.html\n\n- You can now force ya with xya and \'ya.\n- Implemented Notepad.sendTo.\n- MainActivity should now show soft input keyboard implicitly.\n- Pressing the Enter key in Main Activity will now trigger intelligent search.\n- Tanaka analysis is now used whenever applicable.\n- Notepad backup-to-SDCard/restore support added.</string>
+    <string name="whatsNewText">For full changelog please see http://baka.sk/aedict/changes-report.html\n\n- Fixes in search algorithm - faster, more accurate\n- Added support for updating dictionaries to newer versions.\n- Added Joyo/JLPT N1/2500 most common newspaper kanji quizes.\n- Added support for Tatoeba.\n- Added support for radical analysis.</string>
     <string name="searchInEdict">Search in the Edict dictionary</string>
     <string name="showConjugations">Show verb conjugations</string>
     <string name="iDoSomething">I do something.</string>
