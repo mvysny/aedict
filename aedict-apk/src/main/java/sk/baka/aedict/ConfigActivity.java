@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.concurrent.Callable;
 
 import sk.baka.aedict.dict.DictTypeEnum;
@@ -32,6 +33,7 @@ import sk.baka.aedict.dict.DictionaryVersions;
 import sk.baka.aedict.dict.DownloaderService.UpdateDictionaries;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.DialogActivity;
+import sk.baka.aedict.util.Iso6393Codes;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.MiscUtils;
 import android.app.Activity;
@@ -97,12 +99,24 @@ public class ConfigActivity extends PreferenceActivity {
 	 * Launches the "Donate" page.
 	 */
 	public static final String KEY_DONATE= "donate";
+	/**
+	 * Picks the example dictionary, Tanaka or Tatoeba.
+	 */
+	public static final String KEY_EXAMPLES_DICT = "examplesDict";
+	/**
+	 * Picks the Tatoeba language.
+	 */
+	public static final String KEY_EXAMPLES_DICT_LANG = "examplesDictLang";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// setContentView(R.layout.config);
 		addPreferencesFromResource(R.xml.preferences);
+		final ListPreference dictNames = (ListPreference) findPreference(KEY_EXAMPLES_DICT_LANG);
+		final SortedMap<String, String> codes = Iso6393Codes.getSortedLangNames();
+		dictNames.setEntries(codes.keySet().toArray(new CharSequence[0]));
+		dictNames.setEntryValues(codes.values().toArray(new CharSequence[0]));
 	}
 
 	@Override
@@ -152,8 +166,9 @@ public class ConfigActivity extends PreferenceActivity {
 			dictionaries.add(d.custom==null?Dictionary.DEFAULT_DICTIONARY_NAME:d.custom);
 		}
 		Collections.sort(dictionaries);
-		((ListPreference) findPreference(KEY_DICTIONARY_NAME)).setEntries(dictionaries.toArray(new CharSequence[0]));
-		((ListPreference) findPreference(KEY_DICTIONARY_NAME)).setEntryValues(dictionaries.toArray(new CharSequence[0]));
+		final ListPreference dictNames = (ListPreference) findPreference(KEY_DICTIONARY_NAME);
+		dictNames.setEntries(dictionaries.toArray(new CharSequence[0]));
+		dictNames.setEntryValues(dictionaries.toArray(new CharSequence[0]));
 	}
 
 	/**

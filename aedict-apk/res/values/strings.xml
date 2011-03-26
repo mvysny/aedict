@@ -471,4 +471,8 @@
 	<string name="radicalNumber">Rad. Num.:</string>
 	<string name="checkForUpdates">Check for updates</string>
 	<string name="checkForUpdatesSummary">Check for newer dictionary files</string>
+	<string name="examplesDict">Sample Sentences Dictionary</string>
+	<string name="examplesDictSummary">Use either Tanaka or Tatoeba to provide example sentences.</string>
+	<string name="examplesDictLang">Sample Sentences Dictionary Language</string>
+	<string name="examplesDictLangSummary">Select language for example sentences (Tatoeba only)</string>
 </resources>
