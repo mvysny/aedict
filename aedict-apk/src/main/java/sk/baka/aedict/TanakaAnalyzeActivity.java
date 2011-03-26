@@ -25,6 +25,7 @@ import java.util.List;
 import sk.baka.aedict.dict.DictEntry;
 import sk.baka.aedict.dict.DictTypeEnum;
 import sk.baka.aedict.dict.Dictionary;
+import sk.baka.aedict.dict.EdictEntry;
 import sk.baka.aedict.dict.LuceneSearch;
 import sk.baka.aedict.dict.MatcherEnum;
 import sk.baka.aedict.dict.SearchQuery;
@@ -42,6 +43,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 /**
@@ -122,6 +124,15 @@ public class TanakaAnalyzeActivity extends ListActivity {
 	protected void onSaveInstanceState(Bundle outState) {
 		showRomaji.saveState(outState);
 		outState.putSerializable(INTENTKEY_STATE, (Serializable) model);
+	}
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		final DictEntry e = model.get(position);
+		if (!e.isValid()) {
+			return;
+		}
+		EdictEntryDetailActivity.launch(this, (EdictEntry) e);
 	}
 
 	@Override
