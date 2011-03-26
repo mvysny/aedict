@@ -35,6 +35,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -149,6 +150,9 @@ public class KanjiDetailActivity extends AbstractActivity {
 		for (int i = 0; i < items.size(); i++) {
 			String item = items.get(i);
 			final String sitem = KanjidicEntry.removeSplits(item);
+			if (sitem.trim().length() == 0) {
+				continue;
+			}
 			if (isJapanese) {
 				item = showRomaji.romanize(item);
 			}
