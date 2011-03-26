@@ -43,6 +43,10 @@ public final class SearchQuery implements Serializable {
      */
     public boolean isJapanese;
     /**
+     * Used only when {@link #isJapanese} is false. ISO 639-3 language code of the language to be used instead of english. May be null - in such case any language may be used (preferably english).
+     */
+    public String langCode;
+    /**
      * A matcher to use when matching query strings to a line.
      */
     public MatcherEnum matcher;
