@@ -79,7 +79,7 @@ public class TatoebaParser implements IDictParser {
             return;
         }
         if (!ISO_639_3_CODES.contains(tokens[1])) {
-            System.out.println("Sentence #"+index+": Invalid language code: " + tokens[1] + ", ingnoring");
+            System.out.println("Sentence #"+index+": Invalid language code: " + tokens[1] + ", ignoring");
             return;
         }
         if (tokens[1].equals(JAPAN_ISO_639_3_CODE)) {

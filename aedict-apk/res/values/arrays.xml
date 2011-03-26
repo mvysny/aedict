@@ -45,4 +45,8 @@
     	<item>Overwrite</item>
     	<item>Merge</item>
     </string-array>
+    <string-array name="examplesDict">
+    	<item>Tanaka</item>
+    	<item>Tatoeba</item>
+    </string-array>
 </resources>
