@@ -132,7 +132,9 @@ public class TanakaAnalyzeActivity extends ListActivity {
 		if (!e.isValid()) {
 			return;
 		}
-		EdictEntryDetailActivity.launch(this, (EdictEntry) e);
+		if (e instanceof EdictEntry) {
+			EdictEntryDetailActivity.launch(this, (EdictEntry) e);
+		}
 	}
 
 	@Override
