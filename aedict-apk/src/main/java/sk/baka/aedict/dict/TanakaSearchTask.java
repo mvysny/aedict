@@ -57,6 +57,7 @@ public class TanakaSearchTask extends AsyncTask<String, Void, List<DictEntry>> i
 	private final List<ViewGroup> views = new ArrayList<ViewGroup>();
 	private final ShowRomaji showRomaji;
 	private final String highlightTerm;
+	private final DictTypeEnum dictType;
 
 	/**
 	 * Creates new searcher.
@@ -80,11 +81,12 @@ public class TanakaSearchTask extends AsyncTask<String, Void, List<DictEntry>> i
 		this.vg = vg;
 		this.showRomaji = showRomaji;
 		this.highlightTerm = highlightTerm;
+		dictType = AedictApp.getConfig().getSamplesDictType();
 	}
 
 	@Override
 	protected void onPreExecute() {
-		AedictApp.getDownloader().checkDictionary(activity, new Dictionary(DictTypeEnum.Tanaka, null), null, false);
+		AedictApp.getDownloader().checkDictionary(activity, new Dictionary(dictType, null), null, false);
 		activity.setProgressBarIndeterminate(true);
 		activity.setProgressBarIndeterminateVisibility(true);
 		final TextView tv = (TextView) activity.getLayoutInflater().inflate(android.R.layout.simple_list_item_1, vg, false);
@@ -94,14 +96,15 @@ public class TanakaSearchTask extends AsyncTask<String, Void, List<DictEntry>> i
 
 	@Override
 	protected List<DictEntry> doInBackground(String... params) {
-		final SearchQuery query = new SearchQuery(DictTypeEnum.Tanaka);
+		final SearchQuery query = new SearchQuery(dictType);
 		query.isJapanese = true;
 		query.matcher = MatcherEnum.Substring;
 		query.query = new String[] { params[0] };
+		query.langCode = AedictApp.getConfig().getSamplesDictLang();
 		try {
 			return LuceneSearch.singleSearch(query, null, true);
 		} catch (Exception e) {
-			Log.e(TanakaSearchTask.class.getSimpleName(), "Failed to search in Tanaka", e);
+			Log.e(TanakaSearchTask.class.getSimpleName(), "Failed to search in " + dictType, e);
 			return Collections.singletonList(DictEntry.newErrorMsg(e));
 		}
 	}
