@@ -15,7 +15,7 @@
 				Added support for updating dictionaries to newer versions.
 			</action>
 			<action dev="vyzivus" type="update" issue="127">
-				include radical and its number into Kanji detail view.
+				Include radical and its number into Kanji detail view.
 			</action>
 			<action dev="vyzivus" type="add" issue="129">
 				Indexer should be able to push new dictionaries to the baka.sk site.
@@ -24,16 +24,19 @@
 				Add an red X button on the word search field to clean the field.
 			</action>
 			<action dev="vyzivus" type="fix" issue="133">
-					Attempt to view the kanji 負 (defeat) seems to cause a force close.
+				Attempt to view the kanji 負 (defeat) seems to cause a force close.
 			</action>
 			<action dev="vyzivus" type="add" issue="120">
-					Added Joyo/JLPT N1/2500 most common newspaper kanji quizes.
+				Added Joyo/JLPT N1/2500 most common newspaper kanji quizes.
 			</action>
 			<action dev="vyzivus" type="add" issue="128">
-					 Force portrait mode in Show stroke order &amp; Kanjipad view.
+				 Force portrait mode in Show stroke order &amp; Kanjipad view.
 			</action>
 			<action dev="vyzivus" type="add" issue="131">
 				Added support for radical analysis.
+			</action>
+			<action dev="vyzivus" type="add" issue="121">
+				Added support for Tatoeba.
 			</action>
 		</release>
 		<release version="2.8" date="30. December 2010">
