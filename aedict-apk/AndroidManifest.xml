@@ -65,8 +65,8 @@
 		<activity android:name=".DownloadDictionaryActivity"
 			android:label="@string/downloadDictionaries" />
 		<activity android:name=".NotepadActivity" android:label="@string/notepad" />
-		<activity android:name=".StrokeOrderActivity" android:label="@string/showSod" />
-		<activity android:name=".KanjiDetailActivity" android:label="@string/kanjiDetail" />
+		<activity android:name=".StrokeOrderActivity" android:label="@string/showSod"  android:screenOrientation="portrait"/>
+		<activity android:name=".KanjiDetailActivity" android:label="@string/kanjiDetail" android:screenOrientation="portrait"/>
 		<activity android:name=".jlptquiz.QuizLaunchActivity" android:label="@string/jlptQuiz">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
