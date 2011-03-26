@@ -30,6 +30,7 @@ import sk.baka.aedict.dict.DictionaryVersions;
 import sk.baka.aedict.dict.DownloaderService;
 import sk.baka.aedict.kanji.RomanizationEnum;
 import sk.baka.aedict.util.BackgroundService;
+import sk.baka.aedict.util.Iso6393Codes;
 import sk.baka.autils.DialogUtils;
 import sk.baka.autils.ListBuilder;
 import sk.baka.autils.MiscUtils;
@@ -320,11 +321,45 @@ public class AedictApp extends Application implements OnSharedPreferenceChangeLi
 		}
 
 		/**
+		 * Sets the dictionary type used to retrieve the example sentences.
+		 * @param dict dictionary type, {@link DictTypeEnum#Tatoeba} or {@link DictTypeEnum#Tanaka}.
+		 */
+		public synchronized void setSamplesDictType(final DictTypeEnum dict) {
+			if(dict!=DictTypeEnum.Tatoeba && dict!=DictTypeEnum.Tanaka) {
+				throw new RuntimeException("Invalid dict type: "+dict);
+			}
+			commit(prefs.edit().putString(ConfigActivity.KEY_EXAMPLES_DICT, dict.name()));
+		}
+
+		/**
+		 * Gets the dictionary type used to retrieve the example sentences.
+		 * @return dictionary type, {@link DictTypeEnum#Tatoeba} or {@link DictTypeEnum#Tanaka}.
+		 */
+		public synchronized DictTypeEnum getSamplesDictType() {
+			return DictTypeEnum.valueOf(prefs.getString(ConfigActivity.KEY_EXAMPLES_DICT, "Tanaka"));
+		}
+
+		/**
+		 * Sets the dictionary language used to retrieve the example sentences.
+		 * @param langCode ISO 639-3 language code.
+		 */
+		public synchronized void setSamplesDictLang(final String langCode) {
+			commit(prefs.edit().putString(ConfigActivity.KEY_EXAMPLES_DICT_LANG, langCode));
+		}
+
+		/**
+		 * Gets the dictionary language used to retrieve the example sentences.
+		 * @return ISO 639-3 language code.
+		 */
+		public synchronized String getSamplesDictLang() {
+			return prefs.getString(ConfigActivity.KEY_EXAMPLES_DICT_LANG, Iso6393Codes.LANG_CODE_ENGLISH);
+		}
+
+		/**
 		 * True if the results should be sorted (the default), false otherwise.
 		 * See http://code.google.com/p/aedict/issues/detail?id=56 for details.
 		 */
 		public static final String KEY_SORT = "sort";
-
 		/**
 		 * True if the results should be sorted (the default), false otherwise.
 		 * See http://code.google.com/p/aedict/issues/detail?id=56 for details.

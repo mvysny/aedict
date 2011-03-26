@@ -354,7 +354,7 @@ public enum DictTypeEnum {
             String translations = doc.get("translations");
             final Map<String, String> langCodeToSentence = new HashMap<String, String>();
             for (final String sentence: translations.split("\n")) {
-                if(sentence.length()>=4 || sentence.charAt(3)==':'){
+                if(sentence.length()>5 && sentence.charAt(3)==':'){
                     langCodeToSentence.put(sentence.substring(0, 3), sentence.substring(5));
                 }
             }

@@ -266,8 +266,8 @@ public class MainActivity extends ListActivity {
 					if (!AedictApp.getDownloader().checkDictionary(MainActivity.this, new Dictionary(DictTypeEnum.Tanaka, null), null, false)) {
 						return true;
 					}
-					final SearchQuery jp = SearchQuery.searchTanaka(text, true, r);
-					final SearchQuery en = SearchQuery.searchTanaka(text, false, r);
+					final SearchQuery jp = SearchQuery.searchTanaka(AedictApp.getConfig().getSamplesDictType(), text, true, r, AedictApp.getConfig().getSamplesDictLang());
+					final SearchQuery en = SearchQuery.searchTanaka(AedictApp.getConfig().getSamplesDictType(), text, false, r, AedictApp.getConfig().getSamplesDictLang());
 					ResultActivity.launch(MainActivity.this, Arrays.asList(en, jp), null);
 				}
 				return true;
@@ -295,7 +295,7 @@ public class MainActivity extends ListActivity {
 		}
 		final boolean isTanaka = ((CheckBox) findViewById(R.id.searchExamples)).isChecked();
 		if (isAdvanced && isTanaka) {
-			final SearchQuery q = SearchQuery.searchTanaka(text, isJapanese, r);
+			final SearchQuery q = SearchQuery.searchTanaka(AedictApp.getConfig().getSamplesDictType(), text, isJapanese, r, AedictApp.getConfig().getSamplesDictLang());
 			performSearch(q, null);
 			return;
 		}

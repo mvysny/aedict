@@ -29,14 +29,14 @@ public class SearchQueryTest {
 
     @Test
     public void tanakaAndParserEn() {
-	final SearchQuery q = SearchQuery.searchTanaka("mother AND father", false, null);
+	final SearchQuery q = SearchQuery.searchTanaka(DictTypeEnum.Tanaka, "mother AND father", false, null, null);
 	Assert.assertArrayEquals(q.query, new String[]{"mother AND father"});
     }
 
     @Test
     public void tanakaAndParserJp() {
 	final RomanizationEnum r = RomanizationEnum.NihonShiki;
-	final SearchQuery q = SearchQuery.searchTanaka("haha AND chichi", true, r);
+	final SearchQuery q = SearchQuery.searchTanaka(DictTypeEnum.Tanaka, "haha AND chichi", true, r, null);
 	Assert.assertArrayEquals(q.query, new String[]{r.toKatakana("haha") + " AND " + r.toKatakana("chichi"), r.toHiragana("haha") + " AND " + r.toHiragana("chichi")});
     }
 }

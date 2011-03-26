@@ -220,20 +220,25 @@ public final class SearchQuery implements Serializable {
 
     /**
      * Creates an EDICT query which searches for a japanese or english term in the Tanaka example dictionary.
-     *
+     * @param sampleDictType the dictionary to search in, Tanaka or Tatoeba
      * @param word
      *            the word to search, in japanese language, may contain romaji.
      *            Full-width katakana conversion is performed automatically. Not
      *            null
      * @param romanization
      *            the romanization system to use, not null.
+     * @param langCode ISO 639-3 language code to return instead of english. May be null - in this case the default language is used.
      * @return search query, never null
      */
-    public static SearchQuery searchTanaka(final String word, final boolean isJapanese, final RomanizationEnum romanization) {
-        final SearchQuery result = new SearchQuery(DictTypeEnum.Tanaka);
+    public static SearchQuery searchTanaka(final DictTypeEnum sampleDictType, final String word, final boolean isJapanese, final RomanizationEnum romanization, final String langCode) {
+        if(sampleDictType!=DictTypeEnum.Tanaka && sampleDictType!=DictTypeEnum.Tatoeba) {
+            throw new RuntimeException("Invalid dictionary type: "+sampleDictType);
+        }
+        final SearchQuery result = new SearchQuery(sampleDictType);
 	result.query = parseQuery(word, isJapanese, romanization);
         result.isJapanese = isJapanese;
         result.matcher = MatcherEnum.Substring;
+        result.langCode = langCode;
         return result;
     }
 
