@@ -114,6 +114,9 @@
 			<Button android:id="@+id/addToNotepad" android:layout_height="wrap_content"
 				android:text="@string/addToNotepad" android:layout_width="fill_parent"
 				android:layout_weight="1"></Button>
+			<Button android:id="@+id/showRadical" android:layout_height="wrap_content"
+				android:text="@string/radicals" android:layout_width="fill_parent"
+				android:layout_weight="1"></Button>
 		</LinearLayout>
 
 	</LinearLayout>
