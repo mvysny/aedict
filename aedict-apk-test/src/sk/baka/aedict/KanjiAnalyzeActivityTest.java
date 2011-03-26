@@ -49,7 +49,7 @@ public class KanjiAnalyzeActivityTest extends AbstractAedictTest<KanjiAnalyzeAct
 		startActivity("母上");
 		assertEquals(2, getActivity().getListAdapter().getCount());
 		assertEquals("母", get(0).getJapanese());
-		assertEquals("mama, mother", get(0).english);
+		assertEquals("mother", get(0).english);
 		assertEquals("上", get(1).getJapanese());
 		assertEquals("above, up", get(1).english);
 		tester.optionMenu(10000);
