@@ -32,6 +32,9 @@
 			<action dev="vyzivus" type="add" issue="128">
 					 Force portrait mode in Show stroke order &amp; Kanjipad view.
 			</action>
+			<action dev="vyzivus" type="add" issue="131">
+				Added support for radical analysis.
+			</action>
 		</release>
 		<release version="2.8" date="30. December 2010">
 			<action dev="vyzivus" type="add" issue="112">
