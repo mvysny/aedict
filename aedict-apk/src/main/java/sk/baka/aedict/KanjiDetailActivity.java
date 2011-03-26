@@ -39,7 +39,6 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.TextView;
 
 /**
@@ -106,13 +105,19 @@ public class KanjiDetailActivity extends AbstractActivity {
 		((TextView) findViewById(R.id.radicalNumber)).setText(String.valueOf(entry.radical));
 		final SearchUtils utils = new SearchUtils(this);
 		utils.setupCopyButton(R.id.copy, R.id.kanji);
-		((Button) findViewById(R.id.showStrokeOrder)).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.showStrokeOrder).setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
 				StrokeOrderActivity.launch(KanjiDetailActivity.this, entry.kanji);
 			}
 		});
-		((Button) findViewById(R.id.addToNotepad)).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.showRadical).setOnClickListener(new View.OnClickListener() {
+
+			public void onClick(View v) {
+				KanjiAnalyzeActivity.launch(KanjiDetailActivity.this, Radicals.getRadicals(entry.getKanji()), false);
+			}
+		});
+		findViewById(R.id.addToNotepad).setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
 				NotepadActivity.addAndLaunch(KanjiDetailActivity.this, entry);
