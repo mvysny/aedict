@@ -133,6 +133,7 @@ public class DownloaderService implements Closeable {
 	public boolean checkRequiredVersions(final Activity activity) {
 		final Set<Dictionary> needsUpdate = AedictApp.getConfig().getCurrentDictVersions().getOlderThan(AedictApp.MIN_REQUIRED);
 		if (!needsUpdate.isEmpty()) {
+			Log.i("Aedict-DictionaryVersionChecker", "Comparing current versions "+AedictApp.getConfig().getCurrentDictVersions().versions+" and "+AedictApp.MIN_REQUIRED.versions);
 			new DialogActivity.Builder(activity).setDialogListener(new UpdateDictionaries(needsUpdate)).showYesNoDialog(
 					"The following dictionaries are no longer compatible with this version of Aedict and needs to be updated: " + needsUpdate + ". Perform the update now?");
 		}

@@ -45,6 +45,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
+import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -205,6 +206,7 @@ public class ConfigActivity extends PreferenceActivity {
 			}
 			AedictApp.getConfig().setServerDictVersions(dv);
 			final DictionaryVersions current = AedictApp.getConfig().getCurrentDictVersions();
+			Log.i("Aedict-DictionaryVersionChecker", "Comparing current versions "+current.versions+" and "+dv.versions);
 			final Set<Dictionary> updatable = current.getOlderThan(dv);
 			if(updatable.isEmpty()){
 				new DialogActivity.Builder(a).showInfoDialog("No updates found", "No dictionary updates has been found.");
