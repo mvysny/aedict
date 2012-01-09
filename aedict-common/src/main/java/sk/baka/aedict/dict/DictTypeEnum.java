@@ -541,7 +541,10 @@ public enum DictTypeEnum {
             reading = jpPart;
         } else {
             kanji = jpPart.substring(0, openSquareBracket).trim();
-            final int closingSquareBracket = jpPart.indexOf(']');
+            final int closingSquareBracket = jpPart.indexOf(']', openSquareBracket);
+            if (closingSquareBracket < 0) {
+                throw new IllegalArgumentException("Parameter edictEntry: invalid value " + edictEntry + ": missing ']'");
+            }
             reading = jpPart.substring(openSquareBracket + 1, closingSquareBracket).trim();
         }
         return new EdictEntry(kanji, reading, englishPart);

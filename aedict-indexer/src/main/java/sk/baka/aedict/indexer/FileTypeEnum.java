@@ -66,16 +66,21 @@ public enum FileTypeEnum {
                         return;
                     }
                     final Document doc = new Document();
-                    final EdictEntry entry = DictTypeEnum.parseEdictEntry(line);
-                    doc.add(new Field("contents", line, Field.Store.YES, Field.Index.ANALYZED));
-                    doc.add(new Field("common", entry.isCommon ? "t" : "f", Field.Store.NO, Field.Index.NOT_ANALYZED));
-                    final ListBuilder jp = new ListBuilder(" ");
-                    if (entry.kanji != null) {
-                        jp.add("W" + entry.kanji + "W");
+                    try {
+                        final EdictEntry entry = DictTypeEnum.parseEdictEntry(line);
+                        doc.add(new Field("contents", line, Field.Store.YES, Field.Index.ANALYZED));
+                        doc.add(new Field("common", entry.isCommon ? "t" : "f", Field.Store.NO, Field.Index.NOT_ANALYZED));
+                        final ListBuilder jp = new ListBuilder(" ");
+                        if (entry.kanji != null) {
+                            jp.add("W" + entry.kanji + "W");
+                        }
+                        jp.add("W" + entry.reading + "W");
+                        doc.add(new Field("jp", jp.toString(), Field.Store.NO, Field.Index.ANALYZED));
+                        writer.addDocument(doc);
+                    } catch (Exception ex) {
+                        System.out.println("Failed to parse edict line " + line + ", skipping: " + ex);
+                        ex.printStackTrace();
                     }
-                    jp.add("W" + entry.reading + "W");
-                    doc.add(new Field("jp", jp.toString(), Field.Store.NO, Field.Index.ANALYZED));
-                    writer.addDocument(doc);
                 }
 
                 public void onFinish(final IndexWriter writer) {
