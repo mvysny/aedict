@@ -295,9 +295,10 @@ public class TatoebaParser implements IDictParser {
                 final Sentences sentence = sentences.get(jpSentenceId);
                 final BLineParser bLine = new BLineParser(edict, sentence.japanese, tokens[2]);
                 if (sentence.bLine != null) {
-                    throw new RuntimeException("Duplicite bLine for " + jpSentenceId);
+                    System.out.println("WARNING: Duplicite bLine for " + jpSentenceId + ": first one: " + sentence.bLine + ", second one: " + bLine + ", ignoring second one");
+                } else {
+                    sentence.bLine = bLine;
                 }
-                sentence.bLine = bLine;
             }
         } finally {
             MiscUtils.closeQuietly(reader);

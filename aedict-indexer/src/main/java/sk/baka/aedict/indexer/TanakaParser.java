@@ -153,12 +153,18 @@ public class TanakaParser implements IDictParser {
         private final Edict edict;
 
         /**
+         * Original japanese sentence.
+         */
+        public final String japaneseSentence;
+        
+        /**
          * Parses the Tanaka B-line.
          * @param japaneseSentence the original Japanese sentence.
          * @param bLine the Tanaka B-line, without the B: prefix.
          */
         public BLineParser(Edict edict, String japaneseSentence, String bLine) {
             this.edict = edict;
+            this.japaneseSentence = japaneseSentence;
             // gather all words in their dictionary form.
             final List<BWord> words = parseWords(bLine);
             final StringBuilder wordList = new StringBuilder();
@@ -210,6 +216,11 @@ public class TanakaParser implements IDictParser {
                 result.add(new BWord(edict, (String) w));
             }
             return result;
+        }
+
+        @Override
+        public String toString() {
+            return "BLine{" + japaneseSentence + ": in kana = " + kana + ", dictionaryFormWordList=" + dictionaryFormWordList + '}';
         }
     }
 
