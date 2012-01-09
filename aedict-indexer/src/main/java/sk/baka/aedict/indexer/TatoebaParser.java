@@ -293,11 +293,15 @@ public class TatoebaParser implements IDictParser {
                 final String[] tokens = split(line);
                 final int jpSentenceId = Integer.parseInt(tokens[0]);
                 final Sentences sentence = sentences.get(jpSentenceId);
-                final BLineParser bLine = new BLineParser(edict, sentence.japanese, tokens[2]);
-                if (sentence.bLine != null) {
-                    System.out.println("WARNING: Duplicite bLine for " + jpSentenceId + ": first one: " + sentence.bLine + ", second one: " + bLine + ", ignoring second one");
+                if (sentence == null) {
+                    System.out.println("Missing sentence for jpn_indices index " + jpSentenceId + ", ignoring");
                 } else {
-                    sentence.bLine = bLine;
+                    final BLineParser bLine = new BLineParser(edict, sentence.japanese, tokens[2]);
+                    if (sentence.bLine != null) {
+                        System.out.println("WARNING: Duplicite bLine for jpn_indices index " + jpSentenceId + ": first one: " + sentence.bLine + ", second one: " + bLine + ", ignoring second one");
+                    } else {
+                        sentence.bLine = bLine;
+                    }
                 }
             }
         } finally {
