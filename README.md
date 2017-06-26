@@ -13,4 +13,4 @@ but you may find it helpful. You can also sync your data from Aedict Android int
 Thank you very much for your kind support throughout the recent years. I appreciate your great feedback which gave life to many great features. And it's been fun :-)
 However, as you probably know, Aedict's development has been largely fueled by my enthusiasm; and I cannot afford to publish an app for a low price anymore. Unfortunately, I have no means to get the money elsewhere, like Facebook does. I am just a sole developer with no investors backing me up. This is great though because I am free to follow the requests of my users solely. To continue doing this, I need your help.
 
-![Become Patron](http://www.aedict.eu/patreon.png)
+<a href="https://www.patreon.com/bePatron?u=2914375"><img src="http://www.aedict.eu/patreon.png"/></a>
