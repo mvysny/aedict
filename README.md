@@ -1,3 +1,5 @@
+<a href="https://www.patreon.com/bePatron?u=2914375"><img src="http://www.aedict.eu/patreon.png"/></a>
+
 # Aedict
 
 This is the original repository of the old Aedict 2 code base. However,
