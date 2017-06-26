@@ -7,8 +7,9 @@ you can use the [Aedict Issue Tracker](https://github.com/mvysny/aedict/issues) 
 
 ## Use Aedict 3 on your desktop
 
-There is [Aedict Online](https://www.aedict-online.eu) which is not as feature-complete and not as polished as the Aedict Android,
-but you may find it helpful. You can also sync your data from Aedict Android into Aedict Online and vice versa.
+Fire up your browser and head to [Aedict Online](https://www.aedict-online.eu) - an online clone of the Android Aedict. Be warned - it is still in the Alpha phase though :) 
+
+You can sync your data from Aedict Android into Aedict Online and vice versa. Just open your Android Aedict, head to *Settings / Expert Settings / Storage Type* and make sure to select *EmbeddedDB*. Then, just follow the instructions and then head to *Settings / User Data* and enable sync with Aedict Online. Please read the [Syncing data with Aedict Online](https://www.patreon.com/posts/its-done-and-out-7893290) for more information.
 
 ## Personal pledge
 
