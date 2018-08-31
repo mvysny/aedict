@@ -9,11 +9,6 @@ you can use the [Aedict Issue Tracker](https://github.com/mvysny/aedict/issues) 
 
 Fire up your browser and head to [Aedict Online](https://www.aedict-online.eu) - an online clone of the Android Aedict. Be warned - it is still in the Alpha phase though :) 
 
-You can enable an automatic sync of your data between all Aedict Androids and the Aedict Online. Just open your Android Aedict, head to *Settings / Expert Settings / Storage Type* and make sure to select *EmbeddedDB*. Then, just follow the instructions and then head to *Settings / User Data* and enable sync with Aedict Online. Please read the [Syncing data with Aedict Online](https://www.patreon.com/posts/its-done-and-out-7893290) for more information.
+## Aedict Ultimate
 
-## Personal pledge
-
-Thank you very much for your kind support throughout the recent years. I appreciate your great feedback which gave life to many great features. And it's been fun :-)
-However, as you probably know, Aedict's development has been largely fueled by my enthusiasm; and I cannot afford to publish an app for a low price anymore. Unfortunately, I have no means to get the money elsewhere, like Facebook does. I am just a sole developer with no investors backing me up. This is great though because I am free to follow the requests of my users solely. To continue doing this, I need your help.
-
-<a href="https://www.patreon.com/bePatron?u=2914375"><img src="http://www.aedict.eu/patreon.png"/></a>
+Aedict is now subscription-based, to help fund further development. Please read more at the [Aedict Blog](https://mvysny.github.io/aedict-blog/), the [Aedict Ultimate Blogpost](https://mvysny.github.io/aedict-blog/Aedict-Ultimate/).
