@@ -119,7 +119,7 @@ public class NotepadActivity extends Activity implements TabContentFactory {
 		return (TabHost) findViewById(R.id.tabs);
 	}
 
-	private int getCategoryCount() {
+	private static int getCategoryCount() {
 		final int result = AedictApp.getConfig().getNotepadCategories().size();
 		if (result > 1) {
 			return result;
